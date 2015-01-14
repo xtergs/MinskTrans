@@ -1,0 +1,174 @@
+﻿<Window x:Class="MinskTrans.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:minskTrans="clr-namespace:MinskTrans"
+        mc:Ignorable="d"
+        d:DataContext ="{d:DesignInstance minskTrans:ShedulerModelView}"
+        Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded">
+    <Window.Resources>
+        <minskTrans:listConverter x:Key="listConverter"/>
+        <CollectionViewSource x:Key="shedulerModelViewViewSource" d:DesignSource="{d:DesignInstance {x:Type minskTrans:ShedulerModelView}, CreateList=True}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="RouteNum"></PropertyGroupDescription>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource x:Key="shedulerModelViewRoutsViewSource" Source="{Binding Routs, Source={StaticResource shedulerModelViewViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewRoutsStopsViewSource" Source="{Binding Stops, Source={StaticResource shedulerModelViewRoutsViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewStopsViewSource" Source="{Binding Stops, Source={StaticResource shedulerModelViewViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewTimesViewSource" Source="{Binding Times, Source={StaticResource shedulerModelViewViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewTimesTimesDictionaryViewSource" Source="{Binding TimesDictionary, Source={StaticResource shedulerModelViewTimesViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewRoutViewSource" Source="{Binding Rout, Source={StaticResource shedulerModelViewViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewRoutStopsViewSource" Source="{Binding Stops, Source={StaticResource shedulerModelViewViewSource}}"/>
+        <CollectionViewSource x:Key="shedulerModelViewRouteNamesViewSource" Source="{Binding RouteNames, Source={StaticResource shedulerModelViewViewSource}}"/>
+
+
+    </Window.Resources>
+    <TabControl>
+        <TabItem Header="Stops">
+            <DockPanel>
+                <Button Content="ParsStops" DockPanel.Dock="Bottom" Command="{Binding ParseStopsCommand}" CommandParameter="{Binding Text, ElementName=textBox, UpdateSourceTrigger=PropertyChanged}"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="1"  x:Name="textBox" DockPanel.Dock="Bottom" />
+                    <DataGrid Grid.Row="0" ItemsSource="{Binding Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Routs">
+            <DockPanel>
+                <Button Content="ParsStops" DockPanel.Dock="Bottom" Command="{Binding ParseRoutsCommand}" CommandParameter="{Binding Text, ElementName=textBox1, UpdateSourceTrigger=PropertyChanged}"></Button>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="2"  x:Name="textBox1" DockPanel.Dock="Bottom" AcceptsReturn="True" AcceptsTab="True"/>
+                    <GridSplitter Grid.Row="1" Height="5"></GridSplitter>
+                    <DataGrid Grid.Row="0" DockPanel.Dock="Top" ItemsSource="{Binding Routs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DataGrid>
+                </Grid>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="Times">
+            <DockPanel>
+                <Button Content="ParsStops" DockPanel.Dock="Bottom" Command="{Binding ParseTimesCommand}" CommandParameter="{Binding Text, ElementName=textBox2, UpdateSourceTrigger=PropertyChanged}"></Button>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Row="2"  x:Name="textBox2" DockPanel.Dock="Bottom"  AcceptsReturn="True" AcceptsTab="True"/>
+                    <GridSplitter Grid.Row="1" Grid.RowSpan="2"></GridSplitter>
+                    <DataGrid Grid.Row="0" DockPanel.Dock="Top" ItemsSource="{Binding  Times, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <DataGrid ItemsSource="{Binding TimesDictionary}">
+                                    <DataGrid.RowDetailsTemplate>
+                                        <DataTemplate>
+
+                                            <ListView ItemsSource="{Binding Value}"></ListView>
+
+                                        </DataTemplate>
+                                    </DataGrid.RowDetailsTemplate>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </Grid>
+            </DockPanel>
+        </TabItem>
+        <TabItem >
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <DataGrid x:Name="routsDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="0" RowDetailsVisibilityMode="VisibleWhenSelected">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="authorityColumn" Binding="{Binding Authority}" Header="Authority" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="cityColumn" Binding="{Binding City}" Header="City" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="commercialColumn" Binding="{Binding Commercial}" Header="Commercial" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="dataColumn" Binding="{Binding Data}" Header="Data" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="datestartColumn" Binding="{Binding Datestart}" Header="Datestart" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="entryColumn" Binding="{Binding Entry}" Header="Entry" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="operatorColumn" Binding="{Binding Operator}" Header="Operator" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="routeNameColumn" Binding="{Binding RouteName}" Header="Route Name" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="routeNumColumn" Binding="{Binding RouteNum}" Header="Route Num" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="routIdColumn" Binding="{Binding RoutId}" Header="Rout Id" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="routTagColumn" Binding="{Binding RoutTag}" Header="Rout Tag" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="routTypeColumn" Binding="{Binding RoutType}" Header="Rout Type" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="specialDatesColumn" Binding="{Binding SpecialDates}" Header="Special Dates" Width="SizeToHeader"/>
+                        <DataGridTemplateColumn x:Name="timeColumn" Header="Time" Width="SizeToHeader">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DataGrid DisplayMemberPath="Time" ItemsSource="{Binding}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn x:Name="transportColumn" Binding="{Binding Transport}" Header="Transport" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="validityPeriodsColumn" Binding="{Binding ValidityPeriods}" Header="Validity Periods" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="weekdaysColumn" Binding="{Binding Weekdays}" Header="Weekdays" Width="SizeToHeader"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <DataGrid x:Name="timeDataGrid" Grid.Column="1" DisplayMemberPath="Time" ItemsSource="{Binding Source={StaticResource shedulerModelViewRoutsViewSource}}" Margin="0"/>
+                <DataGrid x:Name="stopsDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding Source={StaticResource shedulerModelViewRoutsStopsViewSource}}" Margin="0" Grid.Row="1" RowDetailsVisibilityMode="VisibleWhenSelected">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="areaColumn" Binding="{Binding Area}" Header="Area" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="cityColumn1" Binding="{Binding City}" Header="City" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="iDColumn" Binding="{Binding ID}" Header="ID" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="infoColumn" Binding="{Binding Info}" Header="Info" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="latColumn" Binding="{Binding Lat}" Header="Lat" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="lngColumn" Binding="{Binding Lng}" Header="Lng" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="nameColumn" Binding="{Binding Name}" Header="Name" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="stopNumColumn" Binding="{Binding StopNum}" Header="Stop Num" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="stopsStrColumn" Binding="{Binding StopsStr}" Header="Stops Str" Width="SizeToHeader"/>
+                        <DataGridTextColumn x:Name="streatColumn" Binding="{Binding Streat}" Header="Streat" Width="SizeToHeader"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="test">
+            <Grid >
+                <ListView ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding SelectedRouteNumIndex, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="225">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView ItemsSource="{Binding RouteNames}" SelectedIndex="{Binding RouteNamesIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="RouteName" HorizontalAlignment="Left" Height="194" Margin="264,0,0,0" VerticalAlignment="Top" Width="345">
+
+                </ListView>
+                <ListView ItemsSource="{Binding  StopsObservableCollection}" SelectedIndex="{Binding StopsIndex}" DisplayMemberPath="Name" HorizontalAlignment="Left" Height="194" Margin="614,0,-12,0" VerticalAlignment="Top" Width="345"/>
+                <ListView ItemsSource="{Binding TimesObservableCollection}" Margin="0,202,0,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <minskTrans:ScheduleView HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="Auto" Width="Auto" DataContext="{Binding}"/>
+                            
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <DataGrid x:Name="timesDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="728,236,-181,-123" RowDetailsVisibilityMode="VisibleWhenSelected">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="routIdColumn1" Binding="{Binding RoutId}" Header="Rout Id" Width="SizeToHeader"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+        </TabItem>
+    </TabControl >
+</Window>

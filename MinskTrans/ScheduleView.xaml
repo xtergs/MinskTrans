@@ -10,29 +10,11 @@
     <UserControl.Resources>
         <minskTrans:listConverter x:Key="listConverter"/>
     </UserControl.Resources>
-    <DataGrid ItemsSource="{Binding DictionaryTime}">
+    <DataGrid ItemsSource="{Binding DictionaryTime}" AutoGenerateColumns="False">
         <DataGrid.Columns>
             <DataGridTextColumn Binding="{Binding Key}"></DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource listConverter}}"></DataGridTextColumn>
         </DataGrid.Columns>
-            <DataGrid.GroupStyle>
-            <GroupStyle>
-                <GroupStyle.ContainerStyle>
-                    <Style TargetType="{x:Type GroupItem}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <GroupBox Margin="10" Header="{Binding}">
-                                        <GroupBox.Content>
-                                            <ItemsPresenter />
-                                        </GroupBox.Content>
-                                    </GroupBox>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </GroupStyle.ContainerStyle>
-            </GroupStyle>
-        </DataGrid.GroupStyle>
+           
     </DataGrid>
 </UserControl>

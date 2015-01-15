@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:minskTrans="clr-namespace:MinskTrans"
         mc:Ignorable="d"
-        d:DataContext ="{d:DesignInstance minskTrans:ShedulerModelView}"
+        d:DataContext ="{d:DesignInstance minskTrans:StopMovelView}"
         Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded">
     <Window.Resources>
         <minskTrans:listConverter x:Key="listConverter"/>
@@ -26,6 +26,67 @@
 
     </Window.Resources>
     <TabControl>
+        <TabItem Header="test">
+            <Grid >
+                <ListView ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}" SelectedValue="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="225" Margin="0,22,0,0" SelectedIndex="0" RenderTransformOrigin="0.5,0.5">
+
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <GroupBox Margin="10" Header="{Binding Key}">
+                                                    <GroupBox.Content>
+                                                        <ContentPresenter></ContentPresenter>
+                                                    </GroupBox.Content>
+                                                </GroupBox>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+                <ListView ItemsSource="{Binding RouteNames}" SelectedValue="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="RouteName" HorizontalAlignment="Left" Height="194" Margin="264,0,0,0" VerticalAlignment="Top" Width="345" SelectedIndex="0">
+
+                </ListView>
+                <ListView ItemsSource="{Binding  StopsObservableCollection}" SelectedIndex="{Binding StopSelectedIndex}" DisplayMemberPath="Name" HorizontalAlignment="Left" Height="194" Margin="614,0,-12,0" VerticalAlignment="Top" Width="345"/>
+
+                <ListView ItemsSource="{Binding TimesObservableCollection}" Margin="0,202,0,0">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True"></WrapPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Days}"></TextBlock>
+                                <minskTrans:ScheduleView Grid.Row="1" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Height="Auto" Width="Auto" DataContext="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <TextBox  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="Stops">
+            <Grid>
+                <ListView SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding FilteredStops}" DisplayMemberPath="Name" HorizontalAlignment="Left" Height="226" Margin="67,47,0,0" VerticalAlignment="Top" Width="249">
+
+                </ListView>
+                <DataGrid ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Left" Height="217" Margin="341,47,0,0" VerticalAlignment="Top" Width="363"/>
+                <TextBox HorizontalAlignment="Left" Height="23" Margin="88,20,0,0" TextWrapping="Wrap" Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+            </Grid>
+        </TabItem>
         <TabItem Header="Stops">
             <DockPanel>
                 <Button Content="ParsStops" DockPanel.Dock="Bottom" Command="{Binding ParseStopsCommand}" CommandParameter="{Binding Text, ElementName=textBox, UpdateSourceTrigger=PropertyChanged}"/>
@@ -141,34 +202,6 @@
 
             </Grid>
         </TabItem>
-        <TabItem Header="test">
-            <Grid >
-                <ListView ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding SelectedRouteNumIndex, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="225">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <ListView ItemsSource="{Binding RouteNames}" SelectedIndex="{Binding RouteNamesIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="RouteName" HorizontalAlignment="Left" Height="194" Margin="264,0,0,0" VerticalAlignment="Top" Width="345">
-
-                </ListView>
-                <ListView ItemsSource="{Binding  StopsObservableCollection}" SelectedIndex="{Binding StopsIndex}" DisplayMemberPath="Name" HorizontalAlignment="Left" Height="194" Margin="614,0,-12,0" VerticalAlignment="Top" Width="345"/>
-                <ListView ItemsSource="{Binding TimesObservableCollection}" Margin="0,202,0,0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <minskTrans:ScheduleView HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="Auto" Width="Auto" DataContext="{Binding}"/>
-                            
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                <DataGrid x:Name="timesDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="728,236,-181,-123" RowDetailsVisibilityMode="VisibleWhenSelected">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="routIdColumn1" Binding="{Binding RoutId}" Header="Rout Id" Width="SizeToHeader"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-
-            </Grid>
-        </TabItem>
+       
     </TabControl >
 </Window>

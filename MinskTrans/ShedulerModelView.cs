@@ -19,146 +19,8 @@ namespace MinskTrans
 		private ObservableCollection<Stop> stops;
 		private ObservableCollection<Rout> routs;
 		private ObservableCollection<Schedule> times;
-		private string routNum;
-		private int stopIndex;
-		private ObservableCollection<Time> timeT;
-		private ObservableCollection<Rout> routT;
-		private ObservableCollection<Stop> stopT;
-
-		private ObservableCollection<string> routeNums;
-		private int selectedRouteNumIndex;
-		private new ObservableCollection<Rout> routeObservableCollection;
-
-		private CollectionViewSource RoutView;
-		private int routeNamesIndex;
-		private List<Stop> stopsObservableCollection;
-		private List<Time> timesObservableCollection;
-		private int stopsIndex;
-
-		public ObservableCollection<string> RouteNums
-		{
-			get
-			{
-				routeNums =	new ObservableCollection<string>(Routs.Select(x => x.RouteNum).Distinct());
-				return routeNums;
-			}
-		}
-
-		public int SelectedRouteNumIndex
-		{
-			get { return selectedRouteNumIndex; }
-			set
-			{
-				if (value < 0)
-					value = 0;
-				selectedRouteNumIndex = value;
-				OnPropertyChanged();
-				OnPropertyChanged("RouteNames");
-			}
-		}
-
-		public ObservableCollection<Rout> RouteNames
-		{
-			get
-			{
-				routeObservableCollection = new ObservableCollection<Rout>(Routs.Where(x=>x.RouteNum == routeNums[SelectedRouteNumIndex]));
-				return routeObservableCollection;
-			}
-		}
-
-		public int RouteNamesIndex
-		{
-			get { return routeNamesIndex; }
-			set
-			{
-				if (value == routeNamesIndex) return;
-				if (value < 0)
-					value = 0;
-				routeNamesIndex = value;
-				OnPropertyChanged();
-				OnPropertyChanged("StopsObservableCollection");
-			}
-		}
-
-		public List<Stop> StopsObservableCollection
-		{
-			get
-			{
-				stopsObservableCollection = (RouteNames[RouteNamesIndex].Stops);
-				return stopsObservableCollection;
-			}
-			set
-			{
-				if (Equals(value, stopsObservableCollection)) return;
-				stopsObservableCollection = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public int StopsIndex
-		{
-			get { return stopsIndex; }
-			set
-			{
-				if (value == stopsIndex) return;
-				if (value < 0)
-					value = 0;
-				stopsIndex = value;
-				OnPropertyChanged();
-				OnPropertyChanged("TimesObservableCollection");
-			}
-		}
-
-		public List<Time> TimesObservableCollection
-		{
-			get
-			{
-				var tempList = RouteNames[RouteNamesIndex].Time;
-				if (tempList == null)
-					return null;
-				timesObservableCollection = tempList.TimesDictionary[StopsIndex];
-				return timesObservableCollection;
-			}
-			set
-			{
-				if (Equals(value, timesObservableCollection)) return;
-				timesObservableCollection = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public CollectionViewSource RoutViewSource
-		{
-			get { return RoutView; }
-			set
-			{
-				RoutView = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public string RoutNum
-		{
-			get { return routNum; }
-			set
-			{
-				if (value == routNum) return;
-				routNum = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public int StopIndex
-		{
-			get { return stopIndex; }
-			set
-			{
-				if (value == stopIndex) return;
-				stopIndex = value;
-				OnPropertyChanged();
-			}
-		}
-
+		
+		
 		public ShedulerModelView()
 		{
 			WebClient client = new WebClient();
@@ -186,39 +48,9 @@ namespace MinskTrans
 					rout.Stops.Add(Stops.First(x => x.ID == st));
 				}
 			}
-
-			RoutView = new CollectionViewSource();
-			RoutView.GroupDescriptions.Add(new PropertyGroupDescription("RoutNum"));
-			RoutView.Source = Routs;
 		}
 
-		public ObservableCollection<Time> Time
-		{
-			get { return timeT; }
-			set
-			{
-				timeT = value;
-				OnPropertyChanged();
-			}
-		}
-		public ObservableCollection<Rout> Rout
-		{
-			get { return routT; }
-			set
-			{
-				routT = value;
-				OnPropertyChanged();
-			}
-		}
-		public ObservableCollection<Stop> Stop
-		{
-			get { return stopT; }
-			set
-			{
-				stopT = value;
-				OnPropertyChanged();
-			}
-		}
+		
 		public ObservableCollection<Schedule> Times
 		{
 			get { return times; }
@@ -258,18 +90,7 @@ namespace MinskTrans
 			return true;
 		}
 
-		public ActionCommand ShowRoutCommand
-		{
-			get
-			{
-				return  new ActionCommand(
-					x =>
-					{
-						RoutViewSource.Source = new ObservableCollection<Rout>(Routs.Where(r => r.RouteNum.Contains(RoutNum)));
-						
-					});
-			}
-		}
+		
 
 		public ActionCommand ParseStopsCommand
 		{

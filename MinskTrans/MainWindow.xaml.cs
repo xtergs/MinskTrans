@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 
 using System.Windows;
+using MinskTrans.Modelview;
 
 
 namespace MinskTrans
@@ -14,10 +15,10 @@ namespace MinskTrans
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		RoutesModelview ShedulerModelView { get; set; }
+		MainModelView ShedulerModelView { get; set; }
 		public MainWindow()
 		{
-			ShedulerModelView = new RoutesModelview();
+			ShedulerModelView = new MainModelView();
 			InitializeComponent();
 			DataContext = ShedulerModelView;
 			
@@ -25,9 +26,7 @@ namespace MinskTrans
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			System.Windows.Data.CollectionViewSource shedulerModelViewViewSource = ((System.Windows.Data.CollectionViewSource)(this.FindResource("shedulerModelViewViewSource")));
-			// Load data by setting the CollectionViewSource.Source property:
-			shedulerModelViewViewSource.Source = ShedulerModelView.Routs;
+			
 			
 		}
 	}

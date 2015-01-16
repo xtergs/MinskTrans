@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MinskTrans.Model;
 
 namespace MinskTrans
 {
@@ -12,6 +14,12 @@ namespace MinskTrans
 		private string stopNameFilter;
 		private IEnumerable<Time> timeSchedule;
 		private Stop filteredSelectedStop;
+		private int curDay;
+		private bool autoDay;
+		private int nowTimeHour;
+		private int nowTimeMin;
+		private bool autoNowTime;
+		private int curTime;
 
 		public StopMovelView()
 			: base()
@@ -48,21 +56,115 @@ namespace MinskTrans
 			get
 			{
 				if (StopNameFilter != null)
-				return Stops.Where(x=>Routs.Any(y=>y.Stops.Contains(x)) && x.Name.ToLower().Contains(StopNameFilter.ToLower()));
+				return Stops.Where(x=>Routs.Any(y=>y.Stops.Contains(x)) && x.SearchName.Contains(StopNameFilter.ToLower()));
 				return Stops;
 			}
 			
 		}
 
-		public IEnumerable<Schedule> TimeSchedule
+		public bool AutoDay
+		{
+			get { return autoDay; }
+			set
+			{
+				if (value.Equals(autoDay)) return;
+				autoDay = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public int CurDay
 		{
 			get
 			{
-				var ss =
-					Routs[0].Time.TimesDictionary[0][0].Times.OrderBy(x=>x).Select(x=> new {Routs[0], x})
-						.OrderBy(x => x.TimesDictionary[0].OrderBy(y => y.Times));
-				ss.ToString();
-				return Times.Where(x=>x.Rout.Stops.Contains(FilteredSelectedStop));
+				if (AutoDay)
+					return (int)DateTime.Now.DayOfWeek ;
+				if (curDay <= 0)
+					CurDay = 1;
+				return curDay;
+			}
+			set
+			{
+				if (value == curDay) return;
+				if (value <= 0 || value > 7)
+					return;
+				curDay = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public int NowTimeHour
+		{
+			get { return nowTimeHour; }
+			set
+			{
+				if (value == nowTimeHour) return;
+				if (value >= 24 || value < 0)
+					value = 0;
+				nowTimeHour = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public int NowTimeMin
+		{
+			get { return nowTimeMin; }
+			set
+			{
+				if (value == nowTimeMin) return;
+
+				while (value >= 60)
+				{
+					NowTimeHour++;
+					value -= 60;
+				}
+
+				nowTimeMin = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public bool AutoNowTime
+		{
+			get { return autoNowTime; }
+			set
+			{
+				if (value.Equals(autoNowTime)) return;
+				autoNowTime = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public int CurTime
+		{
+			get
+			{
+				if (AutoNowTime)
+					return DateTime.Now.Hour*60 + DateTime.Now.Minute;
+				return NowTimeHour * 60 + NowTimeMin;
+			}
+		}
+
+		public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
+		{
+			get
+			{
+				var dd = Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop));
+				IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
+				foreach (var sched in dd	)
+				{
+					var temp = sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime);
+					ss = ss.Concat(temp);
+					
+				}
+				ss = ss.OrderBy(x => x.Value);
+				//ss.ToString();
+				return ss;
 			}
 		}
 	}

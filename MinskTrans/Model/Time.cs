@@ -21,6 +21,7 @@ namespace MinskTrans
 			{
 				Times.Add(time.Times[i] + correnction);
 			}
+			Schedule = time.Schedule;
 		}
 		public string Days { get; set; }
 		public List<int> Times { get; set; }
@@ -48,6 +49,8 @@ namespace MinskTrans
 				return dic;
 			}
 		}
+
+		public Schedule Schedule { get; set; }
 
 	}
 }

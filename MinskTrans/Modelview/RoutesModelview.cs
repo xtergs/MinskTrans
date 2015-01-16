@@ -18,6 +18,8 @@ namespace MinskTrans
 			OnPropertyChanged("RouteNums");
 		}
 
+
+
 		private string routNum;
 		private IEnumerable<string> routeNums;
 		private int selectedRouteNumIndex;
@@ -36,13 +38,32 @@ namespace MinskTrans
 		
 		private int stopsIndex;
 		private Stop stopSelectedValue;
+		private string typeTransport;
+		private bool curTime;
+
+		public string TypeTransport
+		{
+			get
+			{
+				if (String.IsNullOrWhiteSpace(typeTransport))
+					TypeTransport = Routs[0].Transport;
+				return typeTransport;
+			}
+			set
+			{
+				if (value == typeTransport) return;
+				typeTransport = value;
+				OnPropertyChanged();
+				OnPropertyChanged("RouteNums");
+			}
+		}
 
 
 		public IEnumerable<string> RouteNums
 		{
 			get
 			{
-					var temp= (Routs.Select(x=>x.RouteNum).Distinct());
+					var temp= Routs.Where(x=>x.Transport == TypeTransport).Select(x=>x.RouteNum).Distinct();
 				if (RoutNum != null)
 					temp = temp.Where(x => x.Contains(routNum));
 				return temp;
@@ -129,8 +150,8 @@ namespace MinskTrans
 
 					int curTime;
 #if DEBUG
-					curTime = 56 + 10*60;
-					CurTime = true;
+					curTime = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+					//CurTime = true;
 #else
 				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #endif
@@ -144,7 +165,17 @@ namespace MinskTrans
 			}
 		}
 
-		public bool CurTime { get; set; }
+		public bool CurTime
+		{
+			get { return curTime; }
+			set
+			{
+				if (value.Equals(curTime)) return;
+				curTime = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimesObservableCollection");
+			}
+		}
 
 		public int SelectedRouteNumIndex
 		{
@@ -199,6 +230,20 @@ namespace MinskTrans
 				stopIndex = value;
 				OnPropertyChanged();
 			}
+		}
+
+		public ActionCommand ShowBusCommand
+		{
+			get { return new ActionCommand(x=> TypeTransport = "bus");}
+		}
+
+		public ActionCommand ShowTrolCommand
+		{
+			get { return new ActionCommand(x => TypeTransport = "trol"); }
+		}
+		public ActionCommand ShowTramCommand
+		{
+			get { return new ActionCommand(x => TypeTransport = "tram"); }
 		}
 	}
 }

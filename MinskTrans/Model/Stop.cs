@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MinskTrans.Model;
 
 namespace MinskTrans
 {
-	public class Stop
+	public class Stop:BaseModel
 	{
+		private string name;
 
 		public Stop(string str, Stop stop)
 			: this(str)
@@ -27,49 +29,52 @@ namespace MinskTrans
 			if (string.IsNullOrWhiteSpace(StopsStr))
 				StopsStr = stop.StopsStr;
 		}
+
 		public Stop(string str)
 		{
-			int indexStart = 0;
+			//int indexStart = 0;
 			char sym = ';';
 
-			int indexEnd = str.IndexOf(sym);
-			ID = int.Parse(str.Substring(indexStart, indexEnd));
+			Inicialize(str, sym.ToString());
 
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			City = str.Substring(indexStart, indexEnd - indexStart);
+			//int indexEnd = str.IndexOf(sym);
+			ID = int.Parse(GetStr());
 
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			Area = str.Substring(indexStart, indexEnd - indexStart);
-
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			Streat = str.Substring(indexStart, indexEnd - indexStart);
-
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			Name = str.Substring(indexStart, indexEnd - indexStart);
-
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			Info = str.Substring(indexStart, indexEnd - indexStart);
-
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			Lng = int.Parse(str.Substring(indexStart, indexEnd - indexStart));
-
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			Lat = int.Parse(str.Substring(indexStart, indexEnd - indexStart));
-
-			indexStart = indexEnd + 1;
-			indexEnd = str.IndexOf(sym, indexStart);
-			StopsStr = str.Substring(indexStart, indexEnd - indexStart);
-
-			indexStart = indexEnd + 1;
+			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			StopNum = str.Substring(indexStart);
+			City = GetStr();
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			Area = GetStr();
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			Streat = GetStr();
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			Name = GetStr();
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			Info = GetStr();
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			Lng = int.Parse(GetStr());
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			Lat = int.Parse(GetStr());
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			StopsStr = GetStr();
+
+			//indexStart = indexEnd + 1;
+			//indexEnd = str.IndexOf(sym, indexStart);
+			StopNum = GetStr();
 
 			Stops = new List<Stop>();
 		}
@@ -77,12 +82,42 @@ namespace MinskTrans
 		public string City { get; set; }
 		public string Area { get; set; }
 		public string Streat { get; set; }
-		public string Name { get; set; }
+
+		public string Name
+		{
+			get { return name; }
+			set
+			{
+				name = value;
+				SearchName = value.ToLower().Trim();
+			}
+		}
+
+		public string SearchName { get; set; }
 		public string Info { get; set; }
 		public int Lng { get; set; }
 		public int Lat { get; set; }
 		public string StopsStr { get; set; }
 		public List<Stop> Stops { get; set; }
 		public string StopNum { get; set; }
+
+		#region Overrides of BaseModel
+
+		protected override string GetStr()
+		{
+			indexEnd = getIntStr.IndexOf(Sym, indexStart);
+			
+			string temp;
+			if (indexEnd < 0)
+			{
+				temp = getIntStr.Substring(indexStart);
+			}
+			else
+				temp = getIntStr.Substring(indexStart, indexEnd - indexStart);
+			indexStart = indexEnd + 1;
+			return temp;
+		}
+
+		#endregion
 	}
 }

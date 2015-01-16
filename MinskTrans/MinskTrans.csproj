@@ -62,17 +62,17 @@
     <Compile Include="ActionCommand.cs" />
     <Compile Include="listConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Rout.cs" />
-    <Compile Include="RoutesModelview.cs" />
-    <Compile Include="Schedule.cs" />
+    <Compile Include="Model\Rout.cs" />
+    <Compile Include="Modelview\RoutesModelview.cs" />
+    <Compile Include="Model\Schedule.cs" />
     <Compile Include="ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ShedulerModelView.cs" />
+    <Compile Include="Modelview\ShedulerModelView.cs" />
     <Compile Include="ShedulerParser.cs" />
-    <Compile Include="Stop.cs" />
-    <Compile Include="StopMovelView.cs" />
-    <Compile Include="Time.cs" />
+    <Compile Include="Model\Stop.cs" />
+    <Compile Include="Modelview\StopMovelView.cs" />
+    <Compile Include="Model\Time.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

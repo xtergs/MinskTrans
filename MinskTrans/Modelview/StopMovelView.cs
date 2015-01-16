@@ -59,7 +59,7 @@ namespace MinskTrans
 			get
 			{
 				var ss =
-					Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop))
+					Routs[0].Time.TimesDictionary[0][0].Times.OrderBy(x=>x).Select(x=> new {Routs[0], x})
 						.OrderBy(x => x.TimesDictionary[0].OrderBy(y => y.Times));
 				ss.ToString();
 				return Times.Where(x=>x.Rout.Stops.Contains(FilteredSelectedStop));

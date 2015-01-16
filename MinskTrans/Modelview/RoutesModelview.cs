@@ -126,13 +126,20 @@ namespace MinskTrans
 					if (tempList == null)
 						return null;
 					timesObservableCollection = tempList.TimesDictionary[StopSelectedIndex];
+
+					int curTime;
+#if DEBUG
+					curTime = 56 + 10*60;
+					CurTime = true;
+#else
+				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
+#endif
+					if (CurTime)
+						timesObservableCollection.ForEach(x =>
+						{
+							x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
+						});
 				}
-				int curTime = 56 + 10 * 60;
-				if (false)
-					timesObservableCollection.ForEach(x =>
-					{
-						x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
-					});
 				return timesObservableCollection;
 			}
 		}

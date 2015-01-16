@@ -14,10 +14,10 @@ namespace MinskTrans
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		StopMovelView ShedulerModelView { get; set; }
+		RoutesModelview ShedulerModelView { get; set; }
 		public MainWindow()
 		{
-			ShedulerModelView = new StopMovelView();
+			ShedulerModelView = new RoutesModelview();
 			InitializeComponent();
 			DataContext = ShedulerModelView;
 			

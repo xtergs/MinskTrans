@@ -27,6 +27,12 @@ namespace MinskTrans
 			
 		}
 
+		public StopMovelView(Context newContext)
+			: base(newContext)
+		{
+			
+		}
+
 		public string StopNameFilter
 		{
 			get { return stopNameFilter; }
@@ -56,8 +62,8 @@ namespace MinskTrans
 			get
 			{
 				if (StopNameFilter != null)
-				return Stops.Where(x=>Routs.Any(y=>y.Stops.Contains(x)) && x.SearchName.Contains(StopNameFilter.ToLower()));
-				return Stops;
+					return Context.Stops.Where(x => Context.Routs.Any(y => y.Stops.Contains(x)) && x.SearchName.Contains(StopNameFilter.ToLower()));
+				return Context.Stops;
 			}
 			
 		}
@@ -154,7 +160,7 @@ namespace MinskTrans
 		{
 			get
 			{
-				var dd = Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop));
+				var dd = Context.Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop));
 				IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
 				foreach (var sched in dd	)
 				{

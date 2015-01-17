@@ -18,6 +18,12 @@ namespace MinskTrans
 			OnPropertyChanged("RouteNums");
 		}
 
+		public RoutesModelview(Context context)
+			:base(context)
+		{
+			OnPropertyChanged("RouteNums");
+		}
+
 
 
 		private string routNum;
@@ -46,7 +52,7 @@ namespace MinskTrans
 			get
 			{
 				if (String.IsNullOrWhiteSpace(typeTransport))
-					TypeTransport = Routs[0].Transport;
+					TypeTransport = Context.Routs[0].Transport;
 				return typeTransport;
 			}
 			set
@@ -63,7 +69,7 @@ namespace MinskTrans
 		{
 			get
 			{
-					var temp= Routs.Where(x=>x.Transport == TypeTransport).Select(x=>x.RouteNum).Distinct();
+				var temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
 				if (RoutNum != null)
 					temp = temp.Where(x => x.Contains(routNum));
 				return temp;
@@ -80,13 +86,15 @@ namespace MinskTrans
 				routeNumSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("RouteNames");
+				OnPropertyChanged("StopsObservableCollection");
+				OnPropertyChanged("TimesObservableCollection");
 			}
 		}
 		public ObservableCollection<Rout> RouteNames
 		{
 			get
 			{
-				routeObservableCollection = new ObservableCollection<Rout>(Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
+				routeObservableCollection = new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
 				return routeObservableCollection;
 			}
 		}
@@ -100,6 +108,7 @@ namespace MinskTrans
 				routeSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("StopsObservableCollection");
+				OnPropertyChanged("TimesObservableCollection");
 			}
 		}
 		public List<Stop> StopsObservableCollection

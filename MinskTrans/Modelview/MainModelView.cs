@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MinskTrans.Modelview
+﻿namespace MinskTrans.Modelview
 {
 	public class MainModelView
 	{
-		readonly RoutesModelview routesModelview = new RoutesModelview();
-		readonly StopMovelView stopMovelView = new StopMovelView();
+		private readonly Context context;
+		private readonly RoutesModelview routesModelview;
+		private readonly StopMovelView stopMovelView;
+		private readonly SettingsModelView settingsModelView;
+
+		public MainModelView()
+		{
+			context = new Context();
+			routesModelview = new RoutesModelview(context);
+			stopMovelView = new StopMovelView(context);
+			settingsModelView = new SettingsModelView();
+		}
 
 		public StopMovelView StopMovelView
 		{

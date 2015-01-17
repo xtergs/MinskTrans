@@ -64,22 +64,62 @@ namespace MinskTrans
 			}
 			
 			TimesDictionary.Add(timesDictionary);
-			
-			
 
-			for (int j = 4; j < splitStr.Count(); j++)  //остановки
+
+
+			for (int j = 4; j < splitStr.Count(); j++) //остановки
 			{
 				Inicialize(splitStr[j], ",");
 				int? cor = GetInt();
 
 				//list.ForEach(x=>x.ForEach(y=>y+=cor.Value));
-					timesDictionary = new List<Time>();
-
-					for (int ddd = 0; ddd < TimesDictionary[j-4].Count; ddd++)
+				timesDictionary = new List<Time>();
+				int counter = -1;
+				bool change = true;
+				int? addCor = 0;
+				for (int ddd = 0; ddd < TimesDictionary[j - 4].Count; ddd++)
+				{
+					var tempTime = new Time();
+					tempTime.Times = new List<int>();
+					tempTime.Days = TimesDictionary[j - 4][ddd].Days;
+					for (i = 0; i < TimesDictionary[j - 4][ddd].Times.Count; i++)
 					{
-						timesDictionary.Add(new Time(TimesDictionary[j-4][ddd], cor.Value));	
+					counter--;
+						if (counter == 0)
+						{
+							if (change)
+							{
+								cor=addCor;
+							}
+							else
+							{
+								cor=addCor;
+
+							}
+								counter--;
+							//change = !change;
+						}
+						if (counter < 0)
+						{
+								addCor = GetInt();
+							if (addCor != null)
+							{
+								counter = addCor.Value;
+								addCor = GetInt();
+								if (addCor.Value == 6)
+									addCor =cor+ 1;
+								else if (addCor.Value == 4)
+									addCor = cor - 1;
+								change = !change;
+							}
+						}
+						tempTime.Times.Add(TimesDictionary[j - 4][ddd].Times[i] + cor.Value);
 					}
-					TimesDictionary.Add(timesDictionary);
+					tempTime.Schedule = TimesDictionary[j - 4][ddd].Schedule;
+
+					timesDictionary.Add(tempTime);
+				}
+				TimesDictionary.Add(timesDictionary);
 				//timesDictionary.Add(new Time() { Days = curValue, Times = list[i++] });
 			}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using MinskTrans.Modelview;
 
@@ -10,11 +11,18 @@ namespace MinskTrans
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private Timer timer;
+		private System.Timers.Timer timerr;
 		public MainWindow()
 		{
 			ShedulerModelView = new MainModelView();
 			InitializeComponent();
 			DataContext = ShedulerModelView;
+			//timer = new Timer((x)=>{});
+			timerr = new System.Timers.Timer(1000);
+			timerr.Elapsed += (sender, args) => ShedulerModelView.StopMovelView.RefreshTimeSchedule.Execute(null);
+			timerr.Start();
+
 		}
 
 		private MainModelView ShedulerModelView { get; set; }
@@ -87,6 +95,12 @@ namespace MinskTrans
 					return true;
 
 			return false;
+		}
+
+		private void Window_Closed(object sender, EventArgs e)
+		{
+			timerr.Stop();
+			timerr.Dispose();
 		}
 	}
 }

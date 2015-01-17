@@ -7,7 +7,7 @@
         xmlns:modelview="clr-namespace:MinskTrans.Modelview"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance modelview:MainModelView}"
-        Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded">
+        Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <minskTrans:MinsToTimeConverter x:Key="MinsToTimeConverter" />
         <minskTrans:listConverter x:Key="listConverter" />
@@ -129,42 +129,59 @@
         </TabItem>
         <TabItem Header="Stops" DataContext="{Binding StopMovelView }">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel>
+                <TextBox DockPanel.Dock="Top" Margin="0" TextWrapping="Wrap"
+                         Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Top" />
                 <ListView x:Name="ListView"
                           SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          ItemsSource="{Binding FilteredStops}" DisplayMemberPath="Name" HorizontalAlignment="Left"
-                          Height="226" Margin="67,47,0,0" VerticalAlignment="Top" Width="249" />
-                <DataGrid ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
-                          AutoGenerateColumns="False" HorizontalAlignment="Left" Height="217" Margin="341,47,0,0"
-                          VerticalAlignment="Top" Width="363">
+                          ItemsSource="{Binding FilteredStops}" DisplayMemberPath="Name" Margin="0" />
+                </DockPanel>
+                <DataGrid Grid.Column="1" ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
+                          AutoGenerateColumns="False" Margin="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Key}" />
+                        <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
+                        <DataGridTextColumn Binding="{Binding Key.RouteName}" />
+                        <DataGridTextColumn Binding="{Binding Key.Transport}" />
                         <DataGridTextColumn
                             Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsToTimeConverter}, Mode=OneWay}" />
-                        <DataGridTextColumn Binding="{Binding Key.Transport}" />
                     </DataGrid.Columns>
                 </DataGrid>
-                <TextBox HorizontalAlignment="Left" Height="23" Margin="88,20,0,0" TextWrapping="Wrap"
-                         Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalAlignment="Top" Width="120" />
-                <TextBox HorizontalAlignment="Left" Height="23" Margin="248,20,0,0" TextWrapping="Wrap"
-                         Text="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalAlignment="Top" Width="120" />
-                <TextBox HorizontalAlignment="Left" Height="23" Margin="373,19,0,0" TextWrapping="Wrap"
-                         Text="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalAlignment="Top" Width="120" />
-                <CheckBox Content="AutoDay"
-                          IsChecked="{Binding AutoDay, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                          HorizontalAlignment="Left" Margin="245,7,0,0" VerticalAlignment="Top"
-                          RenderTransformOrigin="0.521,0.467" />
-                <CheckBox Content="AutoNowTime"
+                <DockPanel Grid.Column="2">
+                <DockPanel DockPanel.Dock="Top">
+                    <CheckBox DockPanel.Dock="Top" Content="AutoNowTime"
                           IsChecked="{Binding AutoNowTime, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                          HorizontalAlignment="Left" Margin="341,7,0,0" VerticalAlignment="Top"
+                          HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
                           RenderTransformOrigin="0.521,0.467" />
-                <TextBox HorizontalAlignment="Left" Height="23" Margin="498,19,0,0" TextWrapping="Wrap"
+                    <DockPanel DockPanel.Dock="Top">
+                <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
+                         Text="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Top" Width="36" />
+                <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
+                         Text="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Top" Width="43" />
+                        </DockPanel>
+                    <Slider DockPanel.Dock="Bottom" Value="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="24" TickPlacement="BottomRight"></Slider>
+                        <Slider DockPanel.Dock="Bottom" Value="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="59" TickPlacement="BottomRight" TickFrequency="5"></Slider>
+
+
+                    </DockPanel>
+                <DockPanel>
+                <CheckBox DockPanel.Dock="Top" Content="AutoDay"
+                          IsChecked="{Binding AutoDay, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                          HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
+                          RenderTransformOrigin="0.521,0.467" />
+                <TextBox DockPanel.Dock="Top" HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
                          Text="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          VerticalAlignment="Top" Width="120" />
-                <Button Content="Button" HorizontalAlignment="Left" Margin="865,176,0,0" VerticalAlignment="Top"
-                        Width="75" Click="Button_Click_1" />
+                    <Slider DockPanel.Dock="Bottom" Value="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="7" Minimum="1" TickPlacement="BottomRight"></Slider>
+                </DockPanel>
+                </DockPanel>
             </Grid>
         </TabItem>
         <TabItem Header="Stops">

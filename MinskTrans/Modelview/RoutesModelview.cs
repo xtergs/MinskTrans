@@ -158,6 +158,7 @@ namespace MinskTrans.Modelview
 #else
 				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #endif
+					//TODO заменяет сущь-е время
 					if (CurTime)
 						timesObservableCollection.ForEach(x => { x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList(); });
 				}

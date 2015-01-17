@@ -26,7 +26,7 @@ namespace MinskTrans
 			List<int> list = (List<int>) value;
 			foreach (var time in list)
 			{
-				str += time + ", ";
+				str += time.ToString("00") + ", ";
 			}
 			return str;
 		}

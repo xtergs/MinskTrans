@@ -10,13 +10,10 @@ namespace MinskTrans.Modelview
 		private bool autoDay;
 		private bool autoNowTime;
 		private int curDay;
-		private int curTime;
 		private Stop filteredSelectedStop;
-		private List<Stop> filteredStops;
 		private int nowTimeHour;
 		private int nowTimeMin;
 		private string stopNameFilter;
-		private IEnumerable<Time> timeSchedule;
 
 		public StopMovelView()
 		{
@@ -165,6 +162,14 @@ namespace MinskTrans.Modelview
 				ss = ss.OrderBy(x => x.Value);
 				//ss.ToString();
 				return ss;
+			}
+		}
+
+		public ActionCommand RefreshTimeSchedule
+		{
+			get
+			{
+				return new ActionCommand(x=> OnPropertyChanged("TimeSchedule"));
 			}
 		}
 	}

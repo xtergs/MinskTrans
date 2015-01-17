@@ -66,6 +66,7 @@
     <Compile Include="Converters\MinsToTimeConverter.cs" />
     <Compile Include="Modelview\MainModelView.cs" />
     <Compile Include="Modelview\SettingsModelView.cs" />
+    <Compile Include="Modelview\StopsModelView.cs" />
     <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\GroupStop.cs" />
     <Compile Include="Model\List2.cs" />

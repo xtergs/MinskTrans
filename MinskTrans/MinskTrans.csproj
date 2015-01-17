@@ -62,8 +62,8 @@
     </ApplicationDefinition>
     <Compile Include="ActionCommand.cs" />
     <Compile Include="Context.cs" />
-    <Compile Include="listConverter.cs" />
-    <Compile Include="MinsToTimeConverter.cs" />
+    <Compile Include="Converters\listConverter.cs" />
+    <Compile Include="Converters\MinsToTimeConverter.cs" />
     <Compile Include="Modelview\MainModelView.cs" />
     <Compile Include="Modelview\SettingsModelView.cs" />
     <Compile Include="Model\BaseModel.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modelview\ShedulerModelView.cs" />
+    <Compile Include="Modelview\BaseModelView.cs" />
     <Compile Include="ShedulerParser.cs" />
     <Compile Include="Model\Stop.cs" />
     <Compile Include="Modelview\StopMovelView.cs" />

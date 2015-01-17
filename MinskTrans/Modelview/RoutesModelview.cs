@@ -1,51 +1,41 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
 
-namespace MinskTrans
+namespace MinskTrans.Modelview
 {
-	public class RoutesModelview:ShedulerModelView
+	public class RoutesModelview : BaseModelView
 	{
+		private bool curTime;
+		private string routNum;
+		private int routeNamesIndex;
+		private string routeNumSelectedValue;
+		private IEnumerable<string> routeNums;
+
+		private ObservableCollection<Rout> routeObservableCollection;
+		private Rout routeSelectedValue;
+		private int selectedRouteNumIndex;
+
+		private int stopIndex;
+
+
+		private Stop stopSelectedValue;
+		private int stopsIndex;
+		private List<Stop> stopsObservableCollection;
+		private List<Time> timesObservableCollection;
+		private string typeTransport;
 
 		public RoutesModelview()
-			:base()
 		{
 			OnPropertyChanged("RouteNums");
 		}
 
 		public RoutesModelview(Context context)
-			:base(context)
+			: base(context)
 		{
 			OnPropertyChanged("RouteNums");
 		}
-
-
-
-		private string routNum;
-		private IEnumerable<string> routeNums;
-		private int selectedRouteNumIndex;
-		private string routeNumSelectedValue;
-
-		private ObservableCollection<Rout> routeObservableCollection;
-		private int routeNamesIndex;
-		private Rout routeSelectedValue;
-
-		private List<Stop> stopsObservableCollection;
-		private int stopIndex;
-		
-		
-		private List<Time> timesObservableCollection;
-		
-		
-		private int stopsIndex;
-		private Stop stopSelectedValue;
-		private string typeTransport;
-		private bool curTime;
 
 		public string TypeTransport
 		{
@@ -69,7 +59,7 @@ namespace MinskTrans
 		{
 			get
 			{
-				var temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
+				IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
 				if (RoutNum != null)
 					temp = temp.Where(x => x.Contains(routNum));
 				return temp;
@@ -90,11 +80,13 @@ namespace MinskTrans
 				OnPropertyChanged("TimesObservableCollection");
 			}
 		}
+
 		public ObservableCollection<Rout> RouteNames
 		{
 			get
 			{
-				routeObservableCollection = new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
+				routeObservableCollection =
+					new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
 				return routeObservableCollection;
 			}
 		}
@@ -111,11 +103,12 @@ namespace MinskTrans
 				OnPropertyChanged("TimesObservableCollection");
 			}
 		}
+
 		public List<Stop> StopsObservableCollection
 		{
 			get
 			{
-				if (RouteSelectedValue != null) 
+				if (RouteSelectedValue != null)
 					stopsObservableCollection = (RouteSelectedValue.Stops);
 				return stopsObservableCollection;
 			}
@@ -132,6 +125,7 @@ namespace MinskTrans
 				OnPropertyChanged("TimesObservableCollection");
 			}
 		}
+
 		public int StopSelectedIndex
 		{
 			get { return stopsIndex; }
@@ -152,23 +146,20 @@ namespace MinskTrans
 			{
 				if (RouteSelectedValue != null)
 				{
-					var tempList = RouteSelectedValue.Time;
+					Schedule tempList = RouteSelectedValue.Time;
 					if (tempList == null)
 						return null;
 					timesObservableCollection = tempList.TimesDictionary[StopSelectedIndex];
 
 					int curTime;
 #if DEBUG
-					curTime = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+					curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 					//CurTime = true;
 #else
 				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #endif
 					if (CurTime)
-						timesObservableCollection.ForEach(x =>
-						{
-							x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
-						});
+						timesObservableCollection.ForEach(x => { x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList(); });
 				}
 				return timesObservableCollection;
 			}
@@ -215,9 +206,6 @@ namespace MinskTrans
 		}
 
 
-
-		
-
 		public string RoutNum
 		{
 			get { return routNum; }
@@ -243,13 +231,14 @@ namespace MinskTrans
 
 		public ActionCommand ShowBusCommand
 		{
-			get { return new ActionCommand(x=> TypeTransport = "bus");}
+			get { return new ActionCommand(x => TypeTransport = "bus"); }
 		}
 
 		public ActionCommand ShowTrolCommand
 		{
 			get { return new ActionCommand(x => TypeTransport = "trol"); }
 		}
+
 		public ActionCommand ShowTramCommand
 		{
 			get { return new ActionCommand(x => TypeTransport = "tram"); }

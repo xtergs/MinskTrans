@@ -1,50 +1,41 @@
-﻿
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
+﻿using System;
 using System.Linq;
-using System.Net;
-
 using System.Windows;
 using MinskTrans.Modelview;
-
 
 namespace MinskTrans
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	///     Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		MainModelView ShedulerModelView { get; set; }
 		public MainWindow()
 		{
 			ShedulerModelView = new MainModelView();
 			InitializeComponent();
 			DataContext = ShedulerModelView;
-			
 		}
+
+		private MainModelView ShedulerModelView { get; set; }
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			
-			
 		}
 
-		int w(char x, char y)
+		private int w(char x, char y)
 		{
 			if (x == y)
 				return 0;
 
 			return 1;
-
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			string y = text1.Text;
 			string x = text2.Text;
-			int[][] a = new int[x.Length][];
+			var a = new int[x.Length][];
 			for (int i = 0; i < a.Length; i++)
 				a[i] = new int[y.Length + 1];
 
@@ -64,20 +55,19 @@ namespace MinskTrans
 					result.Text += a[i][j].ToString("D2") + " ";
 				result.Text += "\n";
 			}
-			var str = 23;
+			int str = 23;
 		}
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
-			ListView.ItemsSource= ShedulerModelView.StopMovelView.Context.Stops.Where(
+			ListView.ItemsSource = ShedulerModelView.StopMovelView.Context.Stops.Where(
 				x => Comparer(x.SearchName, ShedulerModelView.StopMovelView.StopNameFilter.ToLower())).Distinct();
 		}
 
 
-		bool Comparer(string x, string y)
+		private bool Comparer(string x, string y)
 		{
-			
-			int[][] a = new int[x.Length][];
+			var a = new int[x.Length][];
 			for (int i = 0; i < a.Length; i++)
 				a[i] = new int[y.Length + 1];
 
@@ -93,9 +83,9 @@ namespace MinskTrans
 			result.Text = "";
 
 			for (int j = a[a.Length - 1].Length - 1; j >= 0; j--)
-					if (a[a.Length - 1][j] <= 2)
-						return true;
-			
+				if (a[a.Length - 1][j] <= 2)
+					return true;
+
 			return false;
 		}
 	}

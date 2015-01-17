@@ -1,36 +1,30 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MinskTrans.Model;
 
-namespace MinskTrans
+namespace MinskTrans.Modelview
 {
-	public class StopMovelView  :ShedulerModelView
+	public class StopMovelView : BaseModelView
 	{
-		private List<Stop> filteredStops;
-		private string stopNameFilter;
-		private IEnumerable<Time> timeSchedule;
-		private Stop filteredSelectedStop;
-		private int curDay;
 		private bool autoDay;
+		private bool autoNowTime;
+		private int curDay;
+		private int curTime;
+		private Stop filteredSelectedStop;
+		private List<Stop> filteredStops;
 		private int nowTimeHour;
 		private int nowTimeMin;
-		private bool autoNowTime;
-		private int curTime;
+		private string stopNameFilter;
+		private IEnumerable<Time> timeSchedule;
 
 		public StopMovelView()
-			: base()
 		{
-			
 		}
 
 		public StopMovelView(Context newContext)
 			: base(newContext)
 		{
-			
 		}
 
 		public string StopNameFilter
@@ -62,10 +56,11 @@ namespace MinskTrans
 			get
 			{
 				if (StopNameFilter != null)
-					return Context.Stops.Where(x => Context.Routs.Any(y => y.Stops.Contains(x)) && x.SearchName.Contains(StopNameFilter.ToLower()));
+					return
+						Context.Stops.Where(
+							x => Context.Routs.Any(y => y.Stops.Contains(x)) && x.SearchName.Contains(StopNameFilter.ToLower()));
 				return Context.Stops;
 			}
-			
 		}
 
 		public bool AutoDay
@@ -85,7 +80,7 @@ namespace MinskTrans
 			get
 			{
 				if (AutoDay)
-					return (int)DateTime.Now.DayOfWeek ;
+					return (int) DateTime.Now.DayOfWeek;
 				if (curDay <= 0)
 					CurDay = 1;
 				return curDay;
@@ -152,7 +147,7 @@ namespace MinskTrans
 			{
 				if (AutoNowTime)
 					return DateTime.Now.Hour*60 + DateTime.Now.Minute;
-				return NowTimeHour * 60 + NowTimeMin;
+				return NowTimeHour*60 + NowTimeMin;
 			}
 		}
 
@@ -160,13 +155,12 @@ namespace MinskTrans
 		{
 			get
 			{
-				var dd = Context.Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop));
+				IEnumerable<Schedule> dd = Context.Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop));
 				IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
-				foreach (var sched in dd	)
+				foreach (Schedule sched in dd)
 				{
-					var temp = sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime);
+					List2<Rout, int> temp = sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime);
 					ss = ss.Concat(temp);
-					
 				}
 				ss = ss.OrderBy(x => x.Value);
 				//ss.ToString();

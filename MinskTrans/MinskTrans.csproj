@@ -63,7 +63,9 @@
     <Compile Include="ActionCommand.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Converters\listConverter.cs" />
+    <Compile Include="Converters\MinsLeftConverter.cs" />
     <Compile Include="Converters\MinsToTimeConverter.cs" />
+    <Compile Include="Modelview\GroupStopsModelView.cs" />
     <Compile Include="Modelview\MainModelView.cs" />
     <Compile Include="Modelview\SettingsModelView.cs" />
     <Compile Include="Modelview\StopsModelView.cs" />

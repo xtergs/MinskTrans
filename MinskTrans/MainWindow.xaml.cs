@@ -19,7 +19,7 @@ namespace MinskTrans
 			InitializeComponent();
 			DataContext = ShedulerModelView;
 			//timer = new Timer((x)=>{});
-			timerr = new System.Timers.Timer(1000);
+			timerr = new System.Timers.Timer(10000);
 			timerr.Elapsed += (sender, args) => ShedulerModelView.StopMovelView.RefreshTimeSchedule.Execute(null);
 			timerr.Start();
 

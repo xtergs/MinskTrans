@@ -14,14 +14,19 @@ namespace MinskTrans.Modelview
 		private int nowTimeHour;
 		private int nowTimeMin;
 		private string stopNameFilter;
+		private bool trol;
+		private bool bus;
+		private bool tram;
 
 		public StopMovelView()
+			:this(null)
 		{
 		}
 
 		public StopMovelView(Context newContext)
 			: base(newContext)
 		{
+			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
 		}
 
 		public string StopNameFilter
@@ -148,15 +153,61 @@ namespace MinskTrans.Modelview
 			}
 		}
 
+		public bool Trol
+		{
+			get { return trol; }
+			set
+			{
+				if (value.Equals(trol)) return;
+				trol = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public bool Bus
+		{
+			get { return bus; }
+			set
+			{
+				if (value.Equals(bus)) return;
+				bus = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public bool Tram
+		{
+			get { return tram; }
+			set
+			{
+				if (value.Equals(tram)) return;
+				tram = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
 		public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
 		{
 			get
 			{
-				IEnumerable<Schedule> dd = Context.Times.Where(x => x.Rout.Stops.Contains(FilteredSelectedStop));
+				IEnumerable<Schedule> dd = Context.Times.Where(x => (x.Rout.Stops.Contains(FilteredSelectedStop)));
 				IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
 				foreach (Schedule sched in dd)
 				{
-					List2<Rout, int> temp = sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime);
+					var temp = sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime).Where(x =>
+						{
+							if (x.Key.Transport == "bus")
+								return Bus;
+							if (x.Key.Transport == "trol")
+								return Trol;
+							if (x.Key.Transport == "tram")
+								return Tram;
+							return false;
+						});
+					
 					ss = ss.Concat(temp);
 				}
 				ss = ss.OrderBy(x => x.Value);

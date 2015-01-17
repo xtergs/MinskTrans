@@ -6,13 +6,15 @@
 		private readonly RoutesModelview routesModelview;
 		private readonly StopMovelView stopMovelView;
 		private readonly SettingsModelView settingsModelView;
+		private readonly GroupStopsModelView groupStopsModelView;
 
 		public MainModelView()
 		{
 			context = new Context();
 			routesModelview = new RoutesModelview(context);
 			stopMovelView = new StopMovelView(context);
-			settingsModelView = new SettingsModelView();
+			settingsModelView = new SettingsModelView(context);
+			groupStopsModelView = new GroupStopsModelView(context);
 		}
 
 		public StopMovelView StopMovelView
@@ -23,6 +25,11 @@
 		public RoutesModelview RoutesModelview
 		{
 			get { return routesModelview; }
+		}
+
+		public GroupStopsModelView GroupStopsModelView
+		{
+			get { return groupStopsModelView; }
 		}
 	}
 }

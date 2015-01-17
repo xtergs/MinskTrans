@@ -132,7 +132,7 @@ namespace MinskTrans.Modelview
 			set
 			{
 				if (value == stopsIndex) return;
-				if (value < 0)
+				if (value < 0 || value >= StopsObservableCollection.Count)
 					value = 0;
 				stopsIndex = value;
 				OnPropertyChanged();
@@ -178,33 +178,33 @@ namespace MinskTrans.Modelview
 			}
 		}
 
-		public int SelectedRouteNumIndex
-		{
-			get { return selectedRouteNumIndex; }
-			set
-			{
-				if (value < 0)
-					value = 0;
-				selectedRouteNumIndex = value;
-				OnPropertyChanged();
-				OnPropertyChanged("RouteNames");
-			}
-		}
+		//public int SelectedRouteNumIndex
+		//{
+		//	get { return selectedRouteNumIndex; }
+		//	set
+		//	{
+		//		if (value < 0)
+		//			value = 0;
+		//		selectedRouteNumIndex = value;
+		//		OnPropertyChanged();
+		//		OnPropertyChanged("RouteNames");
+		//	}
+		//}
 
 
-		public int RouteNamesIndex
-		{
-			get { return routeNamesIndex; }
-			set
-			{
-				if (value == routeNamesIndex) return;
-				if (value < 0)
-					value = 0;
-				routeNamesIndex = value;
-				OnPropertyChanged();
-				OnPropertyChanged("StopsObservableCollection");
-			}
-		}
+		//public int RouteNamesIndex
+		//{
+		//	get { return routeNamesIndex; }
+		//	set
+		//	{
+		//		if (value == routeNamesIndex) return;
+		//		if (value < 0)
+		//			value = 0;
+		//		routeNamesIndex = value;
+		//		OnPropertyChanged();
+		//		OnPropertyChanged("StopsObservableCollection");
+		//	}
+		//}
 
 
 		public string RoutNum
@@ -219,16 +219,16 @@ namespace MinskTrans.Modelview
 			}
 		}
 
-		public int StopIndex
-		{
-			get { return stopIndex; }
-			set
-			{
-				if (value == stopIndex) return;
-				stopIndex = value;
-				OnPropertyChanged();
-			}
-		}
+		//public int StopIndex
+		//{
+		//	get { return stopIndex; }
+		//	set
+		//	{
+		//		if (value == stopIndex) return;
+		//		stopIndex = value;
+		//		OnPropertyChanged();
+		//	}
+		//}
 
 		public ActionCommand ShowBusCommand
 		{

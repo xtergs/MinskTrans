@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace MinskTrans
+namespace MinskTrans.Converters
 {
-	class MinsToTimeConverter:IValueConverter
+	class MinsLeftConverter:IValueConverter
 	{
 		#region Implementation of IValueConverter
 
@@ -22,10 +22,10 @@ namespace MinskTrans
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			int mins = (int) value;
-			int hour = mins/60;
-			if (hour >= 24)
-				hour -= 24;
-			return hour.ToString("00") + ":" + (mins - (mins/60)*60).ToString("00");
+			mins -= DateTime.Now.Hour*60 + DateTime.Now.Minute;
+			if (mins >= 60)
+				return (mins/60) + ":" + (mins - (mins/60)*60); 
+			return mins;
 		}
 
 		/// <summary>

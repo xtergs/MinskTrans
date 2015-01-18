@@ -1,20 +1,21 @@
 ﻿<UserControl x:Class="MinskTrans.ScheduleView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:minskTrans="clr-namespace:MinskTrans"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DataContext="{d:DesignInstance minskTrans:Time}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <minskTrans:listConverter x:Key="listConverter"/>
+        <minskTrans:listConverter x:Key="listConverter" />
     </UserControl.Resources>
     <DataGrid ItemsSource="{Binding DictionaryTime}" AutoGenerateColumns="False">
         <DataGrid.Columns>
-            <DataGridTextColumn Binding="{Binding Key}"></DataGridTextColumn>
-            <DataGridTextColumn Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource listConverter}}"></DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding Key}" />
+            <DataGridTextColumn
+                Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource listConverter}}" />
         </DataGrid.Columns>
-           
+
     </DataGrid>
 </UserControl>

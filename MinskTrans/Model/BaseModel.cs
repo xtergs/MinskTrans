@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MinskTrans.Model
+﻿namespace MinskTrans.Model
 {
 	public class BaseModel
 	{
-		protected string getIntStr = "";
-		protected int indexStart = 0;
-		protected int indexEnd = 0;
 		protected string Sym = "";
+		protected string getIntStr = "";
+		protected int indexEnd = 0;
+		protected int indexStart = 0;
 
 		protected virtual void Inicialize(string str, string sym)
 		{
@@ -22,7 +16,7 @@ namespace MinskTrans.Model
 
 		protected int? GetInt()
 		{
-			var temp = GetStr();
+			string temp = GetStr();
 			if (temp == null)
 				return null;
 			return int.Parse(temp);

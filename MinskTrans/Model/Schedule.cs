@@ -1,40 +1,33 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using MinskTrans.Model;
 
 namespace MinskTrans
 {
 	public class Schedule : BaseModel
 	{
-		
-
 		public Schedule(string str)
 		{
-			
 			char sym = ',';
 			var timesDictionary = new List<Time>();
 
 			TimesDictionary = new List<List<Time>>();
 
 			//Route id
-			var splitStr = str.Split(new[] {",,"}, StringSplitOptions.RemoveEmptyEntries);
+			string[] splitStr = str.Split(new[] {",,"}, StringSplitOptions.RemoveEmptyEntries);
 			Inicialize(splitStr[0], ",");
 			RoutId = GetInt().Value;
 			int val = 0;
 			int hour = 0;
 
 
-			List<List<int>> list = new List<List<int>>();
+			var list = new List<List<int>>();
 			list.Add(new List<int>());
-			var listValue = list[0];
+			List<int> listValue = list[0];
 			var dictionary = new Dictionary<int, List<int>>();
 
-			while (true)// парсинг времени
+			while (true) // парсинг времени
 			{
 				int? curValue = GetInt();
 				if (curValue == null)
@@ -47,24 +40,23 @@ namespace MinskTrans
 				val += curValue.Value;
 				listValue.Add(val);
 			}
-			
+
 			Inicialize(splitStr[3], ",");
 			int i = 0;
-			while (true) 
+			while (true)
 			{
-				var curValue = GetStr();
+				string curValue = GetStr();
 				if (curValue == null)
 					break;
 				if (i >= list.Count)
 					timesDictionary[timesDictionary.Count - 1].Days += curValue;
 				else
-					timesDictionary.Add(new Time() {Days = curValue, Times = list[i++], Schedule = this});
+					timesDictionary.Add(new Time {Days = curValue, Times = list[i++], Schedule = this});
 				if (GetStr() == null)
 					break;
 			}
-			
-			TimesDictionary.Add(timesDictionary);
 
+			TimesDictionary.Add(timesDictionary);
 
 
 			for (int j = 4; j < splitStr.Count(); j++) //остановки
@@ -84,30 +76,29 @@ namespace MinskTrans
 					tempTime.Days = TimesDictionary[j - 4][ddd].Days;
 					for (i = 0; i < TimesDictionary[j - 4][ddd].Times.Count; i++)
 					{
-					counter--;
+						counter--;
 						if (counter == 0)
 						{
 							if (change)
 							{
-								cor=addCor;
+								cor = addCor;
 							}
 							else
 							{
-								cor=addCor;
-
+								cor = addCor;
 							}
-								counter--;
+							counter--;
 							//change = !change;
 						}
 						if (counter < 0)
 						{
-								addCor = GetInt();
+							addCor = GetInt();
 							if (addCor != null)
 							{
 								counter = addCor.Value;
 								addCor = GetInt();
 								if (addCor.Value == 6)
-									addCor =cor+ 1;
+									addCor = cor + 1;
 								else if (addCor.Value == 4)
 									addCor = cor - 1;
 								change = !change;
@@ -124,29 +115,25 @@ namespace MinskTrans
 			}
 
 			//TimesDictionary.Add();
-
-
-
-			
 		}
 
 		public int RoutId { get; set; }
 		public Rout Rout { get; set; }
-		
+
 		/// <summary>
-		///first - stops, second - varios days 
+		///     first - stops, second - varios days
 		/// </summary>
 		public List<List<Time>> TimesDictionary { get; set; }
 
-		public List2<Rout, int> GetListTimes(int stop,int day, int startedTime, int endTime = int.MaxValue)
+		public List2<Rout, int> GetListTimes(int stop, int day, int startedTime, int endTime = int.MaxValue)
 		{
-			var result =new List2<Rout, int>();
-			var temp = TimesDictionary[stop].Where(x => x.Days.Contains(day.ToString()));
-			foreach (var time in temp)
+			var result = new List2<Rout, int>();
+			IEnumerable<Time> temp = TimesDictionary[stop].Where(x => x.Days.Contains(day.ToString()));
+			foreach (Time time in temp)
 			{
-				foreach (var tm in time.Times.Where(x=>x >= startedTime && x <= endTime))
+				foreach (int tm in time.Times.Where(x => x >= startedTime && x <= endTime))
 				{
-					if (tm >= startedTime)	
+					if (tm >= startedTime)
 						result.Add(new KeyValuePair<Rout, int>(Rout, tm));
 				}
 			}

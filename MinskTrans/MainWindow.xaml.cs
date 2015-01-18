@@ -11,8 +11,9 @@ namespace MinskTrans
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private readonly System.Timers.Timer timerr;
 		private Timer timer;
-		private System.Timers.Timer timerr;
+
 		public MainWindow()
 		{
 			ShedulerModelView = new MainModelView();
@@ -22,7 +23,6 @@ namespace MinskTrans
 			timerr = new System.Timers.Timer(10000);
 			timerr.Elapsed += (sender, args) => ShedulerModelView.StopMovelView.RefreshTimeSchedule.Execute(null);
 			timerr.Start();
-
 		}
 
 		private MainModelView ShedulerModelView { get; set; }

@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MinskTrans.Model;
 
 namespace MinskTrans.Modelview
 {
-	public class StopMovelView : BaseModelView
+	public class StopModelView : BaseModelView
 	{
 		private bool autoDay;
 		private bool autoNowTime;
+		private bool bus;
 		private int curDay;
 		private Stop filteredSelectedStop;
 		private int nowTimeHour;
 		private int nowTimeMin;
 		private string stopNameFilter;
-		private bool trol;
-		private bool bus;
 		private bool tram;
+		private bool trol;
 
-		public StopMovelView()
-			:this(null)
+		public StopModelView()
+			: this(null)
 		{
 		}
 
-		public StopMovelView(Context newContext)
+		public StopModelView(Context newContext)
 			: base(newContext)
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
@@ -70,7 +69,7 @@ namespace MinskTrans.Modelview
 			get { return autoDay; }
 			set
 			{
-				if (value.Equals(autoDay)) return;
+				//if (value.Equals(autoDay)) return;
 				autoDay = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
@@ -82,6 +81,8 @@ namespace MinskTrans.Modelview
 			get
 			{
 				if (AutoDay)
+					if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+						return 7;
 					return (int) DateTime.Now.DayOfWeek;
 				if (curDay <= 0)
 					CurDay = 1;
@@ -197,7 +198,8 @@ namespace MinskTrans.Modelview
 				IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
 				foreach (Schedule sched in dd)
 				{
-					var temp = sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime).Where(x =>
+					IEnumerable<KeyValuePair<Rout, int>> temp =
+						sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime).Where(x =>
 						{
 							if (x.Key.Transport == "bus")
 								return Bus;
@@ -207,7 +209,7 @@ namespace MinskTrans.Modelview
 								return Tram;
 							return false;
 						});
-					
+
 					ss = ss.Concat(temp);
 				}
 				ss = ss.OrderBy(x => x.Value);
@@ -218,10 +220,7 @@ namespace MinskTrans.Modelview
 
 		public ActionCommand RefreshTimeSchedule
 		{
-			get
-			{
-				return new ActionCommand(x=> OnPropertyChanged("TimeSchedule"));
-			}
+			get { return new ActionCommand(x => OnPropertyChanged("TimeSchedule")); }
 		}
 	}
 }

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MinskTrans.Model;
 
 namespace MinskTrans
 {
-	public class Stop:BaseModel
+	public class Stop : BaseModel
 	{
 		private string name;
 
@@ -78,6 +75,7 @@ namespace MinskTrans
 
 			Stops = new List<Stop>();
 		}
+
 		public int ID { get; set; }
 		public string City { get; set; }
 		public string Area { get; set; }
@@ -106,7 +104,7 @@ namespace MinskTrans
 		protected override string GetStr()
 		{
 			indexEnd = getIntStr.IndexOf(Sym, indexStart);
-			
+
 			string temp;
 			if (indexEnd < 0)
 			{

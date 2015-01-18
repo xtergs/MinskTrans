@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MinskTrans
 {
@@ -10,7 +6,6 @@ namespace MinskTrans
 	{
 		public Time()
 		{
-			
 		}
 
 		public Time(Time time, int correnction)
@@ -23,6 +18,7 @@ namespace MinskTrans
 			}
 			Schedule = time.Schedule;
 		}
+
 		public string Days { get; set; }
 		public List<int> Times { get; set; }
 
@@ -51,6 +47,5 @@ namespace MinskTrans
 		}
 
 		public Schedule Schedule { get; set; }
-
 	}
 }

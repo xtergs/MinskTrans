@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MinskTrans
 {
 	public class Rout
 	{
-		int indexStart = 0;
-		char sym = ';';
-
-		int indexEnd = 0;
+		private int indexEnd;
+		private int indexStart;
 		private string str = "";
+		private char sym = ';';
 
 		public Rout(string rout, Rout routR)
-			:this(rout)
+			: this(rout)
 		{
 			if (routR == null)
 				return;
@@ -45,10 +40,11 @@ namespace MinskTrans
 			if (string.IsNullOrWhiteSpace(Weekdays))
 				Weekdays = routR.Weekdays;
 
-			
+
 			if (string.IsNullOrWhiteSpace(Datestart))
 				Datestart = routR.Datestart;
 		}
+
 		public Rout(string rout)
 		{
 			Inicialize(rout);
@@ -67,9 +63,9 @@ namespace MinskTrans
 			RoutId = int.Parse(GetNext());
 
 			Entry = GetNext();
-			var temp = GetNext().Split(',');
+			string[] temp = GetNext().Split(',');
 			RouteStops = new List<int>();
-			foreach (var s in temp)
+			foreach (string s in temp)
 			{
 				if (string.IsNullOrWhiteSpace(s))
 					continue;
@@ -77,26 +73,6 @@ namespace MinskTrans
 			}
 			Data = GetNext();
 			Datestart = GetNext();
-		}
-
-		void Inicialize(string str)
-		{
-			this.str = str;
-			indexStart = 0;
-			indexEnd = -1;
-		}
-
-		string GetNext()
-		{
-			//if (!(indexStart == 0))
-			//{
-				indexStart = indexEnd + 1;
-				indexEnd = str.IndexOf(sym, indexStart);
-			//}
-			if (indexEnd < 0)
-				return str.Substring(indexStart);
-			else
-				return str.Substring(indexStart, indexEnd - indexStart);
 		}
 
 		public string RouteNum { get; set; }
@@ -115,17 +91,17 @@ namespace MinskTrans
 		public Schedule Time { get; set; }
 		public string Entry { get; set; }
 		public List<int> RouteStops { get; set; }
-		public List<Stop> Stops { get; set; } 
+		public List<Stop> Stops { get; set; }
 		public string Data { get; set; }
 		public string Datestart { get; set; }
 
 		#region Overrides of Object
 
 		/// <summary>
-		/// Returns a string that represents the current object.
+		///     Returns a string that represents the current object.
 		/// </summary>
 		/// <returns>
-		/// A string that represents the current object.
+		///     A string that represents the current object.
 		/// </returns>
 		public override string ToString()
 		{
@@ -133,5 +109,24 @@ namespace MinskTrans
 		}
 
 		#endregion
+
+		private void Inicialize(string str)
+		{
+			this.str = str;
+			indexStart = 0;
+			indexEnd = -1;
+		}
+
+		private string GetNext()
+		{
+			//if (!(indexStart == 0))
+			//{
+			indexStart = indexEnd + 1;
+			indexEnd = str.IndexOf(sym, indexStart);
+			//}
+			if (indexEnd < 0)
+				return str.Substring(indexStart);
+			return str.Substring(indexStart, indexEnd - indexStart);
+		}
 	}
 }

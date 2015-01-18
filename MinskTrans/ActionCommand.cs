@@ -1,32 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MinskTrans
 {
 	public class ActionCommand : ICommand
 	{
-		public ActionCommand(Action<object> action, Predicate<object> predicate = null)
-		{
-			this.action = action;
-			this.predicate = predicate;
-		}
-
 		private readonly Action<Object> action;
-		private readonly Predicate<Object> predicate; 
+		private readonly Predicate<Object> predicate;
 
 		#region Implementation of ICommand
 
 		/// <summary>
-		/// Defines the method that determines whether the command can execute in its current state.
+		///     Defines the method that determines whether the command can execute in its current state.
 		/// </summary>
 		/// <returns>
-		/// true if this command can be executed; otherwise, false.
+		///     true if this command can be executed; otherwise, false.
 		/// </returns>
-		/// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+		/// <param name="parameter">
+		///     Data used by the command.  If the command does not require data to be passed, this object can
+		///     be set to null.
+		/// </param>
 		public bool CanExecute(object parameter)
 		{
 			if (predicate == null)
@@ -35,9 +28,12 @@ namespace MinskTrans
 		}
 
 		/// <summary>
-		/// Defines the method to be called when the command is invoked.
+		///     Defines the method to be called when the command is invoked.
 		/// </summary>
-		/// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+		/// <param name="parameter">
+		///     Data used by the command.  If the command does not require data to be passed, this object can
+		///     be set to null.
+		/// </param>
 		public void Execute(object parameter)
 		{
 			action.Invoke(parameter);
@@ -45,10 +41,16 @@ namespace MinskTrans
 
 		public event EventHandler CanExecuteChanged
 		{
-			add { CommandManager.RequerySuggested += value;  }
+			add { CommandManager.RequerySuggested += value; }
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
 		#endregion
+
+		public ActionCommand(Action<object> action, Predicate<object> predicate = null)
+		{
+			this.action = action;
+			this.predicate = predicate;
+		}
 	}
 }

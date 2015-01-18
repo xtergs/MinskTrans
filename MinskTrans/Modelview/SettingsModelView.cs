@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Web.Routing;
 using MinskTrans.Model;
 
@@ -11,7 +7,7 @@ namespace MinskTrans.Modelview
 	public class SettingsModelView
 	{
 		private readonly Context context;
-		
+
 		public SettingsModelView(Context newContext)
 		{
 			context = newContext;
@@ -20,8 +16,6 @@ namespace MinskTrans.Modelview
 		public List<Route> FavouritRoutes { get; set; }
 		public List<Stop> FavouritStops { get; set; }
 
-		public List<GroupStop> GroupStops { get; set; } 
-
-
+		public List<GroupStop> GroupStops { get; set; }
 	}
 }

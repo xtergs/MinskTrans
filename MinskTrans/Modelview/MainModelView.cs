@@ -3,21 +3,21 @@
 	public class MainModelView
 	{
 		private readonly Context context;
-		private readonly RoutesModelview routesModelview;
-		private readonly StopMovelView stopMovelView;
-		private readonly SettingsModelView settingsModelView;
 		private readonly GroupStopsModelView groupStopsModelView;
+		private readonly RoutesModelview routesModelview;
+		private readonly SettingsModelView settingsModelView;
+		private readonly StopModelView stopMovelView;
 
 		public MainModelView()
 		{
 			context = new Context();
 			routesModelview = new RoutesModelview(context);
-			stopMovelView = new StopMovelView(context);
+			stopMovelView = new StopModelView(context);
 			settingsModelView = new SettingsModelView(context);
 			groupStopsModelView = new GroupStopsModelView(context);
 		}
 
-		public StopMovelView StopMovelView
+		public StopModelView StopMovelView
 		{
 			get { return stopMovelView; }
 		}

@@ -1,25 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web.Routing;
 using MinskTrans.Model;
 
 namespace MinskTrans.Modelview
 {
-	public class GroupStopsModelView : StopMovelView
+	public class GroupStopsModelView : StopModelView
 	{
 		private List<GroupStop> groups;
 		private GroupStop selectedGroupStop;
-		public GroupStopsModelView():this(null) {}
+
+		public GroupStopsModelView() : this(null)
+		{
+		}
 
 		public GroupStopsModelView(Context newContext) : base(newContext)
 		{
 			Groups = new List<GroupStop>();
 			Bus = Trol = Tram = true;
-			Groups.Add(new GroupStop(){Context.Stops.First(x=>x.SearchName=="шепичи"), Context.Stops.First(x=>x.SearchName == "плеханова")});
+			Groups.Add(new GroupStop
+			{
+				Context.Stops.First(x => x.SearchName == "шепичи"),
+				Context.Stops.First(x => x.SearchName == "плеханова")
+			});
 			Groups[0].Name = "Шепичи";
 		}
 
@@ -55,10 +57,10 @@ namespace MinskTrans.Modelview
 				if (Groups == null || Groups.Count <= 0)
 					return null;
 				IEnumerable<KeyValuePair<Rout, int>> temp = new List<KeyValuePair<Rout, int>>();
-				foreach (var stop in SelectedGroupStop)
+				foreach (Stop stop in SelectedGroupStop)
 				{
-					this.FilteredSelectedStop = stop;
-					temp = temp.Concat(this.TimeSchedule);
+					FilteredSelectedStop = stop;
+					temp = temp.Concat(TimeSchedule);
 				}
 				return temp.OrderBy(x => x.Value);
 			}

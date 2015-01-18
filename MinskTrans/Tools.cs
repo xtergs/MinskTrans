@@ -1,33 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MinskTrans
+﻿namespace MinskTrans
 {
-	class Tools
+	internal class Tools
 	{
-		private string getIntStr = "";
-		private int indexStart = 0;
-		private int indexEnd = 0;
 		private string Sym = "";
+		private string getIntStr = "";
+		private int indexEnd;
+		private int indexStart;
 
-		void Inicialize(string str, string sym)
+		private void Inicialize(string str, string sym)
 		{
 			getIntStr = str;
 			Sym = sym;
 			indexStart = 0;
 		}
-		int? GetInt()
+
+		private int? GetInt()
 		{
-			var temp = GetStr();
+			string temp = GetStr();
 			if (temp == null)
 				return null;
 			return int.Parse(temp);
 		}
 
-		string GetStr()
+		private string GetStr()
 		{
 			indexEnd = getIntStr.IndexOf(Sym, indexStart);
 			if (indexStart == indexEnd || indexStart < 0)

@@ -47,14 +47,15 @@ namespace MinskTrans.Modelview
 			}
 			set
 			{
-				if (value == typeTransport) return;
+				//if (value == typeTransport) return;
 				typeTransport = value;
 				OnPropertyChanged();
 				OnPropertyChanged("RouteNums");
+				OnPropertyChanged("RouteNumSelectedValue");
 			}
 		}
 
-
+		#region RouteNums
 		public IEnumerable<string> RouteNums
 		{
 			get
@@ -62,6 +63,7 @@ namespace MinskTrans.Modelview
 				IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
 				if (RoutNum != null)
 					temp = temp.Where(x => x.Contains(routNum));
+				RouteNumSelectedValue = temp.First() ?? null;
 				return temp;
 				//return routeNums;
 			}
@@ -72,15 +74,16 @@ namespace MinskTrans.Modelview
 			get { return routeNumSelectedValue; }
 			set
 			{
-				if (value == routeNumSelectedValue) return;
+				//if (value == routeNumSelectedValue) return;
 				routeNumSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("RouteNames");
-				OnPropertyChanged("StopsObservableCollection");
-				OnPropertyChanged("TimesObservableCollection");
+				OnPropertyChanged("RouteSelectedValue");
 			}
 		}
+		#endregion
 
+		#region RouteNames
 		public ObservableCollection<Rout> RouteNames
 		{
 			get
@@ -100,10 +103,12 @@ namespace MinskTrans.Modelview
 				routeSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("StopsObservableCollection");
-				OnPropertyChanged("TimesObservableCollection");
+				OnPropertyChanged("StopSelectedIndex");
 			}
 		}
+		#endregion
 
+		#region Stops
 		public List<Stop> StopsObservableCollection
 		{
 			get
@@ -116,13 +121,11 @@ namespace MinskTrans.Modelview
 
 		public Stop StopSelectedValue
 		{
-			get { return stopSelectedValue; }
-			set
+			get
 			{
-				if (Equals(value, stopSelectedValue)) return;
-				stopSelectedValue = value;
-				OnPropertyChanged();
-				OnPropertyChanged("TimesObservableCollection");
+				if (RouteSelectedValue != null)
+					return RouteSelectedValue.Stops[StopSelectedIndex];
+				return null;
 			}
 		}
 
@@ -131,15 +134,17 @@ namespace MinskTrans.Modelview
 			get { return stopsIndex; }
 			set
 			{
-				if (value == stopsIndex) return;
 				if (value < 0 || value >= StopsObservableCollection.Count)
 					value = 0;
 				stopsIndex = value;
 				OnPropertyChanged();
+				OnPropertyChanged("StopSelectedValue");
 				OnPropertyChanged("TimesObservableCollection");
 			}
 		}
+		#endregion
 
+		#region time
 		public List<Time> TimesObservableCollection
 		{
 			get
@@ -156,7 +161,7 @@ namespace MinskTrans.Modelview
 					curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 					//CurTime = true;
 #else
-				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
+					curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #endif
 					//TODO заменяет сущь-е время
 					if (CurTime)
@@ -165,6 +170,7 @@ namespace MinskTrans.Modelview
 				return timesObservableCollection;
 			}
 		}
+		#endregion
 
 		public bool CurTime
 		{

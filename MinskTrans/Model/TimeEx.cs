@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MinskTrans.Model
+﻿namespace MinskTrans.Model
 {
-	class TimeEx
+	internal class TimeEx
 	{
 	}
 }

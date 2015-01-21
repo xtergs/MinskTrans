@@ -7,8 +7,8 @@
     <ProjectGuid>{B0D150C2-9F62-4577-9A6F-970A67033CCC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MinskTrans</RootNamespace>
-    <AssemblyName>MinskTrans</AssemblyName>
+    <RootNamespace>MinskTrans.DesctopClient</RootNamespace>
+    <AssemblyName>MinskTransWpf</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -61,13 +61,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ActionCommand.cs" />
+    <Compile Include="FrameworkElementExt.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Converters\listConverter.cs" />
     <Compile Include="Converters\MinsLeftConverter.cs" />
     <Compile Include="Converters\MinsToTimeConverter.cs" />
     <Compile Include="Modelview\GroupStopsModelView.cs" />
     <Compile Include="Modelview\MainModelView.cs" />
+    <Compile Include="Modelview\MapModelView.cs" />
     <Compile Include="Modelview\SettingsModelView.cs" />
+    <Compile Include="Modelview\ShowArgs.cs" />
     <Compile Include="Modelview\StopsModelView.cs" />
     <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\GroupStop.cs" />
@@ -86,6 +89,10 @@
     <Compile Include="Modelview\StopMovelView.cs" />
     <Compile Include="Model\Time.cs" />
     <Compile Include="Tools.cs" />
+    <Page Include="Dictionary1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

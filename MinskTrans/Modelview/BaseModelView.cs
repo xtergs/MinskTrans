@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using MinskTrans.Annotations;
+using MinskTrans.DesctopClient.Annotations;
 
-namespace MinskTrans.Modelview
+namespace MinskTrans.DesctopClient.Modelview
 {
 	public class BaseModelView : INotifyPropertyChanged
 	{

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	public class Time
 	{
@@ -20,6 +22,32 @@ namespace MinskTrans
 		}
 
 		public string Days { get; set; }
+
+		[NonSerialized]
+		public Dictionary<int, string> daysToString = new Dictionary<int, string>()
+		{
+			{1, "Пн"},
+			{2, "Вт"},
+			{3, "Ср"},
+			{4, "Чт"},
+			{5, "Пт"},
+			{6, "Сб"},
+			{7, "Вс"}
+		};
+		
+		public string DaysStr
+		{
+			get
+			{
+				var strBuilder = new StringBuilder();
+				foreach (var day in Days)
+				{
+					strBuilder.Append(daysToString[int.Parse(day.ToString())] + " ");
+				}
+				return strBuilder.ToString();
+			}
+		}
+
 		public List<int> Times { get; set; }
 
 		public Dictionary<int, List<int>> DictionaryTime
@@ -33,6 +61,8 @@ namespace MinskTrans
 					val = Times[i];
 					int hour = val/60;
 					int min = val - hour*60;
+					if (hour >= 24)
+						hour -= 24;
 
 					if (dic.ContainsKey(hour))
 						dic[hour].Add(min);

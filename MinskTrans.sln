@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans", "MinskTrans\MinskTrans.csproj", "{B0D150C2-9F62-4577-9A6F-970A67033CCC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.DesctopClient", "MinskTrans\MinskTrans.DesctopClient.csproj", "{B0D150C2-9F62-4577-9A6F-970A67033CCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

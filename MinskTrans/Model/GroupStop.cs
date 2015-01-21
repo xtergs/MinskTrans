@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MinskTrans.Model
+namespace MinskTrans.DesctopClient.Model
 {
 	public class GroupStop : List<Stop>
 	{

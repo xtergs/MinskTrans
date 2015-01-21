@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MinskTrans.Model;
+using MinskTrans.DesctopClient.Model;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	public class Schedule : BaseModel
 	{
+		private Schedule()
+		{ }
 		public Schedule(string str)
 		{
 			char sym = ',';

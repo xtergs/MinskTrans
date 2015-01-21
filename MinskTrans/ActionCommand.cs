@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	public class ActionCommand : ICommand
 	{

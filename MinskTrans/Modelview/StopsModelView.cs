@@ -1,4 +1,4 @@
-﻿namespace MinskTrans.Modelview
+﻿namespace MinskTrans.DesctopClient.Modelview
 {
 	internal class StopsModelView
 	{

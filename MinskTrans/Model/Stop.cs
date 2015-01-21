@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using MinskTrans.Model;
+using MinskTrans.DesctopClient.Model;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	public class Stop : BaseModel
 	{
 		private string name;
 
+		private Stop()
+		{ }
 		public Stop(string str, Stop stop)
 			: this(str)
 		{
@@ -59,11 +61,11 @@ namespace MinskTrans
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Lng = int.Parse(GetStr());
+			Lng = double.Parse(GetStr()) / 100000;
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Lat = int.Parse(GetStr());
+			Lat = double.Parse(GetStr()) / 100000;
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
@@ -93,8 +95,8 @@ namespace MinskTrans
 
 		public string SearchName { get; set; }
 		public string Info { get; set; }
-		public int Lng { get; set; }
-		public int Lat { get; set; }
+		public double Lng { get; set; }
+		public double Lat { get; set; }
 		public string StopsStr { get; set; }
 		public List<Stop> Stops { get; set; }
 		public string StopNum { get; set; }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MinskTrans.Modelview
+namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : BaseModelView
 	{
@@ -83,7 +83,8 @@ namespace MinskTrans.Modelview
 				if (AutoDay)
 					if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
 						return 7;
-					return (int) DateTime.Now.DayOfWeek;
+					else
+						return (int) DateTime.Now.DayOfWeek;
 				if (curDay <= 0)
 					CurDay = 1;
 				return curDay;
@@ -221,6 +222,32 @@ namespace MinskTrans.Modelview
 		public ActionCommand RefreshTimeSchedule
 		{
 			get { return new ActionCommand(x => OnPropertyChanged("TimeSchedule")); }
+		}
+
+		public event Show ShowStop;
+		public event Show ShowRoute;
+		public delegate void Show(object sender, ShowArgs args);
+
+		public ActionCommand ShowStopMap
+		{
+			get { return new ActionCommand(x => OnShowStop(new ShowArgs(){SelectedStop = FilteredSelectedStop}), p => FilteredSelectedStop != null); }
+		}
+
+		//public ActionCommand ShowRouteMap
+		//{
+		//	get { return new ActionCommand(x => OnShowRoute(new ShowArgs()), p => RouteSelectedValue != null); }
+		//}
+
+		protected virtual void OnShowStop(ShowArgs args)
+		{
+			var handler = ShowStop;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnShowRoute(ShowArgs args)
+		{
+			var handler = ShowRoute;
+			if (handler != null) handler(this, args);
 		}
 	}
 }

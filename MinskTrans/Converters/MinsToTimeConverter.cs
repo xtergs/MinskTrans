@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	internal class MinsToTimeConverter : IValueConverter
 	{

@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
-	public class Rout
+	public class Rout : IXmlSerializable
 	{
 		private int indexEnd;
 		private int indexStart;
 		private string str = "";
 		private char sym = ';';
+
+		private Rout()
+		{
+			
+		}
 
 		public Rout(string rout, Rout routR)
 			: this(rout)
@@ -128,5 +136,65 @@ namespace MinskTrans
 				return str.Substring(indexStart);
 			return str.Substring(indexStart, indexEnd - indexStart);
 		}
+
+		#region Implementation of IXmlSerializable
+
+		/// <summary>
+		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
+		/// </summary>
+		/// <returns>
+		/// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
+		/// </returns>
+		public XmlSchema GetSchema()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Generates an object from its XML representation.
+		/// </summary>
+		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
+		public void ReadXml(XmlReader reader)
+		{
+			//reader.read
+			//writer.WriteValue(RouteNum);
+			//writer.WriteValue(Authority);
+			//writer.WriteValue(City);
+			//writer.WriteValue(Transport);
+			//writer.WriteValue(Operator);
+			//writer.WriteValue(ValidityPeriods);
+			//writer.WriteValue(SpecialDates);
+			//writer.WriteValue(RoutTag);
+			//writer.WriteValue(RoutType);
+			//writer.WriteValue(Commercial);
+			//writer.WriteValue(RouteName);
+			//writer.WriteValue(Weekdays);
+			//writer.WriteValue(RoutId);
+		}
+
+		/// <summary>
+		/// Converts an object into its XML representation.
+		/// </summary>
+		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
+		public void WriteXml(XmlWriter writer)
+		{
+			writer.WriteValue(RouteNum);
+			writer.WriteValue(Authority);
+			writer.WriteValue(City);
+			writer.WriteValue(Transport);
+			writer.WriteValue(Operator);
+			writer.WriteValue(ValidityPeriods);
+			writer.WriteValue(SpecialDates);
+			writer.WriteValue(RoutTag);
+			writer.WriteValue(RoutType);
+			writer.WriteValue(Commercial);
+			writer.WriteValue(RouteName);
+			writer.WriteValue(Weekdays);
+			writer.WriteValue(RoutId);
+
+			
+		}
+
+		#endregion
 	}
 }

@@ -1,4 +1,4 @@
-﻿namespace MinskTrans.Model
+﻿namespace MinskTrans.DesctopClient.Model
 {
 	public class BaseModel
 	{

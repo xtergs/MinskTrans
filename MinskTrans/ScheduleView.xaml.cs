@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	/// <summary>
 	///     Interaction logic for ScheduleView.xaml

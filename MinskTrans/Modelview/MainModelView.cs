@@ -1,8 +1,8 @@
-﻿namespace MinskTrans.Modelview
+﻿namespace MinskTrans.DesctopClient.Modelview
 {
 	public class MainModelView
 	{
-		private readonly Context context;
+		public readonly Context context;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutesModelview routesModelview;
 		private readonly SettingsModelView settingsModelView;
@@ -31,5 +31,7 @@
 		{
 			get { return groupStopsModelView; }
 		}
+
+		public Context Context { get { return context; } }
 	}
 }

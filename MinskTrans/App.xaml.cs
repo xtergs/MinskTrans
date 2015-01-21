@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	/// <summary>
 	///     Interaction logic for App.xaml

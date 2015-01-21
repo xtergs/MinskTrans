@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	public class listConverter : IValueConverter
 	{

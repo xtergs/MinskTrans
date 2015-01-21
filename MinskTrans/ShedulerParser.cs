@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MinskTrans
+namespace MinskTrans.DesctopClient
 {
 	public class ShedulerParser
 	{

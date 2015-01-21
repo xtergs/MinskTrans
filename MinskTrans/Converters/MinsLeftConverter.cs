@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace MinskTrans.Converters
+namespace MinskTrans.DesctopClient.Converters
 {
 	internal class MinsLeftConverter : IValueConverter
 	{

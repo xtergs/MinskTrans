@@ -1,4 +1,4 @@
-﻿namespace MinskTrans
+﻿namespace MinskTrans.DesctopClient
 {
 	internal class Tools
 	{

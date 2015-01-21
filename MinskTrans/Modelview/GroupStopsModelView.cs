@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using MinskTrans.Model;
+using MinskTrans.DesctopClient.Model;
 
-namespace MinskTrans.Modelview
+namespace MinskTrans.DesctopClient.Modelview
 {
 	public class GroupStopsModelView : StopModelView
 	{

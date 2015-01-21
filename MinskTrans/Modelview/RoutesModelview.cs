@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MinskTrans.Modelview
+namespace MinskTrans.DesctopClient.Modelview
 {
 	public class RoutesModelview : BaseModelView
 	{
@@ -63,7 +63,8 @@ namespace MinskTrans.Modelview
 				IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
 				if (RoutNum != null)
 					temp = temp.Where(x => x.Contains(routNum));
-				RouteNumSelectedValue = temp.First() ?? null;
+				if (temp.Count() > 0)
+					RouteNumSelectedValue = temp.First();
 				return temp;
 				//return routeNums;
 			}
@@ -99,7 +100,7 @@ namespace MinskTrans.Modelview
 			get { return routeSelectedValue; }
 			set
 			{
-				if (Equals(value, routeSelectedValue)) return;
+				//if (Equals(value, routeSelectedValue)) return;
 				routeSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("StopsObservableCollection");
@@ -249,6 +250,32 @@ namespace MinskTrans.Modelview
 		public ActionCommand ShowTramCommand
 		{
 			get { return new ActionCommand(x => TypeTransport = "tram"); }
+		}
+
+		public event Show ShowStop;
+		public event Show ShowRoute;
+		public delegate void Show(object sender, ShowArgs args);
+
+		public ActionCommand ShowStopMap
+		{
+			get { return new ActionCommand(x=>OnShowStop(new ShowArgs(){SelectedStop = StopSelectedValue}), p=> StopSelectedValue != null); }
+		}
+
+		public ActionCommand ShowRouteMap
+		{
+			get { return new ActionCommand(x=>OnShowRoute(new ShowArgs(){SelectedRoute = RouteSelectedValue}), p=> RouteSelectedValue != null);}
+		}
+
+		protected virtual void OnShowStop(ShowArgs args)
+		{
+			var handler = ShowStop;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnShowRoute(ShowArgs args)
+		{
+			var handler = ShowRoute;
+			if (handler != null) handler(this, args);
 		}
 	}
 }

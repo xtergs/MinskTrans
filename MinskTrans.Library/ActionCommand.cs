@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace MinskTrans.DesctopClient
+namespace MinskTrans.Library
 {
 	public class ActionCommand : ICommand
 	{
@@ -39,11 +39,11 @@ namespace MinskTrans.DesctopClient
 			action.Invoke(parameter);
 		}
 
-		public event EventHandler CanExecuteChanged
-		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
+		public event EventHandler CanExecuteChanged;
+		//{
+		//	add { CommandManager.RequerySuggested += value; }
+		//	remove { CommandManager.RequerySuggested -= value; }
+		//}
 
 		#endregion
 

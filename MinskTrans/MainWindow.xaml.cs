@@ -62,7 +62,7 @@ namespace MinskTrans.DesctopClient
 
 		public MainWindow()
 		{
-			ShedulerModelView = new MainModelView();
+			ShedulerModelView = new MainModelView(new ContextDesctop());
 			BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
 			InitializeComponent();
 			ShedulerModelView.RoutesModelview.ShowRoute += OnShowRoute;

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using MinskTrans.DesctopClient.Annotations;
+using MinskTrans.Library;
+using MinskTrans.Library.Annotations;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -23,12 +24,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return context; }
 		}
 
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			PropertyChangedEventHandler handler = PropertyChanged;
+			var handler = PropertyChanged;
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}

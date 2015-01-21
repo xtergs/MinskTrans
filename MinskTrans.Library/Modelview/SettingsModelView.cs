@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Web.Routing;
+
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.Library;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -13,7 +14,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			context = newContext;
 		}
 
-		public List<Route> FavouritRoutes { get; set; }
+		public List<Rout> FavouritRoutes { get; set; }
 		public List<Stop> FavouritStops { get; set; }
 
 		public List<GroupStop> GroupStops { get; set; }

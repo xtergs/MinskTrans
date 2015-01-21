@@ -4,20 +4,20 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using MinskTrans.DesctopClient.Annotations;
+using MinskTrans.DesctopClient;
+using MinskTrans.Library.Annotations;
 
-namespace MinskTrans.DesctopClient
+namespace MinskTrans.Library
 {
 
-	public class Context : INotifyPropertyChanged , IXmlSerializable
+	public class Context : INotifyPropertyChanged , IXmlSerializable, IContext
 	{
-		private readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
+		protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
 		{
 			new KeyValuePair<string, string>("stops.txt", @"http://www.minsktrans.by/city/minsk/stops.txt"),
 			new KeyValuePair<string, string>("routes.txt", @"http://www.minsktrans.by/city/minsk/routes.txt"),
@@ -89,43 +89,47 @@ namespace MinskTrans.DesctopClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public void Create()
+		public virtual void Create()
 		{
-			if (!File.Exists(list[0].Key) || !File.Exists(list[1].Key) || !File.Exists(list[2].Key))
-				DownloadUpdate();
+			//TODO
+			throw new NotImplementedException();
+			//if (!File.Exists(list[0].Key) || !File.Exists(list[1].Key) || !File.Exists(list[2].Key))
+			//	DownloadUpdate();
 
-			Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
-			Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
-			Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
+			//Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
+			//Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
+			//Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
 
-			foreach (Rout rout in Routs)
-			{
-				rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-				if (rout.Time != null)
-					rout.Time.Rout = rout;
+			//foreach (Rout rout in Routs)
+			//{
+			//	rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+			//	if (rout.Time != null)
+			//		rout.Time.Rout = rout;
 
-				rout.Stops = new List<Stop>();
-				foreach (int st in rout.RouteStops)
-				{
-					rout.Stops.Add(Stops.First(x => x.ID == st));
-				}
-			}
+			//	rout.Stops = new List<Stop>();
+			//	foreach (int st in rout.RouteStops)
+			//	{
+			//		rout.Stops.Add(Stops.First(x => x.ID == st));
+			//	}
+			//}
 		}
 
-		public void DownloadUpdate()
+		public virtual void DownloadUpdate()
 		{
-			using (var client = new WebClient())
-			{
-				client.DownloadFile(list[0].Value, list[0].Key + ".new");
-				client.DownloadFile(list[1].Value, list[1].Key + ".new");
-				client.DownloadFile(list[2].Value, list[2].Key + ".new");
-			}
+			//TODO
+			throw new NotImplementedException();
+			//using (var client = new WebClient())
+			//{
+			//	client.DownloadFile(list[0].Value, list[0].Key + ".new");
+			//	client.DownloadFile(list[1].Value, list[1].Key + ".new");
+			//	client.DownloadFile(list[2].Value, list[2].Key + ".new");
+			//}
 
-			foreach (var keyValuePair in list)
-			{
-				File.Move(keyValuePair.Key + ".new", keyValuePair.Key);
-			}
-			
+			//foreach (var keyValuePair in list)
+			//{
+			//	File.Move(keyValuePair.Key + ".new", keyValuePair.Key);
+			//}
+
 		}
 
 		public bool HaveUpdate()
@@ -135,56 +139,60 @@ namespace MinskTrans.DesctopClient
 
 		public void Save()
 		{
-			XmlSerializer serializer = new XmlSerializer(typeof(Context));
-			StreamWriter streamWriter = new StreamWriter("data.xml");
-			try
-			{
-				serializer.Serialize(streamWriter, this);
-			}
-			finally
-			{
-				streamWriter.Close();
-			}
+			throw new NotImplementedException();
+		//	XmlSerializer serializer = new XmlSerializer(typeof(Context));
+		//	StreamWriter streamWriter = new StreamWriter("data.xml");
+		//	try
+		//	{
+		//		serializer.Serialize(streamWriter, this);
+		//	}
+		//	finally
+		//	{
+		//		streamWriter.Close();
+		//	}
 		}
 
 		public void Load()
 		{
-			XmlSerializer serializer = new XmlSerializer(typeof(Context));
-			StreamReader streamWriter = new StreamReader("data.xml");
-			try
-			{
-				var obj = serializer.Deserialize(streamWriter);
-			}
-			finally
-			{
-				streamWriter.Close();
-			}
+			throw new NotImplementedException();
+		//	XmlSerializer serializer = new XmlSerializer(typeof(Context));
+		//	StreamReader streamWriter = new StreamReader("data.xml");
+		//	try
+		//	{
+		//		var obj = serializer.Deserialize(streamWriter);
+		//	}
+		//	finally
+		//	{
+		//		streamWriter.Close();
+		//	}
 		}
 
-		async public void UpdateAsync()
+		async public virtual void UpdateAsync()
 		{
-			await Task.Run(() =>
-			{
-				DownloadUpdate();
-				Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
-				Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
-				Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
+			//TODO
+			throw new NotImplementedException();
+			//await Task.Run(() =>
+			//{
+			//	DownloadUpdate();
+			//	Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
+			//	Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
+			//	Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
 
-				foreach (Rout rout in Routs)
-				{
-					rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
+			//	foreach (Rout rout in Routs)
+			//	{
+			//		rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+			//		if (rout.Time != null)
+			//			rout.Time.Rout = rout;
 
-					rout.Stops = new List<Stop>();
-					foreach (int st in rout.RouteStops)
-					{
-						rout.Stops.Add(Stops.First(x => x.ID == st));
-					}
-				}
+			//		rout.Stops = new List<Stop>();
+			//		foreach (int st in rout.RouteStops)
+			//		{
+			//			rout.Stops.Add(Stops.First(x => x.ID == st));
+			//		}
+			//	}
 
-				LastUpdateDataDateTime = DateTime.Now;
-			});
+			//	LastUpdateDataDateTime = DateTime.Now;
+			//});
 		}
 
 		[NotifyPropertyChangedInvocator]
@@ -213,8 +221,8 @@ namespace MinskTrans.DesctopClient
 		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
 		public void ReadXml(XmlReader reader)
 		{
-			reader.MoveToAttribute("LastUpdateTime");
-			LastUpdateDataDateTime = reader.ReadContentAsDateTime();
+			//reader.MoveToAttribute("LastUpdateTime");
+			//LastUpdateDataDateTime = reader.ReadContentAsDateTime();
 		}
 
 		/// <summary>

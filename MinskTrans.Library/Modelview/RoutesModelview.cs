@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Modelview;
 
-namespace MinskTrans.DesctopClient.Modelview
+namespace MinskTrans.Library.Modelview
 {
 	public class RoutesModelview : BaseModelView
 	{
@@ -166,7 +168,10 @@ namespace MinskTrans.DesctopClient.Modelview
 #endif
 					//TODO заменяет сущь-е время
 					if (CurTime)
-						timesObservableCollection.ForEach(x => { x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList(); });
+						foreach (var x in timesObservableCollection)
+						{ 
+							 x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
+}
 				}
 				return timesObservableCollection;
 			}

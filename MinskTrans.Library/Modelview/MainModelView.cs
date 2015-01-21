@@ -1,4 +1,7 @@
-﻿namespace MinskTrans.DesctopClient.Modelview
+﻿using MinskTrans.Library;
+using MinskTrans.Library.Modelview;
+
+namespace MinskTrans.DesctopClient.Modelview
 {
 	public class MainModelView
 	{
@@ -8,9 +11,9 @@
 		private readonly SettingsModelView settingsModelView;
 		private readonly StopModelView stopMovelView;
 
-		public MainModelView()
+		public MainModelView(Context newContext)
 		{
-			context = new Context();
+			context = newContext;
 			routesModelview = new RoutesModelview(context);
 			stopMovelView = new StopModelView(context);
 			settingsModelView = new SettingsModelView(context);

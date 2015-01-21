@@ -23,7 +23,7 @@ namespace MinskTrans.DesctopClient
 
 		public string Days { get; set; }
 
-		[NonSerialized]
+		
 		public Dictionary<int, string> daysToString = new Dictionary<int, string>()
 		{
 			{1, "Пн"},

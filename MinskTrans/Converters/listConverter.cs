@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace MinskTrans.DesctopClient
 {
-	public class listConverter : IValueConverter
+	public class ListIntToStrConverter : IValueConverter
 	{
 		#region Implementation of IValueConverter
 

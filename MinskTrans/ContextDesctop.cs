@@ -10,6 +10,7 @@ using MinskTrans.Library;
 
 namespace MinskTrans.DesctopClient
 {
+	[Serializable]
 	public class ContextDesctop : Context
 	{
 		#region Overrides of Context
@@ -77,6 +78,8 @@ namespace MinskTrans.DesctopClient
 				LastUpdateDataDateTime = DateTime.Now;
 			});
 		}
+
+		
 
 		#endregion
 	}

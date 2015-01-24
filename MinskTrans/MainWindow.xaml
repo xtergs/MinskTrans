@@ -4,18 +4,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:minskTrans="clr-namespace:MinskTrans.DesctopClient"
-        xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
         xmlns:converters="clr-namespace:MinskTrans.DesctopClient.Converters"
         
         
         xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WPF"
+       
+        xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance modelview:MainModelView}"
         Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <converters:MinsLeftConverter x:Key="MinsLeftConverter" />
         <minskTrans:MinsToTimeConverter x:Key="MinsToTimeConverter" />
-        <minskTrans:listConverter x:Key="listConverter" />
+        <minskTrans:ListIntToStrConverter x:Key="listConverter" />
         <CollectionViewSource x:Key="shedulerModelViewViewSource"
                               d:DesignSource="{d:DesignInstance {x:Type modelview:BaseModelView}, CreateList=True}">
             <CollectionViewSource.GroupDescriptions>
@@ -117,13 +118,16 @@
 
 
     </Window.Resources>
-    <TabControl x:Name="tabControl">
+    <DockPanel>
+    <TabControl DockPanel.Dock="Top" x:Name="tabControl">
         <TabItem Header="Route" DataContext="{Binding RoutesModelview}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+
 
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="2">
@@ -264,7 +268,7 @@
                 <DockPanel Grid.Column="1">
                     <TextBlock DockPanel.Dock="Top" Text="{Binding FilteredSelectedStop.Name,  UpdateSourceTrigger=PropertyChanged}"></TextBlock>
                     <DataGrid Grid.Column="1" ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
-                          AutoGenerateColumns="False" Margin="0">
+                          AutoGenerateColumns="False" Margin="0" CanUserSortColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
                             <DataGridTextColumn Binding="{Binding Key.RouteName}" />
@@ -327,11 +331,11 @@
                           ItemsSource="{Binding Groups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           HorizontalAlignment="Left" Height="267" Margin="10,10,0,0" VerticalAlignment="Top"
                           Width="261" />
-                <Button Content="Add" HorizontalAlignment="Left" Margin="36,282,0,0" VerticalAlignment="Top" Width="75" />
+                <Button Content="Add" HorizontalAlignment="Left" Margin="36,282,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_4" />
                 <Button Content="Edit" HorizontalAlignment="Left" Margin="116,282,0,0" VerticalAlignment="Top"
-                        Width="75" />
+                        Width="75" Click="Button_Click_5" />
                 <Button Content="Delete" HorizontalAlignment="Left" Margin="196,282,0,0" VerticalAlignment="Top"
-                        Width="75" />
+                        Width="75" Click="Button_Click_6" />
                 <DataGrid ItemsSource="{Binding GroupTimeSchedule, UpdateSourceTrigger=PropertyChanged}"
                           AutoGenerateColumns="False" Margin="276,0,120,0">
                     <DataGrid.Columns>
@@ -448,6 +452,10 @@
             </DockPanel>
         </TabItem>
 
-
     </TabControl>
+        <StatusBar DockPanel.Dock="Bottom"
+                   VerticalAlignment="Bottom">
+            <StatusBarItem x:Name="statusMessages"/>
+        </StatusBar>
+    </DockPanel>
 </Window>

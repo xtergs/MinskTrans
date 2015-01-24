@@ -4,11 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:minskTrans="clr-namespace:MinskTrans.DesctopClient"
+             xmlns:desctopClient="clr-namespace:MinskTrans.DesctopClient;assembly=MinskTrans.Library"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance minskTrans:Time}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <minskTrans:listConverter x:Key="listConverter" />
+        <minskTrans:ListIntToStrConverter x:Key="listConverter" />
     </UserControl.Resources>
     <DataGrid ItemsSource="{Binding DictionaryTime}" AutoGenerateColumns="False">
         <DataGrid.Columns>

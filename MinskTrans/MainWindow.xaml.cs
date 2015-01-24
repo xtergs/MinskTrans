@@ -63,11 +63,20 @@ namespace MinskTrans.DesctopClient
 		public MainWindow()
 		{
 			ShedulerModelView = new MainModelView(new ContextDesctop());
-			BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
+			//BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
 			InitializeComponent();
 			ShedulerModelView.RoutesModelview.ShowRoute += OnShowRoute;
 			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
 			ShedulerModelView.StopMovelView.ShowStop += OnShowStop;
+
+			ShedulerModelView.Context.DataBaseDownloadStarted += (sender, args) => statusMessages.Dispatcher.Invoke(()=>
+			{
+				statusMessages.Content = "Data had started downloading";
+			});
+			ShedulerModelView.Context.DataBaseDownloadEnded += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
+			{
+				statusMessages.Content = "Data has been downloaded";
+			});
 
 			var stop = ShedulerModelView.context.Stops.First(x => x.SearchName == "шепичи");
 			
@@ -218,6 +227,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Window_Closed(object sender, EventArgs e)
 		{
+			ShedulerModelView.Context.Save();
 			timerr.Stop();
 			timerr.Dispose();
 		}
@@ -309,6 +319,39 @@ namespace MinskTrans.DesctopClient
 		{
 			var handler = PropertyChanged;
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		private void Button_Click_4(object sender, RoutedEventArgs e)
+		{
+			var window = new GroupAddWindow(ShedulerModelView.Context);
+			var result = window.ShowDialog();
+			if (result.Value)
+			{
+				if (ShedulerModelView.GroupStopsModelView.AddGroup.CanExecute(window.Group))
+					ShedulerModelView.GroupStopsModelView.AddGroup.Execute(window.Group);
+			}
+		}
+
+		private void Button_Click_5(object sender, RoutedEventArgs e)
+		{
+			var window = new GroupAddWindow(ShedulerModelView.Context);
+			window.Group = ShedulerModelView.GroupStopsModelView.SelectedGroupStop;
+			var result = window.ShowDialog();
+			if (result.Value)
+			{
+				if (ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
+					if (ShedulerModelView.GroupStopsModelView.AddGroup.CanExecute(window.Group))
+					{
+						ShedulerModelView.GroupStopsModelView.RemoveGorup.Execute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop);
+						ShedulerModelView.GroupStopsModelView.AddGroup.Execute(window.Group);
+					}
+			}
+		}
+
+		private void Button_Click_6(object sender, RoutedEventArgs e)
+		{
+			if (ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
+				ShedulerModelView.GroupStopsModelView.RemoveGorup.Execute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop);
 		}
 	}
 }

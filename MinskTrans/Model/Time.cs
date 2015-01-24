@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient
 {
 	[Serializable]
-	public class Time
+	public class Time : BaseModel
 	{
 		public Time()
 		{

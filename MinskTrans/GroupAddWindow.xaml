@@ -7,69 +7,74 @@
 		xmlns:local="clr-namespace:MinskTrans.DesctopClient" xmlns:Converters="clr-namespace:MinskTrans.DesctopClient.Converters" x:Class="MinskTrans.DesctopClient.GroupAddWindow"
 		mc:Ignorable="d"
 		d:DataContext="{d:DesignInstance {x:Type modelview:GroupEditModelView}}"
-		Title="GroupAddWindow" Height="300" Width="300" WindowStyle="ToolWindow">
-    <Window.Resources>
-        <Converters:ListToStr x:Key="ListToStr"/>
-        <local:ListIntToStrConverter x:Key="listConverter"/>
-    </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+		Title="GroupAddWindow" Height="409" Width="766" WindowStyle="ToolWindow">
+	<Window.Resources>
+		<Converters:ListToStr x:Key="ListToStr"/>
+		<local:ListIntToStrConverter x:Key="listConverter"/>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
 
-            </Grid.ColumnDefinitions>
-            <DockPanel Grid.Column="0">
-                <TextBlock DockPanel.Dock="Top" Text="Group name"/>
-                <TextBox DockPanel.Dock="Top" 
+			</Grid.ColumnDefinitions>
+			<DockPanel Grid.Column="0">
+				<TextBlock DockPanel.Dock="Top" Text="Group name"/>
+				<TextBox DockPanel.Dock="Top" 
 					Text="{Binding GroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <ListView ItemsSource="{Binding Stop.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				<ListView ItemsSource="{Binding Stop.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					SelectedValue="{Binding SelectedStopGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Remove" 
+					<ListView.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Remove" 
 								Command="{Binding RemoveStop}"/>
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
-            </DockPanel>
-            <StackPanel Grid.Column="1">
-                <Button Content="--" 
+						</ContextMenu>
+					</ListView.ContextMenu>
+				</ListView>
+			</DockPanel>
+			<StackPanel Grid.Column="1">
+				<Button Content="--" 
 					Command="{Binding AddStop}"/>
-                <Button Content="--&gt;"
+				<Button Content="--&gt;"
 					Command="{Binding RemoveStop}"/>
-            </StackPanel>
-            <DockPanel Grid.Column="2">
-                <TextBox DockPanel.Dock="Top" 
+			</StackPanel>
+			<DockPanel Grid.Column="2">
+				<TextBox DockPanel.Dock="Top" 
 					Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <ListView DockPanel.Dock="Top"
+				<ListView DockPanel.Dock="Top"
 					VerticalAlignment="Stretch"
 					DisplayMemberPath="Name" 
 					ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged}" 
 					SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Add" Command="{Binding AddStop}"/>
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
-                <TextBlock DockPanel.Dock="Bottom" 
-					VerticalAlignment="Bottom"
-					Text="{Binding DirectionsStop, ConverterParameter=DirectionsStop, Converter={StaticResource ListToStr}}"
-                            TextWrapping="Wrap"/>
-            </DockPanel>
-
-        </Grid>
-        <WrapPanel Grid.Row="1" >
-            <Button Content="Save" Click="Button_Click"/>
-            <Button Content="Cancel" Click="Button_Click_1"/>
-            <Button Content="Save" Visibility="Collapsed"/>
-        </WrapPanel>
-    </Grid>
+					<ListView.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Add" Command="{Binding AddStop}"/>
+						</ContextMenu>
+					</ListView.ContextMenu>
+				</ListView>
+				
+			</DockPanel>
+            <DataGrid Grid.Column="3"
+                      ItemsSource="{Binding DirectionsStop}"
+                      AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding RouteNum}"/>
+                    <DataGridTextColumn Binding="{Binding Transport}"/>
+                    <DataGridTextColumn Binding="{Binding DestinationStop.Name}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+		</Grid>
+		<WrapPanel Grid.Row="1" >
+			<Button Content="Save" Click="Button_Click"/>
+			<Button Content="Cancel" Click="Button_Click_1"/>
+			<Button Content="Save" Visibility="Collapsed"/>
+		</WrapPanel>
+	</Grid>
 </Window>

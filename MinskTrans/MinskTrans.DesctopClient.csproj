@@ -94,6 +94,7 @@
       <DependentUpon>GroupAddWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="IContext.cs" />
+    <Compile Include="LogDelegateArgs.cs" />
     <Compile Include="Modelview\BaseModelView.cs" />
     <Compile Include="Modelview\GroupEditModelView.cs" />
     <Compile Include="Modelview\GroupStopsModelView.cs" />

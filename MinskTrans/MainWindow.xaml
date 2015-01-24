@@ -118,7 +118,11 @@
 
 
     </Window.Resources>
-    <DockPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
     <TabControl DockPanel.Dock="Top" x:Name="tabControl">
         <TabItem Header="Route" DataContext="{Binding RoutesModelview}">
             <Grid>
@@ -352,7 +356,8 @@
             </Grid>
         </TabItem>
         <TabItem x:Name="mapTabItem" Header="Map">
-            <Grid x:Name="MapGrid">
+            <Grid x:Name="MapGrid"
+                  VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
@@ -453,9 +458,16 @@
         </TabItem>
 
     </TabControl>
-        <StatusBar DockPanel.Dock="Bottom"
+        <StatusBar Grid.Row="2"
+                   DockPanel.Dock="Bottom"
                    VerticalAlignment="Bottom">
             <StatusBarItem x:Name="statusMessages"/>
+            <StatusBarItem Content="LastUpdated "/>
+            <StatusBarItem Content="{Binding Context.LastUpdateDataDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Update database" 
+                    Command="{Binding Context.UpdateDataCommand}"
+                    HorizontalAlignment="Right"/>
+            <StatusBarItem x:Name="tickTimer"></StatusBarItem>
         </StatusBar>
-    </DockPanel>
+    </Grid>
 </Window>

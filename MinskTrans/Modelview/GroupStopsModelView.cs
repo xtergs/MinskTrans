@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Library;
@@ -7,7 +8,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class GroupStopsModelView : StopModelView
 	{
-		private List<GroupStop> groups;
+		private ObservableCollection<GroupStop> groups;
 		private GroupStop selectedGroupStop;
 
 		public GroupStopsModelView() : this(null)
@@ -16,7 +17,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public GroupStopsModelView(Context newContext) : base(newContext)
 		{
-			Groups = new List<GroupStop>();
+			Groups = new ObservableCollection<GroupStop>();
 			Bus = Trol = Tram = true;
 			//Groups.Add(new GroupStop
 			//{
@@ -26,7 +27,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			//Groups[0].Name = "Шепичи";
 		}
 
-		public List<GroupStop> Groups
+		public ObservableCollection<GroupStop> Groups
 		{
 			get { return groups; }
 			set

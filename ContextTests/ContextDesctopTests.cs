@@ -38,7 +38,7 @@ namespace ContextTests
 			context.Save();
 
 			//Act
-			newContext = (ContextDesctop)newContext.Load();
+			newContext.Load();
 
 			//Assert
 			Assert.IsTrue(context.LastUpdateDataDateTime == newContext.LastUpdateDataDateTime &&

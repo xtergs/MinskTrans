@@ -11,6 +11,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Annotations;
+using System.Threading.Tasks;
+using MinskTrans.Library;
 
 
 namespace MinskTrans.DesctopClient
@@ -35,7 +37,6 @@ namespace MinskTrans.DesctopClient
 			get { return lastUpdateDataDateTime; }
 			set
 			{
-				if (value.Equals(lastUpdateDataDateTime)) return;
 				lastUpdateDataDateTime = value;
 				OnPropertyChanged();
 			}
@@ -109,6 +110,8 @@ namespace MinskTrans.DesctopClient
 			//TODO
 			//throw new NotImplementedException();
 			OnDataBaseDownloadStarted();
+			try
+			{
 			using (var client = new WebClient())
 			{
 				client.DownloadFile(list[0].Value, list[0].Key + ".new");
@@ -116,6 +119,12 @@ namespace MinskTrans.DesctopClient
 				client.DownloadFile(list[2].Value, list[2].Key + ".new");
 			}
 			OnDataBaseDownloadEnded();
+
+			}
+			catch (System.Net.WebException e)
+			{
+				OnLogMessage("Error donwloading");
+			}
 		}
 
 		private List<Rout> newRoutes;
@@ -133,13 +142,16 @@ namespace MinskTrans.DesctopClient
 			newRoutes = ShedulerParser.ParsRout(File.ReadAllText(list[1].Key + ".new"));
 			newSchedule = ShedulerParser.ParsTime(File.ReadAllText(list[2].Key + ".new"));
 
+			if (Stops == null || Routs == null || Times == null)
+				return true;
+
 			if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-				return false;
+				return true;
 
 			foreach (var newRoute in newRoutes)
 			{
 				if (Routs.AsParallel().All(x=>x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
-					return false;
+					return true;
 			}
 
 			
@@ -149,6 +161,8 @@ namespace MinskTrans.DesctopClient
 
 		public void ApplyUpdate()
 		{
+			OnApplyUpdateStarted();
+
 			foreach (var keyValuePair in list)
 			{
 				if (File.Exists(keyValuePair.Key + ".old"))
@@ -179,6 +193,8 @@ namespace MinskTrans.DesctopClient
 			newStops = null;
 			newRoutes = null;
 			newSchedule = null;
+
+			OnApplyUpdateEnded();
 		}
 
 		/// <summary>
@@ -191,7 +207,10 @@ namespace MinskTrans.DesctopClient
 			var streamWriter = new FileStream("data.dat", FileMode.Create, FileAccess.Write);
 			try
 			{
-				serializer.Serialize(streamWriter, this);
+				serializer.Serialize(streamWriter, LastUpdateDataDateTime);
+				serializer.Serialize(streamWriter, Stops);
+				serializer.Serialize(streamWriter, Routs);
+				serializer.Serialize(streamWriter, Times);
 			}
 			finally
 			{
@@ -199,14 +218,22 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public virtual Context Load()
+		public virtual void Load()
 		{
 			//throw new NotImplementedException();
 			BinaryFormatter serializer = new BinaryFormatter();
 			var streamWriter = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
 			try
 			{
-				return (Context)serializer.Deserialize(streamWriter);
+				var tempDateTime = (DateTime)serializer.Deserialize(streamWriter);
+				var tempStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
+				var tempRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
+				var tempTimes = (ObservableCollection<Schedule>)serializer.Deserialize(streamWriter);
+
+				LastUpdateDataDateTime = tempDateTime;
+				Stops = tempStops;
+				Routs = tempRouts;
+				Times = tempTimes;
 			}
 			finally
 			{
@@ -217,29 +244,13 @@ namespace MinskTrans.DesctopClient
 		async public virtual void UpdateAsync()
 		{
 			//TODO
-			throw new NotImplementedException();
-			//await Task.Run(() =>
-			//{
-			//	DownloadUpdate();
-			//	Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
-			//	Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
-			//	Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
-
-			//	foreach (Rout rout in Routs)
-			//	{
-			//		rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-			//		if (rout.Time != null)
-			//			rout.Time.Rout = rout;
-
-			//		rout.Stops = new List<Stop>();
-			//		foreach (int st in rout.RouteStops)
-			//		{
-			//			rout.Stops.Add(Stops.First(x => x.ID == st));
-			//		}
-			//	}
-
-			//	LastUpdateDataDateTime = DateTime.Now;
-			//});
+			//throw new NotImplementedException();
+			await Task.Run(() =>
+			{
+				DownloadUpdate();
+				if (HaveUpdate())
+					ApplyUpdate();
+			});
 		}
 
 		[NotifyPropertyChangedInvocator]
@@ -254,9 +265,12 @@ namespace MinskTrans.DesctopClient
 
 		public event EmptyDelegate DataBaseDownloadStarted;
 		public event EmptyDelegate DataBaseDownloadEnded;
+		public event EmptyDelegate ApplyUpdateStarted;
+		public event EmptyDelegate ApplyUpdateEnded;
+		public event LogDelegate LogMessage;
 
 
-
+		#region Invokators
 		protected virtual void OnDataBaseDownloadStarted()
 		{
 			var handler = DataBaseDownloadStarted;
@@ -267,6 +281,22 @@ namespace MinskTrans.DesctopClient
 			var handler = DataBaseDownloadEnded;
 			if (handler != null) handler(this, EventArgs.Empty);
 		}
+		protected virtual void OnApplyUpdateStarted()
+		{
+			var handler = ApplyUpdateStarted;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+		protected virtual void OnApplyUpdateEnded()
+		{
+			var handler = ApplyUpdateEnded;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+		protected virtual void OnLogMessage(string message)
+		{
+			var handler = LogMessage;
+			if (handler != null) handler(this, new LogDelegateArgs(){Message = message});
+		}
+		#endregion
 
 		#endregion
 
@@ -310,7 +340,16 @@ namespace MinskTrans.DesctopClient
 
 		#endregion
 
+		#region commands
+
+		public ActionCommand UpdateDataCommand
+		{
+			get { return new ActionCommand(x => UpdateAsync()); }
+		}
+		#endregion
+
 		
 	}
 
+	public delegate void LogDelegate(object sender, LogDelegateArgs args);
 }

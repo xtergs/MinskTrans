@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using MinskTrans.DesctopClient.Modelview;
 
 using MapControl;
@@ -57,13 +58,30 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-
-
+		private TimeSpan secs = new TimeSpan(0,1,0,0,0);
+		private System.Timers.Timer checkUpdateTimer;
 
 		public MainWindow()
 		{
 			ShedulerModelView = new MainModelView(new ContextDesctop());
 			//BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
+			DispatcherTimer tm = new DispatcherTimer();
+			tm.Interval = new TimeSpan(0, 0, 1);
+			tm.Tick += (sender, args) =>
+			{
+				if (secs == new TimeSpan(0, 0, 0))
+				{
+					secs = new TimeSpan(0, 1, 0, 0, 0);
+					ShedulerModelView.Context.UpdateAsync();
+				}
+				secs = secs.Subtract(new TimeSpan(0, 0, 1));
+				tickTimer.Content = secs;
+			};
+			tm.Start();
+			checkUpdateTimer = new System.Timers.Timer();
+			checkUpdateTimer.Interval = 1000*60*60;
+			checkUpdateTimer.Enabled = true;
+			checkUpdateTimer.Start();
 			InitializeComponent();
 			ShedulerModelView.RoutesModelview.ShowRoute += OnShowRoute;
 			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
@@ -78,11 +96,13 @@ namespace MinskTrans.DesctopClient
 				statusMessages.Content = "Data has been downloaded";
 			});
 
-			var stop = ShedulerModelView.context.Stops.First(x => x.SearchName == "шепичи");
+			ShedulerModelView.Context.LogMessage += (sender, args) => MessageBox.Show(args.Message);
+
+			var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
 			
 			map.Center = new Location(stop.Lat, stop.Lng);
 			pushpins = new List<Pushpin>();
-			foreach (var st in ShedulerModelView.context.ActualStops)
+			foreach (var st in ShedulerModelView.Context.ActualStops)
 			{
 				var pushpin = new Pushpin();
 				pushpin.Tag = st;
@@ -108,7 +128,7 @@ namespace MinskTrans.DesctopClient
 			map.Children.Add(new MapPolyline()
 			{
 				Locations =
-					ShedulerModelView.context.Stops.Where(x => x.SearchName == "шепичи").Select(x => new Location(x.Lat, x.Lng)),
+					ShedulerModelView.Context.Stops.Where(x => x.SearchName == "шепичи").Select(x => new Location(x.Lat, x.Lng)),
 				StrokeThickness = 10
 			});
 			map.ZoomLevel = 19;
@@ -330,6 +350,7 @@ namespace MinskTrans.DesctopClient
 				if (ShedulerModelView.GroupStopsModelView.AddGroup.CanExecute(window.Group))
 					ShedulerModelView.GroupStopsModelView.AddGroup.Execute(window.Group);
 			}
+			window = null;
 		}
 
 		private void Button_Click_5(object sender, RoutedEventArgs e)
@@ -346,6 +367,7 @@ namespace MinskTrans.DesctopClient
 						ShedulerModelView.GroupStopsModelView.AddGroup.Execute(window.Group);
 					}
 			}
+			window = null;
 		}
 
 		private void Button_Click_6(object sender, RoutedEventArgs e)

@@ -7,6 +7,6 @@ namespace MinskTrans.DesctopClient
 		bool HaveUpdate();
 		void ApplyUpdate();
 		void Save();
-		Context Load();
+		void Load();
 	}
 }

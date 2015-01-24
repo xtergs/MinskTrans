@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient
 {
 	[Serializable]
-	public class Rout : IXmlSerializable
+	public class Rout :BaseModel, IXmlSerializable
 	{
-		private int indexEnd;
-		private int indexStart;
+		
 		private string str = "";
 		private char sym = ';';
 
@@ -136,6 +137,16 @@ namespace MinskTrans.DesctopClient
 			if (indexEnd < 0)
 				return str.Substring(indexStart);
 			return str.Substring(indexStart, indexEnd - indexStart);
+		}
+
+		public Stop DestinationStop
+		{
+			get { return Stops.Last(); }
+		}
+
+		public Stop StartStop
+		{
+			get { return Stops.First(); }
 		}
 
 		#region Implementation of IXmlSerializable

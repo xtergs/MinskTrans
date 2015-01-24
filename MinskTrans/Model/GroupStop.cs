@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,8 @@ using MinskTrans.DesctopClient.Annotations;
 
 namespace MinskTrans.DesctopClient.Model
 {
-	public class GroupStop : INotifyPropertyChanged
+	[Serializable]
+	public class GroupStop :BaseModel, INotifyPropertyChanged
 	{
 		private string name;
 		private ObservableCollection<Stop> stops;

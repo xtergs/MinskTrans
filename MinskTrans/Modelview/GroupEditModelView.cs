@@ -62,11 +62,11 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public IEnumerable<string> DirectionsStop
+		public IEnumerable<Rout> DirectionsStop
 		{
 			get
 			{
-				return Context.Routs.Where(x => x.Stops.Contains(FilteredSelectedStop)).Select(x => x.Stops.Last().Name).Distinct();
+				return Context.Routs.Where(x => x.Stops.Contains(FilteredSelectedStop)).Distinct();
 			}
 		} 
 

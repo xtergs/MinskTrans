@@ -82,7 +82,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ActionCommand.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="ContextDesctop.cs" />
     <Compile Include="Converters\listConverter.cs" />
@@ -108,6 +107,7 @@
     <Compile Include="Modelview\StopsModelView.cs" />
     <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\GroupStop.cs" />
+    <Compile Include="Model\GroupStopId.cs" />
     <Compile Include="Model\List2.cs" />
     <Compile Include="Model\Rout.cs" />
     <Compile Include="Model\Schedule.cs" />

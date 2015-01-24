@@ -1,4 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MinskTrans.DesctopClient.Annotations;
 
 namespace MinskTrans.DesctopClient.Model
 {
@@ -43,5 +46,15 @@ namespace MinskTrans.DesctopClient.Model
 			indexStart = indexEnd + 1;
 			return temp;
 		}
+
+		
+		//public event PropertyChangedEventHandler PropertyChanged;
+
+		//[NotifyPropertyChangedInvocator]
+		//protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		//{
+		//	var handler = PropertyChanged;
+		//	if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+		//}
 	}
 }

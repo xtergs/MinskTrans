@@ -7,12 +7,15 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Annotations;
 using System.Threading.Tasks;
 using MinskTrans.Library;
+using GalaSoft.MvvmLight.CommandWpf;
+using MinskTrans.DesctopClient.Model;
 
 
 namespace MinskTrans.DesctopClient
@@ -30,6 +33,9 @@ namespace MinskTrans.DesctopClient
 		private ObservableCollection<Rout> routs;
 		private ObservableCollection<Stop> stops;
 		private ObservableCollection<Schedule> times;
+		private ObservableCollection<GroupStop> groups;
+		private ObservableCollection<Rout> favouriteRouts;
+		private ObservableCollection<Stop> favouriteStops;
 		private DateTime lastUpdateDataDateTime;
 
 		public DateTime LastUpdateDataDateTime
@@ -38,6 +44,35 @@ namespace MinskTrans.DesctopClient
 			set
 			{
 				lastUpdateDataDateTime = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public ObservableCollection<Rout> FavouriteRouts
+		{
+			get { return favouriteRouts; }
+			set
+			{
+				favouriteRouts = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public ObservableCollection<Stop> FavouriteStops
+		{
+			get { return favouriteStops; }
+			set
+			{
+				favouriteStops = value;
+				OnPropertyChanged();
+			}
+		}
+		public ObservableCollection<GroupStop> Groups
+		{
+			get { return groups; }
+			set
+			{
+				groups = value; 
 				OnPropertyChanged();
 			}
 		}
@@ -100,6 +135,9 @@ namespace MinskTrans.DesctopClient
 				Load();
 				return;
 			}
+			FavouriteRouts = new ObservableCollection<Rout>();
+			FavouriteStops = new ObservableCollection<Stop>();
+			Groups = new ObservableCollection<GroupStop>();
 			DownloadUpdate();
 			HaveUpdate();
 			ApplyUpdate();
@@ -167,7 +205,8 @@ namespace MinskTrans.DesctopClient
 			{
 				if (File.Exists(keyValuePair.Key + ".old"))
 					File.Delete(keyValuePair.Key + ".old");
-				File.Move(keyValuePair.Key, keyValuePair.Key + ".old");
+				if (File.Exists(keyValuePair.Key))
+					File.Move(keyValuePair.Key, keyValuePair.Key + ".old");
 				File.Move(keyValuePair.Key + ".new", keyValuePair.Key);
 			}
 
@@ -203,6 +242,7 @@ namespace MinskTrans.DesctopClient
 		public virtual void Save()
 		{
 			//throw new NotImplementedException();
+			var groupsId = Groups.Select(groupStop => new GroupStopId(groupStop)).ToList();
 			BinaryFormatter serializer = new BinaryFormatter();
 			var streamWriter = new FileStream("data.dat", FileMode.Create, FileAccess.Write);
 			try
@@ -211,6 +251,10 @@ namespace MinskTrans.DesctopClient
 				serializer.Serialize(streamWriter, Stops);
 				serializer.Serialize(streamWriter, Routs);
 				serializer.Serialize(streamWriter, Times);
+				serializer.Serialize(streamWriter, groupsId);
+				serializer.Serialize(streamWriter, FavouriteRouts);
+				serializer.Serialize(streamWriter, FavouriteStops);
+
 			}
 			finally
 			{
@@ -229,24 +273,30 @@ namespace MinskTrans.DesctopClient
 				var tempStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
 				var tempRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
 				var tempTimes = (ObservableCollection<Schedule>)serializer.Deserialize(streamWriter);
+				var tempGroup = (List<GroupStopId>)serializer.Deserialize(streamWriter);
+				FavouriteRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
+				FavouriteStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
+
 
 				LastUpdateDataDateTime = tempDateTime;
 				Stops = tempStops;
 				Routs = tempRouts;
 				Times = tempTimes;
 
-				foreach (Rout rout in Routs)
-				{
-					rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
+				Connect(Routs, Stops);
 
-					rout.Stops = new List<Stop>();
-					foreach (int st in rout.RouteStops)
+				Groups = new ObservableCollection<GroupStop>();
+				foreach (var groupStopId in tempGroup)
+				{
+					var newGroupStop = new GroupStop();
+					newGroupStop.Name = groupStopId.Name;
+					newGroupStop.Stops = new ObservableCollection<Stop>();
+					foreach (var i in groupStopId.StopID)
 					{
-						rout.Stops.Add(Stops.First(x => x.ID == st));
+						newGroupStop.Stops.Add(Stops.First(x=>x.ID == i));
 					}
 				}
+				//Connect(FavouriteRouts, FavouriteStops);
 			}
 			finally
 			{
@@ -254,11 +304,27 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		async public virtual void UpdateAsync()
+		void Connect(IEnumerable<Rout> routs, IEnumerable<Stop> stops)
+		{
+			foreach (Rout rout in routs)
+			{
+				rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+				if (rout.Time != null)
+					rout.Time.Rout = rout;
+
+				rout.Stops = new List<Stop>();
+				foreach (int st in rout.RouteStops)
+				{
+					rout.Stops.Add(stops.First(x => x.ID == st));
+				}
+			}
+		}
+
+		public virtual Task UpdateAsync()
 		{
 			//TODO
 			//throw new NotImplementedException();
-			await Task.Run(() =>
+			return Task.Run(() =>
 			{
 				DownloadUpdate();
 				if (HaveUpdate())
@@ -355,9 +421,39 @@ namespace MinskTrans.DesctopClient
 
 		#region commands
 
-		public ActionCommand UpdateDataCommand
+		private bool updating = false;
+		
+		public RelayCommand UpdateDataCommand
 		{
-			get { return new ActionCommand(x => UpdateAsync()); }
+			get
+			{
+				return new RelayCommand(async () =>
+				{
+					updating = true;
+					await UpdateAsync();
+					updating = false;
+					UpdateDataCommand.RaiseCanExecuteChanged();
+				}, ()=>!updating);
+			}
+		}
+
+		public RelayCommand<Rout> AddFavouriteRoutCommand
+		{
+			get { return new RelayCommand<Rout>(x=>FavouriteRouts.Add(x), p=> p!= null && !FavouriteRouts.Contains(p));}
+		}
+
+		public RelayCommand<Stop> AddFavouriteSopCommand
+		{
+			get { return new RelayCommand<Stop>(x => FavouriteStops.Add(x), p => p != null && !FavouriteStops.Contains(p)); }
+		}
+		public RelayCommand<Rout> RemoveFavouriteRoutCommand
+		{
+			get { return new RelayCommand<Rout>(x => FavouriteRouts.Remove(x), p => p != null && FavouriteRouts.Contains(p)); }
+		}
+
+		public RelayCommand<Stop> RemoveFavouriteSopCommand
+		{
+			get { return new RelayCommand<Stop>(x => FavouriteStops.Remove(x), p => p != null && FavouriteStops.Contains(p)); }
 		}
 		#endregion
 

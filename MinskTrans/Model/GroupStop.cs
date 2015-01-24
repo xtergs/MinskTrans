@@ -9,7 +9,7 @@ using MinskTrans.DesctopClient.Annotations;
 namespace MinskTrans.DesctopClient.Model
 {
 	[Serializable]
-	public class GroupStop :BaseModel, INotifyPropertyChanged
+	public class GroupStop :BaseModel
 	{
 		private string name;
 		private ObservableCollection<Stop> stops;
@@ -40,7 +40,7 @@ namespace MinskTrans.DesctopClient.Model
 			set
 			{
 				stops = value;
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 
@@ -50,17 +50,10 @@ namespace MinskTrans.DesctopClient.Model
 			set
 			{
 				name = value;
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-		}
+		
 	}
 }

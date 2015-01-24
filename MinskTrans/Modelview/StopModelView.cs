@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MinskTrans.Library;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -182,18 +183,22 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public ActionCommand RefreshTimeSchedule
+		public RelayCommand RefreshTimeSchedule
 		{
-			get { return new ActionCommand(x => OnPropertyChanged("TimeSchedule")); }
+			get { return new RelayCommand(() => OnPropertyChanged("TimeSchedule")); }
 		}
 
 		public event Show ShowStop;
 		public event Show ShowRoute;
 		public delegate void Show(object sender, ShowArgs args);
 
-		public ActionCommand ShowStopMap
+		public RelayCommand ShowStopMap
 		{
-			get { return new ActionCommand(x => OnShowStop(new ShowArgs(){SelectedStop = FilteredSelectedStop}), p => FilteredSelectedStop != null); }
+			get
+			{
+				return new RelayCommand(() => OnShowStop(new ShowArgs() {SelectedStop = FilteredSelectedStop}),
+					() => FilteredSelectedStop != null);
+			}
 		}
 
 		//public ActionCommand ShowRouteMap

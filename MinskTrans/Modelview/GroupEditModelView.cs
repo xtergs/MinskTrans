@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
+using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Library;
 
@@ -72,27 +73,27 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		#region Commands
 
-		public ActionCommand AddStop
+		public RelayCommand AddStop
 		{
 			get
 			{
-				return new ActionCommand((x) =>
+				return new RelayCommand(() =>
 				{
 					Stop.Stops.Add(FilteredSelectedStop);
 					OnPropertyChanged("Stop");
 
-				} , (p)=> Stop != null && !Stop.Stops.Contains(FilteredSelectedStop));
+				} , ()=> Stop != null && !Stop.Stops.Contains(FilteredSelectedStop));
 			}
 		}
 
-		public ActionCommand RemoveStop
+		public RelayCommand RemoveStop
 		{
 			get
 			{
-				return new ActionCommand(x =>
+				return new RelayCommand(() =>
 				{
 					Stop.Stops.Remove(SelectedStopGroup);
-				}, p=> SelectedStopGroup != null && Stop.Stops.Contains(SelectedStopGroup));
+				}, ()=> SelectedStopGroup != null && Stop.Stops.Contains(SelectedStopGroup));
 			}
 		}
 

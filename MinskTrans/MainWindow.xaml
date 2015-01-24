@@ -208,7 +208,8 @@
                             <ListView x:Name="routeNamesListView" DockPanel.Dock="Top"
                                       ItemsSource="{Binding RouteNames}"
                                       SelectedValue="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Margin="0" SelectedIndex="0" MinWidth="250"
+                                      Margin="0" SelectedIndex="0" 
+                                      MinWidth="250"
                                       MinHeight="100" SelectionChanged="routeNamesListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
@@ -221,6 +222,9 @@
                                 <ListView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Show Route on map" Command="{Binding ShowRouteMap}" />
+                                        <MenuItem Header="Add to favourite"
+                                                  Command="{Binding Context.AddFavouriteRoutCommand}"
+                                                  CommandParameter="{Binding RouteSelectedValue}"/>
                                     </ContextMenu>
                                 </ListView.ContextMenu>
                             </ListView>
@@ -266,7 +270,21 @@
                                 </ListView.ItemTemplate>
                             </ListView>
                         </DockPanel>
-                        <ListView DockPanel.Dock="Right" />
+                        <DockPanel>
+                            <TextBox Text="Favourite"
+                                     DockPanel.Dock="Top"/>
+                        <ListView DockPanel.Dock="Right" 
+                                  ItemsSource="{Binding Context.FavouriteRouts}"
+                                  SelectedValue="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header ="Remove from favourite"
+                                              Command="{Binding Context.RemoveFavouriteRoutCommand }"
+                                              CommandParameter="{Binding RouteSelectedValue}"/>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                        </DockPanel>
                     </DockPanel>
 
                 </Grid>
@@ -276,6 +294,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" />
                         <ColumnDefinition />
+                        <ColumnDefinition Width="0.5*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <DockPanel>
@@ -289,6 +308,9 @@
                             <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Show Stop" Command="{Binding ShowStopMap}" />
+                                    <MenuItem Header="Add to favourite"
+                                              Command="{Binding Context.AddFavouriteSopCommand}"
+                                              CommandParameter="{Binding FilteredSelectedStop}"/>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
@@ -311,6 +333,21 @@
                         </DataGrid>
                     </DockPanel>
                     <DockPanel Grid.Column="2">
+                        <TextBox DockPanel.Dock="Top"
+                                 Text ="Favourite"/>
+                        <ListView ItemsSource="{Binding Context.FavouriteStops}"
+                                  SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  >
+                            <ListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Remove from favourite"
+                                              Command="{Binding Context.RemoveFavouriteSopCommand}"
+                                              CommandParameter="{Binding FilteredSelectedStop }"/>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                    </DockPanel>
+                    <DockPanel Grid.Column="3">
                         <DockPanel DockPanel.Dock="Top">
                             <CheckBox DockPanel.Dock="Top" Content="AutoNowTime"
                                       IsChecked="{Binding AutoNowTime, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
@@ -351,6 +388,14 @@
                         <Button DockPanel.Dock="Bottom"
                                 Content="Show stop on map"
                                 Command="{Binding ShowStopMap}" />
+                        <Button DockPanel.Dock="Bottom"
+                                Content ="Add to favourite"
+                                Command="{Binding Context.AddFavouriteSopCommand}"
+                                CommandParameter="{Binding FilteredSelectedStop}"/>
+                        <Button DockPanel.Dock="Bottom"
+                                Content="Remove from favourite"
+                                Command="{Binding Context.RemoveFavouriteSopCommand}"
+                                CommandParameter="{Binding FilteredSelectedStop}"/>
                         <DockPanel DockPanel.Dock="Bottom">
                             <CheckBox IsChecked="{Binding Bus, Mode=TwoWay}" DockPanel.Dock="Top" Content="bus" />
                             <CheckBox IsChecked="{Binding Trol, Mode=TwoWay}" DockPanel.Dock="Top" Content="trol" />
@@ -380,7 +425,7 @@
                         <ListView DockPanel.Dock="Bottom"
                                   DisplayMemberPath="Name"
                                   SelectedItem="{Binding SelectedGroupStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  ItemsSource="{Binding Groups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                  ItemsSource="{Binding Context.Groups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                     <DataGrid Grid.Column="1"
                               ItemsSource="{Binding GroupTimeSchedule, UpdateSourceTrigger=PropertyChanged}"

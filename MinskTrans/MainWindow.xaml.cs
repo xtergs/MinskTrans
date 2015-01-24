@@ -177,7 +177,8 @@ namespace MinskTrans.DesctopClient
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			ShedulerModelView.Context.UpdateAsync();
+			if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
+				ShedulerModelView.Context.UpdateDataCommand.Execute(null);
 		}
 
 		private int w(char x, char y)

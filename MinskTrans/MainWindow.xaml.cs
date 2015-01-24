@@ -72,7 +72,8 @@ namespace MinskTrans.DesctopClient
 				if (secs == new TimeSpan(0, 0, 0))
 				{
 					secs = new TimeSpan(0, 1, 0, 0, 0);
-					ShedulerModelView.Context.UpdateAsync();
+					if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
+						ShedulerModelView.Context.UpdateDataCommand.Execute(null);
 				}
 				secs = secs.Subtract(new TimeSpan(0, 0, 1));
 				tickTimer.Content = secs;
@@ -98,39 +99,35 @@ namespace MinskTrans.DesctopClient
 
 			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
-			var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
+			//var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
 			
-			map.Center = new Location(stop.Lat, stop.Lng);
+			map.Center = new Location(53, 27);
 			pushpins = new List<Pushpin>();
-			foreach (var st in ShedulerModelView.Context.ActualStops)
-			{
-				var pushpin = new Pushpin();
-				pushpin.Tag = st;
-				pushpin.Style = (Style)Resources["PushpinStyle1"];
-				//pushpin.templ
-				pushpin.Content = st.Name;
-				pushpin.MouseMove += (sender, args) =>
+			if (ShedulerModelView.Context.ActualStops != null)
+				foreach (var st in ShedulerModelView.Context.ActualStops)
 				{
-					((Pushpin)sender).BringToFront();
-				};
-				pushpin.MouseDown += (o, args) =>
-				{
-					Pushpin tempPushpin = (Pushpin)o;
-					Stop tmStop = (Stop)tempPushpin.Tag;
-					ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
-					stopTabItem.Focus();
-				};
-				MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
-				pushpins.Add(pushpin);
-				map.Children.Add(pushpin);
+					var pushpin = new Pushpin();
+					pushpin.Tag = st;
+					pushpin.Style = (Style)Resources["PushpinStyle1"];
+					//pushpin.templ
+					pushpin.Content = st.Name;
+					pushpin.MouseMove += (sender, args) =>
+					{
+						((Pushpin)sender).BringToFront();
+					};
+					pushpin.MouseDown += (o, args) =>
+					{
+						Pushpin tempPushpin = (Pushpin)o;
+						Stop tmStop = (Stop)tempPushpin.Tag;
+						ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
+						stopTabItem.Focus();
+					};
+					MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
+					pushpins.Add(pushpin);
+					map.Children.Add(pushpin);
 				
-			}
-			map.Children.Add(new MapPolyline()
-			{
-				Locations =
-					ShedulerModelView.Context.Stops.Where(x => x.SearchName == "шепичи").Select(x => new Location(x.Lat, x.Lng)),
-				StrokeThickness = 10
-			});
+				}
+			
 			map.ZoomLevel = 19;
 			
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");

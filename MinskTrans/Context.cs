@@ -108,7 +108,10 @@ namespace MinskTrans.DesctopClient
 
 		public ObservableCollection<Stop> ActualStops
 		{
-			get { return new ObservableCollection<Stop>(Stops.Where(x => Routs.Any(d => d.Stops.Contains(x)))); }
+			get
+			{ if (Stops != null) return new ObservableCollection<Stop>(Stops.Where(x => Routs != null && Routs.Any(d => d.Stops.Contains(x))));
+				return null;
+			}
 		}
 
 		public ObservableCollection<Rout> Routs
@@ -126,7 +129,7 @@ namespace MinskTrans.DesctopClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public virtual void Create()
+		async public virtual void Create(bool AutoUpdate = true)
 		{
 			//TODO
 			//throw new NotImplementedException();
@@ -138,6 +141,8 @@ namespace MinskTrans.DesctopClient
 			FavouriteRouts = new ObservableCollection<Rout>();
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
+			if (AutoUpdate)
+				await UpdateAsync();
 			//DownloadUpdate();
 			//HaveUpdate();
 			//ApplyUpdate();
@@ -233,7 +238,19 @@ namespace MinskTrans.DesctopClient
 			newRoutes = null;
 			newSchedule = null;
 
+			AllPropertiesChanged();
+
 			OnApplyUpdateEnded();
+		}
+
+		void AllPropertiesChanged()
+		{
+			OnPropertyChanged("Stops");
+			OnPropertyChanged("Routs");
+			OnPropertyChanged("Times");
+			OnPropertyChanged("FavouriteRouts");
+			OnPropertyChanged("FavouriteStops");
+			OnPropertyChanged("Groups");
 		}
 
 		/// <summary>
@@ -320,7 +337,7 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public virtual Task UpdateAsync()
+		protected virtual Task UpdateAsync()
 		{
 			//TODO
 			//throw new NotImplementedException();

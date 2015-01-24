@@ -177,27 +177,31 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				IEnumerable<Schedule> dd = Context.Times.Where(x => (x.Rout.Stops.Contains(FilteredSelectedStop)));
-				IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
-				foreach (Schedule sched in dd)
+				if (Context.Times != null)
 				{
-					IEnumerable<KeyValuePair<Rout, int>> temp =
-						sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - TimeInPast).Where(x =>
-						{
-							if (x.Key.Transport == "bus")
-								return Bus;
-							if (x.Key.Transport == "trol")
-								return Trol;
-							if (x.Key.Transport == "tram")
-								return Tram;
-							return false;
-						});
+					IEnumerable<Schedule> dd = Context.Times.Where(x => x.Rout != null && (x.Rout.Stops.Contains(FilteredSelectedStop)));
+					IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
+					foreach (Schedule sched in dd)
+					{
+						IEnumerable<KeyValuePair<Rout, int>> temp =
+							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - TimeInPast).Where(x =>
+							{
+								if (x.Key.Transport == "bus")
+									return Bus;
+								if (x.Key.Transport == "trol")
+									return Trol;
+								if (x.Key.Transport == "tram")
+									return Tram;
+								return false;
+							});
 
-					ss = ss.Concat(temp);
+						ss = ss.Concat(temp);
+					}
+					ss = ss.OrderBy(x => x.Value);
+					//ss.ToString();
+					return ss;
 				}
-				ss = ss.OrderBy(x => x.Value);
-				//ss.ToString();
-				return ss;
+				return null;
 			}
 		}
 

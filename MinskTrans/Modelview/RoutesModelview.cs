@@ -44,7 +44,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			get
 			{
 				if (String.IsNullOrWhiteSpace(typeTransport))
-					TypeTransport = Context.Routs[0].Transport;
+					if (Context.Routs != null && Context.Routs.Count > 0) 
+						TypeTransport = Context.Routs[0].Transport;
 				return typeTransport;
 			}
 			set
@@ -62,13 +63,17 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
-				if (RoutNum != null)
-					temp = temp.Where(x => x.Contains(routNum));
-				if (temp.Count() > 0)
-					RouteNumSelectedValue = temp.First();
-				return temp;
+				if (Context.Routs != null)
+				{
+					IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
+					if (RoutNum != null)
+						temp = temp.Where(x => x.Contains(routNum));
+					if (temp.Count() > 0)
+						RouteNumSelectedValue = temp.First();
+					return temp;
+				}
 				//return routeNums;
+				return null;
 			}
 		}
 
@@ -91,8 +96,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				routeObservableCollection =
-					new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
+				if (Context.Routs != null)
+					routeObservableCollection =
+						new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
 				return routeObservableCollection;
 			}
 		}

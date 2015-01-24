@@ -1,80 +1,86 @@
 ﻿<Window
-		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
-		xmlns:local="clr-namespace:MinskTrans.DesctopClient" xmlns:Converters="clr-namespace:MinskTrans.DesctopClient.Converters" x:Class="MinskTrans.DesctopClient.GroupAddWindow"
-		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance {x:Type modelview:GroupEditModelView}}"
-		Title="GroupAddWindow" Height="409" Width="766" WindowStyle="ToolWindow">
-	<Window.Resources>
-		<Converters:ListToStr x:Key="ListToStr"/>
-		<local:ListIntToStrConverter x:Key="listConverter"/>
-	</Window.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition/>
-				<ColumnDefinition/>
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
+    xmlns:local="clr-namespace:MinskTrans.DesctopClient"
+    xmlns:Converters="clr-namespace:MinskTrans.DesctopClient.Converters"
+    x:Class="MinskTrans.DesctopClient.GroupAddWindow"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type modelview:GroupEditModelView}}"
+    Title="GroupAddWindow" Height="409" Width="766" WindowStyle="ToolWindow">
+    <Window.Resources>
+        <Converters:ListToStr x:Key="ListToStr" />
+        <local:ListIntToStrConverter x:Key="listConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition />
 
-			</Grid.ColumnDefinitions>
-			<DockPanel Grid.Column="0">
-				<TextBlock DockPanel.Dock="Top" Text="Group name"/>
-				<TextBox DockPanel.Dock="Top" 
-					Text="{Binding GroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<ListView ItemsSource="{Binding Stop.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					SelectedValue="{Binding SelectedStopGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-					<ListView.ContextMenu>
-						<ContextMenu>
-							<MenuItem Header="Remove" 
-								Command="{Binding RemoveStop}"/>
-						</ContextMenu>
-					</ListView.ContextMenu>
-				</ListView>
-			</DockPanel>
-			<StackPanel Grid.Column="1">
-				<Button Content="--" 
-					Command="{Binding AddStop}"/>
-				<Button Content="--&gt;"
-					Command="{Binding RemoveStop}"/>
-			</StackPanel>
-			<DockPanel Grid.Column="2">
-				<TextBox DockPanel.Dock="Top" 
-					Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<ListView DockPanel.Dock="Top"
-					VerticalAlignment="Stretch"
-					DisplayMemberPath="Name" 
-					ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged}" 
-					SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-					<ListView.ContextMenu>
-						<ContextMenu>
-							<MenuItem Header="Add" Command="{Binding AddStop}"/>
-						</ContextMenu>
-					</ListView.ContextMenu>
-				</ListView>
-				
-			</DockPanel>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0">
+                <TextBlock DockPanel.Dock="Top" Text="Group name" />
+                <TextBox DockPanel.Dock="Top"
+                         Text="{Binding GroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextChanged="TextBoxBase_OnTextChanged" />
+                <ListView ItemsSource="{Binding Stop.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding SelectedStopGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="Name">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove"
+                                      Command="{Binding RemoveStop}" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </DockPanel>
+            <StackPanel Grid.Column="1">
+                <Button Content="--"
+                        Command="{Binding AddStop}" />
+                <Button Content="--&gt;"
+                        Command="{Binding RemoveStop}" />
+            </StackPanel>
+            <DockPanel Grid.Column="2">
+                <TextBox DockPanel.Dock="Top"
+                         Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ListView DockPanel.Dock="Top"
+                          VerticalAlignment="Stretch"
+                          DisplayMemberPath="Name"
+                          ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Add" Command="{Binding AddStop}" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+
+            </DockPanel>
             <DataGrid Grid.Column="3"
                       ItemsSource="{Binding DirectionsStop}"
                       AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding RouteNum}"/>
-                    <DataGridTextColumn Binding="{Binding Transport}"/>
-                    <DataGridTextColumn Binding="{Binding DestinationStop.Name}"/>
+                    <DataGridTextColumn Binding="{Binding RouteNum}" />
+                    <DataGridTextColumn Binding="{Binding Transport}" />
+                    <DataGridTextColumn Binding="{Binding DestinationStop.Name}" />
                 </DataGrid.Columns>
             </DataGrid>
-		</Grid>
-		<WrapPanel Grid.Row="1" >
-			<Button Content="Save" Click="Button_Click"/>
-			<Button Content="Cancel" Click="Button_Click_1"/>
-			<Button Content="Save" Visibility="Collapsed"/>
-		</WrapPanel>
-	</Grid>
+        </Grid>
+        <WrapPanel Grid.Row="1">
+            <Button x:Name="saveButton"
+                    Content="Save"
+                    Click="Button_Click" />
+            <Button Content="Cancel" Click="Button_Click_1" />
+            <Button Content="Save" Visibility="Collapsed" />
+        </WrapPanel>
+    </Grid>
 </Window>

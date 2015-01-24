@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Library;
 
@@ -68,22 +69,24 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public ActionCommand AddGroup
-		{
-			get { return new ActionCommand(x =>
-			{
-				Groups.Add((GroupStop) x);
-				OnPropertyChanged("Groups");
-			}, p=> p!=null && !Groups.Contains((GroupStop)p));}
-		}
-
-		public ActionCommand RemoveGorup
+		public RelayCommand<GroupStop> AddGroup
 		{
 			get
 			{
-				return new ActionCommand(x =>
+				return new RelayCommand<GroupStop>(x =>
+			{
+				Groups.Add(x);
+				OnPropertyChanged("Groups");
+			}, p=> p!=null && !Groups.Contains(p));}
+		}
+
+		public RelayCommand<GroupStop> RemoveGorup
+		{
+			get
+			{
+				return new RelayCommand<GroupStop>(x =>
 				{
-					Groups.Remove((GroupStop) x);
+					Groups.Remove(x);
 					OnPropertyChanged("Groups");
 				}, p=> p!= null);
 			}

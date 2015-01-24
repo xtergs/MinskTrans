@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.Library;
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -246,33 +247,33 @@ namespace MinskTrans.DesctopClient.Modelview
 		//	}
 		//}
 
-		public ActionCommand ShowBusCommand
+		public RelayCommand ShowBusCommand
 		{
-			get { return new ActionCommand(x => TypeTransport = "bus"); }
+			get { return new RelayCommand(() => TypeTransport = "bus"); }
 		}
 
-		public ActionCommand ShowTrolCommand
+		public RelayCommand ShowTrolCommand
 		{
-			get { return new ActionCommand(x => TypeTransport = "trol"); }
+			get { return new RelayCommand(() => TypeTransport = "trol"); }
 		}
 
-		public ActionCommand ShowTramCommand
+		public RelayCommand ShowTramCommand
 		{
-			get { return new ActionCommand(x => TypeTransport = "tram"); }
+			get { return new RelayCommand(() => TypeTransport = "tram"); }
 		}
 
 		public event Show ShowStop;
 		public event Show ShowRoute;
 		public delegate void Show(object sender, ShowArgs args);
 
-		public ActionCommand ShowStopMap
+		public RelayCommand ShowStopMap
 		{
-			get { return new ActionCommand(x=>OnShowStop(new ShowArgs(){SelectedStop = StopSelectedValue}), p=> StopSelectedValue != null); }
+			get { return new RelayCommand(() => OnShowStop(new ShowArgs() { SelectedStop = StopSelectedValue }), () => StopSelectedValue != null); }
 		}
 
-		public ActionCommand ShowRouteMap
+		public RelayCommand ShowRouteMap
 		{
-			get { return new ActionCommand(x=>OnShowRoute(new ShowArgs(){SelectedRoute = RouteSelectedValue}), p=> RouteSelectedValue != null);}
+			get { return new RelayCommand(() => OnShowRoute(new ShowArgs() { SelectedRoute = RouteSelectedValue }), () => RouteSelectedValue != null); }
 		}
 
 		protected virtual void OnShowStop(ShowArgs args)

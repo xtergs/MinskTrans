@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:minskTrans="clr-namespace:MinskTrans.DesctopClient"
         xmlns:converters="clr-namespace:MinskTrans.DesctopClient.Converters"
-        
-        
+
+
         xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WPF"
-       
+
         xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance modelview:MainModelView}"
-        Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded" 
+        
+        Closed="Window_Closed">
     <Window.Resources>
         <converters:MinsLeftConverter x:Key="MinsLeftConverter" />
         <minskTrans:MinsToTimeConverter x:Key="MinsToTimeConverter" />
@@ -40,43 +42,46 @@
         <CollectionViewSource x:Key="shedulerModelViewRouteNamesViewSource"
                               Source="{Binding RouteNames, Source={StaticResource shedulerModelViewViewSource}}" />
 
-        <Color x:Key="newColor" A="255" R="21" G="35" B="54"/>
+        <Color x:Key="newColor" A="255" R="21" G="35" B="54" />
 
 
-        
         <Style x:Key="PushpinStyle1" TargetType="{x:Type mapControl:Pushpin}">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-            <Setter Property="Padding" Value="3"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Background" Value="White"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Background" Value="White" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type mapControl:Pushpin}">
                         <Grid x:Name="MainGrid">
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Rectangle x:Name="Rectangle" >
+                            <Rectangle x:Name="Rectangle">
                                 <Rectangle.Fill>
-                                    <SolidColorBrush x:Name="SolidColorBrush" Color="White"/>
+                                    <SolidColorBrush x:Name="SolidColorBrush" Color="White" />
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Path x:Name="Path" Data="M0,-0.5L0,16 16,-0.5"  Grid.Row="1">
+                            <Path x:Name="Path" Data="M0,-0.5L0,16 16,-0.5" Grid.Row="1">
                                 <Path.Fill>
-                                    <SolidColorBrush x:Name="SolidColorBrush1" Color="White"/>
+                                    <SolidColorBrush x:Name="SolidColorBrush1" Color="White" />
                                 </Path.Fill>
                             </Path>
-                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Grid>
                         <ControlTemplate.Triggers>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
-                                    <Condition Property="IsEnabled" Value="True"/>
-                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsEnabled" Value="True" />
+                                    <Condition Property="IsMouseOver" Value="True" />
                                 </MultiTrigger.Conditions>
                                 <MultiTrigger.EnterActions>
                                     <BeginStoryboard>
@@ -84,13 +89,13 @@
                                             <ColorAnimation Storyboard.TargetName="SolidColorBrush"
                                                             Storyboard.TargetProperty="Color"
                                                             To="Aqua"
-                                                            Duration="0:0:0:1"/>
+                                                            Duration="0:0:0:1" />
                                             <ColorAnimation Storyboard.TargetName="SolidColorBrush1"
                                                             Storyboard.TargetProperty="Color"
                                                             To="Aqua"
-                                                            Duration="0:0:0:1"/>
-                                            
-                                            
+                                                            Duration="0:0:0:1" />
+
+
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </MultiTrigger.EnterActions>
@@ -98,13 +103,13 @@
                                     <BeginStoryboard>
                                         <Storyboard x:Name="MouseOutAnimation">
                                             <ColorAnimation Storyboard.TargetName="SolidColorBrush"
-                                                                Storyboard.TargetProperty="Color"
-                                                                To="White"
-                                                                Duration="0:0:0:1"/>
+                                                            Storyboard.TargetProperty="Color"
+                                                            To="White"
+                                                            Duration="0:0:0:1" />
                                             <ColorAnimation Storyboard.TargetName="SolidColorBrush1"
-                                                                Storyboard.TargetProperty="Color"
-                                                                To="White"
-                                                                Duration="0:0:0:1"/>
+                                                            Storyboard.TargetProperty="Color"
+                                                            To="White"
+                                                            Duration="0:0:0:1" />
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </MultiTrigger.ExitActions>
@@ -116,358 +121,398 @@
         </Style>
 
 
-
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-    <TabControl DockPanel.Dock="Top" x:Name="tabControl">
-        <TabItem Header="Route" DataContext="{Binding RoutesModelview}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+        <TabControl DockPanel.Dock="Top" x:Name="tabControl">
+            <TabItem Header="Route" DataContext="{Binding RoutesModelview}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
 
 
-                </Grid.RowDefinitions>
-                <WrapPanel Grid.Row="2">
-                    <Button Content="Show stop on map" Command="{Binding ShowStopMap}" Margin="5,0"/>
-                    <Button Content="Show route on map" Command="{Binding ShowRouteMap}" Margin="5,0"/>
-                </WrapPanel>
-                <WrapPanel>
-                    <RadioButton x:Name="BusButton" Command="{Binding ShowBusCommand}" Content="Bus" Margin="5,0" GroupName="Type" IsChecked="True"  />
-                    <RadioButton x:Name="TrolButton" Command="{Binding ShowTrolCommand}" Content="Trol" Margin="5,0" GroupName="Type"/>
-                    <RadioButton x:Name="TramButton" Command="{Binding ShowTramCommand}" Content="Tram" Margin="5,0"  GroupName="Type"/>
+                    </Grid.RowDefinitions>
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="Show stop on map" Command="{Binding ShowStopMap}" Margin="5,0" />
+                        <Button Content="Show route on map" Command="{Binding ShowRouteMap}" Margin="5,0" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <RadioButton x:Name="BusButton" 
+                                     Command="{Binding ShowBusCommand}" 
+                                     Content="Bus" 
+                                     Margin="5,0"
+                                     GroupName="Type" 
+                                     IsChecked="True" />
+                        <RadioButton x:Name="TrolButton" Command="{Binding ShowTrolCommand}" Content="Trol"
+                                     Margin="5,0" GroupName="Type" />
+                        <RadioButton x:Name="TramButton" Command="{Binding ShowTramCommand}" Content="Tram"
+                                     Margin="5,0" GroupName="Type" />
 
-                    <CheckBox Content="Actual"
-                              IsChecked="{Binding CurTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              Margin="5,0" />
-                    <TextBlock Text="{Binding TypeTransport}" Margin="5,0,0,0" />
-                </WrapPanel>
-                <DockPanel Grid.Row="1">
-                    <DockPanel>
-                        <TextBox x:Name="routeFilterTextBox" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"
-                                 Text="{Binding RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalAlignment="Top" Width="83" Margin="0" TextChanged="routeFilterTextBox_TextChanged" />
+                        <CheckBox Content="Actual"
+                                  IsChecked="{Binding CurTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="5,0" />
 
-                        <ListView x:Name="routeNumsListView" ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}"
-                                  SelectedValue="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  
-                                  
-                                  Margin="0" SelectedIndex="0" RenderTransformOrigin="0.5,0.5" SelectionChanged="routeNumsListView_SelectionChanged">
+                    </WrapPanel>
+                    <DockPanel Grid.Row="1">
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="Top">
+                                <TextBlock Text="{Binding TypeTransport}" Margin="0,0,5,0" />
+                                <TextBox x:Name="routeFilterTextBox" DockPanel.Dock="Top" HorizontalAlignment="Left"
+                                         Height="23" TextWrapping="Wrap"
+                                         Text="{Binding RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Top" Width="83" Margin="0"
+                                         TextChanged="routeFilterTextBox_TextChanged" />
+                            </DockPanel>
 
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate>
-                                                        <GroupBox Margin="10" Header="{Binding Key}">
-                                                            <GroupBox.Content>
-                                                                <ContentPresenter />
-                                                            </GroupBox.Content>
-                                                        </GroupBox>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.ContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                        </ListView>
+                            <ListView x:Name="routeNumsListView"
+                                      ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+
+
+                                      Margin="0" SelectedIndex="0" RenderTransformOrigin="0.5,0.5"
+                                      SelectionChanged="routeNumsListView_SelectionChanged">
+
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <GroupBox Margin="10" Header="{Binding Key}">
+                                                                <GroupBox.Content>
+                                                                    <ContentPresenter />
+                                                                </GroupBox.Content>
+                                                            </GroupBox>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                            </ListView>
+                        </DockPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.3*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="0.7*" />
+                            </Grid.RowDefinitions>
+                            <ListView x:Name="routeNamesListView" DockPanel.Dock="Top"
+                                      ItemsSource="{Binding RouteNames}"
+                                      SelectedValue="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0" SelectedIndex="0" MinWidth="250"
+                                      MinHeight="100" SelectionChanged="routeNamesListView_SelectionChanged">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridView.Columns>
+                                            <GridViewColumn DisplayMemberBinding="{Binding RouteName}" Width="Auto" />
+                                            <GridViewColumn DisplayMemberBinding="{Binding Weekdays}" Width="Auto" />
+                                        </GridView.Columns>
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Show Route on map" Command="{Binding ShowRouteMap}" />
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                            </ListView>
+                            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
+                            <ListView x:Name="stopsListView" Grid.Row="2"
+                                      ItemsSource="{Binding  StopsObservableCollection}"
+
+                                      SelectedIndex="{Binding StopSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      DisplayMemberPath="Name" Margin="0"
+                                      DockPanel.Dock="Bottom">
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Show Stop on map" Command="{Binding ShowStopMap}" />
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                            </ListView>
+                        </Grid>
+                        <DockPanel>
+                            <TextBox DockPanel.Dock="Top"
+                                     Text="{Binding StopSelectedValue.Name, UpdateSourceTrigger=PropertyChanged}" />
+                            <ListView DockPanel.Dock="Left"
+                                      ItemsSource="{Binding TimesObservableCollection, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="0">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel IsItemsHost="True" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="{Binding DaysStr}" />
+                                            <minskTrans:ScheduleView Grid.Row="1" HorizontalAlignment="Stretch"
+                                                                     Margin="0,0,0,0" VerticalAlignment="Stretch"
+                                                                     Height="Auto"
+                                                                     Width="Auto" DataContext="{Binding}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </DockPanel>
+                        <ListView DockPanel.Dock="Right" />
                     </DockPanel>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="0.3*" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="0.7*" />
-                        </Grid.RowDefinitions>
-                        <ListView x:Name="routeNamesListView" DockPanel.Dock="Top" ItemsSource="{Binding RouteNames}"
-                                  SelectedValue="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  Margin="0" SelectedIndex="0" MinWidth="250"
-                                  MinHeight="100" SelectionChanged="routeNamesListView_SelectionChanged">
-                            <ListView.View>
-                                <GridView>
-                                    <GridView.Columns>
-                                        <GridViewColumn DisplayMemberBinding="{Binding RouteName}" Width="Auto" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding Weekdays}" Width="Auto" />
-                                    </GridView.Columns>
-                                </GridView>
-                            </ListView.View>
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="stopTabItem" Header="Stops" DataContext="{Binding StopMovelView }">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel>
+                        <TextBox DockPanel.Dock="Top" Margin="0" TextWrapping="Wrap"
+                                 Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Top" />
+                        <ListView x:Name="ListView"
+                                  SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding FilteredStops}" DisplayMemberPath="Name" Margin="0"
+                                  SelectedIndex="0">
                             <ListView.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Show Route on map" Command="{Binding ShowRouteMap}"/>
+                                    <MenuItem Header="Show Stop" Command="{Binding ShowStopMap}" />
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
-                        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
-                        <ListView x:Name="stopsListView" Grid.Row="2" ItemsSource="{Binding  StopsObservableCollection}"
-                                 
-                                  SelectedIndex="{Binding StopSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" Margin="0"
-                                  DockPanel.Dock="Bottom" >
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Show Stop on map" Command="{Binding ShowStopMap}"/>
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                        </ListView>
-                    </Grid>
-                    <DockPanel>
-                    <TextBox DockPanel.Dock="Top" Text="{Binding StopSelectedValue.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <ListView DockPanel.Dock="Left"
-                              ItemsSource="{Binding TimesObservableCollection, UpdateSourceTrigger=PropertyChanged}"
-                              Margin="0">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel IsItemsHost="True" />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{Binding DaysStr}" />
-                                    <minskTrans:ScheduleView Grid.Row="1" HorizontalAlignment="Stretch"
-                                                             Margin="0,0,0,0" VerticalAlignment="Stretch" Height="Auto"
-                                                             Width="Auto" DataContext="{Binding}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
                     </DockPanel>
-                    <ListView DockPanel.Dock="Right"/>
-                </DockPanel>
+                    <DockPanel Grid.Column="1">
+                        <TextBlock DockPanel.Dock="Top"
+                                   Text="{Binding FilteredSelectedStop.Name,  UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGrid Grid.Column="1"
+                                  ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
+                                  AutoGenerateColumns="False" Margin="0" CanUserSortColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
+                                <DataGridTextColumn Binding="{Binding Key.RouteName}" />
+                                <DataGridTextColumn Binding="{Binding Key.Transport}" />
+                                <DataGridTextColumn
+                                    Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsToTimeConverter}, Mode=OneWay}" />
+                                <DataGridTextColumn
+                                    Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsLeftConverter}, Mode=OneWay}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                    <DockPanel Grid.Column="2">
+                        <DockPanel DockPanel.Dock="Top">
+                            <CheckBox DockPanel.Dock="Top" Content="AutoNowTime"
+                                      IsChecked="{Binding AutoNowTime, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
+                                      RenderTransformOrigin="0.521,0.467" />
+                            <DockPanel DockPanel.Dock="Top">
+                                <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
+                                         Text="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Top" Width="36" />
+                                <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
+                                         Text="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         VerticalAlignment="Top" Width="43" />
+                            </DockPanel>
+                            <Slider DockPanel.Dock="Bottom"
+                                    Value="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Maximum="59" TickPlacement="BottomRight" TickFrequency="5" ToolTip="Hours"
+                                    AutoToolTipPlacement="TopLeft" />
+                            <Slider DockPanel.Dock="Bottom"
+                                    Value="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Maximum="24" TickPlacement="BottomRight" ToolTip="Mins" />
 
-            </Grid>
-        </TabItem>
-        <TabItem x:Name="stopTabItem" Header="Stops" DataContext="{Binding StopMovelView }">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <DockPanel>
-                    <TextBox DockPanel.Dock="Top" Margin="0" TextWrapping="Wrap"
-                             Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             VerticalAlignment="Top" />
-                    <ListView x:Name="ListView"
-                              SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              ItemsSource="{Binding FilteredStops}" DisplayMemberPath="Name" Margin="0" SelectedIndex="0">
-                        <ListView.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Show Stop" Command="{Binding ShowStopMap}"/>
-                            </ContextMenu>
-                        </ListView.ContextMenu>
-                    </ListView>
-                </DockPanel>
-                <DockPanel Grid.Column="1">
-                    <TextBlock DockPanel.Dock="Top" Text="{Binding FilteredSelectedStop.Name,  UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-                    <DataGrid Grid.Column="1" ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
-                          AutoGenerateColumns="False" Margin="0" CanUserSortColumns="False">
+
+                        </DockPanel>
+                        <DockPanel DockPanel.Dock="Top">
+                            <CheckBox DockPanel.Dock="Top" Content="AutoDay"
+                                      IsChecked="{Binding AutoDay, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
+                                      RenderTransformOrigin="0.521,0.467" />
+                            <TextBox DockPanel.Dock="Top" HorizontalAlignment="Left" Height="23" Margin="0"
+                                     TextWrapping="Wrap"
+                                     Text="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Top" Width="120" />
+                            <Slider DockPanel.Dock="Bottom"
+                                    Value="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Maximum="7"
+                                    Minimum="1" TickPlacement="BottomRight" />
+                        </DockPanel>
+                        <Button DockPanel.Dock="Bottom"
+                                Content="Show stop on map"
+                                Command="{Binding ShowStopMap}" />
+                        <DockPanel DockPanel.Dock="Bottom">
+                            <CheckBox IsChecked="{Binding Bus, Mode=TwoWay}" DockPanel.Dock="Top" Content="bus" />
+                            <CheckBox IsChecked="{Binding Trol, Mode=TwoWay}" DockPanel.Dock="Top" Content="trol" />
+                            <CheckBox IsChecked="{Binding Tram, Mode=TwoWay}" DockPanel.Dock="Top" Content="tram" />
+                        </DockPanel>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Group" DataContext="{Binding GroupStopsModelView}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Bottom">
+                            <Button Content="Add"
+                                    VerticalAlignment="Bottom"
+                                    Click="Button_Click_4" />
+                            <Button Content="Edit"
+                                    VerticalAlignment="Bottom"
+                                    Click="Button_Click_5" />
+                            <Button Content="Delete"
+                                    VerticalAlignment="Bottom"
+                                    Click="Button_Click_6" />
+                        </DockPanel>
+                        <ListView DockPanel.Dock="Bottom"
+                                  DisplayMemberPath="Name"
+                                  SelectedItem="{Binding SelectedGroupStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding Groups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                    <DataGrid Grid.Column="1"
+                              ItemsSource="{Binding GroupTimeSchedule, UpdateSourceTrigger=PropertyChanged}"
+                              AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
                             <DataGridTextColumn Binding="{Binding Key.RouteName}" />
                             <DataGridTextColumn Binding="{Binding Key.Transport}" />
                             <DataGridTextColumn
-                            Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsToTimeConverter}, Mode=OneWay}" />
+                                Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsToTimeConverter}, Mode=OneWay}" />
                             <DataGridTextColumn
-                            Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsLeftConverter}, Mode=OneWay}" />
+                                Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsLeftConverter}, Mode=OneWay}" />
                         </DataGrid.Columns>
                     </DataGrid>
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="mapTabItem" Header="Map">
+                <Grid x:Name="MapGrid"
+                      VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <WrapPanel>
+                        <CheckBox Content="Bus" Visibility="Collapsed" />
+                        <CheckBox Content="Trol" Visibility="Collapsed" />
+                        <CheckBox Content="Tram" Visibility="Collapsed" />
+                    </WrapPanel>
+                    <mapControl:Map Grid.Row="1" x:Name="map" ZoomLevel="7" Margin="0"
+                                    ViewportChanged="map_ViewportChanged">
+                        <mapControl:Map.Center>
+                            <mapControl:Location Longitude="27" Latitude="53" />
+                        </mapControl:Map.Center>
+
+                    </mapControl:Map>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Stops" Visibility="Collapsed">
+                <DockPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBox x:Name="text1" HorizontalAlignment="Left" Height="23" Margin="60,54,0,0"
+                                 TextWrapping="Wrap" Text="ACEABPCQDEABCR" VerticalAlignment="Top" Width="120" />
+                        <TextBox x:Name="text2" HorizontalAlignment="Left" Height="23" Margin="60,82,0,0"
+                                 TextWrapping="Wrap" Text="ABCDE " VerticalAlignment="Top" Width="120" />
+                        <Button Content="Button" HorizontalAlignment="Left" Margin="242,65,0,0" VerticalAlignment="Top"
+                                Width="75" Click="Button_Click" />
+                        <DataGrid x:Name="DataGrid" HorizontalAlignment="Left" Margin="370,23,0,0"
+                                  VerticalAlignment="Top"
+                                  Height="113" Width="180" />
+                        <TextBox x:Name="result" HorizontalAlignment="Left" Height="176" Margin="609,48,0,0"
+                                 TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="296"
+                                 Grid.RowSpan="2" />
+                    </Grid>
                 </DockPanel>
-                <DockPanel Grid.Column="2">
-                    <DockPanel DockPanel.Dock="Top">
-                        <CheckBox DockPanel.Dock="Top" Content="AutoNowTime"
-                                  IsChecked="{Binding AutoNowTime, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
-                                  RenderTransformOrigin="0.521,0.467" />
-                        <DockPanel DockPanel.Dock="Top">
-                            <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
-                                     Text="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     VerticalAlignment="Top" Width="36" />
-                            <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
-                                     Text="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     VerticalAlignment="Top" Width="43" />
-                        </DockPanel>
-                        <Slider DockPanel.Dock="Bottom"
-                                Value="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Maximum="59" TickPlacement="BottomRight" TickFrequency="5" ToolTip="Hours" AutoToolTipPlacement="TopLeft" />
-                        <Slider DockPanel.Dock="Bottom"
-                                Value="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Maximum="24" TickPlacement="BottomRight" ToolTip="Mins" />
+            </TabItem>
+            <TabItem Header="All Routes" Visibility="Collapsed">
+                <DockPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
 
-                    </DockPanel>
-                    <DockPanel DockPanel.Dock="Top">
-                        <CheckBox DockPanel.Dock="Top" Content="AutoDay"
-                                  IsChecked="{Binding AutoDay, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
-                                  RenderTransformOrigin="0.521,0.467" />
-                        <TextBox DockPanel.Dock="Top" HorizontalAlignment="Left" Height="23" Margin="0"
-                                 TextWrapping="Wrap"
-                                 Text="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalAlignment="Top" Width="120" />
-                        <Slider DockPanel.Dock="Bottom"
-                                Value="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="7"
-                                Minimum="1" TickPlacement="BottomRight" />
-                    </DockPanel>
-                    <DockPanel DockPanel.Dock="Bottom">
-                        <CheckBox IsChecked="{Binding Bus, Mode=TwoWay}" DockPanel.Dock="Top" Content="bus" />
-                        <CheckBox IsChecked="{Binding Trol, Mode=TwoWay}" DockPanel.Dock="Top" Content="trol" />
-                        <CheckBox IsChecked="{Binding Tram, Mode=TwoWay}" DockPanel.Dock="Top" Content="tram" />
-                    </DockPanel>
+                        <DataGrid Grid.Row="0" DockPanel.Dock="Top"
+                                  ItemsSource="{Binding  Context.Routs , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
                 </DockPanel>
-            </Grid>
-        </TabItem>
-        <TabItem Header="Group" DataContext="{Binding GroupStopsModelView}">
-            <Grid>
-                <ListView DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedGroupStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          ItemsSource="{Binding Groups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          HorizontalAlignment="Left" Height="267" Margin="10,10,0,0" VerticalAlignment="Top"
-                          Width="261" />
-                <Button Content="Add" HorizontalAlignment="Left" Margin="36,282,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_4" />
-                <Button Content="Edit" HorizontalAlignment="Left" Margin="116,282,0,0" VerticalAlignment="Top"
-                        Width="75" Click="Button_Click_5" />
-                <Button Content="Delete" HorizontalAlignment="Left" Margin="196,282,0,0" VerticalAlignment="Top"
-                        Width="75" Click="Button_Click_6" />
-                <DataGrid ItemsSource="{Binding GroupTimeSchedule, UpdateSourceTrigger=PropertyChanged}"
-                          AutoGenerateColumns="False" Margin="276,0,120,0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
-                        <DataGridTextColumn Binding="{Binding Key.RouteName}" />
-                        <DataGridTextColumn Binding="{Binding Key.Transport}" />
-                        <DataGridTextColumn
-                            Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsToTimeConverter}, Mode=OneWay}" />
-                        <DataGridTextColumn
-                            Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsLeftConverter}, Mode=OneWay}" />
-                    </DataGrid.Columns>
-                </DataGrid>
+            </TabItem>
+            <TabItem Header="All Times" Visibility="Collapsed">
+                <DockPanel>
 
-            </Grid>
-        </TabItem>
-        <TabItem x:Name="mapTabItem" Header="Map">
-            <Grid x:Name="MapGrid"
-                  VerticalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <WrapPanel>
-                    <CheckBox Content="Bus" Visibility="Collapsed"/>
-                    <CheckBox Content="Trol" Visibility="Collapsed"/>
-                    <CheckBox Content="Tram" Visibility="Collapsed"/>
-                </WrapPanel>
-                <mapControl:Map Grid.Row="1" x:Name="map" ZoomLevel="7" Margin="0" ViewportChanged="map_ViewportChanged">
-                    <mapControl:Map.Center>
-                        <mapControl:Location Longitude="27" Latitude="53"/>
-                    </mapControl:Map.Center>
-                    
-                </mapControl:Map>
-            </Grid>
-        </TabItem>
-        <TabItem Header="Stops" Visibility="Collapsed">
-            <DockPanel>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <TextBox x:Name="text1" HorizontalAlignment="Left" Height="23" Margin="60,54,0,0"
-                             TextWrapping="Wrap" Text="ACEABPCQDEABCR" VerticalAlignment="Top" Width="120" />
-                    <TextBox x:Name="text2" HorizontalAlignment="Left" Height="23" Margin="60,82,0,0"
-                             TextWrapping="Wrap" Text="ABCDE " VerticalAlignment="Top" Width="120" />
-                    <Button Content="Button" HorizontalAlignment="Left" Margin="242,65,0,0" VerticalAlignment="Top"
-                            Width="75" Click="Button_Click" />
-                    <DataGrid x:Name="DataGrid" HorizontalAlignment="Left" Margin="370,23,0,0" VerticalAlignment="Top"
-                              Height="113" Width="180" />
-                    <TextBox x:Name="result" HorizontalAlignment="Left" Height="176" Margin="609,48,0,0"
-                             TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="296" Grid.RowSpan="2" />
-                </Grid>
-            </DockPanel>
-        </TabItem>
-        <TabItem Header="All Routes" Visibility="Visible" >
-            <DockPanel>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
 
+                        </Grid.RowDefinitions>
 
-                    <DataGrid Grid.Row="0" DockPanel.Dock="Top"
-                              ItemsSource="{Binding  Context.Routs , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </Grid>
-            </DockPanel>
-        </TabItem>
-        <TabItem Header="All Times" Visibility="Visible">
-            <DockPanel>
+                        <DataGrid Grid.Row="0" DockPanel.Dock="Top"
+                                  ItemsSource="{Binding  Context.Times, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <DataGrid.RowDetailsTemplate>
+                                <DataTemplate>
+                                    <DataGrid ItemsSource="{Binding TimesDictionary}">
+                                        <DataGrid.RowDetailsTemplate>
+                                            <DataTemplate>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
+                                                <ListView ItemsSource="{Binding Value}" />
 
-                    </Grid.RowDefinitions>
+                                            </DataTemplate>
+                                        </DataGrid.RowDetailsTemplate>
+                                    </DataGrid>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
+                        </DataGrid>
+                    </Grid>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="All Stops" Visibility="Collapsed">
+                <DockPanel>
 
-                    <DataGrid Grid.Row="0" DockPanel.Dock="Top"
-                              ItemsSource="{Binding  Context.Times, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <DataGrid.RowDetailsTemplate>
-                            <DataTemplate>
-                                <DataGrid ItemsSource="{Binding TimesDictionary}">
-                                    <DataGrid.RowDetailsTemplate>
-                                        <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
 
-                                            <ListView ItemsSource="{Binding Value}" />
+                        </Grid.RowDefinitions>
 
-                                        </DataTemplate>
-                                    </DataGrid.RowDetailsTemplate>
-                                </DataGrid>
-                            </DataTemplate>
-                        </DataGrid.RowDetailsTemplate>
-                    </DataGrid>
-                </Grid>
-            </DockPanel>
-        </TabItem>
-        <TabItem Header="All Stops" Visibility="Visible">
-            <DockPanel>
+                        <DataGrid Grid.Row="0" DockPanel.Dock="Top"
+                                  ItemsSource="{Binding  Context.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </DockPanel>
+            </TabItem>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-
-                    </Grid.RowDefinitions>
-
-                    <DataGrid Grid.Row="0" DockPanel.Dock="Top"
-                              ItemsSource="{Binding  Context.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
-                    </DataGrid>
-                </Grid>
-            </DockPanel>
-        </TabItem>
-
-    </TabControl>
+        </TabControl>
         <StatusBar Grid.Row="2"
                    DockPanel.Dock="Bottom"
                    VerticalAlignment="Bottom">
-            <StatusBarItem x:Name="statusMessages"/>
-            <StatusBarItem Content="LastUpdated "/>
-            <StatusBarItem Content="{Binding Context.LastUpdateDataDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Update database" 
+            <StatusBarItem x:Name="statusMessages" />
+            <StatusBarItem Content="LastUpdated " />
+            <StatusBarItem
+                Content="{Binding Context.LastUpdateDataDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="Update database"
                     Command="{Binding Context.UpdateDataCommand}"
-                    HorizontalAlignment="Right"/>
-            <StatusBarItem x:Name="tickTimer"></StatusBarItem>
+                    HorizontalAlignment="Right" />
+            <StatusBarItem x:Name="tickTimer" />
         </StatusBar>
     </Grid>
 </Window>

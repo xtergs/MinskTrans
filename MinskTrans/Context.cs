@@ -146,12 +146,12 @@ namespace MinskTrans.DesctopClient
 				return true;
 
 			if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-				return true;
+				return false;
 
 			foreach (var newRoute in newRoutes)
 			{
 				if (Routs.AsParallel().All(x=>x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
-					return true;
+					return false;
 			}
 
 			
@@ -234,6 +234,19 @@ namespace MinskTrans.DesctopClient
 				Stops = tempStops;
 				Routs = tempRouts;
 				Times = tempTimes;
+
+				foreach (Rout rout in Routs)
+				{
+					rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+					if (rout.Time != null)
+						rout.Time.Rout = rout;
+
+					rout.Stops = new List<Stop>();
+					foreach (int st in rout.RouteStops)
+					{
+						rout.Stops.Add(Stops.First(x => x.ID == st));
+					}
+				}
 			}
 			finally
 			{

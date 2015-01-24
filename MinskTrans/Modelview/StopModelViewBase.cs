@@ -43,9 +43,11 @@ namespace MinskTrans.DesctopClient.Modelview
 			get
 			{
 				if (StopNameFilter != null)
-					return
-						Context.Stops.Where(
-							x => Context.Routs.Any(y => y.Stops.Contains(x)) && x.SearchName.Contains(StopNameFilter.ToLower()));
+				{
+					var temp = Context.ActualStops.Where(
+							x => x.SearchName.Contains(StopNameFilter.ToLower()));
+					return temp;
+				}
 				return Context.Stops;
 			}
 		}

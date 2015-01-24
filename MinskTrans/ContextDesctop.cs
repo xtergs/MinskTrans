@@ -53,31 +53,31 @@ namespace MinskTrans.DesctopClient
 		//	}
 		//}
 
-		public async override void UpdateAsync()
-		{
-			await Task.Run(() =>
-			{
-				DownloadUpdate();
-				Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
-				Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
-				Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
+		//public async override void UpdateAsync()
+		//{
+		//	await Task.Run(() =>
+		//	{
+		//		DownloadUpdate();
+		//		Stops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(File.ReadAllText(list[0].Key)));
+		//		Routs = new ObservableCollection<Rout>(ShedulerParser.ParsRout(File.ReadAllText(list[1].Key)));
+		//		Times = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(File.ReadAllText(list[2].Key)));
 
-				foreach (Rout rout in Routs)
-				{
-					rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
+		//		foreach (Rout rout in Routs)
+		//		{
+		//			rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+		//			if (rout.Time != null)
+		//				rout.Time.Rout = rout;
 
-					rout.Stops = new List<Stop>();
-					foreach (int st in rout.RouteStops)
-					{
-						rout.Stops.Add(Stops.First(x => x.ID == st));
-					}
-				}
+		//			rout.Stops = new List<Stop>();
+		//			foreach (int st in rout.RouteStops)
+		//			{
+		//				rout.Stops.Add(Stops.First(x => x.ID == st));
+		//			}
+		//		}
 
-				LastUpdateDataDateTime = DateTime.Now;
-			});
-		}
+		//		LastUpdateDataDateTime = DateTime.Now;
+		//	});
+		//}
 
 		
 

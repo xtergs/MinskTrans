@@ -47,5 +47,16 @@ namespace MinskTrans.DesctopClient
 			get { return groupEditModelView.Stop; }
 			set { groupEditModelView.Stop = new GroupStop(value); }
 		}
+
+		private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (string.IsNullOrWhiteSpace(((TextBox) sender).Text))
+				saveButton.IsEnabled = false;
+			else
+			{
+				saveButton.IsEnabled = true;
+			}
+
+		}
 	}
 }

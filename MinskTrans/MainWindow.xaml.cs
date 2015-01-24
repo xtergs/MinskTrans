@@ -123,7 +123,7 @@ namespace MinskTrans.DesctopClient
 				MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
 				pushpins.Add(pushpin);
 				map.Children.Add(pushpin);
-
+				
 			}
 			map.Children.Add(new MapPolyline()
 			{
@@ -177,6 +177,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			ShedulerModelView.Context.UpdateAsync();
 		}
 
 		private int w(char x, char y)

@@ -8,6 +8,7 @@ namespace MinskTrans.DesctopClient.Modelview
 	public class BaseModelView : INotifyPropertyChanged
 	{
 		private readonly Context context;
+		//protected readonly ISettingsModelView settingsModelView;
 
 		public BaseModelView()
 			: this(null)
@@ -17,7 +18,13 @@ namespace MinskTrans.DesctopClient.Modelview
 		public BaseModelView(Context newContext)
 		{
 			context = newContext ?? new Context();
+			
 		}
+
+		//public ISettingsModelView SettingsModelView
+		//{
+		//	get { return settingsModelView;}
+		//}
 
 		public Context Context
 		{

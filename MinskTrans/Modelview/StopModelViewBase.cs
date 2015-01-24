@@ -44,7 +44,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				if (StopNameFilter != null)
 				{
-					var temp = Context.ActualStops.Where(
+					var temp = Context.ActualStops.AsParallel().Where(
 							x => x.SearchName.Contains(StopNameFilter.ToLower()));
 					return temp;
 				}

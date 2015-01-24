@@ -12,10 +12,11 @@
         xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance modelview:MainModelView}"
-        Title="MainWindow" Height="372" Width="961" Loaded="Window_Loaded" 
+        Title="MainWindow" Height="418" Width="937" Loaded="Window_Loaded" 
         
         Closed="Window_Closed">
     <Window.Resources>
+        <AlternationConverter x:Key="AlternationConverter"/>
         <converters:MinsLeftConverter x:Key="MinsLeftConverter" />
         <minskTrans:MinsToTimeConverter x:Key="MinsToTimeConverter" />
         <minskTrans:ListIntToStrConverter x:Key="listConverter" />
@@ -141,6 +142,14 @@
                     <WrapPanel Grid.Row="2">
                         <Button Content="Show stop on map" Command="{Binding ShowStopMap}" Margin="5,0" />
                         <Button Content="Show route on map" Command="{Binding ShowRouteMap}" Margin="5,0" />
+                        <Button Content ="Add to favourite" 
+                                Command="{Binding Context.AddFavouriteRoutCommand}"
+                                CommandParameter="{Binding RouteSelectedValue}"
+                                Margin="5,0"/>
+                        <Button Content="Remove from favourite"
+                                Command="{Binding Context.RemoveFavouriteRoutCommand}"
+                                CommandParameter="{Binding RouteSelectedValue}"
+                                Margin="5,0"/>
                     </WrapPanel>
                     <WrapPanel>
                         <RadioButton x:Name="BusButton" 
@@ -155,6 +164,7 @@
                                      Margin="5,0" GroupName="Type" />
 
                         <CheckBox Content="Actual"
+                                  Visibility="Collapsed"
                                   IsChecked="{Binding CurTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Margin="5,0" />
 
@@ -273,17 +283,20 @@
                         <DockPanel>
                             <TextBox Text="Favourite"
                                      DockPanel.Dock="Top"/>
-                        <ListView DockPanel.Dock="Right" 
+                            <ListView DockPanel.Dock="Right" 
                                   ItemsSource="{Binding Context.FavouriteRouts}"
                                   SelectedValue="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header ="Remove from favourite"
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header ="Remove from favourite"
                                               Command="{Binding Context.RemoveFavouriteRoutCommand }"
                                               CommandParameter="{Binding RouteSelectedValue}"/>
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                        </ListView>
+                                        <MenuItem Header="Show on map"
+                                              Command="{Binding ShowRouteMap}"
+                                              CommandParameter="{Binding RouteSelectedValue}"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                            </ListView>
                         </DockPanel>
                     </DockPanel>
 
@@ -321,6 +334,25 @@
                         <DataGrid Grid.Column="1"
                                   ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
                                   AutoGenerateColumns="False" Margin="0" CanUserSortColumns="False">
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Time in past" HorizontalContentAlignment="Stretch">
+                                        <MenuItem Header="10 min"
+                                                  Command="{Binding SetTimeInPast}"
+                                                  CommandParameter="10"/>
+                                        <MenuItem Header="20 min"
+                                                  Command="{Binding SetTimeInPast}"
+                                                  CommandParameter="20"/>
+                                        <MenuItem Header="30 min"
+                                                  Command="{Binding SetTimeInPast}"
+                                                  CommandParameter="30"/>
+                                        <MenuItem Header="40 min"
+                                                  Command="{Binding SetTimeInPast}"
+                                                  CommandParameter="40"/>
+                                       
+                                    </MenuItem>
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
                                 <DataGridTextColumn Binding="{Binding Key.RouteName}" />
@@ -343,6 +375,9 @@
                                     <MenuItem Header="Remove from favourite"
                                               Command="{Binding Context.RemoveFavouriteSopCommand}"
                                               CommandParameter="{Binding FilteredSelectedStop }"/>
+                                    <MenuItem Header="Show on map"
+                                              Command="{Binding ShowStopMap}"
+                                              CommandParameter="{Binding FilteredSelectedStop}"/>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
@@ -354,21 +389,31 @@
                                       HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"
                                       RenderTransformOrigin="0.521,0.467" />
                             <DockPanel DockPanel.Dock="Top">
-                                <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
+                                <TextBlock Text="Start time:"
+                                           DockPanel.Dock="Top"/>
+                                <TextBox HorizontalAlignment="Left" 
+                                         Height="23" Margin="0" TextWrapping="Wrap"
                                          Text="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          VerticalAlignment="Top" Width="36" />
+                                <TextBlock Text=":"></TextBlock>
                                 <TextBox HorizontalAlignment="Left" Height="23" Margin="0" TextWrapping="Wrap"
                                          Text="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          VerticalAlignment="Top" Width="43" />
                             </DockPanel>
-                            <Slider DockPanel.Dock="Bottom"
+                            <Slider DockPanel.Dock="Top"
                                     Value="{Binding NowTimeMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Maximum="59" TickPlacement="BottomRight" TickFrequency="5" ToolTip="Hours"
                                     AutoToolTipPlacement="TopLeft" />
-                            <Slider DockPanel.Dock="Bottom"
+                            <Slider DockPanel.Dock="Top"
                                     Value="{Binding NowTimeHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Maximum="24" TickPlacement="BottomRight" ToolTip="Mins" />
-
+                            <TextBlock Text="Time in past:"
+                                       DockPanel.Dock="Top"></TextBlock>
+                            <TextBox DockPanel.Dock="Top"
+                                     Text="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Slider DockPanel.Dock="Top"
+                                    Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Minimum="0" Maximum="100" TickFrequency="10"/>
 
                         </DockPanel>
                         <DockPanel DockPanel.Dock="Top">

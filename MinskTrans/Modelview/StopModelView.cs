@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using MinskTrans.Library;
 using GalaSoft.MvvmLight.CommandWpf;
+using MinskTrans.DesctopClient.Properties;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : StopModelViewBase
 	{
+		//private ISettingsModelView settingsModelView;
 		private bool autoDay;
 		private bool autoNowTime;
 		private bool bus;
@@ -26,8 +28,24 @@ namespace MinskTrans.DesctopClient.Modelview
 			: base(newContext)
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
+			//settingsModelView = new SettingsModelView(Context);
 		}
 
+		//public ISettingsModelView SettingsModelView
+		//{
+		//	get { return settingsModelView; }
+		//}
+
+		public int TimeInPast
+		{
+			get { return Settings.Default.TimeInPast; }
+			set
+			{
+				Settings.Default.TimeInPast = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
 		public bool AutoDay
 		{
 			get { return autoDay; }
@@ -164,7 +182,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				foreach (Schedule sched in dd)
 				{
 					IEnumerable<KeyValuePair<Rout, int>> temp =
-						sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime).Where(x =>
+						sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - TimeInPast).Where(x =>
 						{
 							if (x.Key.Transport == "bus")
 								return Bus;
@@ -186,6 +204,11 @@ namespace MinskTrans.DesctopClient.Modelview
 		public RelayCommand RefreshTimeSchedule
 		{
 			get { return new RelayCommand(() => OnPropertyChanged("TimeSchedule")); }
+		}
+
+		public RelayCommand<int> SetTimeInPast
+		{
+			get { return new RelayCommand<int>(x=>TimeInPast = x);}
 		}
 
 		public event Show ShowStop;

@@ -138,9 +138,9 @@ namespace MinskTrans.DesctopClient
 			FavouriteRouts = new ObservableCollection<Rout>();
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
-			DownloadUpdate();
-			HaveUpdate();
-			ApplyUpdate();
+			//DownloadUpdate();
+			//HaveUpdate();
+			//ApplyUpdate();
 		}
 
 		public virtual void DownloadUpdate()
@@ -161,7 +161,7 @@ namespace MinskTrans.DesctopClient
 			}
 			catch (System.Net.WebException e)
 			{
-				OnLogMessage("Error donwloading");
+				OnErrorDownloading();
 			}
 		}
 
@@ -347,7 +347,7 @@ namespace MinskTrans.DesctopClient
 		public event EmptyDelegate ApplyUpdateStarted;
 		public event EmptyDelegate ApplyUpdateEnded;
 		public event LogDelegate LogMessage;
-
+		public event EmptyDelegate ErrorDownloading;
 
 		#region Invokators
 		protected virtual void OnDataBaseDownloadStarted()
@@ -374,6 +374,11 @@ namespace MinskTrans.DesctopClient
 		{
 			var handler = LogMessage;
 			if (handler != null) handler(this, new LogDelegateArgs(){Message = message});
+		}
+		protected virtual void OnErrorDownloading()
+		{
+			var handler = ErrorDownloading;
+			if (handler != null) handler(this, EventArgs.Empty);
 		}
 		#endregion
 

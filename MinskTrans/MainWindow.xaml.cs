@@ -96,7 +96,7 @@ namespace MinskTrans.DesctopClient
 				statusMessages.Content = "Data has been downloaded";
 			});
 
-			ShedulerModelView.Context.LogMessage += (sender, args) => MessageBox.Show(args.Message);
+			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
 			var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
 			

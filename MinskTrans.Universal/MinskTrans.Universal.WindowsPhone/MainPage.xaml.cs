@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -13,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ViewModel;
 
@@ -31,8 +33,8 @@ namespace MinskTrans.Universal
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
-			//model.Context.Save();
-			//model.Context.Load();
+	        //model.Context.Save();
+	        //model.Context.Load();
         }
 
         /// <summary>
@@ -59,10 +61,7 @@ namespace MinskTrans.Universal
 
 		async private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
-			var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("1111.txt.new");
-			FileIO.WriteTextAsync(file, "fsdfsdfsdfkkkkwkwek 3k3k3");
-			file = await ApplicationData.Current.LocalFolder.GetFileAsync("1111.txt.new");
-			string str = await FileIO.ReadTextAsync(file);
+			
 		}
 
 		private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -73,6 +72,15 @@ namespace MinskTrans.Universal
 		private void Page_Loaded(object sender, RoutedEventArgs e)
 		{
 			model = new MainModelView(new UniversalContext());
+			model.Context.DataBaseDownloadEnded += (senderr, args) =>
+			{
+				//model.Context.HaveUpdate();
+				listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
+			};
+
+			model.Context.LogMessage += (o, args) => listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+			ShedulerParser.LogMessage += (o, args) => listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+
 		}
     }
 }

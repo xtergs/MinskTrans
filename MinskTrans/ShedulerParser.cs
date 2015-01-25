@@ -8,6 +8,7 @@ namespace MinskTrans.DesctopClient
 	{
 		public static List<Stop> ParsStops(string stops)
 		{
+			OnLogMessage("ParsStops Started");
 			int indexEnd = stops.IndexOf(' ');
 			var resultList = new List<Stop>();
 
@@ -36,12 +37,15 @@ namespace MinskTrans.DesctopClient
 			Stop stopOld = null;
 			for (int i = 1; i < listStr.Length; i++)
 			{
+				if (i % 100 == 0)
+					OnLogMessage(i + " strings are parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 				{
 					resultList.Add(new Stop(listStr[i], stopOld));
 					stopOld = resultList[resultList.Count - 1];
 				}
 			}
+			OnLogMessage("all strings are parsed");
 			foreach (Stop stop in resultList)
 			{
 				string[] strList = stop.StopsStr.Split(',');
@@ -53,7 +57,7 @@ namespace MinskTrans.DesctopClient
 					stop.Stops.Add(resultList.First(x => x.ID == id));
 				}
 			}
-
+			OnLogMessage("ParsStops ended");
 			return resultList;
 		}
 
@@ -136,6 +140,14 @@ namespace MinskTrans.DesctopClient
 			}
 
 			return resultList;
+		}
+
+		static public event LogDelegate LogMessage;
+
+		static protected void OnLogMessage(string args)
+		{
+			LogDelegate handler = LogMessage;
+			if (handler != null) handler(null, new LogDelegateArgs(){Message = args});
 		}
 	}
 }

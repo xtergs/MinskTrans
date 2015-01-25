@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
@@ -95,16 +96,16 @@ namespace MinskTrans.Universal
 			
 		}
 
-		public override void DownloadUpdate()
+		async public override void DownloadUpdate()
 		{
 
 			OnDataBaseDownloadStarted();
 			try
 			{
-				DoSincroFit(list[0].Value, list[0].Key + ".new");
-				DoSincroFit(list[1].Value, list[1].Key + ".new");
-				DoSincroFit(list[2].Value, list[2].Key + ".new");
-
+				await Task.WhenAll(new List<Task>(){
+					DoSincroFit(list[0].Value, list[0].Key + ".new"),
+					DoSincroFit(list[1].Value, list[1].Key + ".new"),
+					DoSincroFit(list[2].Value, list[2].Key + ".new")});
 				OnDataBaseDownloadEnded();
 
 			}
@@ -128,22 +129,60 @@ namespace MinskTrans.Universal
 
 		async public override Task<bool> HaveUpdate()
 		{
-			
+			OnLogMessage("Have update started");
 				try
 				{
-					StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[0].Key + ".new");
-					newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
+#if Release
+					await Task.WhenAll(new Task(async () =>
+					{
+						StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[0].Key + ".new");
+						OnLogMessage("get file" + list[0].Key);
+						newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
+						OnLogMessage("parsed file" + list[0].Key);
+					}),
+						new Task(async () =>
+						{
 
-					file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
+							StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
+							OnLogMessage("get file" + list[1].Key);
+
+							newRoutes = ShedulerParser.ParsRout(await ReadAllFile(file));
+							OnLogMessage("parsed file" + list[1].Key);
+
+						}),
+						new Task(async () =>
+						{
+
+							StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[2].Key + ".new");
+							OnLogMessage("get file" + list[2].Key);
+
+							newSchedule = ShedulerParser.ParsTime(await ReadAllFile(file));
+							OnLogMessage("parsed file" + list[2].Key);
+
+						}));
+#else
+					StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[0].Key + ".new");
+					OnLogMessage("get file" + list[0].Key);
+					newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
+					OnLogMessage("parsed file" + list[0].Key);
+
+					 file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
+					OnLogMessage("get file" + list[1].Key);
+
 					newRoutes = ShedulerParser.ParsRout(await ReadAllFile(file));
+					OnLogMessage("parsed file" + list[1].Key);
 
 					file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[2].Key + ".new");
-					newSchedule = ShedulerParser.ParsTime(await ReadAllFile(file));
+					OnLogMessage("get file" + list[2].Key);
 
+					newSchedule = ShedulerParser.ParsTime(await ReadAllFile(file));
+					OnLogMessage("parsed file" + list[2].Key);
+#endif
+					OnLogMessage("All threads ended");
 				}
 				catch (FileNotFoundException e)
 				{
-
+					OnLogMessage("error file not found");
 					return false;
 				}
 
@@ -160,27 +199,27 @@ namespace MinskTrans.Universal
 				}
 
 
-
+			OnLogMessage("have update true");
 				return true;
 			
 		}
 
-		private async void DoSincroFit(string uri, string file)
+		private async Task DoSincroFit(string uri, string file)
 		{
 			HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
-			//this.file = file;
-			//Add headers to request
-			request.Headers["Type"] = "sincrofit";
-			request.Headers["Device"] = "1";
-			request.Headers["Version"] = "0.000";
-			request.Headers["Os"] = "WindowsPhone";
-			request.Headers["Cache-Control"] = "no-cache";
-			request.Headers["Pragma"] = "no-cache";
+				//this.file = file;
+				//Add headers to request
+				request.Headers["Type"] = "sincrofit";
+				request.Headers["Device"] = "1";
+				request.Headers["Version"] = "0.000";
+				request.Headers["Os"] = "WindowsPhone";
+				request.Headers["Cache-Control"] = "no-cache";
+				request.Headers["Pragma"] = "no-cache";
 
-			var x = await request.GetResponseAsync();
-			playResponseAsync(x, file);
-			//var x = request.BeginGetResponse(playResponseAsync, request);
-
+				var x = await request.GetResponseAsync();
+				playResponseAsync(x, file);
+				//var x = request.BeginGetResponse(playResponseAsync, request);
+			
 
 
 		}
@@ -237,6 +276,7 @@ namespace MinskTrans.Universal
 			{
 				
 			}
+			OnLogMessage("file downloaded: " + file);
 		}
 
 

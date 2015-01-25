@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.UI.WebControls;
-using GalaSoft.MvvmLight.CommandWpf;
-using MinskTrans.DesctopClient.Model;
-using MinskTrans.Library;
+﻿
 
 namespace MinskTrans.DesctopClient.Modelview
 {
+using System.Collections.Generic;
+using System.Linq;
+#if WINDOWS_PHONE_APP
+using GalaSoft.MvvmLight.Command;
+#else
+using GalaSoft.MvvmLight.CommandWpf;
+#endif
+using MinskTrans.DesctopClient.Model;
 	public class GroupEditModelView : StopModelViewBase
 	{
 		private GroupStop stop;

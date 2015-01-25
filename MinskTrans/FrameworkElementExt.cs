@@ -4,7 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
 using System.Windows.Controls;
+#else
+using Windows.UI.Xaml;
+#endif
 
 
 namespace MinskTrans.DesctopClient
@@ -15,6 +19,7 @@ namespace MinskTrans.DesctopClient
 		{
 			if (element == null) return;
 
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
 			Panel parent = element.Parent as Panel;
 			if (parent == null) return;
 
@@ -23,6 +28,7 @@ namespace MinskTrans.DesctopClient
 			  .Select(x => Panel.GetZIndex(x))
 			  .Max();
 			Panel.SetZIndex(element, maxZ + 1);
+#endif
 		}
 	}
 }

@@ -6,22 +6,28 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using MinskTrans.DesctopClient.Annotations;
 using System.Threading.Tasks;
-using MinskTrans.Library;
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+using System.Runtime.Serialization.Formatters.Binary;
+using MinskTrans.DesctopClient.Annotations;
 using GalaSoft.MvvmLight.CommandWpf;
+#else
+using GalaSoft.MvvmLight.Command;
+using MinskTrans.Universal.Annotations;
+#endif
 using MinskTrans.DesctopClient.Model;
 
 
 namespace MinskTrans.DesctopClient
 {
+#if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
-	public class Context : INotifyPropertyChanged , IXmlSerializable, IContext
+#endif
+	public abstract class Context : INotifyPropertyChanged , IXmlSerializable, IContext
 	{
 		protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
 		{
@@ -129,78 +135,24 @@ namespace MinskTrans.DesctopClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		async public virtual void Create(bool AutoUpdate = true)
-		{
-			//TODO
-			//throw new NotImplementedException();
-			if (File.Exists("data.dat"))
-			{
-				Load();
-				return;
-			}
-			FavouriteRouts = new ObservableCollection<Rout>();
-			FavouriteStops = new ObservableCollection<Stop>();
-			Groups = new ObservableCollection<GroupStop>();
-			if (AutoUpdate)
-				await UpdateAsync();
-			//DownloadUpdate();
-			//HaveUpdate();
-			//ApplyUpdate();
-		}
+		public  abstract void Create(bool AutoUpdate = true);
 
-		public virtual void DownloadUpdate()
-		{
-			//TODO
-			//throw new NotImplementedException();
-			OnDataBaseDownloadStarted();
-			try
-			{
-			using (var client = new WebClient())
-			{
-				client.DownloadFile(list[0].Value, list[0].Key + ".new");
-				client.DownloadFile(list[1].Value, list[1].Key + ".new");
-				client.DownloadFile(list[2].Value, list[2].Key + ".new");
-			}
-			OnDataBaseDownloadEnded();
+		
+		protected abstract bool FileExists(string file);
 
-			}
-			catch (System.Net.WebException e)
-			{
-				OnErrorDownloading();
-			}
-		}
+		protected abstract void FileDelete(string file);
 
-		private List<Rout> newRoutes;
-		private List<Stop> newStops;
-		private List<Schedule> newSchedule; 
+		protected abstract void FileMove(string oldFile, string newFile);
 
-		public bool HaveUpdate()
-		{
-			if (list.Any(keyValuePair => !File.Exists(keyValuePair.Key + ".new")))
-			{
-				return false;
-			}
+		protected abstract Task<string> FileReadAllText(string file);
 
-			newStops = ShedulerParser.ParsStops(File.ReadAllText(list[0].Key + ".new"));
-			newRoutes = ShedulerParser.ParsRout(File.ReadAllText(list[1].Key + ".new"));
-			newSchedule = ShedulerParser.ParsTime(File.ReadAllText(list[2].Key + ".new"));
+		public abstract void DownloadUpdate();
 
-			if (Stops == null || Routs == null || Times == null)
-				return true;
+		protected List<Rout> newRoutes;
+		protected List<Stop> newStops;
+		protected List<Schedule> newSchedule;
 
-			if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-				return false;
-
-			foreach (var newRoute in newRoutes)
-			{
-				if (Routs.AsParallel().All(x=>x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
-					return false;
-			}
-
-			
-
-			return true;
-		}
+		public abstract Task<bool> HaveUpdate();
 
 		public void ApplyUpdate()
 		{
@@ -208,11 +160,11 @@ namespace MinskTrans.DesctopClient
 
 			foreach (var keyValuePair in list)
 			{
-				if (File.Exists(keyValuePair.Key + ".old"))
-					File.Delete(keyValuePair.Key + ".old");
-				if (File.Exists(keyValuePair.Key))
-					File.Move(keyValuePair.Key, keyValuePair.Key + ".old");
-				File.Move(keyValuePair.Key + ".new", keyValuePair.Key);
+				if (FileExists(keyValuePair.Key + ".old"))
+					FileDelete(keyValuePair.Key + ".old");
+				if (FileExists(keyValuePair.Key))
+					FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
+				FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
 			}
 
 			Stops = new ObservableCollection<Stop>(newStops);
@@ -243,6 +195,10 @@ namespace MinskTrans.DesctopClient
 			OnApplyUpdateEnded();
 		}
 
+		public abstract void Save();
+
+		public abstract void Load();
+
 		void AllPropertiesChanged()
 		{
 			OnPropertyChanged("Stops");
@@ -256,72 +212,7 @@ namespace MinskTrans.DesctopClient
 		/// <summary>
 		/// Save to data.dat
 		/// </summary>
-		public virtual void Save()
-		{
-			//throw new NotImplementedException();
-			var groupsId = Groups.Select(groupStop => new GroupStopId(groupStop)).ToList();
-			BinaryFormatter serializer = new BinaryFormatter();
-			var streamWriter = new FileStream("data.dat", FileMode.Create, FileAccess.Write);
-			try
-			{
-				serializer.Serialize(streamWriter, LastUpdateDataDateTime);
-				serializer.Serialize(streamWriter, Stops);
-				serializer.Serialize(streamWriter, Routs);
-				serializer.Serialize(streamWriter, Times);
-				serializer.Serialize(streamWriter, groupsId);
-				serializer.Serialize(streamWriter, FavouriteRouts);
-				serializer.Serialize(streamWriter, FavouriteStops);
-
-			}
-			finally
-			{
-				streamWriter.Close();
-			}
-		}
-
-		public virtual void Load()
-		{
-			//throw new NotImplementedException();
-			BinaryFormatter serializer = new BinaryFormatter();
-			var streamWriter = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
-			try
-			{
-				var tempDateTime = (DateTime)serializer.Deserialize(streamWriter);
-				var tempStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
-				var tempRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
-				var tempTimes = (ObservableCollection<Schedule>)serializer.Deserialize(streamWriter);
-				var tempGroup = (List<GroupStopId>)serializer.Deserialize(streamWriter);
-				FavouriteRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
-				FavouriteStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
-
-
-				LastUpdateDataDateTime = tempDateTime;
-				Stops = tempStops;
-				Routs = tempRouts;
-				Times = tempTimes;
-
-				Connect(Routs, Stops);
-
-				Groups = new ObservableCollection<GroupStop>();
-				foreach (var groupStopId in tempGroup)
-				{
-					var newGroupStop = new GroupStop();
-					newGroupStop.Name = groupStopId.Name;
-					newGroupStop.Stops = new ObservableCollection<Stop>();
-					foreach (var i in groupStopId.StopID)
-					{
-						newGroupStop.Stops.Add(Stops.First(x=>x.ID == i));
-					}
-				}
-				//Connect(FavouriteRouts, FavouriteStops);
-			}
-			finally
-			{
-				streamWriter.Close();
-			}
-		}
-
-		void Connect(IEnumerable<Rout> routs, IEnumerable<Stop> stops)
+		protected void Connect(IEnumerable<Rout> routs, IEnumerable<Stop> stops)
 		{
 			foreach (Rout rout in routs)
 			{
@@ -341,10 +232,10 @@ namespace MinskTrans.DesctopClient
 		{
 			//TODO
 			//throw new NotImplementedException();
-			return Task.Run(() =>
+			return Task.Run(async () =>
 			{
 				DownloadUpdate();
-				if (HaveUpdate())
+				if (await HaveUpdate())
 					ApplyUpdate();
 			});
 		}

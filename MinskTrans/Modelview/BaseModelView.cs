@@ -1,23 +1,27 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using MinskTrans.DesctopClient.Annotations;
-
+﻿
 
 namespace MinskTrans.DesctopClient.Modelview
 {
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+#if !WINDOWS_PHONE_APP
+using MinskTrans.DesctopClient.Annotations;
+#else
+using MinskTrans.Universal.Annotations;
+#endif
 	public class BaseModelView : INotifyPropertyChanged
 	{
 		private readonly Context context;
 		//protected readonly ISettingsModelView settingsModelView;
 
-		public BaseModelView()
-			: this(null)
-		{
-		}
+		//public BaseModelView()
+		//	: this(null)
+		//{
+		//}
 
 		public BaseModelView(Context newContext)
 		{
-			context = newContext ?? new Context();
+			context = newContext;
 			
 		}
 

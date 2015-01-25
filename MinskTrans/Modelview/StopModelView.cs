@@ -1,9 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MinskTrans.Library;
+
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+
 using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Properties;
+
+#else
+
+using Windows.Storage;
+using Windows.UI.Xaml;
+using MinskTrans.Universal;
+using GalaSoft.MvvmLight.Command;
+#endif
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -38,10 +48,27 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public int TimeInPast
 		{
-			get { return Settings.Default.TimeInPast; }
+			get
+			{
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+				return Settings.Default.TimeInPast;
+#else
+				if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey("TimeInPast"))
+					TimeInPast = 15;
+				return (int)ApplicationData.Current.RoamingSettings.Values["TimeInPast"];
+#endif
+			}
 			set
 			{
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+		
 				Settings.Default.TimeInPast = value;
+#else
+				if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey("TimeInPast"))
+					ApplicationData.Current.RoamingSettings.Values.Add("TimeInPast", value);
+				else
+					ApplicationData.Current.RoamingSettings.Values["TimeInPast"] = value;
+#endif
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}

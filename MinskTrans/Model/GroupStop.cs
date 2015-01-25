@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using MinskTrans.DesctopClient.Annotations;
+
 
 
 namespace MinskTrans.DesctopClient.Model
 {
+#if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
+#endif
 	public class GroupStop :BaseModel
 	{
 		private string name;

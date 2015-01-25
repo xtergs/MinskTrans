@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace MinskTrans.DesctopClient.Model
 {
+#if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
+#endif
 	class GroupStopId
 	{
 		public GroupStopId() { }

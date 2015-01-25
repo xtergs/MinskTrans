@@ -1,0 +1,5 @@
+<Application x:Class="MinskTrans.Universal.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:MinskTrans.Universal">
+  <Application.Resources>
+    <vm:ViewModelLocator x:Key="Locator" xmlns:vm="using:MinskTrans.Universal.ViewModel" />
+  </Application.Resources>
+</Application>

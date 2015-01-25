@@ -5,7 +5,9 @@ using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient
 {
+#if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
+#endif
 	public class Time : BaseModel
 	{
 		public Time()

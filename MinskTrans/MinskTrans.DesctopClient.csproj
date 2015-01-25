@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MinskTrans.DesctopClient</RootNamespace>
     <AssemblyName>MinskTransWpf</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -87,17 +88,13 @@
     <Compile Include="GroupAddWindow.xaml.cs">
       <DependentUpon>GroupAddWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IContext.cs" />
-    <Compile Include="LogDelegateArgs.cs" />
     <Compile Include="Modelview\BaseModelView.cs" />
     <Compile Include="Modelview\GroupEditModelView.cs" />
     <Compile Include="Modelview\GroupStopsModelView.cs" />
-    <Compile Include="Modelview\ISettingsModelView.cs" />
     <Compile Include="Modelview\MainModelView.cs" />
     <Compile Include="Modelview\MapModelView.cs" />
     <Compile Include="Modelview\RoutesModelview.cs" />
     <Compile Include="Modelview\SettingsModelView.cs" />
-    <Compile Include="Modelview\ShowArgs.cs" />
     <Compile Include="Modelview\StopModelView.cs" />
     <Compile Include="Modelview\StopModelViewBase.cs" />
     <Compile Include="Modelview\StopsModelView.cs" />
@@ -115,7 +112,7 @@
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShedulerParser.cs" />
-    <Compile Include="Tools.cs" />
+    <Compile Include="ShowArgs.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Dictionary1.xaml">
@@ -172,6 +169,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyLibrary\MyLibrary.csproj">
+      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
+      <Name>MyLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

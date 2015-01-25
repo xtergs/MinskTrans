@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using GalaSoft.MvvmLight.CommandWpf;
-using MinskTrans.Library;
+﻿
 
 namespace MinskTrans.DesctopClient.Modelview
 {
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+using GalaSoft.MvvmLight.CommandWpf;
+#else
+using GalaSoft.MvvmLight.Command;
+#endif
 	public class RoutesModelview : BaseModelView
 	{
 		private bool curTime;
@@ -28,10 +32,10 @@ namespace MinskTrans.DesctopClient.Modelview
 		//private List<Time> timesObservableCollection;
 		private string typeTransport;
 
-		public RoutesModelview()
-		{
-			OnPropertyChanged("RouteNums");
-		}
+		//public RoutesModelview()
+		//{
+		//	OnPropertyChanged("RouteNums");
+		//}
 
 		public RoutesModelview(Context context)
 			: base(context)

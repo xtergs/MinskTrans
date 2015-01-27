@@ -7,6 +7,8 @@ using Windows.Storage;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Storage.Streams;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
 
 namespace MinskTrans.Universal
 {
@@ -21,22 +23,28 @@ namespace MinskTrans.Universal
 
 				try
 				{
-					stream = await storage.CreateFileAsync(file);
-					
-					XmlSerializer serializer = new XmlSerializer(typeof(T));
-					serializer.Serialize(await stream.OpenStreamForReadAsync(), obj);
+					stream = await storage.CreateFileAsync(file+".temp", CreationCollisionOption.ReplaceExisting);
+
+					var serializer = new XmlSerializer(typeof(T));
+					serializer.Serialize(await stream.OpenStreamForWriteAsync(), obj);
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					throw new Exception(e.Message, e.InnerException);
 				}
-				finally
-				{
-					if (stream != null)
-					{
-						//stream.Close();
-						//stream.Dispose();
-					}
-				}
+				//finally
+				//{
+				//	if (stream != null)
+				//	{
+				//		//stream.Close();
+				//		//stream.Dispose();
+				//	}
+				//}
+#if DEBUG
+				var newFile = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+				var str = await FileIO.ReadTextAsync(newFile);
+#endif
+				stream.MoveAsync(ApplicationData.Current.LocalFolder, file, NameCollisionOption.ReplaceExisting);
 			});
 		}
 

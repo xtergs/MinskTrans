@@ -1,7 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MinskTrans.DesctopClient;
+
 
 namespace ContextTests
 {
@@ -46,6 +50,34 @@ namespace ContextTests
 						   context.Stops.Count == newContext.Stops.Count &&
 						   context.Times.Count == newContext.Times.Count &&
 						   context.ActualStops.Count == newContext.ActualStops.Count);
+		}
+
+		[TestMethod]
+		public void SerializationXMl()
+		{
+			//Arrange 
+			Inicialize();
+			context.HaveUpdate().Wait();
+			context.ApplyUpdate();
+			
+
+			//Act
+			context.SaveXml();
+
+			var str =  File.ReadAllText("data.xml");
+		}
+
+		[TestMethod]
+		public void DeserializationXMl()
+		{
+			//Arrange 
+			Inicialize();
+			//context.HaveUpdate().Wait();
+			//context.ApplyUpdate();
+
+
+			//Act
+			context.ReadXml();
 		}
 	}
 }

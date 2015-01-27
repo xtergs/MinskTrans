@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -55,13 +56,17 @@ namespace MinskTrans.Universal
 
 		async private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			model.Context.HaveUpdate();
-			//model.Context.ApplyUpdate();
+			await Task.Run(async () =>
+			{
+				//await Task.WhenAll(model.Context.DownloadUpdateAsync());
+				if (await model.Context.HaveUpdate())
+					model.Context.ApplyUpdate();
+			});
 		}
 
 		async private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
-			
+			model.Context.Save();
 		}
 
 		private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -72,15 +77,26 @@ namespace MinskTrans.Universal
 		private void Page_Loaded(object sender, RoutedEventArgs e)
 		{
 			model = new MainModelView(new UniversalContext());
-			model.Context.DataBaseDownloadEnded += (senderr, args) =>
+			DataContext = model;
+			model.Context.DataBaseDownloadEnded += async (senderr, args) =>
 			{
 				//model.Context.HaveUpdate();
 				listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
+				//Task.Run(async () =>
+				//{
+					if (await model.Context.HaveUpdate())
+						model.Context.ApplyUpdate();
+				//});
 			};
 
-			model.Context.LogMessage += (o, args) => listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
-			ShedulerParser.LogMessage += (o, args) => listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+			model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+			//ShedulerParser.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+			
+		}
 
+		private void Button_Click_2(object sender, RoutedEventArgs e)
+		{
+			listview.ItemsSource = model.Context.Routs;
 		}
     }
 }

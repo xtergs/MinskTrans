@@ -14,12 +14,13 @@ using Windows.Web.Http;
 using System.IO.Compression;
 using System.Linq;
 using MinskTrans.DesctopClient.Model;
+using Buffer = Windows.Storage.Streams.Buffer;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
 
 namespace MinskTrans.Universal
 {
-	internal class UniversalContext : Context
+	public  class UniversalContext : Context
 	{
 		#region Overrides of Context
 
@@ -28,10 +29,12 @@ namespace MinskTrans.Universal
 			try
 			{
 				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+				OnLogMessage("file " + file + " exist");
 				return true;
 			}
-			catch (Exception ex)
+			catch (FileNotFoundException ex)
 			{
+				OnLogMessage("file " + file + "not exist");
 				return false;
 			}
 		}
@@ -43,7 +46,7 @@ namespace MinskTrans.Universal
 			if (FileExists("data.dat"))
 			{
 				Load();
-				return;
+				//return;
 			}
 			FavouriteRouts = new ObservableCollection<Rout>();
 			FavouriteStops = new ObservableCollection<Stop>();
@@ -64,14 +67,25 @@ namespace MinskTrans.Universal
 
 		protected override async void FileDelete(string file)
 		{
-			var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
-			await fl.DeleteAsync();
+			try
+			{
+				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+				fl.DeleteAsync();
+			}
+			catch(FileNotFoundException fileNotFound)
+			{ }
+			
 		}
 
 		protected override async void FileMove(string oldFile, string newFile)
 		{
-			var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(oldFile);
-			await fl.RenameAsync(newFile);
+			try
+			{
+				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(oldFile);
+				fl.RenameAsync(newFile);
+			}
+			catch(FileNotFoundException fileNOtFound)
+			{ }
 		}
 
 		protected Task<string> FileReadAllTextt(string file)
@@ -98,7 +112,6 @@ namespace MinskTrans.Universal
 
 		async public override void DownloadUpdate()
 		{
-
 			OnDataBaseDownloadStarted();
 			try
 			{
@@ -115,6 +128,11 @@ namespace MinskTrans.Universal
 			}
 		}
 
+		public override Task DownloadUpdateAsync()
+		{
+			return Task.Run(()=>DownloadUpdate());
+		}
+
 		async Task<string> ReadAllFile(StorageFile file)
 		{
 			StringBuilder builder = new StringBuilder();
@@ -129,19 +147,24 @@ namespace MinskTrans.Universal
 
 		async public override Task<bool> HaveUpdate()
 		{
-			OnLogMessage("Have update started");
+			//return await Task.Run(async () =>
+			//{
+				OnLogMessage("Have update started");
 				try
 				{
-#if Release
-					await Task.WhenAll(new Task(async () =>
+#if DEBUG
+					await Task.WhenAll( Task.Run(async () =>
 					{
+					ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
+
 						StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[0].Key + ".new");
 						OnLogMessage("get file" + list[0].Key);
 						newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
 						OnLogMessage("parsed file" + list[0].Key);
 					}),
-						new Task(async () =>
+						Task.Run(async () =>
 						{
+					ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
 
 							StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
 							OnLogMessage("get file" + list[1].Key);
@@ -150,8 +173,9 @@ namespace MinskTrans.Universal
 							OnLogMessage("parsed file" + list[1].Key);
 
 						}),
-						new Task(async () =>
+						Task.Run(async () =>
 						{
+					ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
 
 							StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[2].Key + ".new");
 							OnLogMessage("get file" + list[2].Key);
@@ -161,22 +185,23 @@ namespace MinskTrans.Universal
 
 						}));
 #else
+					ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
 					StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[0].Key + ".new");
-					OnLogMessage("get file" + list[0].Key);
+					OnLogMessage("get file " + list[0].Key);
 					newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
-					OnLogMessage("parsed file" + list[0].Key);
+					OnLogMessage("parsed file " + list[0].Key);
 
-					 file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
-					OnLogMessage("get file" + list[1].Key);
+					file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
+					OnLogMessage("get fil e" + list[1].Key);
 
 					newRoutes = ShedulerParser.ParsRout(await ReadAllFile(file));
-					OnLogMessage("parsed file" + list[1].Key);
+					OnLogMessage("parsed file " + list[1].Key);
 
 					file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[2].Key + ".new");
-					OnLogMessage("get file" + list[2].Key);
+					OnLogMessage("get file " + list[2].Key);
 
 					newSchedule = ShedulerParser.ParsTime(await ReadAllFile(file));
-					OnLogMessage("parsed file" + list[2].Key);
+					OnLogMessage("parsed file " + list[2].Key);
 #endif
 					OnLogMessage("All threads ended");
 				}
@@ -184,6 +209,11 @@ namespace MinskTrans.Universal
 				{
 					OnLogMessage("error file not found");
 					return false;
+				}
+				catch (Exception e)
+				{
+					OnLogMessage(e.Message);
+					throw new Exception(e.Message);
 				}
 
 				if (Stops == null || Routs == null || Times == null)
@@ -199,25 +229,25 @@ namespace MinskTrans.Universal
 				}
 
 
-			OnLogMessage("have update true");
+				OnLogMessage("have update true");
 				return true;
-			
+			//});
+
 		}
 
 		private async Task DoSincroFit(string uri, string file)
 		{
 			HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
-				//this.file = file;
-				//Add headers to request
-				request.Headers["Type"] = "sincrofit";
-				request.Headers["Device"] = "1";
-				request.Headers["Version"] = "0.000";
-				request.Headers["Os"] = "WindowsPhone";
-				request.Headers["Cache-Control"] = "no-cache";
-				request.Headers["Pragma"] = "no-cache";
-
-				var x = await request.GetResponseAsync();
-				playResponseAsync(x, file);
+			//this.file = file;
+			//Add headers to request
+			request.Headers["Type"] = "sincrofit";
+			request.Headers["Device"] = "1";
+			request.Headers["Version"] = "0.000";
+			request.Headers["Os"] = "WindowsPhone";
+			request.Headers["Cache-Control"] = "no-cache";
+			request.Headers["Pragma"] = "no-cache";
+			var x = await request.GetResponseAsync();
+			await playResponseAsync(x, file);
 				//var x = request.BeginGetResponse(playResponseAsync, request);
 			
 
@@ -232,66 +262,75 @@ namespace MinskTrans.Universal
 			public string File;
 		}
 
-		public async void playResponseAsync(WebResponse response, string file)
+		public  Task playResponseAsync(WebResponse response, string file)
 		{
 			//Declaration of variables
 			//HttpWebRequest webRequest =response;
-
-			try
+			return Task.Run(async () =>
 			{
-				string fileName = file;
-
-				//using (HttpWebResponse webResponse = response.res)
+				try
 				{
-					byte[] buffer = new byte[1024];
+					string fileName = file;
 
-					var newZipFile =
-						await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-					
-					using (var writeStream = await newZipFile.OpenAsync(FileAccessMode.ReadWrite))
+					//using (HttpWebResponse webResponse = response.res)
 					{
-						using (var outputStream = writeStream.GetOutputStreamAt(0))
+						byte[] buffer = new byte[1024];
+						Buffer bufferb = new Buffer(1024);
+
+						var newZipFile =
+							await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+						using (var writeStream = await newZipFile.OpenAsync(FileAccessMode.ReadWrite))
 						{
-							using (var dataWriter = new DataWriter(outputStream))
+							using (var outputStream = writeStream.GetOutputStreamAt(0))
 							{
-								using (Stream input = response.GetResponseStream())
+								using (var dataWriter = new DataWriter(outputStream))
 								{
-									var totalSize = 0;
-									for (int size = input.Read(buffer, 0, buffer.Length); size > 0; size = input.Read(buffer, 0, buffer.Length))
+									using (Stream input = response.GetResponseStream())
 									{
-										dataWriter.WriteBytes(buffer);
-										totalSize += size; //get the progress of download
+										int size = 0;
+										var totalSize = 0;
+										for (size = input.Read(buffer, 0, buffer.Length);
+											size == buffer.Length;
+											size = input.Read(buffer, 0, buffer.Length))
+										{
+											dataWriter.WriteBytes(buffer);
+											totalSize += size; //get the progress of download
+										}
+										for (int i = 0; i < size; i++)
+											dataWriter.WriteByte(buffer[i]);
+										await dataWriter.StoreAsync();
+										await outputStream.FlushAsync();
+										dataWriter.DetachStream();
 									}
-									await dataWriter.StoreAsync();
-									await outputStream.FlushAsync();
-									dataWriter.DetachStream();
 								}
 							}
 						}
+
 					}
+				}
+				catch (Exception e)
+				{
 
 				}
-			}
-			catch (Exception e)
-			{
-				
-			}
-			OnLogMessage("file downloaded: " + file);
+				OnLogMessage("file downloaded: " + file);
+			});
 		}
 
 
 
 		public override async void Save()
 		{
-			await IsolatedStorageOperations.Save(this, "xml.xml");
+			await IsolatedStorageOperations.Save(this, "data.dat");
 		}
 
 		public override async void Load()
 		{
-			var tempThis = await IsolatedStorageOperations.Load<UniversalContext>("xml.xml");
-			Stops = tempThis.Stops;
-			Routs = tempThis.Routs;
-			Times = tempThis.Times;
+			string str =await ReadAllFile(await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat"));
+			//var tempThis = await IsolatedStorageOperations.Load<UniversalContext>("data.dat");
+			//Stops = tempThis.Stops;
+			//Routs = tempThis.Routs;
+			//Times = tempThis.Times;
 		}
 
 		#endregion

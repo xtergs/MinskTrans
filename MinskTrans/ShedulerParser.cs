@@ -32,13 +32,13 @@ namespace MinskTrans.DesctopClient
 			//		resultList.Add(new Stop(stops.Substring(indexStart, indexEnd - indexStart)));
 			//}
 
-			string[] listStr = stops.Split('\n');
+			string[] listStr = stops.Split(new[] {'\n'});
 
 			Stop stopOld = null;
 			for (int i = 1; i < listStr.Length; i++)
 			{
-				if (i % 100 == 0)
-					OnLogMessage(i + " strings are parsed");
+				//if (i % 100 == 0)
+				//	OnLogMessage(i + " strings are parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 				{
 					resultList.Add(new Stop(listStr[i], stopOld));
@@ -63,6 +63,7 @@ namespace MinskTrans.DesctopClient
 
 		public static List<Rout> ParsRout(string routs)
 		{
+			OnLogMessage("ParsRout Started");
 			int indexEnd = routs.IndexOf(' ');
 			var resultList = new List<Rout>();
 
@@ -89,22 +90,26 @@ namespace MinskTrans.DesctopClient
 			//	}
 			//}
 
-			string[] listStr = routs.Split('\n');
+			string[] listStr = routs.Split(new []{'\n'});
 			Rout rout = null;
 			for (int i = 1; i < listStr.Length; i++)
 			{
+				//if (i%50 == 0)
+				//	OnLogMessage(i+ "routs pares");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 				{
 					resultList.Add(new Rout(listStr[i], rout));
 					rout = resultList[resultList.Count - 1];
 				}
 			}
+			OnLogMessage("ParsRouts Ended");
 
 			return resultList;
 		}
 
 		public static List<Schedule> ParsTime(string times)
 		{
+			OnLogMessage("ParsTime Started");
 			//int indexEnd = times.IndexOf(' ');
 			var resultList = new List<Schedule>();
 
@@ -135,9 +140,13 @@ namespace MinskTrans.DesctopClient
 
 			for (int i = 1; i < listStr.Length; i++)
 			{
+				//if (i % 50 == 0)
+				//	OnLogMessage(i + "times parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 					resultList.Add(new Schedule(listStr[i]));
 			}
+
+			OnLogMessage("ParsTimes ended");
 
 			return resultList;
 		}

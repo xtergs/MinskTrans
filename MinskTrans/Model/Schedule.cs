@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient
@@ -8,7 +11,7 @@ namespace MinskTrans.DesctopClient
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
 #endif
-	public class Schedule : BaseModel
+	public class Schedule : BaseModel, IXmlSerializable
 	{
 		private Schedule()
 		{ }
@@ -144,5 +147,64 @@ namespace MinskTrans.DesctopClient
 			}
 			return result;
 		}
+
+		#region Implementation of IXmlSerializable
+
+		/// <summary>
+		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
+		/// </summary>
+		/// <returns>
+		/// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
+		/// </returns>
+		public XmlSchema GetSchema()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Generates an object from its XML representation.
+		/// </summary>
+		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
+		public void ReadXml(XmlReader reader)
+		{
+			//RoutId = Convert.ToInt32(reader.GetAttribute("RoutId"));
+			//int countTimeDictionary = Convert.ToInt32(reader.GetAttribute("Count"));
+			//for (int i = 0; i < countTimeDictionary; i ++)
+			//{
+			//	reader.ReadStartElement("Stop");
+			//	int countStops = Convert.ToInt32(reader.GetAttribute("Count"));
+			//	foreach (var time in stop)
+			//	{
+			//		reader.WriteStartElement("time");
+			//		time.ReadXml(reader);
+			//		reader.WriteEndElement();
+			//	}
+			//	reader.WriteEndElement();
+			//}
+		}
+
+		/// <summary>
+		/// Converts an object into its XML representation.
+		/// </summary>
+		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
+		public void WriteXml(XmlWriter writer)
+		{
+			writer.WriteAttributeString("RoutId", RoutId.ToString());
+			writer.WriteAttributeString("Count", TimesDictionary.Count.ToString());
+			foreach (var stop in TimesDictionary)
+			{
+				writer.WriteStartElement("Stop");
+				writer.WriteAttributeString("Count", stop.Count.ToString());
+				foreach (var time in stop)
+				{
+					writer.WriteStartElement("time");
+					time.WriteXml(writer);
+					writer.WriteEndElement();
+				}
+				writer.WriteEndElement();
+			}
+		}
+
+		#endregion
 	}
 }

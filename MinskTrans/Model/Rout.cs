@@ -17,7 +17,7 @@ namespace MinskTrans.DesctopClient
 		private string str = "";
 		private char sym = ';';
 
-		private Rout()
+		public Rout()
 		{
 			
 		}
@@ -170,20 +170,44 @@ namespace MinskTrans.DesctopClient
 		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
 		public void ReadXml(XmlReader reader)
 		{
-			//reader.read
-			//writer.WriteValue(RouteNum);
-			//writer.WriteValue(Authority);
-			//writer.WriteValue(City);
-			//writer.WriteValue(Transport);
-			//writer.WriteValue(Operator);
-			//writer.WriteValue(ValidityPeriods);
-			//writer.WriteValue(SpecialDates);
-			//writer.WriteValue(RoutTag);
-			//writer.WriteValue(RoutType);
-			//writer.WriteValue(Commercial);
-			//writer.WriteValue(RouteName);
-			//writer.WriteValue(Weekdays);
-			//writer.WriteValue(RoutId);
+			RouteNum = reader.GetAttribute("Num");
+			Authority = reader.GetAttribute("Aut");
+			City = reader.GetAttribute("C");
+			Transport = reader.GetAttribute("Tr");
+			Operator = reader.GetAttribute("Op");
+			ValidityPeriods = reader.GetAttribute("Valid");
+			SpecialDates = reader.GetAttribute("Special");
+			RoutTag = reader.GetAttribute("Tag");
+			RoutType = reader.GetAttribute("Type");
+			Commercial = reader.GetAttribute("Com");
+			RouteName = reader.GetAttribute("Name");
+			Weekdays = reader.GetAttribute("Week");
+			RoutId = Convert.ToInt32(reader.GetAttribute("Id"));
+			Datestart = reader.GetAttribute("Start");
+			reader.ReadStartElement("Rout");
+			int count = Convert.ToInt32(reader.GetAttribute("Count"));
+			RouteStops = new List<int>(count);
+				reader.ReadStartElement();
+			for (int i = 0; i < count; i ++) 
+			{
+				reader.ReadStartElement();
+				RouteStops.Add(reader.ReadContentAsInt());
+				if (!reader.IsEmptyElement)
+					reader.ReadEndElement();
+				else
+				{
+					
+				}
+
+
+			}
+			if (count > 0)
+				reader.ReadEndElement();
+			else
+			{
+
+			}
+			//reader.ReadEndElement();
 		}
 
 		/// <summary>
@@ -192,19 +216,31 @@ namespace MinskTrans.DesctopClient
 		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
 		public void WriteXml(XmlWriter writer)
 		{
-			writer.WriteValue(RouteNum);
-			writer.WriteValue(Authority);
-			writer.WriteValue(City);
-			writer.WriteValue(Transport);
-			writer.WriteValue(Operator);
-			writer.WriteValue(ValidityPeriods);
-			writer.WriteValue(SpecialDates);
-			writer.WriteValue(RoutTag);
-			writer.WriteValue(RoutType);
-			writer.WriteValue(Commercial);
-			writer.WriteValue(RouteName);
-			writer.WriteValue(Weekdays);
-			writer.WriteValue(RoutId);
+			writer.WriteAttributeString("Num", RouteNum);
+			writer.WriteAttributeString("Aut", Authority);
+			writer.WriteAttributeString("C", City);
+			writer.WriteAttributeString("Tr", Transport);
+			writer.WriteAttributeString("Op", Operator);
+			writer.WriteAttributeString("Valid", ValidityPeriods);
+			writer.WriteAttributeString("Special", SpecialDates);
+			writer.WriteAttributeString("Tag", RoutTag);
+			writer.WriteAttributeString("Type", RoutType);
+			writer.WriteAttributeString("Com", Commercial);
+			writer.WriteAttributeString("Name", RouteName);
+			writer.WriteAttributeString("Week", Weekdays);
+			writer.WriteAttributeString("Id", RoutId.ToString());
+			writer.WriteAttributeString("Start", Datestart);
+			writer.WriteStartElement("StList");
+			writer.WriteAttributeString("Count", RouteStops.Count.ToString());
+			foreach (var routeStop in RouteStops)
+			{
+				writer.WriteStartElement("I");
+				writer.WriteValue(routeStop);
+				writer.WriteEndElement();
+
+			}
+			writer.WriteEndElement();
+
 
 			
 		}

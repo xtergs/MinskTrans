@@ -7,6 +7,9 @@ using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+
+using System.Xml;
+using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Library;
 
@@ -15,6 +18,27 @@ namespace MinskTrans.DesctopClient
 	[Serializable]
 	public class ContextDesctop : Context
 	{
+
+		public void SaveXml()
+		{
+
+
+			XmlSerializer serializer = new XmlSerializer(GetType());
+			using (XmlTextWriter writer = new XmlTextWriter("data.xml", Encoding.UTF8))
+			{
+				serializer.Serialize(writer, this);
+			}
+		}
+
+		public void ReadXml()
+		{
+			XmlSerializer serializer = new XmlSerializer(GetType());
+			using (var reader = new XmlTextReader("data.xml"))
+			{
+				Context obj = (Context) serializer.Deserialize(reader);
+				Inicialize(obj);
+			}
+		}
 		#region Overrides of Context
 
 		public override void Save()
@@ -68,32 +92,35 @@ namespace MinskTrans.DesctopClient
 			//ApplyUpdate();
 		}
 
-		public override bool HaveUpdate()
+		async public override Task<bool> HaveUpdate()
 		{
-			if (list.Any(keyValuePair => !FileExists(keyValuePair.Key + ".new")))
+			return await Task.Run(() =>
 			{
-				return false;
-			}
-
-			newStops = ShedulerParser.ParsStops(FileReadAllText(list[0].Key + ".new").Result);
-			newRoutes = ShedulerParser.ParsRout(FileReadAllText(list[1].Key + ".new").Result);
-			newSchedule = ShedulerParser.ParsTime(FileReadAllText(list[2].Key + ".new").Result);
-
-			if (Stops == null || Routs == null || Times == null)
-				return true;
-
-			if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-				return false;
-
-			foreach (var newRoute in newRoutes)
-			{
-				if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
+				if (list.Any(keyValuePair => !FileExists(keyValuePair.Key + ".new")))
+				{
 					return false;
-			}
+				}
+
+				newStops = ShedulerParser.ParsStops(FileReadAllText(list[0].Key + ".new").Result);
+				newRoutes = ShedulerParser.ParsRout(FileReadAllText(list[1].Key + ".new").Result);
+				newSchedule = ShedulerParser.ParsTime(FileReadAllText(list[2].Key + ".new").Result);
+
+				if (Stops == null || Routs == null || Times == null)
+					return true;
+
+				if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
+					return false;
+
+				foreach (var newRoute in newRoutes)
+				{
+					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
+						return false;
+				}
 
 
 
-			return true;
+				return true;
+			});
 		}
 		protected override void FileMove(string oldFile, string newFile)
 		{

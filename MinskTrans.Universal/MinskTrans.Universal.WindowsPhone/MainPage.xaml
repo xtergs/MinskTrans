@@ -5,13 +5,19 @@
     xmlns:local="using:MinskTrans.Universal"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance modelview:MainModelView}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
 
     <Grid Loaded="Grid_Loaded">
         <Button Content="Button" HorizontalAlignment="Left" Margin="98,72,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         <Button Content="Button" HorizontalAlignment="Left" Margin="98,128,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
-        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="354" Margin="10,228,0,0" VerticalAlignment="Top" Width="380"/>
+        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="134" Margin="10,228,0,0" VerticalAlignment="Top" Width="380"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="252,176,0,0" VerticalAlignment="Top" Click="Button_Click_2"/>
+        <ListBox x:Name="listview" ItemsSource="{Binding Context.Routs, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="RouteName"
+            HorizontalAlignment="Left" Height="263" Margin="10,367,0,0" VerticalAlignment="Top" Width="380"/>
 
     </Grid>
 </Page>

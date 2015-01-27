@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
+
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 using System.Runtime.Serialization.Formatters.Binary;
 using MinskTrans.DesctopClient.Annotations;
@@ -89,6 +90,16 @@ namespace MinskTrans.DesctopClient
 			Create();
 		}
 
+		public void Inicialize(Context cont)
+		{
+			Routs = cont.Routs;
+			Stops = cont.Stops;
+			Times = cont.Times;
+			FavouriteRouts = cont.FavouriteRouts;
+			FavouriteStops = cont.FavouriteStops;
+			LastUpdateDataDateTime = cont.LastUpdateDataDateTime;
+			Groups = cont.Groups;
+		}
 
 		public ObservableCollection<Schedule> Times
 		{
@@ -157,38 +168,45 @@ namespace MinskTrans.DesctopClient
 		public void ApplyUpdate()
 		{
 			OnApplyUpdateStarted();
-
-			foreach (var keyValuePair in list)
+			try
 			{
-				if (FileExists(keyValuePair.Key + ".old"))
-					FileDelete(keyValuePair.Key + ".old");
-				if (FileExists(keyValuePair.Key))
-					FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
-				FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
-			}
-
-			Stops = new ObservableCollection<Stop>(newStops);
-			Routs = new ObservableCollection<Rout>(newRoutes);
-			Times = new ObservableCollection<Schedule>(newSchedule);
-
-			foreach (Rout rout in Routs)
-			{
-				rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-				if (rout.Time != null)
-					rout.Time.Rout = rout;
-
-				rout.Stops = new List<Stop>();
-				foreach (int st in rout.RouteStops)
+				foreach (var keyValuePair in list)
 				{
-					rout.Stops.Add(Stops.First(x => x.ID == st));
+					//if (FileExists(keyValuePair.Key + ".old"))
+						FileDelete(keyValuePair.Key + ".old");
+					//if (FileExists(keyValuePair.Key))
+						FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
+					FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
 				}
+
+				Stops = new ObservableCollection<Stop>(newStops);
+				Routs = new ObservableCollection<Rout>(newRoutes);
+				Times = new ObservableCollection<Schedule>(newSchedule);
+
+				foreach (Rout rout in Routs)
+				{
+					rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+					if (rout.Time != null)
+						rout.Time.Rout = rout;
+
+					rout.Stops = new List<Stop>();
+					foreach (int st in rout.RouteStops)
+					{
+						rout.Stops.Add(Stops.First(x => x.ID == st));
+					}
+				}
+
+				LastUpdateDataDateTime = DateTime.UtcNow;
+
+				newStops = null;
+				newRoutes = null;
+				newSchedule = null;
 			}
-
-			LastUpdateDataDateTime = DateTime.UtcNow;
-
-			newStops = null;
-			newRoutes = null;
-			newSchedule = null;
+			catch (Exception e)
+			{
+				OnLogMessage("Apply update: " + e.Message);
+				throw new Exception(e.Message, e.InnerException);
+			}
 
 			AllPropertiesChanged();
 
@@ -228,7 +246,14 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		protected virtual Task UpdateAsync()
+		async public void Update()
+		{
+			DownloadUpdate();
+			if (await HaveUpdate())
+				ApplyUpdate();
+		}
+
+		public virtual Task UpdateAsync()
 		{
 			//TODO
 			//throw new NotImplementedException();
@@ -311,8 +336,22 @@ namespace MinskTrans.DesctopClient
 		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
 		public void ReadXml(XmlReader reader)
 		{
-			//reader.MoveToAttribute("LastUpdateTime");
-			//LastUpdateDataDateTime = reader.ReadContentAsDateTime();
+			reader.ReadStartElement("ContextDesctop");
+			LastUpdateDataDateTime = Convert.ToDateTime(reader.GetAttribute("LastUpdateTime"));
+			Routs = new ObservableCollection<Rout>();
+			int count = Convert.ToInt32(reader.GetAttribute("Count"));
+			reader.ReadStartElement("Routs");
+			for (int i = 0; i < count-1; i ++)
+			{
+				//reader.ReadStartElement("Rout");
+				var rout = new Rout();
+				rout.ReadXml(reader);
+				Routs.Add(rout);
+				//reader.ReadEndElement();
+				reader.ReadEndElement();
+				
+			}
+			//reader.ReadEndElement();
 		}
 
 		/// <summary>
@@ -321,13 +360,74 @@ namespace MinskTrans.DesctopClient
 		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
 		public void WriteXml(XmlWriter writer)
 		{
+
 			writer.WriteAttributeString("LastUpdateTime", LastUpdateDataDateTime.ToString());
-			writer.WriteStartAttribute("Routs");
+
+			writer.WriteStartElement("Routs");
+			writer.WriteAttributeString("Count", Routs.Count.ToString());
 			foreach (var rout in Routs)
 			{
+				writer.WriteStartElement("Rout");
+				//writer.WriteValue(rout);
 				rout.WriteXml(writer);
+				writer.WriteEndElement();
 			}
-			writer.WriteEndAttribute();
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("Stops");
+			writer.WriteAttributeString("Count", Stops.Count.ToString());
+			foreach (var stop in Stops)
+			{
+				writer.WriteStartElement("Stop");
+				//writer.WriteValue(rout);
+				stop.WriteXml(writer);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("Times");
+			writer.WriteAttributeString("Count", Times.Count.ToString());
+			foreach (var time in Times)
+			{
+				writer.WriteStartElement("Time");
+				//writer.WriteValue(rout);
+				time.WriteXml(writer);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("FavouriteRouts");
+			writer.WriteAttributeString("Count", FavouriteRouts.Count.ToString());
+			foreach (var rout in FavouriteRouts)
+			{
+				writer.WriteStartElement("Rout");
+				//writer.WriteValue(rout);
+				rout.WriteXml(writer);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("FavouriteStops");
+			writer.WriteAttributeString("Count", FavouriteStops.Count.ToString());
+			foreach (var stop in FavouriteStops)
+			{
+				writer.WriteStartElement("Stop");
+				//writer.WriteValue(rout);
+				stop.WriteXml(writer);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("Groups");
+			writer.WriteAttributeString("Count", Groups.Count.ToString());
+			foreach (var group in Groups)
+			{
+				writer.WriteStartElement("Group");
+				//writer.WriteValue(rout);
+				group.WriteXml(writer);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
 		}
 
 		#endregion
@@ -370,7 +470,7 @@ namespace MinskTrans.DesctopClient
 		}
 		#endregion
 
-		
+		public abstract Task DownloadUpdateAsync();
 	}
 
 	public delegate void LogDelegate(object sender, LogDelegateArgs args);

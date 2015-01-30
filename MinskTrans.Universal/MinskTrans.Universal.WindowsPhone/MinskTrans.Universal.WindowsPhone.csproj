@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>a:\wp\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -89,6 +89,12 @@
     <Compile Include="..\..\MinskTrans\Modelview\BaseModelView.cs">
       <Link>ModelView\BaseModelView.cs</Link>
     </Compile>
+    <Compile Include="..\..\MinskTrans\Modelview\FavouriteModelview.cs">
+      <Link>ModelView\FavouriteModelview.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MinskTrans\Modelview\FindModelView.cs">
+      <Link>ModelView\FindModelView.cs</Link>
+    </Compile>
     <Compile Include="..\..\MinskTrans\Modelview\GroupEditModelView.cs">
       <Link>ModelView\GroupEditModelView.cs</Link>
     </Compile>
@@ -152,9 +158,10 @@
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowStopView.xaml.cs">
+      <DependentUpon>ShowStopView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UniversalContext.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -173,6 +180,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ShowStopView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

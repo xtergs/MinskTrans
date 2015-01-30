@@ -28,7 +28,8 @@ namespace MinskTrans.DesctopClient.Converters
 				returnStr.Append(o);
 				returnStr.Append(", ");
 			}
-		//	returnStr.Remove(returnStr.Length - 2, 2);
+			if (returnStr.Length >= 2)
+				returnStr.Remove(returnStr.Length - 2, 2);
 			return returnStr.ToString();
 		}
 

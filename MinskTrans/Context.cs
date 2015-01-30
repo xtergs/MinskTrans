@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -118,6 +120,7 @@ namespace MinskTrans.DesctopClient
 			{
 				if (Equals(value, stops)) return;
 				stops = value;
+				//ActualStops = new ObservableCollection<Stop>(value.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
 				OnPropertyChanged();
 				OnPropertyChanged("ActualStops");
 			}
@@ -125,8 +128,9 @@ namespace MinskTrans.DesctopClient
 
 		public ObservableCollection<Stop> ActualStops
 		{
-			get
-			{ if (Stops != null) return new ObservableCollection<Stop>(Stops.Where(x => Routs != null && Routs.Any(d => d.Stops.Contains(x))));
+			get {
+				if (Stops != null)
+					return new ObservableCollection<Stop>(Stops.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
 				return null;
 			}
 		}
@@ -141,6 +145,11 @@ namespace MinskTrans.DesctopClient
 				routs = value;
 				OnPropertyChanged();
 			}
+		}
+
+		public bool RoutsHaveStopId(int stopId)
+		{
+			return Routs.AsParallel().Any(x => x.RouteStops.Contains(stopId));
 		}
 
 
@@ -183,18 +192,7 @@ namespace MinskTrans.DesctopClient
 				Routs = new ObservableCollection<Rout>(newRoutes);
 				Times = new ObservableCollection<Schedule>(newSchedule);
 
-				foreach (Rout rout in Routs)
-				{
-					rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
-
-					rout.Stops = new List<Stop>();
-					foreach (int st in rout.RouteStops)
-					{
-						rout.Stops.Add(Stops.First(x => x.ID == st));
-					}
-				}
+				Connect(Routs, Stops);
 
 				LastUpdateDataDateTime = DateTime.UtcNow;
 
@@ -227,12 +225,14 @@ namespace MinskTrans.DesctopClient
 			OnPropertyChanged("Groups");
 		}
 
-		/// <summary>
-		/// Save to data.dat
-		/// </summary>
+		
 		protected void Connect(IEnumerable<Rout> routs, IEnumerable<Stop> stops)
 		{
-			foreach (Rout rout in routs)
+#if DEBUG
+			Stopwatch watch = new Stopwatch();
+			watch.Start();
+#endif
+			Parallel.ForEach(routs, rout =>
 			{
 				rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
 				if (rout.Time != null)
@@ -241,9 +241,14 @@ namespace MinskTrans.DesctopClient
 				rout.Stops = new List<Stop>();
 				foreach (int st in rout.RouteStops)
 				{
-					rout.Stops.Add(stops.First(x => x.ID == st));
+					var stop = (stops.First(x => x.ID == st));
+					rout.Stops.Add(stop);
+					stop.Routs.Add(rout);
 				}
-			}
+			});
+#if DEBUG
+			watch.Stop();
+#endif
 		}
 
 		async public void Update()
@@ -443,7 +448,7 @@ namespace MinskTrans.DesctopClient
 				return new RelayCommand(async () =>
 				{
 					updating = true;
-					await UpdateAsync();
+					await Task.WhenAll(UpdateAsync()).ConfigureAwait(true);
 					updating = false;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 				}, ()=>!updating);
@@ -469,8 +474,6 @@ namespace MinskTrans.DesctopClient
 			get { return new RelayCommand<Stop>(x => FavouriteStops.Remove(x), p => p != null && FavouriteStops.Contains(p)); }
 		}
 		#endregion
-
-		public abstract Task DownloadUpdateAsync();
 	}
 
 	public delegate void LogDelegate(object sender, LogDelegateArgs args);

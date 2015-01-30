@@ -38,14 +38,16 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+
 		public IEnumerable<Stop> FilteredStops
 		{
 			get
 			{
 				if (StopNameFilter != null)
 				{
+					var tempSt = StopNameFilter.ToLower();
 					var temp = Context.ActualStops.AsParallel().Where(
-							x => x.SearchName.Contains(StopNameFilter.ToLower()));
+							x => x.SearchName.Contains(tempSt));
 					return temp;
 				}
 				return Context.Stops;

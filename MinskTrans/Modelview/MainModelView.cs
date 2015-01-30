@@ -2,15 +2,23 @@
 
 
 
+using System.Linq;
+using GalaSoft.MvvmLight;
+using MinskTrans.DesctopClient.ModelView;
+
+
 namespace MinskTrans.DesctopClient.Modelview
 {
-	public class MainModelView
+	public class MainModelView : ViewModelBase
 	{
 		private readonly Context context;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutesModelview routesModelview;
 		private readonly SettingsModelView settingsModelView;
 		private readonly StopModelView stopMovelView;
+		private readonly FavouriteModelView favouriteModelView;
+		private readonly FindModelView findModelView;
+
 
 		public MainModelView(Context newContext)
 		{
@@ -19,6 +27,18 @@ namespace MinskTrans.DesctopClient.Modelview
 			stopMovelView = new StopModelView(context);
 			settingsModelView = new SettingsModelView(context);
 			groupStopsModelView = new GroupStopsModelView(context);
+			favouriteModelView = new FavouriteModelView(context);
+			findModelView = new FindModelView(context);
+
+			if (IsInDesignMode)
+			{
+				StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));
+			}
+		}
+
+		public FindModelView FindModelView
+		{
+			get { return findModelView;}
 		}
 
 		public StopModelView StopMovelView
@@ -34,6 +54,14 @@ namespace MinskTrans.DesctopClient.Modelview
 		public GroupStopsModelView GroupStopsModelView
 		{
 			get { return groupStopsModelView; }
+		}
+
+		public FavouriteModelView FavouriteModelView
+		{
+			get
+			{
+				return favouriteModelView;
+			}
 		}
 
 		public Context Context { get { return context; } }

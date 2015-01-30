@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -71,7 +72,8 @@ namespace MinskTrans.DesctopClient
 
 		protected override void FileDelete(string file)
 		{
-			File.Delete(file);
+			if (File.Exists(file))
+				File.Delete(file);
 		}
 		async public override void Create(bool AutoUpdate = true)
 		{
@@ -87,7 +89,7 @@ namespace MinskTrans.DesctopClient
 			Groups = new ObservableCollection<GroupStop>();
 			//if (AutoUpdate)
 			//	await UpdateAsync();
-			DownloadUpdate();
+			//DownloadUpdate();
 			//HaveUpdate();
 			//ApplyUpdate();
 		}
@@ -100,10 +102,16 @@ namespace MinskTrans.DesctopClient
 				{
 					return false;
 				}
-
+#if DEBUG
+				Stopwatch watch = new Stopwatch();
+				watch.Start();
+#endif
 				newStops = ShedulerParser.ParsStops(FileReadAllText(list[0].Key + ".new").Result);
 				newRoutes = ShedulerParser.ParsRout(FileReadAllText(list[1].Key + ".new").Result);
 				newSchedule = ShedulerParser.ParsTime(FileReadAllText(list[2].Key + ".new").Result);
+#if DEBUG
+				watch.Stop();
+#endif
 
 				if (Stops == null || Routs == null || Times == null)
 					return true;
@@ -124,7 +132,8 @@ namespace MinskTrans.DesctopClient
 		}
 		protected override void FileMove(string oldFile, string newFile)
 		{
-			File.Move(oldFile, newFile);
+			if (File.Exists(oldFile) && !File.Exists(newFile))
+				File.Move(oldFile, newFile);
 		}
 
 		async protected override Task<string> FileReadAllText(string file)
@@ -132,7 +141,7 @@ namespace MinskTrans.DesctopClient
 			return await Task.Run(() => File.ReadAllText(file));
 		}
 
-		public override void DownloadUpdate()
+		public override async void DownloadUpdate()
 		{
 			//TODO
 			//throw new NotImplementedException();
@@ -141,9 +150,11 @@ namespace MinskTrans.DesctopClient
 			{
 				using (var client = new WebClient())
 				{
+					//Task.WhenAll(
 					client.DownloadFile(list[0].Value, list[0].Key + ".new");
 					client.DownloadFile(list[1].Value, list[1].Key + ".new");
 					client.DownloadFile(list[2].Value, list[2].Key + ".new");
+					//);
 				}
 				OnDataBaseDownloadEnded();
 
@@ -174,6 +185,10 @@ namespace MinskTrans.DesctopClient
 				Stops = tempStops;
 				Routs = tempRouts;
 				Times = tempTimes;
+
+				tempStops = null;
+				tempRouts = null;
+				tempTimes = null;
 
 				Connect(Routs, Stops);
 

@@ -53,7 +53,7 @@ namespace MinskTrans.Universal
 			Groups = new ObservableCollection<GroupStop>();
 			//if (AutoUpdate)
 			//	await UpdateAsync();
-			DownloadUpdate();
+			//DownloadUpdate();
 			//HaveUpdate();
 			//ApplyUpdate();
 		}
@@ -112,13 +112,17 @@ namespace MinskTrans.Universal
 
 		async public override void DownloadUpdate()
 		{
-			OnDataBaseDownloadStarted();
+//#if DEBUG
+//			OnDataBaseDownloadEnded();
+//			return;
+//#endif
 			try
 			{
+				OnDataBaseDownloadStarted();
 				await Task.WhenAll(new List<Task>(){
-					DoSincroFit(list[0].Value, list[0].Key + ".new"),
-					DoSincroFit(list[1].Value, list[1].Key + ".new"),
-					DoSincroFit(list[2].Value, list[2].Key + ".new")});
+					Download(list[0].Value, list[0].Key + ".new"),
+					Download(list[1].Value, list[1].Key + ".new"),
+					Download(list[2].Value, list[2].Key + ".new")});
 				OnDataBaseDownloadEnded();
 
 			}
@@ -128,10 +132,25 @@ namespace MinskTrans.Universal
 			}
 		}
 
-		public override Task DownloadUpdateAsync()
+		public override async Task UpdateAsync()
 		{
-			return Task.Run(()=>DownloadUpdate());
+			//TODO
+			//throw new NotImplementedException();
+			//return Task.Run(async () =>
+			//{
+			DownloadUpdate();
+				if (await HaveUpdate())
+					ApplyUpdate();
+				
+				
+			//});
 		}
+
+		async private void OnDataBaseDownloadEnded(object sender, EventArgs args)
+		{
+			
+		}
+
 
 		async Task<string> ReadAllFile(StorageFile file)
 		{
@@ -235,21 +254,46 @@ namespace MinskTrans.Universal
 
 		}
 
-		private async Task DoSincroFit(string uri, string file)
+		private async Task Download(string uri, string file)
 		{
-			HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
-			//this.file = file;
-			//Add headers to request
-			request.Headers["Type"] = "sincrofit";
-			request.Headers["Device"] = "1";
-			request.Headers["Version"] = "0.000";
-			request.Headers["Os"] = "WindowsPhone";
-			request.Headers["Cache-Control"] = "no-cache";
-			request.Headers["Pragma"] = "no-cache";
-			var x = await request.GetResponseAsync();
-			await playResponseAsync(x, file);
-				//var x = request.BeginGetResponse(playResponseAsync, request);
+			var httpClient = new HttpClient();
+			// Increase the max buffer size for the response so we don't get an exception with so many web sites
 			
+			httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+
+			HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
+			response.EnsureSuccessStatusCode();
+
+			//string str= response.StatusCode + " " + response.ReasonPhrase + Environment.NewLine;
+			var fileGet = await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
+			using (var writeStream = await fileGet.OpenAsync(FileAccessMode.ReadWrite))
+			{
+				using (var outputStream = writeStream.GetOutputStreamAt(0))
+				{
+					var responseBodyAsText = await response.Content.WriteToStreamAsync(outputStream);
+				}
+			}
+
+			//var responseBodyAsText1 = responseBodyAsText.Replace("<br>", Environment.NewLine); // Insert new lines
+
+			//HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+			////this.file = file;
+			////Add headers to request
+			//request.Headers["Type"] = "sincrofit";
+			//request.Headers["Device"] = "1";
+			//request.Headers["Version"] = "0.000";
+			//request.Headers["Os"] = "WindowsPhone";
+			//request.Headers["Cache-Control"] = "no-cache";
+			//request.Headers["Pragma"] = "no-cache";
+			//request.Headers[HttpRequestHeader.UserAgent] =
+			//	@"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+			//request.ContinueTimeout = 100000;
+			//OnLogMessage("Starting reqest");
+			//var x = await request.GetResponseAsync();
+			//OnLogMessage("End Request");
+			//await ResponseAsync(x, file);
+			//	//var x = request.BeginGetResponse(playResponseAsync, request);
+
 
 
 		}
@@ -262,7 +306,7 @@ namespace MinskTrans.Universal
 			public string File;
 		}
 
-		public  Task playResponseAsync(WebResponse response, string file)
+		public  Task ResponseAsync(WebResponse response, string file)
 		{
 			//Declaration of variables
 			//HttpWebRequest webRequest =response;
@@ -313,6 +357,10 @@ namespace MinskTrans.Universal
 				{
 
 				}
+#if DEBUG
+										var File = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+										string str = await FileIO.ReadTextAsync(File);
+#endif
 				OnLogMessage("file downloaded: " + file);
 			});
 		}

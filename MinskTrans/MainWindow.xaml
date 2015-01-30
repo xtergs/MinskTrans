@@ -16,6 +16,7 @@
         
         Closed="Window_Closed">
     <Window.Resources>
+        <converters:TransportToImageConverter x:Key="TransportToImageConverter"/>
         <AlternationConverter x:Key="AlternationConverter"/>
         <converters:MinsLeftConverter x:Key="MinsLeftConverter" />
         <minskTrans:MinsToTimeConverter x:Key="MinsToTimeConverter" />
@@ -121,7 +122,48 @@
             </Setter>
         </Style>
 
+        <DataTemplate x:Key="DataTemplate1">
+            <Grid x:Name="Grid">
+                <Grid.ColumnDefinitions>
 
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition  Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition  Width="Auto"/>
+
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+
+                </Grid.RowDefinitions>
+                <Image Grid.RowSpan="3" 
+					Source="{Binding Key.Transport, Converter={StaticResource TransportToImageConverter}}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top"
+					   Height="{Binding ActualHeight, ElementName=StackPanel}"/>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Left">
+                    <StackPanel x:Name="StackPanel">
+                        <TextBlock Grid.Column="1" 
+					Text="{Binding Key.RouteNum}"
+					FontSize="25"/>
+                        <TextBlock Grid.Column="1" 
+					Grid.Row="1"
+					Text="{Binding Key.StartStop.Name}"/>
+                        <TextBlock Grid.Column="1" 
+									Grid.Row="2"
+									Text="{Binding Key.DestinationStop.Name}" FontSize="14"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="3" HorizontalAlignment="Right">
+                    <TextBlock Grid.Column="2" 
+					Text="{Binding Value, Converter={StaticResource MinsToTimeConverter}}"
+					FontSize="25" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="2" 
+					Grid.Row="1"
+					Text="{Binding Value, Converter={StaticResource MinsLeftConverter}}"
+					FontSize="14" HorizontalAlignment="Right"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -331,10 +373,15 @@
                     <DockPanel Grid.Column="1">
                         <TextBlock DockPanel.Dock="Top"
                                    Text="{Binding FilteredSelectedStop.Name,  UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGrid Grid.Column="1"
+                        <ListView Grid.Column="1"
                                   ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
-                                  AutoGenerateColumns="False" Margin="0" CanUserSortColumns="False">
-                            <DataGrid.ContextMenu>
+                                    ItemTemplate="{StaticResource DataTemplate1}" >
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Time in past" HorizontalContentAlignment="Stretch">
                                         <MenuItem Header="10 min"
@@ -352,8 +399,8 @@
                                        
                                     </MenuItem>
                                 </ContextMenu>
-                            </DataGrid.ContextMenu>
-                            <DataGrid.Columns>
+                            </ListView.ContextMenu>
+                            <!--<DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding Key.RouteNum}" />
                                 <DataGridTextColumn Binding="{Binding Key.RouteName}" />
                                 <DataGridTextColumn Binding="{Binding Key.Transport}" />
@@ -361,8 +408,8 @@
                                     Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsToTimeConverter}, Mode=OneWay}" />
                                 <DataGridTextColumn
                                     Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsLeftConverter}, Mode=OneWay}" />
-                            </DataGrid.Columns>
-                        </DataGrid>
+                            </DataGrid.Columns>-->
+                        </ListView>
                     </DockPanel>
                     <DockPanel Grid.Column="2">
                         <TextBox DockPanel.Dock="Top"
@@ -507,6 +554,27 @@
                         </mapControl:Map.Center>
 
                     </mapControl:Map>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Map1">
+                <Grid VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                   <TextBox Text="dkfjdkjf" HorizontalAlignment="Left"></TextBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                    <TextBox Grid.Column="2" Text="dkfjdkdsaf asdkf jf" HorizontalAlignment="Left"/>
+                    </StackPanel>
+
                 </Grid>
             </TabItem>
             <TabItem Header="Stops" Visibility="Collapsed">

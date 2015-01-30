@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -13,6 +14,7 @@ namespace MinskTrans.DesctopClient
 	public class Stop : BaseModel, IXmlSerializable
 	{
 		private string name;
+		private List<Rout> routs;
 
 		private Stop()
 		{ }
@@ -33,6 +35,8 @@ namespace MinskTrans.DesctopClient
 			//	Info = stop.Info;
 			if (string.IsNullOrWhiteSpace(StopsStr))
 				StopsStr = stop.StopsStr;
+
+			Routs = new List<Rout>();
 		}
 
 		public Stop(string str)
@@ -82,6 +86,7 @@ namespace MinskTrans.DesctopClient
 			StopNum = GetStr();
 
 			Stops = new List<Stop>();
+			Routs = new List<Rout>();
 		}
 
 		public int ID { get; set; }
@@ -106,6 +111,60 @@ namespace MinskTrans.DesctopClient
 		public string StopsStr { get; set; }
 		public List<Stop> Stops { get; set; }
 		public string StopNum { get; set; }
+
+		public List<Rout> Routs
+		{
+			get
+			{
+				if (routs == null)
+					routs = new List<Rout>();
+				return routs;
+			}
+			set { routs = value; }
+		}
+
+		public IEnumerable<IGrouping<string, Rout>> GroupedTypeRouts
+		{
+			get { return Routs.GroupBy(x => x.Transport); }
+		}
+
+		public IEnumerable<Rout> TrolRouts
+		{
+			get { return Routs.Where(x => x.Transport == "trol"); }
+		}
+		public IEnumerable<Rout> BusRouts
+		{
+			get { return Routs.Where(x => x.Transport == "bus"); }
+		}
+		public IEnumerable<Rout> TramRouts
+		{
+			get { return Routs.Where(x => x.Transport == "tram"); }
+		}
+
+		public IEnumerable<string> TrolRoutsNum
+		{
+			get { return TrolRouts.Select(x=>x.RouteNum).Distinct(); }
+		}
+
+		public IEnumerable<string> BusRoutsNum
+		{
+			get { return BusRouts.Select(x => x.RouteNum).Distinct(); }
+		}
+		public IEnumerable<string> TramRoutsNum
+		{
+			get { return TramRouts.Select(x => x.RouteNum).Distinct(); }
+		} 
+
+
+		public IEnumerable<Stop> Directions
+		{
+			get { return Routs.Select(x => x.DestinationStop); }
+		}
+
+		public IEnumerable<string> DirectionsString
+		{
+			get { return Directions.Select(x => x.Name).Distinct(); }
+		} 
 
 		#region Overrides of BaseModel
 

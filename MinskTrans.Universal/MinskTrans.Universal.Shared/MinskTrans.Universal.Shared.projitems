@@ -16,5 +16,20 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Class.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsLeftConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsToTimeConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\RoutsToNumStrConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\StopsToStr.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\TransportToImageConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OrientedSize.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WrapPanel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Image\bus.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Image\tram.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Image\trol.jpg" />
   </ItemGroup>
 </Project>

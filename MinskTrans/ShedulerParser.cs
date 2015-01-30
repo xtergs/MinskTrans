@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MinskTrans.DesctopClient
 {
@@ -46,17 +47,26 @@ namespace MinskTrans.DesctopClient
 				}
 			}
 			OnLogMessage("all strings are parsed");
-			foreach (Stop stop in resultList)
+			Parallel.ForEach(resultList, stop =>
 			{
-				string[] strList = stop.StopsStr.Split(',');
+				var strList = stop.StopsStr.Split(',');
 				foreach (string stopId in strList)
 				{
 					if (string.IsNullOrWhiteSpace(stopId))
 						break;
 					int id = int.Parse(stopId);
+					try
+					{
 					stop.Stops.Add(resultList.First(x => x.ID == id));
+
+					}
+					catch (InvalidOperationException e)
+					{
+						continue;
+					}
 				}
-			}
+
+			});
 			OnLogMessage("ParsStops ended");
 			return resultList;
 		}
@@ -138,12 +148,21 @@ namespace MinskTrans.DesctopClient
 
 			string[] listStr = times.Split('\n');
 
+			try
+			{
 			for (int i = 1; i < listStr.Length; i++)
 			{
 				//if (i % 50 == 0)
 				//	OnLogMessage(i + "times parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 					resultList.Add(new Schedule(listStr[i]));
+			}
+
+			}
+			catch (Exception e )
+			{
+				OnLogMessage("ParsTime error " + e.Message);
+				throw;
 			}
 
 			OnLogMessage("ParsTimes ended");

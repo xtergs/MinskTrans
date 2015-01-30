@@ -84,11 +84,14 @@
     <Compile Include="Converters\ListToStr.cs" />
     <Compile Include="Converters\MinsLeftConverter.cs" />
     <Compile Include="Converters\MinsToTimeConverter.cs" />
+    <Compile Include="Converters\TransportToImageConverter.cs" />
     <Compile Include="FrameworkElementExt.cs" />
     <Compile Include="GroupAddWindow.xaml.cs">
       <DependentUpon>GroupAddWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modelview\BaseModelView.cs" />
+    <Compile Include="Modelview\FavouriteModelView.cs" />
+    <Compile Include="Modelview\FindModelView.cs" />
     <Compile Include="Modelview\GroupEditModelView.cs" />
     <Compile Include="Modelview\GroupStopsModelView.cs" />
     <Compile Include="Modelview\MainModelView.cs" />
@@ -175,6 +178,11 @@
       <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
       <Name>MyLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\bus.jpg" />
+    <Resource Include="Image\tram.jpg" />
+    <Resource Include="Image\trol.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

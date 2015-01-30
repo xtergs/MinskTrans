@@ -25,6 +25,11 @@ using MinskTrans.Universal.Annotations;
 			
 		}
 
+		public virtual void RefreshView()
+		{
+			
+		}
+
 		//public ISettingsModelView SettingsModelView
 		//{
 		//	get { return settingsModelView;}

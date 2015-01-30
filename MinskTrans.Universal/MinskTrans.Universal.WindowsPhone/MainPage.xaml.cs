@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.Universal.ViewModel;
+
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -56,17 +56,15 @@ namespace MinskTrans.Universal
 
 		async private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			await Task.Run(async () =>
-			{
-				//await Task.WhenAll(model.Context.DownloadUpdateAsync());
-				if (await model.Context.HaveUpdate())
-					model.Context.ApplyUpdate();
-			});
+			
 		}
 
 		async private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
-			model.Context.Save();
+			//DataContext = model;
+			model.StopMovelView.FilteredSelectedStop = model.Context.Stops.First(x => x.SearchName == "шепичи" && x.Routs.Any());
+			model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x=>x.SearchName.Contains("шепичи")));
+			//testListview.ItemsSource = model.StopMovelView.TimeSchedule;
 		}
 
 		private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -91,12 +89,24 @@ namespace MinskTrans.Universal
 
 			model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
 			//ShedulerParser.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
-			
+			model.Context.DownloadUpdate();
 		}
 
 		private void Button_Click_2(object sender, RoutedEventArgs e)
 		{
 			listview.ItemsSource = model.Context.Routs;
 		}
+
+		private void ListView_ItemClick(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+		{
+			((ListView)sender).Visibility = Visibility.Collapsed;
+			ShowFavouriteStop.Visibility = Visibility.Visible;
+		}
+
+	    private void ListView_ShowStop_ItemClick(object sender, SelectionChangedEventArgs e)
+	    {
+		    ShowStop.Visibility = Visibility.Visible;
+			StopsListView.Visibility = Visibility.Collapsed;
+	    }
     }
 }

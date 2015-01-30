@@ -72,7 +72,7 @@ using GalaSoft.MvvmLight.Command;
 					IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
 					if (RoutNum != null)
 						temp = temp.Where(x => x.Contains(routNum));
-					if (temp.Count() > 0)
+					if (temp.Any())
 						RouteNumSelectedValue = temp.First();
 					return temp;
 				}
@@ -297,5 +297,15 @@ using GalaSoft.MvvmLight.Command;
 			var handler = ShowRoute;
 			if (handler != null) handler(this, args);
 		}
+
+		#region Overrides of BaseModelView
+
+		public override void RefreshView()
+		{
+			base.RefreshView();
+			OnPropertyChanged("RouteNums");
+		}
+
+		#endregion
 	}
 }

@@ -6,11 +6,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
+    xmlns:converters="using:MinskTrans.Universal.Converters"
+    xmlns:desctopClient="using:MinskTrans.DesctopClient"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    d:DataContext="{d:DesignInstance modelview:GroupStopsModelView}">
+    d:DataContext="{d:DesignInstance modelview:StopModelView}">
     <UserControl.Resources>
+        <converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter"/>
+        <converters:StopsToStr x:Key="StopsToStr"/>
+        <converters:TransportToImageConverter x:Key="TransportToImageConverter"/>
+        <local:MinsLeftConverter x:Key="MinsLeftConverter"/>
+        <local:MinsToTimeConverter x:Key="MinsToTimeConverter"/>
+        
         <DataTemplate x:Key="DataTemplate1">
             <Grid x:Name="Grid">
                 <Grid.ColumnDefinitions>
@@ -56,7 +64,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="ShowStop" 
-					  Visibility="Collapsed"
+					  Visibility="Visible"
 					  Grid.Row="1"
 					  Grid.Column="0"
 					  Grid.ColumnSpan="2">

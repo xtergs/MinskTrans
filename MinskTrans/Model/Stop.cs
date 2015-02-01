@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+
 using MinskTrans.DesctopClient.Model;
+
 
 namespace MinskTrans.DesctopClient
 {
@@ -141,18 +146,28 @@ namespace MinskTrans.DesctopClient
 			get { return Routs.Where(x => x.Transport == "tram"); }
 		}
 
-		public IEnumerable<string> TrolRoutsNum
+		public IEnumerable<Rout> MetroRouts
 		{
-			get { return TrolRouts.Select(x=>x.RouteNum).Distinct(); }
+			get { return Routs.Where(x => x.Transport == "metro"); }
 		}
 
-		public IEnumerable<string> BusRoutsNum
+		public ObservableCollection<string> TrolRoutsNum
 		{
-			get { return BusRouts.Select(x => x.RouteNum).Distinct(); }
+			get { return new ObservableCollection<string>(TrolRouts.Select(x=>x.RouteNum).Distinct()); }
 		}
-		public IEnumerable<string> TramRoutsNum
+
+		public ObservableCollection<string> BusRoutsNum
 		{
-			get { return TramRouts.Select(x => x.RouteNum).Distinct(); }
+			get { return new ObservableCollection<string>( BusRouts.Select(x => x.RouteNum).Distinct()); }
+		}
+		public ObservableCollection<string> TramRoutsNum
+		{
+			get { return new ObservableCollection<string>(TramRouts.Select(x => x.RouteNum).Distinct()); }
+		}
+
+		public List<string> MetroRoutsNum
+		{
+			get { return MetroRouts.Select(x => x.RouteNum).Distinct().ToList(); }
 		} 
 
 
@@ -164,8 +179,9 @@ namespace MinskTrans.DesctopClient
 		public IEnumerable<string> DirectionsString
 		{
 			get { return Directions.Select(x => x.Name).Distinct(); }
-		} 
+		}
 
+		
 		#region Overrides of BaseModel
 
 		protected override string GetStr()

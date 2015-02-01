@@ -50,7 +50,7 @@ namespace MinskTrans.DesctopClient.Modelview
 							x => x.SearchName.Contains(tempSt));
 					return temp;
 				}
-				return Context.Stops;
+				return Context.ActualStops;
 			}
 		}
 	}

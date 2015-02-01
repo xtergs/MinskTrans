@@ -69,7 +69,7 @@ using GalaSoft.MvvmLight.Command;
 			{
 				if (Context.Routs != null)
 				{
-					IEnumerable<string> temp = Context.Routs.Where(x => x.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
+					IEnumerable<string> temp = Context.Routs.Select(x => x.RouteNum).Distinct();
 					if (RoutNum != null)
 						temp = temp.Where(x => x.Contains(routNum));
 					if (temp.Any())

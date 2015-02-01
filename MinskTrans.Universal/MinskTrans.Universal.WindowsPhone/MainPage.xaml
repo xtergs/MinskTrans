@@ -1,171 +1,301 @@
-﻿<Page xmlns:Controls="using:NumberConverter.WinRTXamlToolkit.Controls"
+﻿<Page xmlns:ExpaControl="using:ExpanderViewMaster.ExpaControl"  xmlns:Controls="using:NumberConverter.WinRTXamlToolkit.Controls"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="using:MinskTrans.Universal"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
-	xmlns:Converters="using:MinskTrans.Universal.Converters" 
+	xmlns:Converters="using:MinskTrans.Universal.Converters"
+	xmlns:model="using:MinskTrans.Universal.Model"
+	xmlns:modelView="using:MinskTrans.Universal.ModelView"
 	x:Class="MinskTrans.Universal.MainPage"
 	mc:Ignorable="d"
-	d:DataContext="{d:DesignInstance modelview:MainModelView}"
-	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
-	<Page.Resources>
-		<Converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter"/>
-		<Converters:StopsToStr x:Key="StopsToStr"/>
-		<Converters:TransportToImageConverter x:Key="TransportToImageConverter"/>
-		<local:MinsLeftConverter x:Key="MinsLeftConverter"/>
-		<local:MinsToTimeConverter x:Key="MinsToTimeConverter"/>
-		<DataTemplate x:Key="ListStopsDataTemplate">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Grid.ColumnSpan="10" 
-						   Text="{Binding Name}"/>
-				<TextBlock Grid.ColumnSpan="10" 
-						   Grid.Row="1"
-						   TextWrapping="WrapWholeWords"
-						   Text="{Binding DirectionsString, Converter={StaticResource StopsToStr}}"
-						   MaxLines="2"/>
-				<Controls:WrapPanel Grid.Row="2" Grid.ColumnSpan="9">
-				<Grid HorizontalAlignment="Left" >
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
-					</Grid.ColumnDefinitions>
-					<Image Source="Image/trol.jpg"
-						   Height="{Binding ElementName=TextBlock, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged}"
-					   Grid.Column="0"/>
-					<TextBlock Name="TextBlock"
-						Grid.Column="1"
-						   Text="{Binding TrolRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
-				</Grid>
-					<Grid HorizontalAlignment="Left" >
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Image Source="Image/bus.jpg"
-						   Height="{Binding ElementName=TextBlock1, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged}"
-					   Grid.Column="0"/>
-						<TextBlock Name="TextBlock1"
-						Grid.Column="1"
-						   Text="{Binding BusRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
-					</Grid>
-					<Grid HorizontalAlignment="Left" >
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Image Source="Image/tram.jpg"
-						   Height="{Binding ElementName=TextBlock2, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged}"
-					   Grid.Column="0"/>
-						<TextBlock Name="TextBlock2"
-						Grid.Column="1"
-						   Text="{Binding TramRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
-					</Grid>
-				</Controls:WrapPanel>
+	d:DataContext="{d:DesignInstance modelView:MainModelView}"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
+    <Page.Resources>
+        <Converters:IntToVisibleConverter x:Key="IntToVisibleConverter"/>
+        <Converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter"/>
+        <Converters:StopsToStr x:Key="StopsToStr"/>
+        <Converters:TransportToImageConverter x:Key="TransportToImageConverter"/>
+        <local:MinsLeftConverter x:Key="MinsLeftConverter"/>
+        <local:MinsToTimeConverter x:Key="MinsToTimeConverter"/>
+        <DataTemplate x:Key="ListStopsDataTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="10" 
+    				Text="{Binding Name}"
+                           FontSize="15"/>
+                <TextBlock Grid.ColumnSpan="10" 
+    				Grid.Row="1"
+    				TextWrapping="WrapWholeWords"
+    				Text="{Binding DirectionsString, Converter={StaticResource StopsToStr}}"
+    				MaxLines="2"/>
+                <!--<ListView Grid.Row="2"
+                          Grid.ColumnSpan="9"
+                          ItemsSource="{Binding Source=GroupedTypeRoutsView}">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Controls:WrapPanel>
+                            </Controls:WrapPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Key, Converter={StaticResource TransportToImageConverter}}"></Image>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>-->
+                <Controls:WrapPanel Grid.Row="2" Grid.ColumnSpan="9" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid HorizontalAlignment="Left"
+    					Visibility="{Binding TrolRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/trol.jpg"
+    						Height="{Binding ActualHeight, ElementName=TextBlock, UpdateSourceTrigger=PropertyChanged}"
+    						Grid.Column="0"/>
+                        <TextBlock x:Name="TextBlock"
+                                   Grid.Column="1"
+                                   Foreground="Blue"
+                                   FontSize="15"
+                                   Text="{Binding TrolRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" 
+                          Visibility="{Binding BusRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/bus.jpg"
+                               Height="{Binding ActualHeight, ElementName=TextBlock1, UpdateSourceTrigger=PropertyChanged}"
+                               Grid.Column="0"/>
+                        <TextBlock x:Name="TextBlock1"
+                                   Grid.Column="1"
+                                   Foreground="Green"    
+                                    FontSize="15"
+                                   Text="{Binding BusRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" 
+                          Visibility="{Binding TramRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/tram.jpg"
+                               Height="{Binding ActualHeight, ElementName=TextBlock2, UpdateSourceTrigger=PropertyChanged}"
+                               Grid.Column="0"/>
+                        <TextBlock x:Name="TextBlock2"
+                                   Grid.Column="1"
+                                   Foreground="Red"
+                                    FontSize="15"
+                                   Text="{Binding TramRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" 
+                          Visibility="{Binding MetroRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/subway.jpg"
+    						Height="{Binding ActualHeight, ElementName=TextBlock3, UpdateSourceTrigger=PropertyChanged}"
+    						Grid.Column="0"/>
+                        <TextBlock x:Name="TextBlock3"
+    						Grid.Column="1"
+                                   Foreground="DarkViolet"
+                                    FontSize="15"
+    						Text="{Binding MetroRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}"/>
+                    </Grid>
+                </Controls:WrapPanel>
 
-			</Grid>
-		</DataTemplate>
-		
-	</Page.Resources>
+            </Grid>
+        </DataTemplate>
 
-	<Pivot >
-		<PivotItem Header="Избранное" >
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-				<HyperlinkButton Content="Остановки!"></HyperlinkButton>
-				<HyperlinkButton Grid.Column="1"
+        <DataTemplate x:Key="DataTemplate2"
+                      d:DataContext="{d:DesignInstance model:RoutWithDestinations}">
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Image Source="{Binding Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
+                       Height="{Binding ElementName=RouteNumTextBlock, Path=ActualHeight}" VerticalAlignment="Top"/>
+                <TextBlock Text="{Binding Rout.RouteNum}"
+                           Grid.Column="1"
+                           FontSize="35"
+                           Name="RouteNumTextBlock" VerticalAlignment="Top"/>
+                <ListBox Grid.Column="2" ItemsSource="{Binding Destinations}" Padding="0" Background="#00000000">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+
+                            <TextBlock MinHeight="0" Text="{Binding }" Margin="0,-10" Padding="0"
+                                           MaxLines="1"
+                                         FontSize="15" Foreground="White"/>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </DataTemplate>
+        <SolidColorBrush x:Key="ListBoxBorderThemeBrush" Color="Transparent"/>
+        <Thickness x:Key="ListBoxBorderThemeThickness">1.5</Thickness>
+        <FontFamily x:Key="ContentControlThemeFontFamily">Segoe WP</FontFamily>
+        <x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
+     
+    </Page.Resources>
+
+    <Pivot x:Name="Pivot" >
+        <PivotItem Header="Избранное" 
+                   DataContext="{Binding FavouriteModelView}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <HyperlinkButton Content="Остановки!"/>
+                <HyperlinkButton Grid.Column="1"
 								 Content="Транспорт!"/>
-				
-				<ListView ItemsSource="{Binding  Context.FavouriteStops}"
-						  DataContext="{Binding  GroupStopsModelView}"
-						  SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					Grid.Row="1"
-						  Grid.ColumnSpan="2" ItemTemplate="{StaticResource ListStopsDataTemplate}" SelectionChanged="ListView_ItemClick"></ListView>
 
-                <local:ShowStopView x:Name="ShowFavouriteStop" 
-					  DataContext="{Binding GroupStopsModelView}"
+                <ListView ItemsSource="{Binding  Context.FavouriteStops}"
+						  SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					      Grid.Row="1"
+						  Grid.ColumnSpan="2" 
+                          ItemTemplate="{StaticResource ListStopsDataTemplate}" SelectionChanged="ListView_ItemClick"/>
+                
+                <local:ShowStopView x:Name="ShowFavouriteStop"
 					  Visibility="Collapsed"
 					  Grid.Row="1"
 					  Grid.Column="0"
 					  Grid.ColumnSpan="2">
                 </local:ShowStopView>
-			</Grid>
-		</PivotItem>
+            </Grid>
+        </PivotItem>
 
-		<PivotItem Header="Поиск" DataContext="{Binding FindModelView}" >
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
+        <PivotItem Header="Поиск"
+                   x:Name="SearchPivotItem"
+                   DataContext="{Binding FindModelView}" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-
                     <RowDefinition/>
-				</Grid.RowDefinitions>
-				<HyperlinkButton Content="Остановки!"></HyperlinkButton>
-				<HyperlinkButton Grid.Column="1"
-								 Content="Транспорт!"/>
-                <TextBox x:Name="FindStop" 
+                </Grid.RowDefinitions>
+                
+                
+                <HyperlinkButton Content="Остановки!" 
+                                 x:Name="StopsHyperlinkButton"
+                                 Click="HyperLinkButton_ShowStops"></HyperlinkButton>
+                <HyperlinkButton Grid.Column="1"
+								 Content="Транспорт!"
+                                 x:Name="RoutsHyperlinkButton"
+                                 Click="HyperLinkButton_ShowRouts"/>
+
+
+                <Grid Grid.Row="1"
+                      Grid.ColumnSpan="2"
+                      x:Name="ShowStopsGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+
+                    <TextBox Grid.Row="0" 
+                             Visibility="Visible"
+                         x:Name="FindStop" 
                          Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <TextBox x:Name="FindTrans" 
-                         Visibility="Collapsed"
-                         Text="{Binding RoutesModelview.RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <ListView x:Name="StopsListView"
-                    ItemsSource="{Binding  Context.ActualStops}"
+                    <ListView Grid.Row="1" 
+                          x:Name="StopsListView"
+                          ItemsSource="{Binding   FilteredStops, UpdateSourceTrigger=PropertyChanged}"
 						  DataContext="{Binding  StopModelView}"
 						  SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					Grid.Row="1"
-						  Grid.ColumnSpan="2" ItemTemplate="{StaticResource ListStopsDataTemplate}" SelectionChanged="ListView_ShowStop_ItemClick"></ListView>
+						  Grid.ColumnSpan="2" 
+                          ItemTemplate="{StaticResource ListStopsDataTemplate}" 
+                          SelectionChanged="ListView_ShowStop_ItemClick"/>
 
-                <local:ShowStopView x:Name="ShowStop" 
-					  DataContext="{Binding GroupStopsModelView}"
-					  Visibility="Collapsed"
-					  Grid.Row="1"
-					  Grid.Column="0"
-					  Grid.ColumnSpan="2">
-                </local:ShowStopView>
-			</Grid>
-		</PivotItem>
-		<!--<PivotItem Header="Избранное">
+                    <local:ShowStopView x:Name="ShowStop" 
+					                DataContext="{Binding StopModelView}"
+					                Visibility="Collapsed"
+					                Grid.Row="0"
+                                    Grid.RowSpan="2"
+                    				Grid.Column="0">
+                    </local:ShowStopView>
+                </Grid>
+                <Grid Grid.Row="1"
+                      Grid.ColumnSpan="2"
+                      Visibility="Collapsed"
+                      x:Name="ShowRoutsGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Row="0" 
+                         x:Name="FindTrans" 
+                         Text="{Binding RoutsModelView.RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number"/>
+
+                    <ListView Grid.Row="1" 
+                          x:Name="RoutsListView"
+                          ItemsSource="{Binding  RouteNums, UpdateSourceTrigger=PropertyChanged}"
+						  DataContext="{Binding  RoutsModelView}"
+						  SelectedItem="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.ColumnSpan="2" 
+                          ItemTemplate="{StaticResource DataTemplate2}"
+                          SelectionChanged="ListView_ShowListRout_ItemClick"/>
+                    <ListView Grid.Row="1" 
+                              Visibility="Collapsed"
+                          x:Name="ShowRoutsListView"
+                          ItemsSource="{Binding  RouteNames, UpdateSourceTrigger=PropertyChanged}"
+						  DataContext="{Binding  RoutsModelView}"
+						  SelectedItem="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.ColumnSpan="2" 
+                          
+                          SelectionChanged="ListView_ShowRout_ItemClick"/>
+                </Grid>
+                    
+
+            </Grid>
+            
+        </PivotItem>
+        <!--<PivotItem Header="Избранное">
 			<Grid>
 
 
 			</Grid>
 		</PivotItem>-->
-		<PivotItem Header="Debug">
-			<Grid Loaded="Grid_Loaded">
-				<Button Content="Button" HorizontalAlignment="Left" Margin="98,72,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-				<Button Content="Button" HorizontalAlignment="Left" Margin="98,128,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
-				<ListBox x:Name="listBox" HorizontalAlignment="Left" Height="134" Margin="10,228,0,0" VerticalAlignment="Top" Width="380"/>
-				<Button Content="Button" HorizontalAlignment="Left" Margin="252,176,0,0" VerticalAlignment="Top" Click="Button_Click_2"/>
-				<ListBox x:Name="listview" ItemsSource="{Binding Context.Routs, UpdateSourceTrigger=PropertyChanged}"
+        <PivotItem Header="Debug">
+            <Grid Loaded="Grid_Loaded">
+                <Button Content="Button" HorizontalAlignment="Left" Margin="98,72,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+                <Button Content="Button" HorizontalAlignment="Left" Margin="98,128,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+                <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="134" Margin="10,228,0,0" VerticalAlignment="Top" Width="380"/>
+                <Button Content="Button" HorizontalAlignment="Left" Margin="252,176,0,0" VerticalAlignment="Top" Click="Button_Click_2"/>
+                <ListBox x:Name="listview" ItemsSource="{Binding Context.Routs, UpdateSourceTrigger=PropertyChanged}"
 					DisplayMemberPath="RouteName"
 					HorizontalAlignment="Left" Height="263" Margin="10,367,0,0" VerticalAlignment="Top" Width="380"/>
 
-			</Grid>
-		</PivotItem>
-	</Pivot>
+            </Grid>
+        </PivotItem>
+    </Pivot>
 </Page>

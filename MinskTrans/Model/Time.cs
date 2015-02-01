@@ -83,6 +83,25 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
+		public string ToStrTable
+		{
+			get
+			{
+				StringBuilder builder = new StringBuilder();
+				foreach (var dictionary in DictionaryTime)
+				{
+					builder.Append(dictionary.Key + ":");
+					foreach (var i in dictionary.Value)
+					{
+						builder.Append(i + ", ");
+					}
+					builder.Remove(builder.Length - 2, 2);
+					builder.Append("\n");
+				}
+				return builder.ToString();
+			}
+		}
+
 		public Schedule Schedule { get; set; }
 
 		#region Implementation of IXmlSerializable

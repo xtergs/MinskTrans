@@ -13,6 +13,23 @@ namespace MinskTrans.DesctopClient
 #endif
 	public class Rout :BaseModel, IXmlSerializable
 	{
+		public enum TransportType
+		{
+			None,
+			Trol,
+			Bus,
+			Tram,
+			Metro
+		}
+
+		static Dictionary<string, TransportType> transportTypeDictionary = new Dictionary<string, TransportType>()
+		{
+			{"", TransportType.None},
+			{"trol", TransportType.Trol},
+			{"bus", TransportType.Bus},
+			{"metro", TransportType.Metro},
+			{"tram", TransportType.Tram}
+		}; 
 		
 		private string str = "";
 		private char sym = ';';
@@ -33,7 +50,7 @@ namespace MinskTrans.DesctopClient
 				Authority = routR.Authority;
 			if (string.IsNullOrWhiteSpace(City))
 				City = routR.City;
-			if (string.IsNullOrWhiteSpace(Transport))
+			if (Transport == TransportType.None)
 				Transport = routR.Transport;
 			if (string.IsNullOrWhiteSpace(Operator))
 				Operator = routR.Operator;
@@ -60,18 +77,18 @@ namespace MinskTrans.DesctopClient
 		public Rout(string rout)
 		{
 			Inicialize(rout);
-			RouteNum = GetNext();
-			Authority = GetNext();
-			City = GetNext();
-			Transport = GetNext();
-			Operator = GetNext();
-			ValidityPeriods = GetNext();
-			SpecialDates = GetNext();
-			RoutTag = GetNext();
-			RoutType = GetNext();
-			Commercial = GetNext();
-			RouteName = GetNext();
-			Weekdays = GetNext();
+			RouteNum = GetNext().Trim();
+			Authority = GetNext().Trim();
+			City = GetNext().Trim();
+			Transport = transportTypeDictionary[GetNext()];
+			Operator = GetNext().Trim();
+			ValidityPeriods = GetNext().Trim();
+			SpecialDates = GetNext().Trim();
+			RoutTag = GetNext().Trim();
+			RoutType = GetNext().Trim();
+			Commercial = GetNext().Trim();
+			RouteName = GetNext().Trim().Replace("  "," ").Replace("дс","ДС").Replace("д/с","ДС");
+			Weekdays = GetNext().Trim();
 			RoutId = int.Parse(GetNext());
 
 			Entry = GetNext();
@@ -90,7 +107,7 @@ namespace MinskTrans.DesctopClient
 		public string RouteNum { get; set; }
 		public string Authority { get; set; }
 		public string City { get; set; }
-		public string Transport { get; set; }
+		public TransportType Transport { get; set; }
 		public string Operator { get; set; }
 		public string ValidityPeriods { get; set; }
 		public string SpecialDates { get; set; }
@@ -148,7 +165,7 @@ namespace MinskTrans.DesctopClient
 
 		public Stop StartStop
 		{
-			get { return Stops.First(); }
+			get { return Stops.FirstOrDefault(); }
 		}
 
 		#region Implementation of IXmlSerializable
@@ -173,7 +190,9 @@ namespace MinskTrans.DesctopClient
 			RouteNum = reader.GetAttribute("Num");
 			Authority = reader.GetAttribute("Aut");
 			City = reader.GetAttribute("C");
-			Transport = reader.GetAttribute("Tr");
+			TransportType transportType;
+			TransportType.TryParse(reader.GetAttribute("Tr"), true, out transportType);
+			Transport = transportType;
 			Operator = reader.GetAttribute("Op");
 			ValidityPeriods = reader.GetAttribute("Valid");
 			SpecialDates = reader.GetAttribute("Special");
@@ -219,7 +238,7 @@ namespace MinskTrans.DesctopClient
 			writer.WriteAttributeString("Num", RouteNum);
 			writer.WriteAttributeString("Aut", Authority);
 			writer.WriteAttributeString("C", City);
-			writer.WriteAttributeString("Tr", Transport);
+			writer.WriteAttributeString("Tr", Transport.ToString());
 			writer.WriteAttributeString("Op", Operator);
 			writer.WriteAttributeString("Valid", ValidityPeriods);
 			writer.WriteAttributeString("Special", SpecialDates);

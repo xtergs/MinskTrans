@@ -56,23 +56,23 @@ namespace MinskTrans.DesctopClient
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			City = GetStr();
+			City = GetStr().Trim();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Area = GetStr();
+			Area = GetStr().Trim();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Streat = GetStr();
+			Streat = GetStr().Trim();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Name = GetStr();
+			Name = GetStr().Trim();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Info = GetStr();
+			Info = GetStr().Trim();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
@@ -84,11 +84,11 @@ namespace MinskTrans.DesctopClient
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			StopsStr = GetStr();
+			StopsStr = GetStr().Trim();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			StopNum = GetStr();
+			StopNum = GetStr().Trim();
 
 			Stops = new List<Stop>();
 			Routs = new List<Rout>();
@@ -128,27 +128,27 @@ namespace MinskTrans.DesctopClient
 			set { routs = value; }
 		}
 
-		public IEnumerable<IGrouping<string, Rout>> GroupedTypeRouts
+		public IEnumerable<IGrouping<Rout.TransportType, Rout>> GroupedTypeRouts
 		{
 			get { return Routs.GroupBy(x => x.Transport); }
 		}
 
 		public IEnumerable<Rout> TrolRouts
 		{
-			get { return Routs.Where(x => x.Transport == "trol"); }
+			get { return Routs.Where(x => x.Transport == Rout.TransportType.Trol); }
 		}
 		public IEnumerable<Rout> BusRouts
 		{
-			get { return Routs.Where(x => x.Transport == "bus"); }
+			get { return Routs.Where(x => x.Transport == Rout.TransportType.Bus); }
 		}
 		public IEnumerable<Rout> TramRouts
 		{
-			get { return Routs.Where(x => x.Transport == "tram"); }
+			get { return Routs.Where(x => x.Transport == Rout.TransportType.Tram); }
 		}
 
 		public IEnumerable<Rout> MetroRouts
 		{
-			get { return Routs.Where(x => x.Transport == "metro"); }
+			get { return Routs.Where(x => x.Transport == Rout.TransportType.Metro); }
 		}
 
 		public ObservableCollection<string> TrolRoutsNum

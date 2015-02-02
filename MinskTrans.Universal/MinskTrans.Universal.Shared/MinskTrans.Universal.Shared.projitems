@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\RoutsToNumStrConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StopsToStr.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\TransportToImageConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\WeekdaysToStrConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\ExpanderControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\HeaderedItemsControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\HierarchicalDataTemplate.cs" />
@@ -47,6 +48,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)ExpaResource\ExpanderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resourse\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resourse\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

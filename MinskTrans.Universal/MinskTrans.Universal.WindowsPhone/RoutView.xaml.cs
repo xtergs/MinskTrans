@@ -58,10 +58,15 @@ namespace MinskTrans.Universal
 
 
 			
-			DataContext = MainModelView.MainModelViewGet.FindModelView.RoutsModelView;
+			//DataContext = MainModelView.MainModelViewGet.FindModelView.RoutsModelView;
 			//ListView.ItemsSource = MainModelView.MainModelViewGet.FindModelView.RoutsModelView.TimesObservableCollection;
 			OnPropertyChanged("RouteNumSelectedValue");
 		}
+
+		protected override void OnNavigatedTo(NavigationEventArgs e)
+	    {
+	         DataContext = e.Parameter;
+	     }
 
 		private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
 		{

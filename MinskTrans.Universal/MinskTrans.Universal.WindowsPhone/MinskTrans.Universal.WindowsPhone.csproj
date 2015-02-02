@@ -165,6 +165,7 @@
     <Compile Include="ShowStopView.xaml.cs">
       <DependentUpon>ShowStopView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TransportToColor.cs" />
     <Compile Include="UniversalContext.cs" />
   </ItemGroup>
   <ItemGroup>

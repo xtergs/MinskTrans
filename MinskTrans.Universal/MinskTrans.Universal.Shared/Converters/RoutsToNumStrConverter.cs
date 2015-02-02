@@ -18,9 +18,12 @@ namespace MinskTrans.Universal.Converters
 				returnStr.Append(o);
 				returnStr.Append(", ");
 			}
-			if (returnStr.Length >= 2)
-				returnStr.Remove(returnStr.Length - 2, 2);
-			return returnStr.ToString();
+		    if (returnStr.Length >= 2)
+		    {
+			    returnStr.Remove(returnStr.Length - 2, 2);
+			    returnStr.Append(" ");
+		    }
+		    return returnStr.ToString();
 	    }
 
 	    public object ConvertBack(object value, Type targetType, object parameter, string language)

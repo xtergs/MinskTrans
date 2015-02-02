@@ -213,11 +213,11 @@ namespace MinskTrans.DesctopClient.Modelview
 						IEnumerable<KeyValuePair<Rout, int>> temp =
 							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - TimeInPast).Where(x =>
 							{
-								if (x.Key.Transport == "bus")
+								if (x.Key.Transport == Rout.TransportType.Bus)
 									return Bus;
-								if (x.Key.Transport == "trol")
+								if (x.Key.Transport == Rout.TransportType.Trol)
 									return Trol;
-								if (x.Key.Transport == "tram")
+								if (x.Key.Transport == Rout.TransportType.Tram)
 									return Tram;
 								return false;
 							});
@@ -244,34 +244,19 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return new RelayCommand<int>(x=>TimeInPast = x);}
 		}
 
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
+		
 
-		public RelayCommand ShowStopMap
-		{
-			get
-			{
-				return new RelayCommand(() => OnShowStop(new ShowArgs() {SelectedStop = FilteredSelectedStop}),
-					() => FilteredSelectedStop != null);
-			}
-		}
+
+
+		
+
+		
 
 		//public ActionCommand ShowRouteMap
 		//{
 		//	get { return new ActionCommand(x => OnShowRoute(new ShowArgs()), p => RouteSelectedValue != null); }
 		//}
 
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
-
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		
 	}
 }

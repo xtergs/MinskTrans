@@ -31,7 +31,7 @@ namespace MinskTrans.Universal.ModelView
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
-		private string typeTransport;
+		private Rout.TransportType typeTransport;
 
 		//public RoutesModelview()
 		//{
@@ -44,11 +44,11 @@ namespace MinskTrans.Universal.ModelView
 			OnPropertyChanged("RouteNums");
 		}
 
-		public string TypeTransport
+		public Rout.TransportType TypeTransport
 		{
 			get
 			{
-				if (String.IsNullOrWhiteSpace(typeTransport))
+				//if (String.IsNullOrWhiteSpace(typeTransport))
 					if (Context.Routs != null && Context.Routs.Count > 0) 
 						TypeTransport = Context.Routs[0].Transport;
 				return typeTransport;
@@ -64,7 +64,7 @@ namespace MinskTrans.Universal.ModelView
 		}
 
 		#region RouteNums
-		public IEnumerable<RoutWithDestinations> RouteNums
+		public virtual IEnumerable<RoutWithDestinations> RouteNums
 		{
 			get
 			{
@@ -76,7 +76,7 @@ namespace MinskTrans.Universal.ModelView
 					List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
 					foreach (var item in temp)
 					{
-						returnEnumerable.Add(new RoutWithDestinations(item, Context.Routs.Where(x => x.RouteNum == item.RouteNum && x.Transport == item.Transport && (x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")) ).Select(x => x.RouteName)));
+						returnEnumerable.Add(new RoutWithDestinations(item, Context.Routs.Where(x =>x.Stops.Count > 0 && x.RouteNum == item.RouteNum && x.Transport == item.Transport && (x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")) ).Select(x => x.StartStop.Name + " - " + x.DestinationStop.Name)));
 					}
 					return returnEnumerable;
 				}
@@ -274,17 +274,17 @@ namespace MinskTrans.Universal.ModelView
 
 		public RelayCommand ShowBusCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = "bus"); }
+			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Bus); }
 		}
 
 		public RelayCommand ShowTrolCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = "trol"); }
+			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Trol); }
 		}
 
 		public RelayCommand ShowTramCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = "tram"); }
+			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Tram); }
 		}
 
 		public event Show ShowStop;

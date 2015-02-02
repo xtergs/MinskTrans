@@ -13,7 +13,7 @@ namespace MinskTrans.Universal.Model
 		public RoutWithDestinations(Rout newRout, IEnumerable<string> listDestinations)
 		{
 			rout = newRout;
-			destinations = listDestinations;
+			destinations = listDestinations.Distinct();
 		}
 
 		private readonly Rout rout;

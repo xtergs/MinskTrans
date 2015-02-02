@@ -8,8 +8,9 @@ using MinskTrans.DesctopClient.Modelview;
 
 namespace MinskTrans.Universal.ModelView
 {
-	public class FavouriteModelView:BaseModelView
+	public class FavouriteModelView:FindModelView
 	{
+		
 		public FavouriteModelView(Context newContext) : base(newContext)
 		{
 

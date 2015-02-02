@@ -2,33 +2,36 @@
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Data;
+using MinskTrans.DesctopClient;
 
 namespace MinskTrans.Universal.Converters
 {
-    class TransportToImageConverter: IValueConverter
-    {
-	    #region Implementation of IValueConverter
+	class TransportToImageConverter: IValueConverter
+	{
+		#region Implementation of IValueConverter
 
-	    public object Convert(object value, Type targetType, object parameter, string language)
-	    {
-		    string strValue = (string) value;
+		public object Convert(object value, Type targetType, object parameter, string language)
+		{
+			MinskTrans.DesctopClient.Rout.TransportType strValue = (MinskTrans.DesctopClient.Rout.TransportType)value;
 			switch (strValue)
 			{
-				case "trol":
+				case Rout.TransportType.Trol:
 					return "Image/trol.jpg";
-				case "bus":
+				case Rout.TransportType.Bus:
 					return "Image/bus.jpg";
-				case "tram":
+				case Rout.TransportType.Tram:
 					return "Image/tram.jpg";
+				case Rout.TransportType.Metro:
+					return "Image/subway.jpg";
 			}
-		    return "";
-	    }
+			return "";
+		}
 
-	    public object ConvertBack(object value, Type targetType, object parameter, string language)
-	    {
-		    throw new NotImplementedException();
-	    }
+		public object ConvertBack(object value, Type targetType, object parameter, string language)
+		{
+			throw new NotImplementedException();
+		}
 
-	    #endregion
-    }
+		#endregion
+	}
 }

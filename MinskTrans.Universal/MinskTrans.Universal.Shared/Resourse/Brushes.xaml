@@ -1,0 +1,13 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MinskTrans.Universal.Resourse">
+    <SolidColorBrush x:Key="LightBlueSolidColorBrush" Color="#FF01ACC7"/>
+    <SolidColorBrush x:Key="BlueSolidColorBrush" Color="#FF0056A3"/>
+    <SolidColorBrush x:Key="RedSolidColorBrush" Color="#FFBE2A2A"/>
+    <SolidColorBrush x:Key="VioletSolidColorBrush" Color="#FF8B00FF"/>
+    <SolidColorBrush x:Key="GreenSolidColorBrush" Color="#FF4D781E"/>
+    <SolidColorBrush x:Key="BackGroundSolidColorBrush" Color="#FF1D1D1D"/>
+    <SolidColorBrush x:Key="GreyGroundSolidColorBrush" Color="#FF7E7C7D"/>
+
+</ResourceDictionary>

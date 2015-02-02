@@ -30,7 +30,7 @@ using GalaSoft.MvvmLight.Command;
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
-		private string typeTransport;
+		private Rout.TransportType typeTransport;
 
 		//public RoutesModelview()
 		//{
@@ -43,11 +43,11 @@ using GalaSoft.MvvmLight.Command;
 			OnPropertyChanged("RouteNums");
 		}
 
-		public string TypeTransport
+		public Rout.TransportType TypeTransport
 		{
 			get
 			{
-				if (String.IsNullOrWhiteSpace(typeTransport))
+				//if (String.IsNullOrWhiteSpace(typeTransport))
 					if (Context.Routs != null && Context.Routs.Count > 0) 
 						TypeTransport = Context.Routs[0].Transport;
 				return typeTransport;
@@ -259,17 +259,17 @@ using GalaSoft.MvvmLight.Command;
 
 		public RelayCommand ShowBusCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = "bus"); }
+			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Bus); }
 		}
 
 		public RelayCommand ShowTrolCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = "trol"); }
+			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Trol); }
 		}
 
 		public RelayCommand ShowTramCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = "tram"); }
+			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Tram); }
 		}
 
 		public event Show ShowStop;

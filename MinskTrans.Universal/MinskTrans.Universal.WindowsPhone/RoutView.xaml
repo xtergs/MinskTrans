@@ -7,7 +7,9 @@
 	xmlns:Converters="using:MinskTrans.Universal.Converters"
 	
 
-	xmlns:ExpanderControl="using:ExpanderControl" x:Name="page"
+	xmlns:ExpanderControl="using:ExpanderControl"
+	xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
+	x:Name="page"
 	
 
 	x:Class="MinskTrans.Universal.RoutView"
@@ -25,9 +27,9 @@
         </Style>
     </Page.Resources>
     <Page.BottomAppBar>
-        <CommandBar>
-            <AppBarButton Icon="Accept" Label="appbarbutton"/>
-            <AppBarButton Icon="Cancel" Label="appbarbutton"/>
+        <CommandBar ClosedDisplayMode="Minimal" IsSticky="False" IsTabStop="False" MinHeight="0" >
+            <AppBarButton Icon="Map" IsCompact="True"/>
+            <AppBarToggleButton Icon="Favorite"  IsCompact="True"/>
         </CommandBar>
     </Page.BottomAppBar>
     <Page.Transitions>
@@ -58,7 +60,7 @@
             </Grid.ColumnDefinitions>
 			<Image Source="{Binding RouteSelectedValue.Transport, Converter={StaticResource TransportToImageConverter}, UpdateSourceTrigger=PropertyChanged}"
 				Height="{Binding ActualHeight, ElementName=RouteNameTextBlock}"/>
-            <TextBlock Grid.Column="2"
+            <TextBlock Grid.Column="1"
 				Text="{Binding RouteSelectedValue.RouteNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				FontSize="25" Margin="5,0,0,0"/>
 			<TextBlock Grid.Column="2"
@@ -78,23 +80,30 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 						<ToggleButton x:Name="ToggleButton"  
-                                      
+                                      FontSize="17"
                                       Style="{StaticResource ToggleButtonStyle1}"
 							Content="{Binding Key.Name}"
 									  HorizontalAlignment="Stretch"/>
 						<ListView Grid.Row="1" 
 								  Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ToggleButton}" 
 								  ItemsSource="{Binding Value}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <controls:WrapPanel></controls:WrapPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
 							<ListView.ItemTemplate>
 								<DataTemplate>
-								   <Grid>
+								   <Grid
+                                       Margin="5,0">
 									   <Grid.RowDefinitions>
 										   <RowDefinition Height="Auto"/>
 										   <RowDefinition Height="Auto"/>
 									   </Grid.RowDefinitions>
 										   <TextBlock Text="{Binding DaysStr}"
-													  FontSize="13"/>
+													  FontSize="15"/>
 									   <TextBlock Grid.Row="1"
+                                                  FontSize="13"
 												  Text="{Binding ToStrTable}"/>
 								   </Grid>
 								</DataTemplate>

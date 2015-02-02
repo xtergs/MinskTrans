@@ -14,6 +14,8 @@ namespace MinskTrans.Universal.ModelView
 {
 	public class RoutsModelView:BaseModelView
 	{
+
+
 		private bool curTime;
 		private string routNum;
 		private int routeNamesIndex;

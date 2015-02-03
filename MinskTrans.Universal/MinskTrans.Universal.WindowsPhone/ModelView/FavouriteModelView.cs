@@ -13,7 +13,7 @@ namespace MinskTrans.Universal.ModelView
 		
 		public FavouriteModelView(Context newContext) : base(newContext)
 		{
-
+			
 		}
 	}
 }

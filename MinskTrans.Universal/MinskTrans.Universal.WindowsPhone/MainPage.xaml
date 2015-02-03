@@ -9,7 +9,9 @@
 	xmlns:model="using:MinskTrans.Universal.Model"
 	xmlns:modelView="using:MinskTrans.Universal.ModelView"
 	xmlns:xaml="using:Windows.UI.Xaml"
+       xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WinRT"
 	xmlns:desctopClient="using:MinskTrans.DesctopClient"
+	xmlns:mapControl1="using:MapControl"
 	x:Class="MinskTrans.Universal.MainPage"
 	mc:Ignorable="d"
 	d:DataContext="{d:DesignInstance modelView:MainModelView}"
@@ -184,10 +186,134 @@
 
 	</Page.Resources>
 
-	<Pivot x:Name="Pivot" Margin="0" Padding="0"
+    <Grid>
+        <SettingsFlyout></SettingsFlyout>
+        <ProgressBar x:Name="ProgressRing" IsIndeterminate="True" VerticalAlignment="Stretch" Height="5"   />
+        <Pivot x:Name="Pivot" Margin="0" Padding="0"
 		   
 		   Background="{StaticResource BackGroundSolidColorBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-		<PivotItem Header="Избранное" 
+        <PivotItem Header="Поиск"
+				   x:Name="SearchPivotItem"
+				   DataContext="{Binding FindModelView}" BorderThickness="0,10,0,0" Margin="0" Padding="0"
+				   BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+            <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                   
+                  
+                    <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <HyperlinkButton Content="Остановки!" 
+								 IsEnabled="False"
+								 x:Name="StopsHyperlinkButton"
+								 Click="HyperLinkButton_ShowStops"></HyperlinkButton>
+                        <HyperlinkButton Grid.Column="1"
+								 Content="Транспорт!"
+								 x:Name="RoutsHyperlinkButton"
+								 Click="HyperLinkButton_ShowRouts"/>
+                    </Grid>
+
+
+                    <Grid Grid.Row="1"
+					  Grid.ColumnSpan="2"
+					  x:Name="ShowStopsGrid" Margin="10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+
+                        <TextBox Grid.Row="0" 
+							 Visibility="Visible"
+						 x:Name="FindStop" 
+						 Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ListView Grid.Row="1" 
+						  x:Name="StopsListView"
+						  ItemsSource="{Binding   FilteredStops, UpdateSourceTrigger=PropertyChanged}"
+						  DataContext="{Binding  StopModelView}"
+						  SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.ColumnSpan="2" 
+						  ItemTemplate="{StaticResource ListStopsDataTemplate}" 
+						  SelectionChanged="ListView_ShowStop_ItemClick">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+
+                    </Grid>
+                    <local:ShowStopView x:Name="ShowStop" 
+									DataContext="{Binding StopModelView}"
+									Visibility="Collapsed"
+									Grid.Row="0"
+									Grid.RowSpan="2"
+										Grid.ColumnSpan="2"
+									Grid.Column="0">
+                    </local:ShowStopView>
+                    <Grid Grid.Row="1"
+					  Grid.ColumnSpan="2"
+					  Visibility="Collapsed"
+					  x:Name="ShowRoutsGrid" Margin="10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Row="0" 
+						 x:Name="FindTrans" 
+						 Text="{Binding RoutsModelView.RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number"/>
+
+                        <ListView Grid.Row="1" 
+						  x:Name="RoutsListView"
+						  ItemsSource="{Binding  RouteNums, UpdateSourceTrigger=PropertyChanged}"
+						  DataContext="{Binding  RoutsModelView}"
+						  SelectedItem="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.ColumnSpan="2" 
+						  ItemTemplate="{StaticResource DataTemplate2}"
+						  SelectionChanged="ListView_ShowListRout_ItemClick"/>
+                        <Grid Grid.Row="1"
+                          Grid.ColumnSpan="2"
+                          Visibility="Collapsed"
+                          DataContext="{Binding RoutsModelView}"
+                          x:Name="ShowRoutsListGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Image MinHeight="10" MinWidth="10" Source="{Binding RouteNumSelectedValue.Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
+                                       Height="{Binding ElementName=TransportTextBlock, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock FontSize="20" Name="TransportTextBlock" Grid.Column="1" Text="{Binding RouteNumSelectedValue.Rout.RouteNum}"/>
+                            </Grid>
+                            <ListView Grid.Row="1" 
+							  
+						  x:Name="ShowRoutsListView"
+						  ItemsSource="{Binding  RouteNames, UpdateSourceTrigger=PropertyChanged}"
+						  
+						  SelectedItem="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.ColumnSpan="2" 
+						  ItemTemplate="{StaticResource DataTemplate3}"
+						  SelectionChanged="ListView_ShowRout_ItemClick"/>
+                        </Grid>
+                    </Grid>
+
+
+                </Grid>
+            </Border>
+
+        </PivotItem>
+        <PivotItem Header="Избранное" 
 				   x:Name ="FavourPivotItem"
 				   Padding="0" Margin="0"
 				   DataContext="{Binding FavouriteModelView}"
@@ -250,7 +376,7 @@
 				
 				<ListView Grid.Row="1" 
 						  x:Name="FavouriteRoutsListView"
-						  ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}"
+						  ItemsSource="{Binding  Context.FavouriteRouts, UpdateSourceTrigger=PropertyChanged}"
 						  DataContext="{Binding  RoutsModelView}"
 						  SelectedItem="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						  Grid.ColumnSpan="2" 
@@ -271,126 +397,30 @@
 
 		</PivotItem>
 
-		<PivotItem Header="Поиск"
-				   x:Name="SearchPivotItem"
-				   DataContext="{Binding FindModelView}" BorderThickness="0,10,0,0" Margin="0" Padding="0"
+        <PivotItem Header="Карта" 
+				   x:Name ="MapPivotItem"
+				   Padding="0" Margin="0"
+				  
 				   BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-			<Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-				<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-
-				<Grid x:Name="FindHyperButtonGrid" Margin="10,0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition/>
-						<ColumnDefinition/>
-					</Grid.ColumnDefinitions>
-				<HyperlinkButton Content="Остановки!" 
-								 IsEnabled="False"
-								 x:Name="StopsHyperlinkButton"
-								 Click="HyperLinkButton_ShowStops"></HyperlinkButton>
-				<HyperlinkButton Grid.Column="1"
-								 Content="Транспорт!"
-								 x:Name="RoutsHyperlinkButton"
-								 Click="HyperLinkButton_ShowRouts"/>
-				</Grid>
+            <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                <mapControl1:Map></mapControl1:Map>
+                </Border>
+            </PivotItem>
 
 
-				<Grid Grid.Row="1"
-					  Grid.ColumnSpan="2"
-					  x:Name="ShowStopsGrid" Margin="10,0">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
+        <PivotItem Header="Карта" 
+				   x:Name ="SettingsPivotItem"
+				   Padding="0" Margin="0"
+				  
+				   BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+            <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+               <StackPanel>
+                   <Button Content="Обновить расписание" Command="{Binding Context.UpdateDataCommand}"/>
+               </StackPanel>
+            </Border>
+        </PivotItem>
 
-
-					<TextBox Grid.Row="0" 
-							 Visibility="Visible"
-						 x:Name="FindStop" 
-						 Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-					<ListView Grid.Row="1" 
-						  x:Name="StopsListView"
-						  ItemsSource="{Binding   FilteredStops, UpdateSourceTrigger=PropertyChanged}"
-						  DataContext="{Binding  StopModelView}"
-						  SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-						  Grid.ColumnSpan="2" 
-						  ItemTemplate="{StaticResource ListStopsDataTemplate}" 
-						  SelectionChanged="ListView_ShowStop_ItemClick">
-						<ListView.ItemContainerStyle>
-							<Style TargetType="ListViewItem">
-								<Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-							</Style>
-						</ListView.ItemContainerStyle>
-					</ListView>
-
-				</Grid>
-					<local:ShowStopView x:Name="ShowStop" 
-									DataContext="{Binding StopModelView}"
-									Visibility="Collapsed"
-									Grid.Row="0"
-									Grid.RowSpan="2"
-										Grid.ColumnSpan="2"
-									Grid.Column="0">
-					</local:ShowStopView>
-				<Grid Grid.Row="1"
-					  Grid.ColumnSpan="2"
-					  Visibility="Collapsed"
-					  x:Name="ShowRoutsGrid" Margin="10,0">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition/>
-					</Grid.RowDefinitions>
-					<TextBox Grid.Row="0" 
-						 x:Name="FindTrans" 
-						 Text="{Binding RoutsModelView.RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number"/>
-
-					<ListView Grid.Row="1" 
-						  x:Name="RoutsListView"
-						  ItemsSource="{Binding  RouteNums, UpdateSourceTrigger=PropertyChanged}"
-						  DataContext="{Binding  RoutsModelView}"
-						  SelectedItem="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-						  Grid.ColumnSpan="2" 
-						  ItemTemplate="{StaticResource DataTemplate2}"
-						  SelectionChanged="ListView_ShowListRout_ItemClick"/>
-                    <Grid Grid.Row="1"
-                          Grid.ColumnSpan="2"
-                          Visibility="Collapsed"
-                          DataContext="{Binding RoutsModelView}"
-                          x:Name="ShowRoutsListGrid">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                                <Image MinHeight="10" MinWidth="10" Source="{Binding RouteNumSelectedValue.Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
-                                       Height="{Binding ElementName=TransportTextBlock, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBlock FontSize="20" Name="TransportTextBlock" Grid.Column="1" Text="{Binding RouteNumSelectedValue.Rout.RouteNum}"/>
-                        </Grid>
-					<ListView Grid.Row="1" 
-							  
-						  x:Name="ShowRoutsListView"
-						  ItemsSource="{Binding  RouteNames, UpdateSourceTrigger=PropertyChanged}"
-						  
-						  SelectedItem="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-						  Grid.ColumnSpan="2" 
-						  ItemTemplate="{StaticResource DataTemplate3}"
-						  SelectionChanged="ListView_ShowRout_ItemClick"/>
-                        </Grid>
-				</Grid>
-					
-
-			</Grid>
-				</Border>
-			
-		</PivotItem>
-		<!--<PivotItem Header="Избранное">
+        <!--<PivotItem Header="Избранное">
 			<Grid>
 
 
@@ -409,4 +439,5 @@
 			</Grid>
 		</PivotItem>
 	</Pivot>
+    </Grid>
 </Page>

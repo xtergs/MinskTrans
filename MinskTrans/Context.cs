@@ -23,6 +23,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.Universal.Annotations;
 #endif
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.Universal.Model;
 
 
 namespace MinskTrans.DesctopClient
@@ -43,7 +44,7 @@ namespace MinskTrans.DesctopClient
 		private ObservableCollection<Stop> stops;
 		private ObservableCollection<Schedule> times;
 		private ObservableCollection<GroupStop> groups;
-		private ObservableCollection<Rout> favouriteRouts;
+		private ObservableCollection<RoutWithDestinations> favouriteRouts;
 		private ObservableCollection<Stop> favouriteStops;
 		private DateTime lastUpdateDataDateTime;
 
@@ -57,7 +58,7 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public ObservableCollection<Rout> FavouriteRouts
+		public ObservableCollection<RoutWithDestinations> FavouriteRouts
 		{
 			get { return favouriteRouts; }
 			set
@@ -215,7 +216,7 @@ namespace MinskTrans.DesctopClient
 
 		public abstract void Load();
 
-		void AllPropertiesChanged()
+		public void AllPropertiesChanged()
 		{
 			OnPropertyChanged("Stops");
 			OnPropertyChanged("Routs");
@@ -286,6 +287,8 @@ namespace MinskTrans.DesctopClient
 		public event EmptyDelegate ApplyUpdateEnded;
 		public event LogDelegate LogMessage;
 		public event EmptyDelegate ErrorDownloading;
+		public event EmptyDelegate UpdateStarted;
+		public event EmptyDelegate UpdateEnded;
 
 		#region Invokators
 		protected virtual void OnDataBaseDownloadStarted()
@@ -407,7 +410,8 @@ namespace MinskTrans.DesctopClient
 			{
 				writer.WriteStartElement("Rout");
 				//writer.WriteValue(rout);
-				rout.WriteXml(writer);
+				//TODO
+				//rout.WriteXml(writer);
 				writer.WriteEndElement();
 			}
 			writer.WriteEndElement();
@@ -455,18 +459,23 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public RelayCommand<Rout> AddFavouriteRoutCommand
+		public IEnumerable<string> GetDestinations(Rout rout)
 		{
-			get { return new RelayCommand<Rout>(x=>FavouriteRouts.Add(x), p=> p!= null && !FavouriteRouts.Contains(p));}
+			return new List<string>();
+		}
+
+		public RelayCommand<RoutWithDestinations> AddFavouriteRoutCommand
+		{
+			get { return new RelayCommand<RoutWithDestinations>(x => FavouriteRouts.Add(x), p => p != null && !FavouriteRouts.Contains(p)); }
 		}
 
 		public RelayCommand<Stop> AddFavouriteSopCommand
 		{
 			get { return new RelayCommand<Stop>(x => FavouriteStops.Add(x), p => p != null && !FavouriteStops.Contains(p)); }
 		}
-		public RelayCommand<Rout> RemoveFavouriteRoutCommand
+		public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
 		{
-			get { return new RelayCommand<Rout>(x => FavouriteRouts.Remove(x), p => p != null && FavouriteRouts.Contains(p)); }
+			get { return new RelayCommand<RoutWithDestinations>(x => FavouriteRouts.Remove(x), p => p != null && FavouriteRouts.Contains(p)); }
 		}
 
 		public RelayCommand<Stop> RemoveFavouriteSopCommand
@@ -474,6 +483,18 @@ namespace MinskTrans.DesctopClient
 			get { return new RelayCommand<Stop>(x => FavouriteStops.Remove(x), p => p != null && FavouriteStops.Contains(p)); }
 		}
 		#endregion
+
+		protected virtual void OnUpdateStarted()
+		{
+			var handler = UpdateStarted;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
+		protected virtual void OnUpdateEnded()
+		{
+			var handler = UpdateEnded;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
 	}
 
 	public delegate void LogDelegate(object sender, LogDelegateArgs args);

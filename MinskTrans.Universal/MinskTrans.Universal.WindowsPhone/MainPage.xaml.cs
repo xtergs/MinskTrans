@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.Universal.Model;
 using MinskTrans.Universal.ModelView;
 
 
@@ -40,22 +41,26 @@ namespace MinskTrans.Universal
 			//model.Context.Load();
 
 			model = MainModelView.Create(new UniversalContext());
-			model.Context.DataBaseDownloadEnded += async (senderr, args) =>
+			model.Context.UpdateStarted += (sender, args) => ProgressRing.Visibility = Visibility.Visible;
+			model.Context.UpdateEnded += async (senderr, args) =>
 			{
 				
 				listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
 				
-				if (await model.Context.HaveUpdate())
-					model.Context.ApplyUpdate();
+				
 				DataContext = model;
 #if DEBUG
 				model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x => x.SearchName.Contains("шепичи")));
-				model.Context.FavouriteRouts.Add(model.Context.Routs.First(x=>x.RouteNum.Contains("20")));
+				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), new List<string>()));
+				model.Context.AllPropertiesChanged();
+				string str = "s";
 #endif
-				
+				ProgressRing.Visibility = Visibility.Collapsed;
+
 			};
 			model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));		
-			model.Context.DownloadUpdate();
+			//model.Context.DownloadUpdate();
+			model.Context.UpdateAsync();
 		}
 
 		/// <summary>
@@ -225,7 +230,7 @@ namespace MinskTrans.Universal
 
 		private void ShowFavouriteRoutsListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			throw new NotImplementedException();
+			Frame.Navigate(typeof(RoutView), MainModelView.MainModelViewGet.FavouriteModelView.RoutsModelView);
 		}
 
 		private void FavouriteStopsHyperlinkButton_OnClick(object sender, RoutedEventArgs e)

@@ -15,7 +15,7 @@ namespace MinskTrans.Universal.ModelView
 	public class RoutsModelView:BaseModelView
 	{
 
-
+		
 		private bool curTime;
 		private string routNum;
 		private int routeNamesIndex;
@@ -46,13 +46,17 @@ namespace MinskTrans.Universal.ModelView
 			OnPropertyChanged("RouteNums");
 		}
 
+		public bool ShowFavourite { get; set; }
+
+		
+
 		public Rout.TransportType TypeTransport
 		{
 			get
 			{
 				//if (String.IsNullOrWhiteSpace(typeTransport))
-					if (Context.Routs != null && Context.Routs.Count > 0) 
-						TypeTransport = Context.Routs[0].Transport;
+				if (Context.Routs != null && Context.Routs.Count() > 0)
+					TypeTransport = Context.Routs.First().Transport;
 				return typeTransport;
 			}
 			set
@@ -78,7 +82,7 @@ namespace MinskTrans.Universal.ModelView
 					List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
 					foreach (var item in temp)
 					{
-						returnEnumerable.Add(new RoutWithDestinations(item, Context.Routs.Where(x =>x.Stops.Count > 0 && x.RouteNum == item.RouteNum && x.Transport == item.Transport && (x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")) ).Select(x => x.StartStop.Name + " - " + x.DestinationStop.Name)));
+						returnEnumerable.Add(new RoutWithDestinations(item, Context.Routs.Where(x => x.Stops.Count > 0 && x.RouteNum == item.RouteNum && x.Transport == item.Transport && (x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A"))).Select(x => x.StartStop.Name + " - " + x.DestinationStop.Name)));
 					}
 					return returnEnumerable;
 				}

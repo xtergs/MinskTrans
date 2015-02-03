@@ -14,6 +14,7 @@ using Windows.Web.Http;
 using System.IO.Compression;
 using System.Linq;
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.Universal.Model;
 using Buffer = Windows.Storage.Streams.Buffer;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
@@ -48,9 +49,16 @@ namespace MinskTrans.Universal
 				Load();
 				//return;
 			}
-			FavouriteRouts = new ObservableCollection<Rout>();
+			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
+			DataBaseDownloadEnded += async (sender, args) => 
+			{
+				if (await HaveUpdate())
+					ApplyUpdate();
+				OnUpdateEnded();
+
+			};
 			//if (AutoUpdate)
 			//	await UpdateAsync();
 			//DownloadUpdate();
@@ -138,9 +146,8 @@ namespace MinskTrans.Universal
 			//throw new NotImplementedException();
 			//return Task.Run(async () =>
 			//{
+			OnUpdateStarted();
 			DownloadUpdate();
-				if (await HaveUpdate())
-					ApplyUpdate();
 				
 				
 			//});

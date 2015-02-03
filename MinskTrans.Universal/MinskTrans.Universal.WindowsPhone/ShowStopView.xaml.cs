@@ -22,6 +22,7 @@ namespace MinskTrans.Universal
 		public ShowStopView()
 		{
 			this.InitializeComponent();
+			
 		}
 	}
 }

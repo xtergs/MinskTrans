@@ -43,12 +43,19 @@ namespace MinskTrans.Universal.ModelView
 		public RoutsModelView(Context context)
 			: base(context)
 		{
+			Context.PropertyChanged += (sender, args) =>
+			{
+				OnPropertyChanged("RouteNums");
+			};
 			OnPropertyChanged("RouteNums");
 		}
 
 		public bool ShowFavourite { get; set; }
 
-		
+		public bool IsFavouriteRout
+		{
+			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
+		}
 
 		public Rout.TransportType TypeTransport
 		{

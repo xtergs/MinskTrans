@@ -6,9 +6,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking.Connectivity;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -16,6 +18,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MapControl;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Model;
@@ -32,35 +35,80 @@ namespace MinskTrans.Universal
 	public sealed partial class MainPage : Page
 	{
 		private MainModelView model;
+
+		enum States
+		{
+			Stops,
+			Routs,
+			StopView,
+			RoutList,
+			RoutView
+		}
+		private List<Pushpin> pushpins;
+		States state = States.Stops;
+
+		
+
 		public MainPage()
 		{
 			this.InitializeComponent();
+
+			//model = MainModelView.Create(new UniversalContext());
+			model = MainModelView.MainModelViewGet;
+			model.Context.ShowRoute += OnShowRoute;
+			model.Context.ShowStop += OnShowStop;
+			//model.ShowStop += OnShowStop;
+
+			
 
 			this.NavigationCacheMode = NavigationCacheMode.Required;
 			//model.Context.Save();
 			//model.Context.Load();
 
-			model = MainModelView.Create(new UniversalContext());
-			model.Context.UpdateStarted += (sender, args) => ProgressRing.Visibility = Visibility.Visible;
+			//model.Context.UpdateStarted += (sender, args) => FlyoutBase.ShowAttachedFlyout(GgGrid);
+			model.Context.UpdateStarted += (sender, args) =>
+			{
+				ProgressBar.Visibility = Visibility.Visible;
+				ProgressBar.IsIndeterminate = true;
+			};
 			model.Context.UpdateEnded += async (senderr, args) =>
 			{
+				//FlyoutBase.GetAttachedFlyout(GgGrid).Hide();
 				
 				listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
 				
 				
-				DataContext = model;
+				//DataContext = model;
 #if DEBUG
 				model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x => x.SearchName.Contains("шепичи")));
 				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), new List<string>()));
 				model.Context.AllPropertiesChanged();
 				string str = "s";
 #endif
-				ProgressRing.Visibility = Visibility.Collapsed;
+				ProgressBar.Visibility = Visibility.Collapsed;
+				ProgressBar.IsIndeterminate = false;
+				//Flyout.Show();
+				//ProgressRing.Visibility = Visibility.Collapsed;
 
 			};
-			model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));		
+			model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+			model.Context.LoadStarted += (sender, args) =>
+			{
+				ProgressBar.IsIndeterminate = true;
+				ProgressBar.Visibility = Visibility.Visible;
+			};
+			model.Context.LoadEnded += (sender, args) =>
+			{
+				ProgressBar.IsIndeterminate = false;
+				ProgressBar.Visibility = Visibility.Collapsed;
+			};
+			//model.Context.Load();
+
+
 			//model.Context.DownloadUpdate();
-			model.Context.UpdateAsync();
+			//model.Context.UpdateAsync();
+			DataContext = model;
+
 		}
 
 		/// <summary>
@@ -68,16 +116,8 @@ namespace MinskTrans.Universal
 		/// </summary>
 		/// <param name="e">Event data that describes how this page was reached.
 		/// This parameter is typically used to configure the page.</param>
-		protected override void OnNavigatedTo(NavigationEventArgs e)
-		{
-			// TODO: Prepare page for display here.
-
-			// TODO: If your application contains multiple pages, ensure that you are
-			// handling the hardware Back button by registering for the
-			// Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
-			// If you are using the NavigationHelper provided by some templates,
-			// this event is handled for you.
-		}
+		
+		
 
 		async private void Button_Click(object sender, RoutedEventArgs e)
 		{
@@ -96,7 +136,7 @@ namespace MinskTrans.Universal
 
 		}
 
-		private void Page_Loaded(object sender, RoutedEventArgs e)
+		private async void Page_Loaded(object sender, RoutedEventArgs e)
 		{
 			
 
@@ -114,7 +154,6 @@ namespace MinskTrans.Universal
 						this.CoreWindow_PointerPressed;
 				}
 #endif
-
 			
 		}
 
@@ -123,29 +162,36 @@ namespace MinskTrans.Universal
 			e.Handled = true;
 			if (Pivot.SelectedItem == SearchPivotItem)
 			{
-				if (StopsHyperlinkButton.IsEnabled)
-				{
-					if (ShowRoutsListGrid.Visibility == Visibility.Visible)
-					{
-						RoutsListView.Visibility = Visibility.Visible;
-						ShowRoutsListGrid.Visibility = Visibility.Collapsed;
-						FindTrans.Visibility = Visibility.Visible;
-						FindHyperButtonGrid.Visibility = Visibility.Visible;
-					}
-				}
-				else if (RoutsHyperlinkButton.IsEnabled == true)
-				{
-					if (ShowStop.Visibility == Visibility.Visible)
-					{
-						ShowStop.Visibility = Visibility.Collapsed;
-						StopsListView.Visibility = Visibility.Visible;
-						FindStop.Visibility = Visibility.Visible;
-						FindHyperButtonGrid.Visibility = Visibility.Visible;
-					}
-					ShowRoutsListView.SelectionChanged -= ListView_ShowRout_ItemClick;
-					ShowRoutsListView.SelectedIndex = -1;
-					ShowRoutsListView.SelectionChanged += ListView_ShowRout_ItemClick;
-				}
+				//if (state == States.RoutView)
+				//{
+					
+				//}
+				if (state == States.RoutList)
+					UnShowRoutList();
+				else if (state == States.StopView)
+					UnShowStopView();
+
+				//if (StopsHyperlinkButton.IsEnabled)
+				//{
+				//	if (ShowRoutsListGrid.Visibility == Visibility.Visible)
+				//	{
+				//		RoutsListView.Visibility = Visibility.Visible;
+				//		ShowRoutsListGrid.Visibility = Visibility.Collapsed;
+				//		FindTrans.Visibility = Visibility.Visible;
+				//		FindHyperButtonGrid.Visibility = Visibility.Visible;
+				//	}
+				//}
+				//else if (RoutsHyperlinkButton.IsEnabled == true)
+				//{
+				//	if (ShowStop.Visibility == Visibility.Visible)
+				//	{
+				//		ShowStop.Visibility = Visibility.Collapsed;
+				//		StopsListView.Visibility = Visibility.Visible;
+				//		FindStop.Visibility = Visibility.Visible;
+				//		FindHyperButtonGrid.Visibility = Visibility.Visible;
+				//	}
+					
+				//}
 			}
 			else if (Pivot.SelectedItem == FavourPivotItem)
 			{
@@ -172,42 +218,139 @@ namespace MinskTrans.Universal
 			ShowFavouriteStop.Visibility = Visibility.Visible;
 		}
 
-		private void ListView_ShowStop_ItemClick(object sender, SelectionChangedEventArgs e)
+	
+
+		void ShowStopView()
 		{
+			state = States.StopView;
 			ShowStop.Visibility = Visibility.Visible;
 			FindStop.Visibility = Visibility.Collapsed;
 			StopsListView.Visibility = Visibility.Collapsed;
 			FindHyperButtonGrid.Visibility = Visibility.Collapsed;
 		}
 
+		void UnShowStopView()
+		{
+			state = States.Stops;
+			ShowStop.Visibility = Visibility.Collapsed;
+			FindStop.Visibility = Visibility.Visible;
+			StopsListView.Visibility = Visibility.Visible;
+			FindHyperButtonGrid.Visibility = Visibility.Visible;
+			//StopsListView.SelectionChanged -= ListView_ShowStop_ItemClick;
+			//StopsListView.SelectedIndex = -1;
+			//StopsListView.SelectionChanged += ListView_ShowStop_ItemClick;
+
+		}
+
 		private void HyperLinkButton_ShowStops(object sender, RoutedEventArgs e)
 		{
+			ShowStops();
+		}
+
+		void ShowStops()
+		{
+			state = States.Stops;
 			StopsHyperlinkButton.IsEnabled = false;
 			RoutsHyperlinkButton.IsEnabled = true;
 			ShowRoutsGrid.Visibility = Visibility.Collapsed;
 			ShowStopsGrid.Visibility = Visibility.Visible;
 		}
 
-		private void HyperLinkButton_ShowRouts(object sender, RoutedEventArgs e)
+		void ShowRouts()
 		{
+			state = States.Routs;
 			StopsHyperlinkButton.IsEnabled = true;
 			RoutsHyperlinkButton.IsEnabled = false;
 			ShowRoutsGrid.Visibility = Visibility.Visible;
 			ShowStopsGrid.Visibility = Visibility.Collapsed;
+			ShowRoutsListView.Visibility = Visibility.Collapsed;
+		}
+
+		private void HyperLinkButton_ShowRouts(object sender, RoutedEventArgs e)
+		{
+			ShowRouts();
 		}
 
 		private void ListView_ShowRout_ItemClick(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
 		{
-			
-
+			//state= States.RoutView;
 			Frame.Navigate(typeof(RoutView), MainModelView.MainModelViewGet.FindModelView.RoutsModelView);
 		}
 
 		private void ListView_ShowListRout_ItemClick(object sender, SelectionChangedEventArgs e)
 		{
-			FindTrans.Visibility = RoutsListView.Visibility = Visibility.Collapsed;
+			ShowRoutList();
+		}
 
+		void ShowRoutList()
+		{
+			state = States.RoutList;
+			FindTrans.Visibility = RoutsListView.Visibility = Visibility.Collapsed;
+			ShowRoutsListView.Visibility = Visibility.Visible;
 			ShowRoutsListGrid.Visibility = Visibility.Visible;
+			
+		}
+
+		void UnShowRoutList()
+		{
+			state = States.Routs;
+			FindTrans.Visibility = RoutsListView.Visibility = Visibility.Visible;
+			ShowRoutsListGrid.Visibility = Visibility.Collapsed;
+			ShowRoutsListView.Visibility= Visibility.Collapsed;
+			ShowRoutsListView.SelectionChanged -= ListView_ShowRout_ItemClick;
+			ShowRoutsListView.SelectedIndex = -1;
+			ShowRoutsListView.SelectionChanged += ListView_ShowRout_ItemClick;
+		}
+
+		private bool pushpinsAll = true;
+		private bool isShowBusStops;
+		private bool isShowTrolStops;
+		private bool isShowTramStops;
+		private bool Is_Connected;
+		private bool Is_InternetAvailable;
+		private bool Is_Roaming;
+		private bool Is_LowOnData;
+		private bool Is_OverDataLimit;
+		private bool Is_Wifi_Connected;
+
+		private void OnShowStop(object sender, ShowArgs args)
+		{
+			//pushpinsAll = true;
+			MapPivotItem.Focus(FocusState.Programmatic);
+			//var temp = args.SelectedStop;
+			//map.Center = new Location(temp.Lat, temp.Lng);
+			//map.ZoomLevel = 19;
+		}
+
+		private void OnShowRoute(object sender, ShowArgs args)
+		{
+			MapPivotItem.Focus(FocusState.Programmatic);
+		}
+
+		public void RefreshPushPins()
+		{
+			if (pushpins == null)
+				return;
+			if (pushpinsAll)
+				foreach (var child in pushpins)
+				{
+					if (map.ZoomLevel <= 20)
+					{
+						child.Visibility = Visibility.Collapsed;
+					}
+					else
+					{
+						child.Visibility = Visibility.Visible;
+					}
+
+
+
+				}
+		}
+
+		private void map_ViewportChanged(object sender, EventArgs e)
+		{
+			RefreshPushPins();
 		}
 
 		private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -220,6 +363,7 @@ namespace MinskTrans.Universal
 				Window.Current.CoreWindow.PointerPressed -=
 					this.CoreWindow_PointerPressed;
 #endif
+			//model.Context.Save();
 		}
 
 		private void FavouriteRoutsListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -247,6 +391,12 @@ namespace MinskTrans.Universal
 			FavouriteRoutssHyperlinkButton.IsEnabled = false;
 			ShowFavouriteStopsGrid.Visibility = Visibility.Collapsed;
 			ShowFavouriteRoutsGrid.Visibility = Visibility.Visible;
+		}
+
+		private void StopsListView_ItemClick(object sender, ItemClickEventArgs e)
+		{
+			ShowStopView();
+
 		}
 	}
 }

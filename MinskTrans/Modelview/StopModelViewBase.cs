@@ -12,6 +12,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public StopModelViewBase(Context newContext) : base(newContext)
 		{
+			newContext.PropertyChanged+= (sender, args) => {OnPropertyChanged("StopNameFilter");};
 		}
 
 		public string StopNameFilter
@@ -24,6 +25,11 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
 			}
+		}
+
+		public bool IsStopFavourite
+		{
+			get { return Context.IsFavouriteStop(FilteredSelectedStop); }
 		}
 
 		public Stop FilteredSelectedStop
@@ -52,7 +58,9 @@ namespace MinskTrans.DesctopClient.Modelview
 							x => x.SearchName.Contains(tempSt));
 					return temp.OrderBy(x=>x.SearchName);
 				}
-				return Context.ActualStops.OrderBy(x => x.SearchName);
+				if (Context.ActualStops != null) 
+					return Context.ActualStops.OrderBy(x => x.SearchName);
+				return null;
 			}
 		}
 

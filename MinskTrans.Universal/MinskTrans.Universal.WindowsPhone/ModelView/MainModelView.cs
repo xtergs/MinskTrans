@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 
@@ -44,6 +45,11 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
+		public SettingsModelView SettingsModelView
+		{
+			get { return settingsModelView; }
+		}
+
 		public FindModelView FindModelView
 		{
 			get { return findModelView;}
@@ -74,6 +80,8 @@ namespace MinskTrans.Universal.ModelView
 
 		public Context Context { get { return context; } }
 
+
+		
 		
 	}
 }

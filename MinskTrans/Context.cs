@@ -23,6 +23,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.Universal.Annotations;
 #endif
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Model;
 
 
@@ -97,6 +98,7 @@ namespace MinskTrans.DesctopClient
 		{
 			Routs = cont.Routs;
 			Stops = cont.Stops;
+			ActualStops = cont.ActualStops;
 			Times = cont.Times;
 			FavouriteRouts = cont.FavouriteRouts;
 			FavouriteStops = cont.FavouriteStops;
@@ -117,7 +119,7 @@ namespace MinskTrans.DesctopClient
 		public ObservableCollection<Stop> Stops
 		{
 			get { return stops; }
-			set
+			private set
 			{
 				if (Equals(value, stops)) return;
 				stops = value;
@@ -130,10 +132,10 @@ namespace MinskTrans.DesctopClient
 		public ObservableCollection<Stop> ActualStops
 		{
 			get {
-				if (Stops != null)
-					return new ObservableCollection<Stop>(Stops.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
-				return null;
+				return actualStops;
 			}
+
+			private set { actualStops = value; }
 		}
 
 		public ObservableCollection<Rout> Routs
@@ -167,13 +169,15 @@ namespace MinskTrans.DesctopClient
 
 		protected abstract Task<string> FileReadAllText(string file);
 
-		public abstract void DownloadUpdate();
+		public abstract Task DownloadUpdate();
+
+		
 
 		protected List<Rout> newRoutes;
 		protected List<Stop> newStops;
 		protected List<Schedule> newSchedule;
 
-		public abstract Task<bool> HaveUpdate();
+		public abstract Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes);
 
 		public void ApplyUpdate()
 		{
@@ -207,6 +211,8 @@ namespace MinskTrans.DesctopClient
 				throw new Exception(e.Message, e.InnerException);
 			}
 
+			ActualStops = new ObservableCollection<Stop>(Stops.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
+
 			AllPropertiesChanged();
 
 			OnApplyUpdateEnded();
@@ -214,7 +220,7 @@ namespace MinskTrans.DesctopClient
 
 		public abstract void Save();
 
-		public abstract void Load();
+		public abstract Task Load();
 
 		public void AllPropertiesChanged()
 		{
@@ -252,22 +258,25 @@ namespace MinskTrans.DesctopClient
 #endif
 		}
 
-		async public void Update()
-		{
-			DownloadUpdate();
-			if (await HaveUpdate())
-				ApplyUpdate();
-		}
+		//async public void Update()
+		//{
+		//	await DownloadUpdate();
+		//	if (await HaveUpdate())
+		//		ApplyUpdate();
+		//}
 
 		public virtual Task UpdateAsync()
 		{
 			//TODO
 			//throw new NotImplementedException();
+			
 			return Task.Run(async () =>
 			{
-				DownloadUpdate();
-				if (await HaveUpdate())
+				OnUpdateStarted();
+				await DownloadUpdate();
+				if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new"))
 					ApplyUpdate();
+				OnUpdateEnded();
 			});
 		}
 
@@ -289,6 +298,9 @@ namespace MinskTrans.DesctopClient
 		public event EmptyDelegate ErrorDownloading;
 		public event EmptyDelegate UpdateStarted;
 		public event EmptyDelegate UpdateEnded;
+		public event EmptyDelegate LoadStarted;
+		public event EmptyDelegate LoadEnded;
+		public event ErrorLoadingDelegate ErrorLoading;
 
 		#region Invokators
 		protected virtual void OnDataBaseDownloadStarted()
@@ -338,26 +350,48 @@ namespace MinskTrans.DesctopClient
 			return null;
 		}
 
+		protected ObservableCollection<int> FavouriteRoutsIds;
+		protected ObservableCollection<int> FavouriteStopsIds; 
 		/// <summary>
 		/// Generates an object from its XML representation.
 		/// </summary>
 		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
 		public void ReadXml(XmlReader reader)
 		{
-			reader.ReadStartElement("ContextDesctop");
+			
+			//reader.ReadStartElement("ContextDesctop");
 			LastUpdateDataDateTime = Convert.ToDateTime(reader.GetAttribute("LastUpdateTime"));
-			Routs = new ObservableCollection<Rout>();
+			//Routs = new ObservableCollection<Rout>();
+
+			reader.ReadStartElement();
 			int count = Convert.ToInt32(reader.GetAttribute("Count"));
-			reader.ReadStartElement("Routs");
+			FavouriteRoutsIds = new ObservableCollection<int>();
 			for (int i = 0; i < count-1; i ++)
 			{
-				//reader.ReadStartElement("Rout");
-				var rout = new Rout();
-				rout.ReadXml(reader);
-				Routs.Add(rout);
-				//reader.ReadEndElement();
-				reader.ReadEndElement();
+				reader.ReadStartElement();
+				FavouriteRoutsIds.Add(int.Parse(reader.GetAttribute("id")));
 				
+				//reader.ReadStartElement("Rout");
+				//var rout = new Rout();
+				//rout.ReadXml(reader);
+				//Routs.Add(rout);
+				//reader.ReadEndElement();
+				if (!reader.IsEmptyElement)
+					reader.ReadEndElement();
+				
+			}
+
+			count = Convert.ToInt32(reader.GetAttribute("Count"));
+			FavouriteStopsIds = new ObservableCollection<int>();
+			reader.ReadStartElement();
+			for (int i = 0; i < count - 1; i++)
+			{
+				reader.ReadStartElement();
+				FavouriteStopsIds.Add(int.Parse(reader.GetAttribute("id")));
+
+				if (!reader.IsEmptyElement)
+					reader.ReadEndElement();
+
 			}
 			//reader.ReadEndElement();
 		}
@@ -371,47 +405,12 @@ namespace MinskTrans.DesctopClient
 
 			writer.WriteAttributeString("LastUpdateTime", LastUpdateDataDateTime.ToString());
 
-			writer.WriteStartElement("Routs");
-			writer.WriteAttributeString("Count", Routs.Count.ToString());
-			foreach (var rout in Routs)
-			{
-				writer.WriteStartElement("Rout");
-				//writer.WriteValue(rout);
-				rout.WriteXml(writer);
-				writer.WriteEndElement();
-			}
-			writer.WriteEndElement();
-
-			writer.WriteStartElement("Stops");
-			writer.WriteAttributeString("Count", Stops.Count.ToString());
-			foreach (var stop in Stops)
-			{
-				writer.WriteStartElement("Stop");
-				//writer.WriteValue(rout);
-				stop.WriteXml(writer);
-				writer.WriteEndElement();
-			}
-			writer.WriteEndElement();
-
-			writer.WriteStartElement("Times");
-			writer.WriteAttributeString("Count", Times.Count.ToString());
-			foreach (var time in Times)
-			{
-				writer.WriteStartElement("Time");
-				//writer.WriteValue(rout);
-				time.WriteXml(writer);
-				writer.WriteEndElement();
-			}
-			writer.WriteEndElement();
-
-			writer.WriteStartElement("FavouriteRouts");
+			writer.WriteStartElement("FavouritRouts");
 			writer.WriteAttributeString("Count", FavouriteRouts.Count.ToString());
 			foreach (var rout in FavouriteRouts)
 			{
 				writer.WriteStartElement("Rout");
-				//writer.WriteValue(rout);
-				//TODO
-				//rout.WriteXml(writer);
+				writer.WriteAttributeString("id", rout.Rout.RoutId.ToString());
 				writer.WriteEndElement();
 			}
 			writer.WriteEndElement();
@@ -421,8 +420,7 @@ namespace MinskTrans.DesctopClient
 			foreach (var stop in FavouriteStops)
 			{
 				writer.WriteStartElement("Stop");
-				//writer.WriteValue(rout);
-				stop.WriteXml(writer);
+				writer.WriteAttributeString("id", stop.ID.ToString());
 				writer.WriteEndElement();
 			}
 			writer.WriteEndElement();
@@ -432,7 +430,13 @@ namespace MinskTrans.DesctopClient
 			foreach (var group in Groups)
 			{
 				writer.WriteStartElement("Group");
-				//writer.WriteValue(rout);
+				writer.WriteAttributeString("Name", group.Name);
+				foreach (var stop in group.Stops)
+				{
+					writer.WriteStartElement("Stop");
+					writer.WriteAttributeString("id", stop.ID.ToString());
+					writer.WriteEndElement();
+				}
 				group.WriteXml(writer);
 				writer.WriteEndElement();
 			}
@@ -444,7 +448,8 @@ namespace MinskTrans.DesctopClient
 		#region commands
 
 		private bool updating = false;
-		
+		private ObservableCollection<Stop> actualStops;
+
 		public RelayCommand UpdateDataCommand
 		{
 			get
@@ -452,7 +457,8 @@ namespace MinskTrans.DesctopClient
 				return new RelayCommand(async () =>
 				{
 					updating = true;
-					await Task.WhenAll(UpdateAsync()).ConfigureAwait(true);
+					UpdateDataCommand.RaiseCanExecuteChanged();
+					await UpdateAsync();
 					updating = false;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 				}, ()=>!updating);
@@ -495,6 +501,102 @@ namespace MinskTrans.DesctopClient
 			var handler = UpdateEnded;
 			if (handler != null) handler(this, EventArgs.Empty);
 		}
+
+		public bool IsFavouriteStop(Stop stop)
+		{
+			return FavouriteStops.Contains(stop);
+		}
+
+		public bool IsFavouriteRout(RoutWithDestinations rout)
+		{
+			return FavouriteRouts.Contains(rout);
+		}
+
+		public RelayCommand<Stop> AddRemoveFavouriteStop
+		{
+			get { return new RelayCommand<Stop>(x =>
+			{
+				if (IsFavouriteStop(x))
+					RemoveFavouriteSopCommand.Execute(x);
+				else
+					AddFavouriteSopCommand.Execute(x);
+
+			}
+				);}
+		}
+
+		public RelayCommand<RoutWithDestinations> AddRemoveFavouriteRout
+		{
+			get
+			{
+				return new RelayCommand<RoutWithDestinations>(x =>
+				{
+					if (IsFavouriteRout(x))
+						RemoveFavouriteRoutCommand.Execute(x);
+					else
+						AddFavouriteRoutCommand.Execute(x);
+
+				}
+					);
+			}
+		} 
+
+		public event Show ShowStop;
+		public event Show ShowRoute;
+		public delegate void Show(object sender, ShowArgs args);
+
+		public RelayCommand<Stop> ShowStopMap
+		{
+			get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		}
+
+		public RelayCommand<Rout> ShowRouteMap
+		{
+			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		}
+
+		protected virtual void OnShowStop(ShowArgs args)
+		{
+			var handler = ShowStop;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnShowRoute(ShowArgs args)
+		{
+			var handler = ShowRoute;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnLoadStarted()
+		{
+			var handler = LoadStarted;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
+		protected virtual void OnLoadEnded()
+		{
+			var handler = LoadEnded;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
+		protected virtual void OnErrorLoading(ErrorLoadingDelegateArgs args)
+		{
+			var handler = ErrorLoading;
+			if (handler != null) handler(this, args);
+		}
+	}
+
+	public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);
+
+	public class ErrorLoadingDelegateArgs:EventArgs
+	{
+		public enum Errors
+		{
+			NoFileToDeserialize,
+			NoSourceFiles
+		}
+
+		public Errors Error { get; set; }
 	}
 
 	public delegate void LogDelegate(object sender, LogDelegateArgs args);

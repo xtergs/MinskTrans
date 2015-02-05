@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.Universal.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.Universal.WP.Tests", "MinskTrans.Universal.WP.Tests\MinskTrans.Universal.WP.Tests.csproj", "{86DFE06A-EA16-4BAD-B04C-9B292F1A5789}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestApp1", "UnitTestApp1\UnitTestApp1.csproj", "{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems*{59beb27b-8c75-4e30-a0d1-5ed336038c3c}*SharedItemsImports = 13
@@ -192,6 +194,28 @@ Global
 		{86DFE06A-EA16-4BAD-B04C-9B292F1A5789}.Release|x86.ActiveCfg = Release|x86
 		{86DFE06A-EA16-4BAD-B04C-9B292F1A5789}.Release|x86.Build.0 = Release|x86
 		{86DFE06A-EA16-4BAD-B04C-9B292F1A5789}.Release|x86.Deploy.0 = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|ARM.ActiveCfg = Debug|ARM
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|ARM.Build.0 = Debug|ARM
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|ARM.Deploy.0 = Debug|ARM
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|x64.ActiveCfg = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|x86.ActiveCfg = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|x86.Build.0 = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Debug|x86.Deploy.0 = Debug|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|Any CPU.ActiveCfg = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|ARM.ActiveCfg = Release|ARM
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|ARM.Build.0 = Release|ARM
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|ARM.Deploy.0 = Release|ARM
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|Mixed Platforms.Build.0 = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|Mixed Platforms.Deploy.0 = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|x64.ActiveCfg = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|x86.ActiveCfg = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|x86.Build.0 = Release|x86
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,5 +227,6 @@ Global
 		{E8232612-EA44-4F4B-823C-B4C98EFB6342} = {259E8A59-B554-414A-8C5C-1A9BE5AE4B45}
 		{1D8E7A1E-95BF-4052-B60E-9D87CCF404F8} = {B33B7725-3735-4693-A3E1-77A0972BE758}
 		{86DFE06A-EA16-4BAD-B04C-9B292F1A5789} = {B33B7725-3735-4693-A3E1-77A0972BE758}
+		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD} = {B33B7725-3735-4693-A3E1-77A0972BE758}
 	EndGlobalSection
 EndGlobal

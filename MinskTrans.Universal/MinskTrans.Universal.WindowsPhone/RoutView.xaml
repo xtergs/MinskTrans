@@ -28,8 +28,8 @@
     </Page.Resources>
     <Page.BottomAppBar>
         <CommandBar ClosedDisplayMode="Minimal" IsSticky="False" IsTabStop="False" MinHeight="0" >
-            <AppBarButton Icon="Map" IsCompact="True"/>
-            <AppBarToggleButton Icon="Favorite" Command="{Binding Context.AddFavouriteRoutCommand}" CommandParameter="{Binding RouteSelectedValue}"  IsCompact="True"/>
+            <AppBarButton Icon="Map" IsCompact="True" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}"/>
+            <AppBarToggleButton Icon="Favorite" IsChecked="{Binding IsFavouriteRout}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}"  IsCompact="True"/>
         </CommandBar>
     </Page.BottomAppBar>
     <Page.Transitions>

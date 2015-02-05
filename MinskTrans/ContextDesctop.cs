@@ -165,7 +165,7 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public override void Load()
+		public override Task Load()
 		{
 			//throw new NotImplementedException();
 			BinaryFormatter serializer = new BinaryFormatter();

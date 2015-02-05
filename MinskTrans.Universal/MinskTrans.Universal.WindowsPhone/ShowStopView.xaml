@@ -8,6 +8,7 @@
 	xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
 	xmlns:converters="using:MinskTrans.Universal.Converters"
 	xmlns:desctopClient="using:MinskTrans.DesctopClient"
+	xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
 	mc:Ignorable="d"
 	d:DesignHeight="300"
 	d:DesignWidth="400"
@@ -93,10 +94,12 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Background="#FF5D5959" Margin="-10,0">
+        <Border  Grid.Row="2" Background="#FF5D5959" Margin="-10,0">
+            <controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
             <AppBarButton HorizontalAlignment="Center" Icon="Sync" Command="{Binding RefreshTimeSchedule}" IsCompact="True" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"/>
-            <AppBarToggleButton HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-            <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowStopMap}" IsCompact="True"/>
-        </StackPanel>
+            <AppBarToggleButton IsChecked="{Binding IsStopFavourite}" Command="{Binding Context.AddRemoveFavouriteStop}" CommandParameter="{Binding FilteredSelectedStop}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+            <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowStopMap}" CommandParameter="{Binding FilteredSelectedStop}" IsCompact="True"/>
+        </controls:WrapPanel>
+        </Border>
     </Grid>
 </UserControl>

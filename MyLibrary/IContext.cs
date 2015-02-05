@@ -5,10 +5,10 @@ namespace MinskTrans.DesctopClient
 	public interface IContext
 	{
 		void Create(bool a = true);
-		void DownloadUpdate();
-		Task<bool> HaveUpdate();
+		Task DownloadUpdate();
+		Task<bool> HaveUpdate(string a, string b, string c);
 		void ApplyUpdate();
 		void Save();
-		void Load();
+		Task Load();
 	}
 }

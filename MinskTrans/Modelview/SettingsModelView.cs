@@ -46,5 +46,61 @@ using MinskTrans.Library;
 				OnPropertyChanged("TimeSchedule");
 			}
 		}
+
+		public bool UpdateOnWiFi
+		{
+			get
+			{
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+				return Settings.Default.TimeInPast;
+#else
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnWiFi"))
+					UpdateOnWiFi = true;
+				return (bool)ApplicationData.Current.LocalSettings.Values["UpdateOnWiFi"];
+#endif
+			}
+			set
+			{
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+		
+				Settings.Default.TimeInPast = value;
+#else
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnWiFi"))
+					ApplicationData.Current.LocalSettings.Values.Add("UpdateOnWiFi", value);
+				else
+					ApplicationData.Current.LocalSettings.Values["UpdateOnWiFi"] = value;
+#endif
+				OnPropertyChanged();
+				//OnPropertyChanged("UpdateOnWiFi");
+			}
+		}
+
+		public bool UpdateOnMobileData
+		{
+			get
+			{
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+				return Settings.Default.TimeInPast;
+#else
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnMobileData"))
+					UpdateOnMobileData = true;
+				return (bool)ApplicationData.Current.LocalSettings.Values["UpdateOnMobileData"];
+#endif
+			}
+			set
+			{
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+		
+				Settings.Default.TimeInPast = value;
+#else
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnMobileData"))
+					ApplicationData.Current.LocalSettings.Values.Add("UpdateOnMobileData", value);
+				else
+					ApplicationData.Current.LocalSettings.Values["UpdateOnMobileData"] = value;
+#endif
+				OnPropertyChanged();
+				//OnPropertyChanged("UpdateOnWiFi");
+			}
+		}
 	}
 }

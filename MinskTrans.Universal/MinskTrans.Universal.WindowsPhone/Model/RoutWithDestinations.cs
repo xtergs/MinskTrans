@@ -16,6 +16,17 @@ namespace MinskTrans.Universal.Model
 			destinations = listDestinations.Distinct();
 		}
 
+		public RoutWithDestinations(Rout newRout, Context context)
+		{
+			rout = newRout;
+			destinations =
+				context.Routs.Where(
+					x =>
+						x.Stops.Count > 0 && x.RouteNum == newRout.RouteNum && x.Transport == newRout.Transport &&
+						(x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")))
+					.Select(x => x.StartStop.Name + " - " + x.DestinationStop.Name);
+		}
+
 		private readonly Rout rout;
 		private readonly IEnumerable<string> destinations; 
 

@@ -181,7 +181,7 @@ namespace MinskTrans.DesctopClient
 		protected List<Stop> newStops;
 		protected List<Schedule> newSchedule;
 
-		public abstract Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes);
+		public abstract Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate);
 
 		public async Task ApplyUpdate()
 		{
@@ -280,7 +280,7 @@ namespace MinskTrans.DesctopClient
 			{
 				OnUpdateStarted();
 				await DownloadUpdate();
-				if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new"))
+				if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new", true))
 					await ApplyUpdate();
 				OnUpdateEnded();
 			});

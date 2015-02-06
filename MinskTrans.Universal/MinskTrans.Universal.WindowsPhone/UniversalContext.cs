@@ -147,7 +147,7 @@ namespace MinskTrans.Universal
 			//{
 			OnUpdateStarted();
 			await DownloadUpdate();
-			if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new"))
+			if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new", true))
 				await ApplyUpdate();
 			OnUpdateEnded();
 
@@ -172,7 +172,7 @@ namespace MinskTrans.Universal
 			return builder.ToString();
 		}
 
-		public override async Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes)
+		public override async Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate)
 		{
 			//return  Task.Run(async () =>
 			//{
@@ -243,17 +243,19 @@ namespace MinskTrans.Universal
 				OnLogMessage(e.Message);
 				throw new Exception(e.Message);
 			}
-
-			if (Stops == null || Routs == null || Times == null)
-				return true;
-
-			if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-				return false;
-
-			foreach (var newRoute in newRoutes)
+			if (checkUpdate)
 			{
-				if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
+				if (Stops == null || Routs == null || Times == null)
+					return true;
+
+				if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
 					return false;
+
+				foreach (var newRoute in newRoutes)
+				{
+					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
+						return false;
+				}
 			}
 
 
@@ -389,7 +391,7 @@ namespace MinskTrans.Universal
 				}
 			}
 
-			await HaveUpdate(list[0].Key, list[1].Key, list[2].Key);
+			await HaveUpdate(list[0].Key, list[1].Key, list[2].Key, false);
 			await ApplyUpdate();
 			//string str =await ReadAllFile(await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat"));
 			string nameFile = "data.dat";

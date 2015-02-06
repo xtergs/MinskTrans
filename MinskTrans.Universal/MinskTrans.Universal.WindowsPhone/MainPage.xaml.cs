@@ -246,7 +246,7 @@ namespace MinskTrans.Universal
 
 		private void OnShowRoute(object sender, ShowArgs args)
 		{
-			MapPivotItem.Focus(FocusState.Pointer);
+			Pivot.SelectedItem = MapPivotItem;
 			model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 

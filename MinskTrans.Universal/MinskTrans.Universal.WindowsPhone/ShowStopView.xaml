@@ -97,7 +97,7 @@
         <Border  Grid.Row="2" Background="#FF5D5959" Margin="-10,0">
             <controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
             <AppBarButton HorizontalAlignment="Center" Icon="Sync" Command="{Binding RefreshTimeSchedule}" IsCompact="True" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"/>
-            <AppBarToggleButton IsChecked="{Binding IsStopFavourite, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteStop}" CommandParameter="{Binding FilteredSelectedStop}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+            <AppBarToggleButton IsChecked="{Binding IsStopFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteStop}" CommandParameter="{Binding FilteredSelectedStop}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
             <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowStopMap}" CommandParameter="{Binding FilteredSelectedStop}" IsCompact="True"/>
         </controls:WrapPanel>
         </Border>

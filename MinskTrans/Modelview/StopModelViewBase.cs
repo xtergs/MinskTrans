@@ -30,6 +30,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		public bool IsStopFavourite
 		{
 			get { return Context.IsFavouriteStop(FilteredSelectedStop); }
+			set { OnPropertyChanged();}
 		}
 
 		public Stop FilteredSelectedStop

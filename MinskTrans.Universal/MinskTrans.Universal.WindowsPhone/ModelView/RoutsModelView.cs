@@ -143,9 +143,10 @@ namespace MinskTrans.Universal.ModelView
 		}
 		#endregion
 
-		bool IsRoutFavourite
+		public bool IsRoutFavourite
 		{
 			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
+			set { OnPropertyChanged();}
 		}
 
 		#region Stops

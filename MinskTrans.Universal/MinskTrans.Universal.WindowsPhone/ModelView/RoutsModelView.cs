@@ -89,7 +89,7 @@ namespace MinskTrans.Universal.ModelView
 					List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
 					foreach (var item in temp)
 					{
-						returnEnumerable.Add(new RoutWithDestinations(item, Context.Routs.Where(x => x.Stops.Count > 0 && x.RouteNum == item.RouteNum && x.Transport == item.Transport && (x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A"))).Select(x => x.StartStop.Name + " - " + x.DestinationStop.Name)));
+						returnEnumerable.Add(new RoutWithDestinations(item, Context));
 					}
 					return returnEnumerable;
 				}

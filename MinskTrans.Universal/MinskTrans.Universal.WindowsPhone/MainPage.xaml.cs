@@ -107,7 +107,7 @@ namespace MinskTrans.Universal
 				//DataContext = model;
 #if DEBUG
 				model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x => x.SearchName.Contains("шепичи")));
-				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), new List<string>()));
+				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), model.Context));
 				model.Context.AllPropertiesChanged();
 				string str = "s";
 #endif

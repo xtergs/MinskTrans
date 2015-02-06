@@ -52,7 +52,7 @@ using MinskTrans.Library;
 			get
 			{
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
-				return Settings.Default.TimeInPast;
+				return Settings.Default.UpdateOnWiFi;
 #else
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnWiFi"))
 					UpdateOnWiFi = true;
@@ -63,7 +63,7 @@ using MinskTrans.Library;
 			{
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 		
-				Settings.Default.TimeInPast = value;
+				Settings.Default.UpdateOnWiFi = value;
 #else
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnWiFi"))
 					ApplicationData.Current.LocalSettings.Values.Add("UpdateOnWiFi", value);
@@ -80,7 +80,7 @@ using MinskTrans.Library;
 			get
 			{
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
-				return Settings.Default.TimeInPast;
+				return Settings.Default.UpdateOnMobileData;
 #else
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnMobileData"))
 					UpdateOnMobileData = true;
@@ -90,8 +90,8 @@ using MinskTrans.Library;
 			set
 			{
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
-		
-				Settings.Default.TimeInPast = value;
+
+				Settings.Default.UpdateOnMobileData = value;
 #else
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnMobileData"))
 					ApplicationData.Current.LocalSettings.Values.Add("UpdateOnMobileData", value);

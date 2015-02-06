@@ -19,7 +19,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : StopModelViewBase
 	{
-		//private ISettingsModelView settingsModelView;
+		private ISettingsModelView settingsModelView;
 		private bool autoDay;
 		private bool autoNowTime;
 		private bool bus;
@@ -29,16 +29,22 @@ namespace MinskTrans.DesctopClient.Modelview
 		private bool tram;
 		private bool trol;
 
-		public StopModelView()
-			: this(null)
-		{
-		}
+		//public StopModelView()
+		//	: this(null)
+		//{
+		//}
 
-		public StopModelView(Context newContext)
+		public StopModelView(Context newContext, ISettingsModelView settings)
 			: base(newContext)
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
-			//settingsModelView = new SettingsModelView(Context);
+			settingsModelView = settings;
+
+			settingsModelView.PropertyChanged += (sender, args) =>
+			{
+				if (args.PropertyName == "TimeInPast")
+					Refresh();
+			};
 		}
 
 		//public ISettingsModelView SettingsModelView
@@ -46,33 +52,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		//	get { return settingsModelView; }
 		//}
 
-		public int TimeInPast
-		{
-			get
-			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-				return Settings.Default.TimeInPast;
-#else
-				if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey("TimeInPast"))
-					TimeInPast = 15;
-				return (int)ApplicationData.Current.RoamingSettings.Values["TimeInPast"];
-#endif
-			}
-			set
-			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
 		
-				Settings.Default.TimeInPast = value;
-#else
-				if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey("TimeInPast"))
-					ApplicationData.Current.RoamingSettings.Values.Add("TimeInPast", value);
-				else
-					ApplicationData.Current.RoamingSettings.Values["TimeInPast"] = value;
-#endif
-				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
-			}
-		}
 		public bool AutoDay
 		{
 			get { return autoDay; }
@@ -211,7 +191,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					foreach (Schedule sched in dd)
 					{
 						IEnumerable<KeyValuePair<Rout, int>> temp =
-							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - TimeInPast).Where(x =>
+							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - settingsModelView.TimeInPast).Where(x =>
 							{
 								if (x.Key.Transport == Rout.TransportType.Bus)
 									return Bus;
@@ -241,7 +221,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public RelayCommand<int> SetTimeInPast
 		{
-			get { return new RelayCommand<int>(x=>TimeInPast = x);}
+			get { return new RelayCommand<int>(x=>settingsModelView.TimeInPast = x);}
 		}
 
 		

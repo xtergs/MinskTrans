@@ -106,6 +106,7 @@
     <Compile Include="Model\GroupStopId.cs" />
     <Compile Include="Model\List2.cs" />
     <Compile Include="Model\Rout.cs" />
+    <Compile Include="Model\RoutWithDestinations.cs" />
     <Compile Include="Model\Schedule.cs" />
     <Compile Include="Model\Stop.cs" />
     <Compile Include="Model\Time.cs" />
@@ -180,9 +181,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Image\bus.jpg" />
-    <Resource Include="Image\tram.jpg" />
-    <Resource Include="Image\trol.jpg" />
+    <Content Include="Image\bus.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\subway.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\tram.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\trol.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

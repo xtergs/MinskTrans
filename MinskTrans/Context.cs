@@ -21,6 +21,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 #else
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Universal.Annotations;
+
 #endif
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
@@ -119,7 +120,7 @@ namespace MinskTrans.DesctopClient
 		public ObservableCollection<Stop> Stops
 		{
 			get { return stops; }
-			private set
+			set
 			{
 				if (Equals(value, stops)) return;
 				stops = value;
@@ -271,19 +272,16 @@ namespace MinskTrans.DesctopClient
 		//		ApplyUpdate();
 		//}
 
-		public virtual Task UpdateAsync()
+		async public virtual Task UpdateAsync()
 		{
 			//TODO
 			//throw new NotImplementedException();
-			
-			return Task.Run(async () =>
-			{
-				OnUpdateStarted();
-				await DownloadUpdate();
-				if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new", true))
-					await ApplyUpdate();
-				OnUpdateEnded();
-			});
+
+			OnUpdateStarted();
+			await DownloadUpdate();
+			if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new", true))
+				await ApplyUpdate();
+			OnUpdateEnded();
 		}
 
 		[NotifyPropertyChangedInvocator]
@@ -356,8 +354,8 @@ namespace MinskTrans.DesctopClient
 			return null;
 		}
 
-		protected ObservableCollection<int> FavouriteRoutsIds;
-		protected ObservableCollection<int> FavouriteStopsIds; 
+		protected internal ObservableCollection<int> FavouriteRoutsIds;
+		protected internal ObservableCollection<int> FavouriteStopsIds; 
 		/// <summary>
 		/// Generates an object from its XML representation.
 		/// </summary>

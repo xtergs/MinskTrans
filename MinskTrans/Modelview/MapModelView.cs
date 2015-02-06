@@ -1,13 +1,19 @@
 ﻿
 
 
+
 using System.Collections.Generic;
 using System.Linq;
-using Windows.UI.Xaml;
-using GalaSoft.MvvmLight.Command;
 using MapControl;
+#if (WINDOWS_PHONE_APP )
+using GalaSoft.MvvmLight.Command;
+using Windows.UI.Xaml;
 using MinskTrans.Universal.Common;
-using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
+#else
+using System.Windows;
+using GalaSoft.MvvmLight.CommandWpf;
+#endif
+//using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -49,6 +55,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					var pushpin = new Pushpin {Tag = st, Content = st.Name};
 					//pushpin.templ
+#if WINDOWS_PHONE_APP
 					pushpin.Tapped += (sender, argss) =>
 					{
 						((Pushpin) sender).BringToFront();
@@ -60,6 +67,7 @@ namespace MinskTrans.DesctopClient.Modelview
 						//model.StopMovelView.FilteredSelectedStop = tmStop;
 						//MapPivotItem.Focus(FocusState.Programmatic);
 					};
+#endif
 					MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
 					pushpins.Add(pushpin);
 					map.Children.Add(pushpin);

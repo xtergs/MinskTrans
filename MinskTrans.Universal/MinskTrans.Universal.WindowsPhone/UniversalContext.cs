@@ -44,21 +44,9 @@ namespace MinskTrans.Universal
 
 		public override void Create(bool AutoUpdate = true)
 		{
-			//TODO
-			//throw new NotImplementedException();
-			//if (FileExists("data.dat"))
-			//{
-			//	Load();
-			//	//return;
-			//}
 			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
-			//DataBaseDownloadEnded += async (sender, args) => 
-			//{
-
-
-			//};
 		}
 
 
@@ -139,21 +127,6 @@ namespace MinskTrans.Universal
 			}
 		}
 
-		public override async Task UpdateAsync()
-		{
-			//TODO
-			//throw new NotImplementedException();
-			//return Task.Run(async () =>
-			//{
-			OnUpdateStarted();
-			await DownloadUpdate();
-			if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new", true))
-				await ApplyUpdate();
-			OnUpdateEnded();
-
-			//});
-		}
-
 		private async void OnDataBaseDownloadEnded(object sender, EventArgs args)
 		{
 
@@ -212,25 +185,6 @@ namespace MinskTrans.Universal
 						OnLogMessage("parsed file" + list[2].Key);
 
 					}));
-//#else
-//					ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
-//					StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[0].Key + ".new");
-//					OnLogMessage("get file " + list[0].Key);
-//					newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
-//					OnLogMessage("parsed file " + list[0].Key);
-
-//					file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[1].Key + ".new");
-//					OnLogMessage("get fil e" + list[1].Key);
-
-//					newRoutes = ShedulerParser.ParsRout(await ReadAllFile(file));
-//					OnLogMessage("parsed file " + list[1].Key);
-
-//					file = await ApplicationData.Current.LocalFolder.GetFileAsync(list[2].Key + ".new");
-//					OnLogMessage("get file " + list[2].Key);
-
-//					newSchedule = ShedulerParser.ParsTime(await ReadAllFile(file));
-//					OnLogMessage("parsed file " + list[2].Key);
-//#endif
 				OnLogMessage("All threads ended");
 			}
 			catch (FileNotFoundException e)
@@ -286,92 +240,9 @@ namespace MinskTrans.Universal
 					var responseBodyAsText = await response.Content.WriteToStreamAsync(outputStream);
 				}
 			}
-
-			//var responseBodyAsText1 = responseBodyAsText.Replace("<br>", Environment.NewLine); // Insert new lines
-
-			//HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
-			////this.file = file;
-			////Add headers to request
-			//request.Headers["Type"] = "sincrofit";
-			//request.Headers["Device"] = "1";
-			//request.Headers["Version"] = "0.000";
-			//request.Headers["Os"] = "WindowsPhone";
-			//request.Headers["Cache-Control"] = "no-cache";
-			//request.Headers["Pragma"] = "no-cache";
-			//request.Headers[HttpRequestHeader.UserAgent] =
-			//	@"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
-			//request.ContinueTimeout = 100000;
-			//OnLogMessage("Starting reqest");
-			//var x = await request.GetResponseAsync();
-			//OnLogMessage("End Request");
-			//await ResponseAsync(x, file);
-			//	//var x = request.BeginGetResponse(playResponseAsync, request);
-
-
-
 		}
 
-		public Task ResponseAsync(WebResponse response, string file)
-		{
-			//Declaration of variables
-			//HttpWebRequest webRequest =response;
-			return Task.Run(async () =>
-			{
-				try
-				{
-					string fileName = file;
-
-					//using (HttpWebResponse webResponse = response.res)
-					{
-						byte[] buffer = new byte[1024];
-						Buffer bufferb = new Buffer(1024);
-
-						var newZipFile =
-							await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-						using (var writeStream = await newZipFile.OpenAsync(FileAccessMode.ReadWrite))
-						{
-							using (var outputStream = writeStream.GetOutputStreamAt(0))
-							{
-								using (var dataWriter = new DataWriter(outputStream))
-								{
-									using (Stream input = response.GetResponseStream())
-									{
-										int size = 0;
-										var totalSize = 0;
-										for (size = input.Read(buffer, 0, buffer.Length);
-											size == buffer.Length;
-											size = input.Read(buffer, 0, buffer.Length))
-										{
-											dataWriter.WriteBytes(buffer);
-											totalSize += size; //get the progress of download
-										}
-										for (int i = 0; i < size; i++)
-											dataWriter.WriteByte(buffer[i]);
-										await dataWriter.StoreAsync();
-										await outputStream.FlushAsync();
-										dataWriter.DetachStream();
-									}
-								}
-							}
-						}
-
-					}
-				}
-				catch (Exception e)
-				{
-
-				}
-#if DEBUG
-				var File = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
-				string str = await FileIO.ReadTextAsync(File);
-#endif
-				OnLogMessage("file downloaded: " + file);
-			});
-		}
-
-
-
+		
 		public override async void Save()
 		{
 
@@ -404,14 +275,14 @@ namespace MinskTrans.Universal
 					OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize});
 					return;
 				}
-				//var tempThis = await IsolatedStorageOperations.Load<UniversalContext>(nameFile);
 				var storage = ApplicationData.Current.LocalFolder;
 				
 
 				//if (storage.FileExists(file))
 						var stream = await storage.OpenStreamForReadAsync(nameFile);
-						XmlSerializer serializer = new XmlSerializer(typeof(UniversalContext));
-				var abj = (UniversalContext)serializer.Deserialize(stream);
+				var type = GetType();
+						XmlSerializer serializer = new XmlSerializer(GetType());
+						var abj = (Context)serializer.Deserialize(stream);
 				
 				//XmlReader reader = XmlReader.Create(stream);
 				//		//serializer.Deserialize()

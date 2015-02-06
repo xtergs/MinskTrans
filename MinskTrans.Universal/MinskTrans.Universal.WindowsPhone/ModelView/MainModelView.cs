@@ -33,12 +33,12 @@ namespace MinskTrans.Universal.ModelView
 		private MainModelView(Context newContext)
 		{
 			context = newContext;
-			routesModelview = new RoutsModelView(context);
-			stopMovelView = new StopModelView(context);
 			settingsModelView = new SettingsModelView(context);
-			groupStopsModelView = new GroupStopsModelView(context);
-			favouriteModelView = new FavouriteModelView(context);
-			findModelView = new FindModelView(context);
+			routesModelview = new RoutsModelView(context);
+			stopMovelView = new StopModelView(context, settingsModelView);
+			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
+			favouriteModelView = new FavouriteModelView(context, settingsModelView);
+			findModelView = new FindModelView(context, settingsModelView);
 
 			if (IsInDesignMode)
 			{

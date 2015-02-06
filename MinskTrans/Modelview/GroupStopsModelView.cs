@@ -16,11 +16,12 @@ using MinskTrans.DesctopClient.Model;
 		
 		private GroupStop selectedGroupStop;
 
-		public GroupStopsModelView() : this(null)
-		{
-		}
+		//public GroupStopsModelView() : this(null)
+		//{
+		//}
 
-		public GroupStopsModelView(Context newContext) : base(newContext)
+		public GroupStopsModelView(Context newContext, ISettingsModelView settingsModelView)
+			: base(newContext, settingsModelView)
 		{
 			Bus = Trol = Tram = true;
 		}

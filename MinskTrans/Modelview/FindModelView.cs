@@ -27,9 +27,9 @@ namespace MinskTrans.DesctopClient.ModelView
 			}
 		}
 
-		public FindModelView(Context newContext) : base(newContext)
+		public FindModelView(Context newContext, ISettingsModelView settingsModelView) : base(newContext)
 		{
-			stopModelView = new StopModelView(newContext);
+			stopModelView = new StopModelView(newContext, settingsModelView);
 			routesModelview = new RoutesModelview(newContext);
 		}
 	}

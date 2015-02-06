@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Library;
+using MinskTrans.Universal.Model;
 
 namespace MinskTrans.DesctopClient
 {
@@ -65,9 +66,9 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		protected override bool FileExists(string file)
+		protected override Task<bool> FileExists(string file)
 		{
-			return File.Exists(file);
+			return Task<bool>.Run(()=>File.Exists(file));
 		}
 
 		protected override void FileDelete(string file)
@@ -79,12 +80,12 @@ namespace MinskTrans.DesctopClient
 		{
 			//TODO
 			//throw new NotImplementedException();
-			if (FileExists("data.dat"))
+			if (File.Exists("data.dat"))
 			{
 				Load();
 				return;
 			}
-			FavouriteRouts = new ObservableCollection<Rout>();
+			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
 			//if (AutoUpdate)
@@ -94,38 +95,37 @@ namespace MinskTrans.DesctopClient
 			//ApplyUpdate();
 		}
 
-		async public override Task<bool> HaveUpdate()
+		async public override Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate)
 		{
-			return await Task.Run(() =>
+			return await Task.Run(async () =>
 			{
-				if (list.Any(keyValuePair => !FileExists(keyValuePair.Key + ".new")))
-				{
+				if (!File.Exists(fileStops) || !File.Exists(fileRouts) || !File.Exists(fileTimes))
 					return false;
-				}
 #if DEBUG
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
 #endif
-				newStops = ShedulerParser.ParsStops(FileReadAllText(list[0].Key + ".new").Result);
-				newRoutes = ShedulerParser.ParsRout(FileReadAllText(list[1].Key + ".new").Result);
-				newSchedule = ShedulerParser.ParsTime(FileReadAllText(list[2].Key + ".new").Result);
+				newStops = ShedulerParser.ParsStops(await FileReadAllText(fileStops));
+				newRoutes = ShedulerParser.ParsRout(await FileReadAllText(fileRouts));
+				newSchedule = ShedulerParser.ParsTime(await FileReadAllText(fileTimes));
 #if DEBUG
 				watch.Stop();
 #endif
-
-				if (Stops == null || Routs == null || Times == null)
-					return true;
-
-				if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-					return false;
-
-				foreach (var newRoute in newRoutes)
+				if (checkUpdate)
 				{
-					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
+					if (Stops == null || Routs == null || Times == null)
+						return true;
+
+					if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
 						return false;
+
+					foreach (var newRoute in newRoutes)
+					{
+						if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
+							return false;
+					}
+
 				}
-
-
 
 				return true;
 			});
@@ -141,7 +141,7 @@ namespace MinskTrans.DesctopClient
 			return await Task.Run(() => File.ReadAllText(file));
 		}
 
-		public override async void DownloadUpdate()
+		public override async Task DownloadUpdate()
 		{
 			//TODO
 			//throw new NotImplementedException();
@@ -168,47 +168,50 @@ namespace MinskTrans.DesctopClient
 		public override Task Load()
 		{
 			//throw new NotImplementedException();
-			BinaryFormatter serializer = new BinaryFormatter();
-			var streamWriter = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
-			try
+			return Task.Run(() =>
 			{
-				var tempDateTime = (DateTime)serializer.Deserialize(streamWriter);
-				var tempStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
-				var tempRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
-				var tempTimes = (ObservableCollection<Schedule>)serializer.Deserialize(streamWriter);
-				var tempGroup = (List<GroupStopId>)serializer.Deserialize(streamWriter);
-				FavouriteRouts = (ObservableCollection<Rout>)serializer.Deserialize(streamWriter);
-				FavouriteStops = (ObservableCollection<Stop>)serializer.Deserialize(streamWriter);
-
-
-				LastUpdateDataDateTime = tempDateTime;
-				Stops = tempStops;
-				Routs = tempRouts;
-				Times = tempTimes;
-
-				tempStops = null;
-				tempRouts = null;
-				tempTimes = null;
-
-				Connect(Routs, Stops);
-
-				Groups = new ObservableCollection<GroupStop>();
-				foreach (var groupStopId in tempGroup)
+				BinaryFormatter serializer = new BinaryFormatter();
+				var streamWriter = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
+				try
 				{
-					var newGroupStop = new GroupStop();
-					newGroupStop.Name = groupStopId.Name;
-					newGroupStop.Stops = new ObservableCollection<Stop>();
-					foreach (var i in groupStopId.StopID)
+					var tempDateTime = (DateTime) serializer.Deserialize(streamWriter);
+					var tempStops = (ObservableCollection<Stop>) serializer.Deserialize(streamWriter);
+					var tempRouts = (ObservableCollection<Rout>) serializer.Deserialize(streamWriter);
+					var tempTimes = (ObservableCollection<Schedule>) serializer.Deserialize(streamWriter);
+					var tempGroup = (List<GroupStopId>) serializer.Deserialize(streamWriter);
+					FavouriteRouts = (ObservableCollection<RoutWithDestinations>) serializer.Deserialize(streamWriter);
+					FavouriteStops = (ObservableCollection<Stop>) serializer.Deserialize(streamWriter);
+
+
+					LastUpdateDataDateTime = tempDateTime;
+					Stops = tempStops;
+					Routs = tempRouts;
+					Times = tempTimes;
+
+					tempStops = null;
+					tempRouts = null;
+					tempTimes = null;
+
+					Connect(Routs, Stops);
+
+					Groups = new ObservableCollection<GroupStop>();
+					foreach (var groupStopId in tempGroup)
 					{
-						newGroupStop.Stops.Add(Stops.First(x => x.ID == i));
+						var newGroupStop = new GroupStop();
+						newGroupStop.Name = groupStopId.Name;
+						newGroupStop.Stops = new ObservableCollection<Stop>();
+						foreach (var i in groupStopId.StopID)
+						{
+							newGroupStop.Stops.Add(Stops.First(x => x.ID == i));
+						}
 					}
+					//Connect(FavouriteRouts, FavouriteStops);
 				}
-				//Connect(FavouriteRouts, FavouriteStops);
-			}
-			finally
-			{
-				streamWriter.Close();
-			}
+				finally
+				{
+					streamWriter.Close();
+				}
+			});
 		}
 
 		

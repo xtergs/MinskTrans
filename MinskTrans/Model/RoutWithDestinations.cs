@@ -10,12 +10,6 @@ namespace MinskTrans.Universal.Model
 	public class RoutWithDestinations
 	{
 
-		public RoutWithDestinations(Rout newRout, IEnumerable<string> listDestinations)
-		{
-			rout = newRout;
-			destinations = listDestinations.Distinct();
-		}
-
 		public RoutWithDestinations(Rout newRout, Context context)
 		{
 			rout = newRout;

@@ -23,12 +23,12 @@ namespace MinskTrans.DesctopClient.Modelview
 		public MainModelView(Context newContext)
 		{
 			context = newContext;
-			routesModelview = new RoutesModelview(context);
-			stopMovelView = new StopModelView(context);
 			settingsModelView = new SettingsModelView(context);
-			groupStopsModelView = new GroupStopsModelView(context);
+			routesModelview = new RoutesModelview(context);
+			stopMovelView = new StopModelView(context, settingsModelView);
+			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context);
-			findModelView = new FindModelView(context);
+			findModelView = new FindModelView(context, settingsModelView);
 
 			if (IsInDesignMode)
 			{

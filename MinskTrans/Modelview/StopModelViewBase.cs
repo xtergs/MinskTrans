@@ -12,8 +12,17 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public StopModelViewBase(Context newContext) : base(newContext)
 		{
-			newContext.PropertyChanged+= (sender, args) => {OnPropertyChanged("StopNameFilter");};
+			newContext.PropertyChanged+= (sender, args) => {Refresh();};
 		}
+
+		#region Overrides of BaseModelView
+
+		public override void Refresh()
+		{
+			OnPropertyChanged("StopNameFilter");
+		}
+
+		#endregion
 
 		public string StopNameFilter
 		{

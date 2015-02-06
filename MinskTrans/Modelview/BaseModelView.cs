@@ -40,6 +40,11 @@ using MinskTrans.Universal.Annotations;
 			get { return context; }
 		}
 
+		public virtual void Refresh()
+		{
+			
+		}
+
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

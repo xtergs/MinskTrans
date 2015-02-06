@@ -21,14 +21,14 @@ namespace MinskTrans.DesctopClient.Converters
 		/// <param name="value">The value produced by the binding source.</param><param name="targetType">The type of the binding target property.</param><param name="parameter">The converter parameter to use.</param><param name="culture">The culture to use in the converter.</param>
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			string strValue = (string)value;
-			if (strValue == "trol")
+			Rout.TransportType strValue = (Rout.TransportType)value;
+			if (strValue == Rout.TransportType.Trol)
 				return "Image/trol.jpg";
-			if (strValue == "bus")
+			if (strValue == Rout.TransportType.Bus)
 				return "Image/bus.jpg";
-			if (strValue == "tram")
+			if (strValue == Rout.TransportType.Tram)
 				return "Image/tram.jpg";
-			return "";
+			return "Image/subway.jpg";
 		}
 
 		/// <summary>

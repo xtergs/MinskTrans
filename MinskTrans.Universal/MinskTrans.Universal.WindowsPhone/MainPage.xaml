@@ -1133,6 +1133,7 @@
 							IsOn="{Binding UpdateOnMobileData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <TextBlock Text="Дата обновления расписания"/>
                         <TextBlock Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThumbToolTipEnabled="True"/>
                     </StackPanel>
                 </Border>
             </PivotItem>

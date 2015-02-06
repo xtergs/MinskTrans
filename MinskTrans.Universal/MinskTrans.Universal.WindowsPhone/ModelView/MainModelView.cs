@@ -16,6 +16,7 @@ namespace MinskTrans.Universal.ModelView
 		private readonly StopModelView stopMovelView;
 		private readonly FavouriteModelView favouriteModelView;
 		private readonly FindModelView findModelView;
+		private MapModelView mapMOdelView;
 
 		public static MainModelView Create(Context newContext)
 		{
@@ -43,6 +44,12 @@ namespace MinskTrans.Universal.ModelView
 			{
 				StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));
 			}
+		}
+
+		public MapModelView MapModelView
+		{
+			get { return mapMOdelView;}
+			set { mapMOdelView = value; }
 		}
 
 		public SettingsModelView SettingsModelView

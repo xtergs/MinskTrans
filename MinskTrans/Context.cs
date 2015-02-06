@@ -135,7 +135,11 @@ namespace MinskTrans.DesctopClient
 				return actualStops;
 			}
 
-			private set { actualStops = value; }
+			private set
+			{
+				actualStops = value;
+				OnPropertyChanged();
+			}
 		}
 
 		public ObservableCollection<Rout> Routs
@@ -161,7 +165,7 @@ namespace MinskTrans.DesctopClient
 		public  abstract void Create(bool AutoUpdate = true);
 
 		
-		protected abstract bool FileExists(string file);
+		protected abstract Task<bool> FileExists(string file);
 
 		protected abstract void FileDelete(string file);
 
@@ -179,18 +183,19 @@ namespace MinskTrans.DesctopClient
 
 		public abstract Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes);
 
-		public void ApplyUpdate()
+		public async Task ApplyUpdate()
 		{
 			OnApplyUpdateStarted();
 			try
 			{
 				foreach (var keyValuePair in list)
 				{
-					//if (FileExists(keyValuePair.Key + ".old"))
+					if (await FileExists(keyValuePair.Key + ".new"))
+					{
 						FileDelete(keyValuePair.Key + ".old");
-					//if (FileExists(keyValuePair.Key))
 						FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
-					FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
+						FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
+					}
 				}
 
 				Stops = new ObservableCollection<Stop>(newStops);
@@ -224,6 +229,7 @@ namespace MinskTrans.DesctopClient
 
 		public void AllPropertiesChanged()
 		{
+			OnPropertyChanged("ActualStops");
 			OnPropertyChanged("Stops");
 			OnPropertyChanged("Routs");
 			OnPropertyChanged("Times");
@@ -275,7 +281,7 @@ namespace MinskTrans.DesctopClient
 				OnUpdateStarted();
 				await DownloadUpdate();
 				if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new"))
-					ApplyUpdate();
+					await ApplyUpdate();
 				OnUpdateEnded();
 			});
 		}
@@ -366,7 +372,7 @@ namespace MinskTrans.DesctopClient
 			reader.ReadStartElement();
 			int count = Convert.ToInt32(reader.GetAttribute("Count"));
 			FavouriteRoutsIds = new ObservableCollection<int>();
-			for (int i = 0; i < count-1; i ++)
+			for (int i = 0; i < count; i ++)
 			{
 				reader.ReadStartElement();
 				FavouriteRoutsIds.Add(int.Parse(reader.GetAttribute("id")));
@@ -384,7 +390,7 @@ namespace MinskTrans.DesctopClient
 			count = Convert.ToInt32(reader.GetAttribute("Count"));
 			FavouriteStopsIds = new ObservableCollection<int>();
 			reader.ReadStartElement();
-			for (int i = 0; i < count - 1; i++)
+			for (int i = 0; i < count; i++)
 			{
 				reader.ReadStartElement();
 				FavouriteStopsIds.Add(int.Parse(reader.GetAttribute("id")));

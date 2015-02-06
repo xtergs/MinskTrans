@@ -63,9 +63,9 @@ namespace MinskTrans.Universal
 
 
 
-		protected override bool FileExists(string file)
+		protected override async Task<bool> FileExists(string file)
 		{
-			return FileExistss(file).Result;
+			return await FileExistss(file);
 		}
 
 		protected override async void FileDelete(string file)
@@ -148,7 +148,7 @@ namespace MinskTrans.Universal
 			OnUpdateStarted();
 			await DownloadUpdate();
 			if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new"))
-				ApplyUpdate();
+				await ApplyUpdate();
 			OnUpdateEnded();
 
 			//});
@@ -390,7 +390,7 @@ namespace MinskTrans.Universal
 			}
 
 			await HaveUpdate(list[0].Key, list[1].Key, list[2].Key);
-			ApplyUpdate();
+			await ApplyUpdate();
 			//string str =await ReadAllFile(await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat"));
 			string nameFile = "data.dat";
 			if (await FileExistss(nameFile))

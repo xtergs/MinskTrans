@@ -7,7 +7,7 @@ namespace MinskTrans.DesctopClient
 		void Create(bool a = true);
 		Task DownloadUpdate();
 		Task<bool> HaveUpdate(string a, string b, string c);
-		void ApplyUpdate();
+		Task ApplyUpdate();
 		void Save();
 		Task Load();
 	}

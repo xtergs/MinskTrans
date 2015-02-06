@@ -55,8 +55,34 @@ namespace MinskTrans.Universal
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
+			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.Context.ShowRoute += OnShowRoute;
 			model.Context.ShowStop += OnShowStop;
+
+			
+
+			VisualStateGroup.CurrentStateChanged += (sender, args) =>
+			{
+				if (args.NewState == ShowStopVisualState)
+				{
+					StopsListView.SelectedIndex = -1;
+				} else if (args.NewState == RoutsListVisualState)
+					RoutsListView.SelectedIndex = -1;
+				else if (args.NewState == ShowRoutVisualState)
+					ShowRoutsListView.SelectedIndex = -1;
+				
+			};
+
+			FavouriteVisualStateGroup.CurrentStateChanged += (sender, args) =>
+			{
+				if (args.NewState == FavouriteShowStopVisualState)
+					FavouriteStopsListView.SelectedIndex = -1;
+				else if (args.NewState == FavouriteShowRoutVisualState)
+					ShowFavouriteRoutsListView.SelectedIndex = -1;
+				else if (args.NewState == FavouriteRoutsListVisualState)
+					FavouriteRoutsListView.SelectedIndex = -1;
+			};
+			
 			//model.ShowStop += OnShowStop;
 
 			
@@ -87,6 +113,7 @@ namespace MinskTrans.Universal
 #endif
 				ProgressBar.Visibility = Visibility.Collapsed;
 				ProgressBar.IsIndeterminate = false;
+				model.MapModelView.Inicialize();
 				//Flyout.Show();
 				//ProgressRing.Visibility = Visibility.Collapsed;
 
@@ -101,12 +128,15 @@ namespace MinskTrans.Universal
 			{
 				ProgressBar.IsIndeterminate = false;
 				ProgressBar.Visibility = Visibility.Collapsed;
+				model.MapModelView.Inicialize();
 			};
 			//model.Context.Load();
 
 
 			//model.Context.DownloadUpdate();
 			//model.Context.UpdateAsync();
+			model.MapModelView = new MapModelView(model.Context, map);
+
 			DataContext = model;
 
 		}
@@ -159,51 +189,28 @@ namespace MinskTrans.Universal
 
 		private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
 		{
-			e.Handled = true;
 			if (Pivot.SelectedItem == SearchPivotItem)
 			{
-				//if (state == States.RoutView)
-				//{
-					
-				//}
-				if (state == States.RoutList)
-					UnShowRoutList();
-				else if (state == States.StopView)
-					UnShowStopView();
-
-				//if (StopsHyperlinkButton.IsEnabled)
-				//{
-				//	if (ShowRoutsListGrid.Visibility == Visibility.Visible)
-				//	{
-				//		RoutsListView.Visibility = Visibility.Visible;
-				//		ShowRoutsListGrid.Visibility = Visibility.Collapsed;
-				//		FindTrans.Visibility = Visibility.Visible;
-				//		FindHyperButtonGrid.Visibility = Visibility.Visible;
-				//	}
-				//}
-				//else if (RoutsHyperlinkButton.IsEnabled == true)
-				//{
-				//	if (ShowStop.Visibility == Visibility.Visible)
-				//	{
-				//		ShowStop.Visibility = Visibility.Collapsed;
-				//		StopsListView.Visibility = Visibility.Visible;
-				//		FindStop.Visibility = Visibility.Visible;
-				//		FindHyperButtonGrid.Visibility = Visibility.Visible;
-				//	}
-					
-				//}
+				e.Handled = true;
+				if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
+					VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
+				else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
+					VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
+				else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
+					VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
+				
 			}
 			else if (Pivot.SelectedItem == FavourPivotItem)
 			{
-				if (FavouriteStopsHyperlinkButton.IsEnabled)
-				{
-					ShowFavouriteStop.Visibility = Visibility.Collapsed;
-					FavouriteStopsListView.Visibility = Visibility.Visible;
-				}
-				else if (FavouriteRoutssHyperlinkButton.IsEnabled)
-				{
-					
-				}
+				e.Handled = true;
+
+				if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
+					VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
+				else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+					VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
+				else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+					VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+
 			}
 		}
 
@@ -212,95 +219,7 @@ namespace MinskTrans.Universal
 			listview.ItemsSource = model.Context.Routs;
 		}
 
-		private void ListView_ItemClick(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
-		{
-			((ListView)sender).Visibility = Visibility.Collapsed;
-			ShowFavouriteStop.Visibility = Visibility.Visible;
-		}
-
-	
-
-		void ShowStopView()
-		{
-			state = States.StopView;
-			ShowStop.Visibility = Visibility.Visible;
-			FindStop.Visibility = Visibility.Collapsed;
-			StopsListView.Visibility = Visibility.Collapsed;
-			FindHyperButtonGrid.Visibility = Visibility.Collapsed;
-		}
-
-		void UnShowStopView()
-		{
-			state = States.Stops;
-			ShowStop.Visibility = Visibility.Collapsed;
-			FindStop.Visibility = Visibility.Visible;
-			StopsListView.Visibility = Visibility.Visible;
-			FindHyperButtonGrid.Visibility = Visibility.Visible;
-			//StopsListView.SelectionChanged -= ListView_ShowStop_ItemClick;
-			//StopsListView.SelectedIndex = -1;
-			//StopsListView.SelectionChanged += ListView_ShowStop_ItemClick;
-
-		}
-
-		private void HyperLinkButton_ShowStops(object sender, RoutedEventArgs e)
-		{
-			ShowStops();
-		}
-
-		void ShowStops()
-		{
-			state = States.Stops;
-			StopsHyperlinkButton.IsEnabled = false;
-			RoutsHyperlinkButton.IsEnabled = true;
-			ShowRoutsGrid.Visibility = Visibility.Collapsed;
-			ShowStopsGrid.Visibility = Visibility.Visible;
-		}
-
-		void ShowRouts()
-		{
-			state = States.Routs;
-			StopsHyperlinkButton.IsEnabled = true;
-			RoutsHyperlinkButton.IsEnabled = false;
-			ShowRoutsGrid.Visibility = Visibility.Visible;
-			ShowStopsGrid.Visibility = Visibility.Collapsed;
-			ShowRoutsListView.Visibility = Visibility.Collapsed;
-		}
-
-		private void HyperLinkButton_ShowRouts(object sender, RoutedEventArgs e)
-		{
-			ShowRouts();
-		}
-
-		private void ListView_ShowRout_ItemClick(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
-		{
-			//state= States.RoutView;
-			Frame.Navigate(typeof(RoutView), MainModelView.MainModelViewGet.FindModelView.RoutsModelView);
-		}
-
-		private void ListView_ShowListRout_ItemClick(object sender, SelectionChangedEventArgs e)
-		{
-			ShowRoutList();
-		}
-
-		void ShowRoutList()
-		{
-			state = States.RoutList;
-			FindTrans.Visibility = RoutsListView.Visibility = Visibility.Collapsed;
-			ShowRoutsListView.Visibility = Visibility.Visible;
-			ShowRoutsListGrid.Visibility = Visibility.Visible;
-			
-		}
-
-		void UnShowRoutList()
-		{
-			state = States.Routs;
-			FindTrans.Visibility = RoutsListView.Visibility = Visibility.Visible;
-			ShowRoutsListGrid.Visibility = Visibility.Collapsed;
-			ShowRoutsListView.Visibility= Visibility.Collapsed;
-			ShowRoutsListView.SelectionChanged -= ListView_ShowRout_ItemClick;
-			ShowRoutsListView.SelectedIndex = -1;
-			ShowRoutsListView.SelectionChanged += ListView_ShowRout_ItemClick;
-		}
+		
 
 		private bool pushpinsAll = true;
 		private bool isShowBusStops;
@@ -315,16 +234,20 @@ namespace MinskTrans.Universal
 
 		private void OnShowStop(object sender, ShowArgs args)
 		{
-			//pushpinsAll = true;
-			MapPivotItem.Focus(FocusState.Programmatic);
-			//var temp = args.SelectedStop;
-			//map.Center = new Location(temp.Lat, temp.Lng);
-			//map.ZoomLevel = 19;
+			pushpinsAll = true;
+			Pivot.SelectedItem = MapPivotItem;
+			
+			//model.MapModelView.ShowStop.Execute(args.SelectedStop);
+
+			var temp = args.SelectedStop;
+			map.Center = new Location(temp.Lat, temp.Lng);
+			map.ZoomLevel = 19;
 		}
 
 		private void OnShowRoute(object sender, ShowArgs args)
 		{
-			MapPivotItem.Focus(FocusState.Programmatic);
+			MapPivotItem.Focus(FocusState.Pointer);
+			model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 
 		public void RefreshPushPins()
@@ -366,37 +289,6 @@ namespace MinskTrans.Universal
 			//model.Context.Save();
 		}
 
-		private void FavouriteRoutsListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			FavouriteRoutsListView.Visibility = Visibility.Collapsed;
-			ShowFavouriteRoutsListView.Visibility = Visibility.Visible;
-		}
-
-		private void ShowFavouriteRoutsListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			Frame.Navigate(typeof(RoutView), MainModelView.MainModelViewGet.FavouriteModelView.RoutsModelView);
-		}
-
-		private void FavouriteStopsHyperlinkButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			FavouriteStopsHyperlinkButton.IsEnabled = false;
-			FavouriteRoutssHyperlinkButton.IsEnabled = true;
-			ShowFavouriteStopsGrid.Visibility = Visibility.Visible;
-			ShowFavouriteRoutsGrid.Visibility = Visibility.Collapsed;
-		}
-
-		private void FavouriteRoutssHyperlinkButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			FavouriteStopsHyperlinkButton.IsEnabled = true;
-			FavouriteRoutssHyperlinkButton.IsEnabled = false;
-			ShowFavouriteStopsGrid.Visibility = Visibility.Collapsed;
-			ShowFavouriteRoutsGrid.Visibility = Visibility.Visible;
-		}
-
-		private void StopsListView_ItemClick(object sender, ItemClickEventArgs e)
-		{
-			ShowStopView();
-
-		}
+		
 	}
 }

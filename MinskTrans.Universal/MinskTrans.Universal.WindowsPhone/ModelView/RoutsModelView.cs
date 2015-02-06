@@ -102,10 +102,13 @@ namespace MinskTrans.Universal.ModelView
 			get { return routeNumSelectedValue; }
 			set
 			{
+				if (value == null)
+					return;
 				//if (value == routeNumSelectedValue) return;
 				routeNumSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("RouteNames");
+				OnPropertyChanged("IsRoutFavourite");
 				OnPropertyChanged("RouteSelectedValue");
 			}
 		}
@@ -128,14 +131,22 @@ namespace MinskTrans.Universal.ModelView
 			get { return routeSelectedValue; }
 			set
 			{
+				if (value == null)
+					return;
 				//if (Equals(value, routeSelectedValue)) return;
 				routeSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimesObservableCollection");
 				OnPropertyChanged("StopSelectedIndex");
+				OnPropertyChanged("IsRoutFavourite");
 			}
 		}
 		#endregion
+
+		bool IsRoutFavourite
+		{
+			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
+		}
 
 		#region Stops
 		public List<Stop> StopsObservableCollection

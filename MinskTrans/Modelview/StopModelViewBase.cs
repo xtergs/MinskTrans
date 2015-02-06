@@ -20,7 +20,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return stopNameFilter; }
 			set
 			{
-				if (value == stopNameFilter) return;
+				//if (value == stopNameFilter) return;
 				stopNameFilter = value;
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
@@ -37,11 +37,15 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return filteredSelectedStop; }
 			set
 			{
+				if (value == null)
+					return;
+				//if (Equals(value, filteredSelectedStop)) return;
 				ShowStopMap.RaiseCanExecuteChanged();
-				if (Equals(value, filteredSelectedStop)) return;
 				filteredSelectedStop = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged("IsStopFavourite");
+
 				OnPropertyChanged("DirectionsStop");
 			}
 		}

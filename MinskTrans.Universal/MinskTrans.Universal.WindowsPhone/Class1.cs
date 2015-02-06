@@ -41,8 +41,8 @@ namespace MinskTrans.Universal
 				//	}
 				//}
 #if DEBUG
-				var newFile = await ApplicationData.Current.LocalFolder.GetFileAsync(file+".temp");
-				var str = await FileIO.ReadTextAsync(newFile);
+				//var newFile = await ApplicationData.Current.LocalFolder.GetFileAsync(file+".temp");
+				var str = await FileIO.ReadTextAsync(stream);
 #endif
 				stream.MoveAsync(ApplicationData.Current.LocalFolder, file, NameCollisionOption.ReplaceExisting);
 			});

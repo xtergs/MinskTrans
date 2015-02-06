@@ -24,7 +24,12 @@ namespace MinskTrans.Universal.Model
 					x =>
 						x.Stops.Count > 0 && x.RouteNum == newRout.RouteNum && x.Transport == newRout.Transport &&
 						(x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")))
-					.Select(x => x.StartStop.Name + " - " + x.DestinationStop.Name);
+					.Select(x => Trim(x.StartStop.Name) + " - " + Trim(x.DestinationStop.Name));
+		}
+
+		string Trim(string str)
+		{
+			return str.Replace("~(посадки-высадки нет)", "");
 		}
 
 		private readonly Rout rout;

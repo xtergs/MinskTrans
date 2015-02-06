@@ -11,7 +11,7 @@ using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-	class MapModelView: BaseModelView
+	public class MapModelView: BaseModelView
 	{
 		private Stop currentStop;
 		private Rout currentRout;
@@ -26,7 +26,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			
 		}
 
-		public Style StylePushpin { get; set; }
+		public static Style StylePushpin { get; set; }
 
 		public MapModelView(Context context, Map map)
 			: base(context)
@@ -35,23 +35,20 @@ namespace MinskTrans.DesctopClient.Modelview
 
 			Inicialize();
 
-			Context.PropertyChanged += (sender, args) => Inicialize();
+			//Context.PropertyChanged += (sender, args) => Inicialize();
 			map.ZoomLevel = 19;
-			map.Center = new Location(27.33, 53.55);
+			map.Center = new Location(53.55, 27.33);
 		}
 
-		void Inicialize()
+		public void Inicialize()
 		{
 			if (Context.ActualStops != null)
 			{
 				pushpins = new List<Pushpin>(Context.ActualStops.Count);
 				foreach (var st in Context.ActualStops)
 				{
-					var pushpin = new Pushpin();
-					pushpin.Tag = st;
-					pushpin.Style = StylePushpin;
+					var pushpin = new Pushpin {Tag = st, Content = st.Name};
 					//pushpin.templ
-					pushpin.Content = st.Name;
 					pushpin.Tapped += (sender, argss) =>
 					{
 						((Pushpin) sender).BringToFront();
@@ -99,7 +96,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return location; }
 			set
 			{
-				if (Equals(value, location)) return;
+				//if (Equals(value, location)) return;
 				location = value;
 				OnPropertyChanged();
 			}

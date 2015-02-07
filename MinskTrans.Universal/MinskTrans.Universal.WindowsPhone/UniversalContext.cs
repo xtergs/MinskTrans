@@ -199,22 +199,22 @@ namespace MinskTrans.Universal
 			}
 			if (checkUpdate)
 			{
-				if (Stops == null || Routs == null || Times == null)
+				if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
 					return true;
 
-				if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-					return false;
+				if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+					return true;
 
 				foreach (var newRoute in newRoutes)
 				{
-					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
-						return false;
+					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart != newRoute.Datestart))
+						return true;
 				}
 			}
 
 
-			OnLogMessage("have update true");
-			return true;
+			OnLogMessage("don't have update true");
+			return false;
 			//});
 
 		}

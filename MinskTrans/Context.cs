@@ -252,13 +252,35 @@ namespace MinskTrans.DesctopClient
 				if (rout.Time != null)
 					rout.Time.Rout = rout;
 
-				rout.Stops = new List<Stop>();
-				foreach (int st in rout.RouteStops)
+				rout.Stops = rout.RouteStops.Select(x => Stops.First(d =>
 				{
-					var stop = (stops.First(x => x.ID == st));
-					rout.Stops.Add(stop);
-					stop.Routs.Add(rout);
-				}
+					if (d.ID == x)
+					{
+						if (d.Routs == null)
+							d.Routs = new List<Rout>();
+						d.Routs.Add(rout);
+						return true;
+					}
+					return false;
+				})).ToList();
+				
+				//rout.Stops = stops.Where(x =>
+				//{
+				//	if (rout.RouteStops.Contains(x.ID))
+				//	{
+				//		if (x.Routs == null)
+				//			x.Routs = new List<Rout>();
+				//		x.Routs.Add(rout);
+				//		return true;
+				//	}
+				//	return false;
+				//}).ToList();
+				//foreach (int st in rout.RouteStops)
+				//{
+				//	var stop = (stops.First(x => x.ID == st));
+				//	rout.Stops.Add(stop);
+				//	stop.Routs.Add(rout);
+				//}
 			});
 #if DEBUG
 			watch.Stop();

@@ -150,13 +150,15 @@ namespace MinskTrans.DesctopClient
 
 			try
 			{
-			for (int i = 1; i < listStr.Length; i++)
-			{
+				Parallel.For(1, listStr.Length, i => { 
+			//for (int i = 1; i < listStr.Length; i++)
+			//{
 				//if (i % 50 == 0)
 				//	OnLogMessage(i + "times parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 					resultList.Add(new Schedule(listStr[i]));
-			}
+			//}
+				});
 
 			}
 			catch (Exception e )

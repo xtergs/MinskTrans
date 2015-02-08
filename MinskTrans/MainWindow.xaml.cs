@@ -100,36 +100,38 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
 			//var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
-			
-			map.Center = new Location(53, 27);
-			pushpins = new List<Pushpin>();
-			if (ShedulerModelView.Context.ActualStops != null)
-				foreach (var st in ShedulerModelView.Context.ActualStops)
-				{
-					var pushpin = new Pushpin();
-					pushpin.Tag = st;
-					pushpin.Style = (Style)Resources["PushpinStyle1"];
-					//pushpin.templ
-					pushpin.Content = st.Name;
-					pushpin.MouseMove += (sender, args) =>
+			ShedulerModelView.Context.UpdateEnded += (sender, args) =>
+			{
+				map.Center = new Location(53, 27);
+				pushpins = new List<Pushpin>();
+				if (ShedulerModelView.Context.ActualStops != null)
+					foreach (var st in ShedulerModelView.Context.ActualStops)
 					{
-						((Pushpin)sender).BringToFront();
-					};
-					pushpin.MouseDown += (o, args) =>
-					{
-						Pushpin tempPushpin = (Pushpin)o;
-						Stop tmStop = (Stop)tempPushpin.Tag;
-						ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
-						stopTabItem.Focus();
-					};
-					MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
-					pushpins.Add(pushpin);
-					map.Children.Add(pushpin);
-				
-				}
-			
-			map.ZoomLevel = 19;
-			
+						var pushpin = new Pushpin();
+						pushpin.Tag = st;
+						pushpin.Style = (Style) Resources["PushpinStyle1"];
+						//pushpin.templ
+						pushpin.Content = st.ID;
+						pushpin.MouseMove += (senderr, argsr) =>
+						{
+							((Pushpin) senderr).BringToFront();
+						};
+						pushpin.MouseDown += (o, argsr) =>
+						{
+							Pushpin tempPushpin = (Pushpin) o;
+							Stop tmStop = (Stop) tempPushpin.Tag;
+							ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
+							stopTabItem.Focus();
+						};
+						MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
+						pushpins.Add(pushpin);
+						map.Children.Add(pushpin);
+
+					}
+				//map.
+				//MapControl.Caching.ImageFileCache
+				map.ZoomLevel = 19;
+			};
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");
 			
 			
@@ -373,6 +375,13 @@ namespace MinskTrans.DesctopClient
 		{
 			if (ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
 				ShedulerModelView.GroupStopsModelView.RemoveGorup.Execute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop);
+		}
+
+		private void Button_Click_7(object sender, RoutedEventArgs e)
+		{
+			CalculateRout calculate = new CalculateRout(ShedulerModelView.Context);
+			calculate.CreateGraph();
+			calculate.FindPath(ShedulerModelView.Context.ActualStops.First(x => x.ID == 15757), ShedulerModelView.Context.ActualStops.First(x => x.ID == 15754));
 		}
 	}
 }

@@ -101,7 +101,7 @@ namespace MinskTrans.Universal
 					if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
 						if (model.Context.UpdateDataCommand.CanExecute(null))
 							model.Context.UpdateAsync();
-				}, null, new TimeSpan(0,0,0,30,0), new TimeSpan(0, 0, 0, 30, 0));
+				}, null, new TimeSpan(0,0,30,0,0), new TimeSpan(0, 0, 30, 0, 0));
 				
 
 				model.Context.ErrorLoading += (sender, args) =>

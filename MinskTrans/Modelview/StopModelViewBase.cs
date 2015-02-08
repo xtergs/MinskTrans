@@ -12,7 +12,11 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public StopModelViewBase(Context newContext) : base(newContext)
 		{
-			newContext.PropertyChanged+= (sender, args) => {Refresh();};
+			newContext.PropertyChanged+= (sender, args) =>
+			{
+				if (args.PropertyName == "ActualStops")
+				Refresh();
+			};
 		}
 
 		#region Overrides of BaseModelView
@@ -20,6 +24,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		public override void Refresh()
 		{
 			OnPropertyChanged("StopNameFilter");
+			OnPropertyChanged("FilteredStops");
 		}
 
 		#endregion

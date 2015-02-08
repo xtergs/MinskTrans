@@ -62,7 +62,12 @@ namespace MinskTrans.DesctopClient
 
 		public ObservableCollection<RoutWithDestinations> FavouriteRouts
 		{
-			get { return favouriteRouts; }
+			get
+			{
+				if (favouriteRouts == null)
+					favouriteRouts = new ObservableCollection<RoutWithDestinations>();
+				return favouriteRouts;
+			}
 			set
 			{
 				favouriteRouts = value;
@@ -72,7 +77,12 @@ namespace MinskTrans.DesctopClient
 
 		public ObservableCollection<Stop> FavouriteStops
 		{
-			get { return favouriteStops; }
+			get
+			{
+				if (favouriteStops == null)
+					favouriteStops = new ObservableCollection<Stop>();
+				return favouriteStops;
+			}
 			set
 			{
 				favouriteStops = value;
@@ -189,7 +199,8 @@ namespace MinskTrans.DesctopClient
 			OnApplyUpdateStarted();
 			try
 			{
-				foreach (var keyValuePair in list)
+				Parallel.ForEach(list, async keyValuePair =>
+					//foreach (var keyValuePair in list)
 				{
 					if (await FileExists(keyValuePair.Key + ".new"))
 					{
@@ -197,7 +208,13 @@ namespace MinskTrans.DesctopClient
 						FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
 						FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
 					}
-				}
+				});
+				//Stops.Clear();
+				//Routs.Clear();
+				//Times.Clear();
+				//Parallel.ForEach(newStops, stop => Stops.Add(stop));
+				//Parallel.ForEach(newRoutes, rout => Routs.Add(rout));
+				//Parallel.ForEach(newSchedule, time => Times.Add(time));
 
 				Stops = new ObservableCollection<Stop>(newStops);
 				Routs = new ObservableCollection<Rout>(newRoutes);
@@ -217,7 +234,7 @@ namespace MinskTrans.DesctopClient
 				throw new Exception(e.Message, e.InnerException);
 			}
 
-			ActualStops = new ObservableCollection<Stop>(Stops.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
+			ActualStops = new ObservableCollection<Stop>(Stops.Where(x => Routs != null && Routs.Any(d => d.Stops.Contains(x))));
 
 			AllPropertiesChanged();
 
@@ -503,7 +520,7 @@ namespace MinskTrans.DesctopClient
 
 		public RelayCommand<Stop> AddFavouriteSopCommand
 		{
-			get { return new RelayCommand<Stop>(x => FavouriteStops.Add(x), p => p != null && !FavouriteStops.Contains(p)); }
+			get { return new RelayCommand<Stop>(x => FavouriteStops.Add(x), p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p)); }
 		}
 		public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
 		{

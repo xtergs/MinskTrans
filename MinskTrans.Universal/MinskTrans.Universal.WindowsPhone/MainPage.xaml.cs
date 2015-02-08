@@ -91,7 +91,10 @@ namespace MinskTrans.Universal
 			//model.Context.Save();
 			//model.Context.Load();
 
-			//model.Context.UpdateStarted += (sender, args) => FlyoutBase.ShowAttachedFlyout(GgGrid);
+			model.Context.ErrorDownloading += (sender, args) =>
+			{
+
+			};
 			model.Context.UpdateStarted += (sender, args) =>
 			{
 				ProgressBar.Visibility = Visibility.Visible;
@@ -101,11 +104,11 @@ namespace MinskTrans.Universal
 			{
 				//FlyoutBase.GetAttachedFlyout(GgGrid).Hide();
 				
-				listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
+				//listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
 				
 				
 				//DataContext = model;
-#if DEBUG
+#if _DEBUG
 				model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x => x.SearchName.Contains("шепичи")));
 				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), model.Context));
 				model.Context.AllPropertiesChanged();
@@ -113,12 +116,13 @@ namespace MinskTrans.Universal
 #endif
 				ProgressBar.Visibility = Visibility.Collapsed;
 				ProgressBar.IsIndeterminate = false;
-				model.MapModelView.Inicialize();
+				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
+				//model.MapModelView.Inicialize();
 				//Flyout.Show();
 				//ProgressRing.Visibility = Visibility.Collapsed;
 
 			};
-			model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
+			//model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
 			model.Context.LoadStarted += (sender, args) =>
 			{
 				ProgressBar.IsIndeterminate = true;
@@ -128,7 +132,8 @@ namespace MinskTrans.Universal
 			{
 				ProgressBar.IsIndeterminate = false;
 				ProgressBar.Visibility = Visibility.Collapsed;
-				model.MapModelView.Inicialize();
+				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
+				//model.MapModelView.Inicialize();
 			};
 			//model.Context.Load();
 
@@ -139,6 +144,38 @@ namespace MinskTrans.Universal
 
 			DataContext = model;
 
+		}
+
+		public void InicializeMap()
+		{
+			if (model.Context.ActualStops != null)
+			{
+				pushpins = new List<Pushpin>(model.Context.ActualStops.Count);
+				foreach (var st in model.Context.ActualStops)
+				{
+					var pushpin = new Pushpin { Tag = st, Content = st.Name };
+					//pushpin.templ
+#if WINDOWS_PHONE_APP
+					pushpin.Tapped += (sender, argss) =>
+					{
+						((Pushpin)sender).BringToFront();
+					};
+					pushpin.Tapped += (o, argss) =>
+					{
+						Pushpin tempPushpin = (Pushpin)o;
+						Stop tmStop = (Stop)tempPushpin.Tag;
+						//model.StopMovelView.FilteredSelectedStop = tmStop;
+						//MapPivotItem.Focus(FocusState.Programmatic);
+					};
+#endif
+					MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
+					pushpins.Add(pushpin);
+					map.Children.Add(pushpin);
+
+
+				}
+				map.Center = new Location(model.Context.ActualStops.First().Lat, model.Context.ActualStops.First().Lng);
+			}
 		}
 
 		/// <summary>
@@ -198,7 +235,11 @@ namespace MinskTrans.Universal
 					VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
 				else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
 					VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
-				
+				else
+				{
+					e.Handled = false;
+				}
+
 			}
 			else if (Pivot.SelectedItem == FavourPivotItem)
 			{
@@ -208,20 +249,18 @@ namespace MinskTrans.Universal
 					VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
 				else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
 					VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-				else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+				else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
+				         !FavouriteRoutssHyperlinkButton.IsEnabled)
 					VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+				else
+					e.Handled = false;
 
 			}
+			else
+				Application.Current.Exit();
 		}
 
-		private void Button_Click_2(object sender, RoutedEventArgs e)
-		{
-			listview.ItemsSource = model.Context.Routs;
-		}
-
-		
-
-		private bool pushpinsAll = true;
+	private bool pushpinsAll = true;
 		private bool isShowBusStops;
 		private bool isShowTrolStops;
 		private bool isShowTramStops;
@@ -247,7 +286,19 @@ namespace MinskTrans.Universal
 		private void OnShowRoute(object sender, ShowArgs args)
 		{
 			Pivot.SelectedItem = MapPivotItem;
-			model.MapModelView.ShowRout.Execute(args.SelectedRoute);
+			var x = args.SelectedRoute;
+			pushpinsAll = false;
+			foreach (var child in pushpins)
+			{
+				child.Visibility = Visibility.Collapsed;
+			}
+			//var tempRoute = args.SelectedRoute;
+			foreach (var child in pushpins.Where(d => x.Stops.Any(p => p.ID == ((Stop)d.Tag).ID)))
+			{
+				child.Visibility = Visibility.Visible;
+			}
+			map.Center = new Location(x.StartStop.Lat, x.StartStop.Lng);
+			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 
 		public void RefreshPushPins()
@@ -257,7 +308,7 @@ namespace MinskTrans.Universal
 			if (pushpinsAll)
 				foreach (var child in pushpins)
 				{
-					if (map.ZoomLevel <= 20)
+					if (map.ZoomLevel <= 15)
 					{
 						child.Visibility = Visibility.Collapsed;
 					}

@@ -47,10 +47,10 @@ namespace MinskTrans.DesctopClient.Modelview
 			};
 		}
 
-		//public ISettingsModelView SettingsModelView
-		//{
-		//	get { return settingsModelView; }
-		//}
+	public ISettingsModelView SettingsModelView
+	{
+		get { return settingsModelView; }
+	}
 
 		
 		public bool AutoDay
@@ -188,6 +188,26 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					IEnumerable<Schedule> dd = Context.Times.Where(x => x.Rout != null && (x.Rout.Stops.Contains(FilteredSelectedStop)));
 					IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
+					IEnumerable<KeyValuePair<Rout, int>> tt = new List<KeyValuePair<Rout, int>>();
+					//foreach (var schedule in dd)
+					//{
+					//	var temp =
+					//		schedule.GetListTimes(schedule.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay - 1, 24 * 60 + CurTime - settingsModelView.TimeInPast).Where(x =>
+					//		{
+					//			if (x.Key.Transport == Rout.TransportType.Bus)
+					//				return Bus;
+					//			if (x.Key.Transport == Rout.TransportType.Trol)
+					//				return Trol;
+					//			if (x.Key.Transport == Rout.TransportType.Tram)
+					//				return Tram;
+					//			return true;
+					//		});
+
+					//	tt = tt.Concat(temp);
+					//}
+
+					//tt.OrderBy(x => x.Value);
+
 					foreach (Schedule sched in dd)
 					{
 						IEnumerable<KeyValuePair<Rout, int>> temp =
@@ -199,14 +219,16 @@ namespace MinskTrans.DesctopClient.Modelview
 									return Trol;
 								if (x.Key.Transport == Rout.TransportType.Tram)
 									return Tram;
-								return false;
+								return true;
 							});
 
 						ss = ss.Concat(temp);
+
+						
 					}
 					ss = ss.OrderBy(x => x.Value);
 					//ss.ToString();
-					return ss;
+					return tt.Concat(ss);
 				}
 				return null;
 			}

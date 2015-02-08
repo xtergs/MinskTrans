@@ -457,9 +457,9 @@
                             <TextBlock Text="Time in past:"
                                        DockPanel.Dock="Top"></TextBlock>
                             <TextBox DockPanel.Dock="Top"
-                                     Text="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding SettingsModelView.TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             <Slider DockPanel.Dock="Top"
-                                    Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Value="{Binding SettingsModelView.TimeInPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Minimum="0" Maximum="100" TickFrequency="10"/>
 
                         </DockPanel>
@@ -658,6 +658,7 @@
                     </Grid>
                 </DockPanel>
             </TabItem>
+            <Button Content="Button" Height="100" Width="75" Click="Button_Click_7"/>
 
         </TabControl>
         <StatusBar Grid.Row="2"

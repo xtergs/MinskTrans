@@ -45,7 +45,8 @@ namespace MinskTrans.Universal.ModelView
 		{
 			Context.PropertyChanged += (sender, args) =>
 			{
-				OnPropertyChanged("RouteNums");
+				if (args.PropertyName == "Routs")
+					OnPropertyChanged("RouteNums");
 			};
 			OnPropertyChanged("RouteNums");
 		}

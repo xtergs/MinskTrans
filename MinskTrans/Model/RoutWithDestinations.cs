@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using MinskTrans.DesctopClient;
 
 namespace MinskTrans.Universal.Model
@@ -18,7 +19,7 @@ namespace MinskTrans.Universal.Model
 					x =>
 						x.Stops.Count > 0 && x.RouteNum == newRout.RouteNum && x.Transport == newRout.Transport &&
 						(x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")))
-					.Select(x => Trim(x.StartStop.Name) + " - " + Trim(x.DestinationStop.Name));
+					.Select(x => Trim(x.StartStop.Name) + " - " + Trim(x.DestinationStop.Name)).Distinct();
 		}
 
 		string Trim(string str)

@@ -82,7 +82,7 @@ namespace MinskTrans.DesctopClient
 			//throw new NotImplementedException();
 			if (File.Exists("data.dat"))
 			{
-				Load();
+				//Load();
 				return;
 			}
 			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();

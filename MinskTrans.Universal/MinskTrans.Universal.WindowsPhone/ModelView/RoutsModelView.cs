@@ -111,6 +111,7 @@ namespace MinskTrans.Universal.ModelView
 				OnPropertyChanged("RouteNames");
 				OnPropertyChanged("IsRoutFavourite");
 				OnPropertyChanged("RouteSelectedValue");
+				OnPropertyChanged("StopsObservableCollection");
 			}
 		}
 		#endregion

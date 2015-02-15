@@ -124,7 +124,8 @@ namespace MinskTrans.Universal
 #endif
 				ProgressBar.Visibility = Visibility.Collapsed;
 				ProgressBar.IsIndeterminate = false;
-				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
+				pushpins = null;
+				//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
 				//model.MapModelView.Inicialize();
 				//Flyout.Show();
 				//ProgressRing.Visibility = Visibility.Collapsed;
@@ -140,7 +141,7 @@ namespace MinskTrans.Universal
 			{
 				ProgressBar.IsIndeterminate = false;
 				ProgressBar.Visibility = Visibility.Collapsed;
-				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
+				//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
 				//model.MapModelView.Inicialize();
 			};
 			
@@ -162,9 +163,9 @@ namespace MinskTrans.Universal
 
 		public void InicializeMap()
 		{
-			mappanel = new MapPanel();
-			mappanel.ParentMap = map;	
-			if (model.Context.ActualStops != null)
+			//mappanel = new MapPanel();
+			//mappanel.ParentMap = map;	
+			if (model != null && model.Context.ActualStops != null)
 			{
 				pushpins = new List<Pushpin>(model.Context.ActualStops.Count);
 				foreach (var st in model.Context.ActualStops)
@@ -317,22 +318,25 @@ namespace MinskTrans.Universal
 			pushpinsAll = false;
 			foreach (var child in pushpins)
 			{
-				child.Visibility = Visibility.Collapsed;
+				map.Children.Remove(child);
+				//child.Visibility = Visibility.Collapsed;
 			}
 			//var tempRoute = args.SelectedRoute;
 			foreach (var child in pushpins.Where(d => x.Stops.Any(p => p.ID == ((Stop)d.Tag).ID)))
 			{
-				child.Visibility = Visibility.Visible;
+				map.Children.Add(child);
+				//child.Visibility = Visibility.Visible;
 			}
 			map.Center = new Location(x.StartStop.Lat, x.StartStop.Lng);
+			ShowAllPushPins.Visibility = Visibility.Visible;
 			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 
 		public void RefreshPushPinsAsync()
 		{
 			if (pushpins == null)
-				return;
-			if (pushpinsAll)
+				InicializeMap();
+			if (pushpinsAll && map!=null)
 			{
 				var northWest = map.ViewportPointToLocation(new Point(0, 0));
 				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
@@ -346,8 +350,8 @@ namespace MinskTrans.Universal
 					else
 					{
 						var x = MapPanel.GetLocation(child);
-						if (x.Latitude < northWest.Latitude && x.Longitude > northWest.Longitude && 
-							x.Latitude > southEast.Latitude && x.Longitude < southEast.Longitude &&  
+						if (x.Latitude <= northWest.Latitude && x.Longitude >= northWest.Longitude && 
+							x.Latitude >= southEast.Latitude && x.Longitude <= southEast.Longitude &&  
 							!map.Children.Contains(child))
 							map.Children.Add(child);
 						//child.Visibility = Visibility.Visible;
@@ -394,6 +398,19 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowGroupVisualState", true);
 		}
 
+		private Pushpin ipushpin;
+
+		public Pushpin Ipushpin
+		{
+			get
+			{
+				if (ipushpin == null)
+					ipushpin = new Pushpin(){Content = "Я"};
+				return ipushpin;
+			}
+			set { ipushpin = value; }
+		}
+
 		private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
 		{
 			Geolocator geolocator = new Geolocator();
@@ -407,7 +424,9 @@ namespace MinskTrans.Universal
 					);
 
 				map.Center = new Location(geoposition.Coordinate.Latitude, geoposition.Coordinate.Longitude);
-				
+				MapPanel.SetLocation(Ipushpin, map.Center);
+				map.Children.Add(Ipushpin);
+
 			}
 			catch (Exception ex)
 			{
@@ -426,7 +445,11 @@ namespace MinskTrans.Universal
 		}
 
 
-		
-		
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			pushpinsAll = true;
+			RefreshPushPinsAsync();
+			ShowAllPushPins.Visibility = Visibility.Collapsed;
+		}
 	}
 }

@@ -212,7 +212,7 @@
                             <Setter Property="MinHeight" Value="0"/>
                         </Style>
                     </ListBox.ItemContainerStyle>
-                   
+
 
                 </ListBox>
             </Grid>
@@ -680,43 +680,57 @@
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="GroupsVisualStateGroup">
-            	<VisualState x:Name="ListGroupsVisualState"/>
-            	<VisualState x:Name="ShowGroupVisualState">
-            		<Storyboard>
-            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="GroupsListView">
-            				<DiscreteObjectKeyFrame KeyTime="0">
-            					<DiscreteObjectKeyFrame.Value>
-            						<Visibility>Collapsed</Visibility>
-            					</DiscreteObjectKeyFrame.Value>
-            				</DiscreteObjectKeyFrame>
-            			</ObjectAnimationUsingKeyFrames>
-            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="showStopView">
-            				<DiscreteObjectKeyFrame KeyTime="0">
-            					<DiscreteObjectKeyFrame.Value>
-            						<Visibility>Visible</Visibility>
-            					</DiscreteObjectKeyFrame.Value>
-            				</DiscreteObjectKeyFrame>
-            			</ObjectAnimationUsingKeyFrames>
-            		</Storyboard>
-            	</VisualState>
-            	<VisualState x:Name="SelectToDeleteVisualState">
-            		<Storyboard>
-            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ListBox.SelectionMode)" Storyboard.TargetName="GroupsListView">
-            				<DiscreteObjectKeyFrame KeyTime="0">
-            					<DiscreteObjectKeyFrame.Value>
-            						<SelectionMode>Extended</SelectionMode>
-            					</DiscreteObjectKeyFrame.Value>
-            				</DiscreteObjectKeyFrame>
-            			</ObjectAnimationUsingKeyFrames>
-            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="appBarButton">
-            				<DiscreteObjectKeyFrame KeyTime="0">
-            					<DiscreteObjectKeyFrame.Value>
-            						<Visibility>Visible</Visibility>
-            					</DiscreteObjectKeyFrame.Value>
-            				</DiscreteObjectKeyFrame>
-            			</ObjectAnimationUsingKeyFrames>
-            		</Storyboard>
-            	</VisualState>
+                <VisualState x:Name="ListGroupsVisualState"/>
+                <VisualState x:Name="ShowGroupVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="GroupsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="showStopView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RefreshCurGroupShow">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="AddGroupAppBarButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SelectToDeleteVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ListBox.SelectionMode)" Storyboard.TargetName="GroupsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <SelectionMode>Extended</SelectionMode>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="appBarButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
@@ -774,10 +788,10 @@
                             </Grid.RowDefinitions>
 
 
-                            <TextBox Grid.Row="0" 
+                            <local:MyTextBox Grid.Row="0" 
 								Visibility="Visible"
 								x:Name="FindStop" 
-								Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Search" IsTextPredictionEnabled="False"/>
+								Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  InputScope="Search" IsTextPredictionEnabled="False" />
                             <ListView Grid.Row="1" 
 								x:Name="StopsListView"
 								ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged}"
@@ -816,7 +830,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <TextBox Grid.Row="0" 
+                            <local:MyTextBox Grid.Row="0" 
 								x:Name="FindTrans" 
 								Text="{Binding RoutsModelView.RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number"/>
 
@@ -1052,7 +1066,7 @@
 								ItemsSource="{Binding RouteNames, UpdateSourceTrigger=PropertyChanged}"
 								DataContext="{Binding RoutsModelView}"
 								SelectedItem="{Binding RouteSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-									  ItemTemplate="{StaticResource DataTemplate2}"
+									  ItemTemplate="{StaticResource DataTemplate3}"
 								Grid.ColumnSpan="2" 
 						  
 								>
@@ -1137,19 +1151,8 @@
                                 </ListView>
                                 <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                                     <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                                        <AppBarButton Icon="Add">
-                                            <AppBarButton.Flyout>
-                                                <Flyout>
-                                                    <StackPanel>
-                                                        <TextBlock Text="Выберите группу"/>
-                                                        <ListView ItemsSource="{Binding Context.Groups}" ItemContainerStyle="{StaticResource FullListViewItem}"></ListView>
-                                                        <Button Content="Ok"></Button>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </AppBarButton.Flyout>
-                                        </AppBarButton>
-                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRoutMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
                                     </Controls:WrapPanel>
                                 </Border>
                             </Grid>
@@ -1168,29 +1171,30 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <ListBox FontSize="18" SelectionChanged="GroupSelectedListView" Name="GroupsListView" DisplayMemberPath="Name" SelectedItem="{Binding SelectedGroupStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Context.Groups, UpdateSourceTrigger=PropertyChanged}" IsDoubleTapEnabled="False" Background="{x:Null}" Foreground="White"  >
-                        	<Interactivity:Interaction.Behaviors>
-                        		<Core:EventTriggerBehavior EventName="Holding">
-                        			<Core:GoToStateAction StateName="SelectToDeleteVisualState"/>
-                        		</Core:EventTriggerBehavior>
-                        	</Interactivity:Interaction.Behaviors>
-                        	<!--<Interactivity:Interaction.Behaviors>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="Holding">
+                                    <Core:GoToStateAction StateName="SelectToDeleteVisualState"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <!--<Interactivity:Interaction.Behaviors>
                         		<Core:EventTriggerBehavior EventName="SelectionChanged">
                         			<Core:GoToStateAction StateName="ShowGroupVisualState"/>
                         		</Core:EventTriggerBehavior>
                         	</Interactivity:Interaction.Behaviors>-->
-                            
+
 
                         </ListBox>
                         <!--<ListView DataContext="{Binding ElementName=GroupsListView, Path=SelectedItem}" DisplayMemberPath="Stops" Visibility="Collapsed"/>-->
                         <local:ShowStopView ShowStatusBar="Collapsed" x:Name="showStopView" DataContext="{Binding}" Visibility="Collapsed"></local:ShowStopView>
                         <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                             <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
+                                <AppBarButton x:Name="RefreshCurGroupShow" Visibility="Collapsed" Command="{Binding RefreshTimeSchedule}" IsCompact="True" Icon="Sync" />
                                 <AppBarButton x:Name="AddGroupAppBarButton"  HorizontalAlignment="Center" Icon="Add" IsCompact="True" Click="AppBarButton_Click">
                                     <AppBarButton.Flyout>
                                         <Flyout Placement="Bottom">
                                             <StackPanel>
                                                 <TextBlock FontSize="18" Text="Название группы"/>
-                                                <TextBox Name="NameTextBox"/>
+                                                <local:MyTextBox Name="NameTextBox"/>
                                                 <Button Content="Добавить" Command="{Binding Context.CreateGroup}" CommandParameter="{Binding ElementName=NameTextBox, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Button>
                                             </StackPanel>
                                         </Flyout>
@@ -1215,18 +1219,18 @@
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                    
-                    <mapControl1:Map ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
-                        <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                            <AppBarButton IsCompact="True" Click="AppBarButton_Click_1">
+
+                        <mapControl1:Map ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
+                            <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
+                                <AppBarButton IsCompact="True" Click="AppBarButton_Click_1">
                                     <AppBarButton.Icon>
                                         <FontIcon Glyph="Я" />
                                     </AppBarButton.Icon>
                                 </AppBarButton>
-                            
-                        </Controls:WrapPanel>
-                    </Border>
+                                <AppBarButton Visibility="Collapsed" Name="ShowAllPushPins"  IsCompact="True" Click="ButtonBase_OnClick" Icon="ViewAll" />
+                            </Controls:WrapPanel>
+                        </Border>
                     </Grid>
                 </Border>
             </PivotItem>

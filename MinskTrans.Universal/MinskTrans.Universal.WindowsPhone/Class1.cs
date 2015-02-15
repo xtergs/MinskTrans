@@ -40,7 +40,7 @@ namespace MinskTrans.Universal
 				//		//stream.Dispose();
 				//	}
 				//}
-#if DEBUG
+#if _DEBUG
 				//var newFile = await ApplicationData.Current.LocalFolder.GetFileAsync(file+".temp");
 				var str = await FileIO.ReadTextAsync(stream);
 #endif

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
+
+  <Identity Name="22fba783-1d59-40a2-a985-c3d089c3ff12"
+            Publisher="CN=Brian"
+            Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>WatermarkTextBoxControl</DisplayName>
+    <PublisherDisplayName>Brian</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>WatermarkTextBoxControl</Description>
+  </Properties>
+
+  <Prerequisites>
+    <OSMinVersion>6.2</OSMinVersion>
+    <OSMaxVersionTested>6.2</OSMaxVersionTested>
+  </Prerequisites>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+        Executable="$targetnametoken$.exe"
+        EntryPoint="WatermarkTextBoxControl.App">
+        <VisualElements
+            DisplayName="WatermarkTextBoxControl"
+            Logo="Assets\Logo.png"
+            SmallLogo="Assets\SmallLogo.png"
+            Description="WatermarkTextBoxControl"
+            ForegroundText="light"
+            BackgroundColor="#222222">
+            <DefaultTile ShowName="allLogos" />
+            <SplashScreen Image="Assets\SplashScreen.png" />
+        </VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>

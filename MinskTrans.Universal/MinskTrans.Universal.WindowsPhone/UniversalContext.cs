@@ -318,10 +318,27 @@ namespace MinskTrans.Universal
 				{
 					abj.FavouriteStops.Add(Stops.First(x=>x.ID == favouriteStopsId));
 				}
+				abj.Groups = new ObservableCollection<GroupStop>();
+				foreach (var groupsStopId in abj.GroupsStopIds)
+				{
+					var group = new GroupStop();
+					group.Name = groupsStopId.Name;
+					group.Stops = new ObservableCollection<Stop>();
+					foreach (var i in groupsStopId.StopID)
+					{
+						group.Stops.Add(Stops.First(x=>x.ID == i));
+					}
+					abj.Groups.Add(group);
+				}
 					FavouriteRouts = abj.FavouriteRouts;
 					FavouriteStops = abj.FavouriteStops;
-				
-				
+				Groups = abj.Groups;
+				abj.FavouriteRoutsIds = null;
+				abj.FavouriteStopsIds = null;
+				abj.GroupsStopIds = null;
+				abj = null;
+
+
 
 			}
 			else

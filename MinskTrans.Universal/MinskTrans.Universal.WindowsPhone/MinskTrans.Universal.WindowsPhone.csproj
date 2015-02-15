@@ -165,6 +165,9 @@
     <Compile Include="ModelView\FindModelView.cs" />
     <Compile Include="ModelView\MainModelView.cs" />
     <Compile Include="ModelView\RoutsModelView.cs" />
+    <Compile Include="MyTextBox.xaml.cs">
+      <DependentUpon>MyTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NoFilesToRestoreDataException.cs" />
     <Compile Include="NotDataToDeserialize.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -173,6 +176,8 @@
     <Compile Include="ShowStopView.xaml.cs">
       <DependentUpon>ShowStopView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TextBoxDelete.cs" />
+    <Compile Include="Themes\EmptyToVisibility.cs" />
     <Compile Include="TransportToColor.cs" />
     <Compile Include="UniversalContext.cs" />
   </ItemGroup>
@@ -200,12 +205,14 @@
     <Content Include="Assets\WideLogo.scale-100.png" />
     <Content Include="Assets\WideLogo.scale-140.png" />
     <Content Include="Assets\WideLogo.scale-240.png" />
-    <None Include="Package.StoreAssociation.xml" />
     <Content Include="README_FIRST.txt" />
+    <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
+    <None Include="Package.StoreAssociation.xml" />
+    <Content Include="ReadMe.Coding4Fun.Toolkit.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -215,12 +222,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MyTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ShowStopView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Coding4Fun.Toolkit">
+      <HintPath>..\..\packages\Coding4Fun.Toolkit.Controls.2.1.0\lib\wpa81\Coding4Fun.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Controls">
+      <HintPath>..\..\packages\Coding4Fun.Toolkit.Controls.2.1.0\lib\wpa81\Coding4Fun.Toolkit.Controls.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\packages\MvvmLightLibs.5.0.2.0\lib\wpa81\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>

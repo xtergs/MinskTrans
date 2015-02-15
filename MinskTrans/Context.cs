@@ -427,7 +427,8 @@ namespace MinskTrans.DesctopClient
 		}
 
 		protected internal ObservableCollection<int> FavouriteRoutsIds;
-		protected internal ObservableCollection<int> FavouriteStopsIds; 
+		protected internal ObservableCollection<int> FavouriteStopsIds;
+		protected internal ObservableCollection<GroupStopId> GroupsStopIds;
 		/// <summary>
 		/// Generates an object from its XML representation.
 		/// </summary>
@@ -457,13 +458,55 @@ namespace MinskTrans.DesctopClient
 				
 			}
 
+			if (!reader.IsEmptyElement)
+				reader.ReadEndElement();
+			else
+			{
+				reader.ReadStartElement();
+				if (reader.NodeType == XmlNodeType.EndElement)
+					reader.ReadEndElement();
+			}
+
+			//reader.ReadStartElement();
 			count = Convert.ToInt32(reader.GetAttribute("Count"));
 			FavouriteStopsIds = new ObservableCollection<int>();
-			reader.ReadStartElement();
 			for (int i = 0; i < count; i++)
 			{
 				reader.ReadStartElement();
 				FavouriteStopsIds.Add(int.Parse(reader.GetAttribute("id")));
+
+				if (!reader.IsEmptyElement)
+					reader.ReadEndElement();
+
+			}
+			if (!reader.IsEmptyElement)
+				reader.ReadEndElement();
+			else
+			{
+				reader.ReadStartElement();
+				if (reader.NodeType == XmlNodeType.EndElement)
+					reader.ReadEndElement();				
+			}
+
+			//reader.ReadStartElement();
+			count = Convert.ToInt32(reader.GetAttribute("Count"));
+			GroupsStopIds = new ObservableCollection<GroupStopId>();
+			for (int i = 0; i < count; i++)
+			{
+				var group = new GroupStopId();
+				reader.ReadStartElement();
+				group.Name = reader.GetAttribute("Name");
+				int countt = int.Parse(reader.GetAttribute("Count"));
+				group.StopID = new List<int>(countt);
+				for (int j = 0; j < countt; j++)
+				{
+					reader.ReadStartElement();
+					group.StopID.Add(int.Parse(reader.GetAttribute("id")));
+					if (!reader.IsEmptyElement)
+						reader.ReadEndElement();
+
+				}
+				GroupsStopIds.Add(group);
 
 				if (!reader.IsEmptyElement)
 					reader.ReadEndElement();
@@ -507,6 +550,8 @@ namespace MinskTrans.DesctopClient
 			{
 				writer.WriteStartElement("Group");
 				writer.WriteAttributeString("Name", group.Name);
+				writer.WriteAttributeString("Count", group.Stops.Count.ToString());
+
 				foreach (var stop in group.Stops)
 				{
 					writer.WriteStartElement("Stop");

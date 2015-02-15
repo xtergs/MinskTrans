@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MinskTrans.DesctopClient;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -22,7 +23,43 @@ namespace MinskTrans.Universal
 		public ShowStopView()
 		{
 			this.InitializeComponent();
-			
+			ShowStatusBar = Visibility.Visible;
+		}
+
+		public Visibility ShowStatusBar
+		{
+			get { return statusBar.Visibility; }
+			set { statusBar.Visibility = value; }
+		}
+
+
+
+		private FlyoutBase flyout;
+
+		private void AppBarButton_Click(object sender, RoutedEventArgs e)
+		{
+			flyout = ((AppBarButton)sender).Flyout;
+			flyout.ShowAt((FrameworkElement) sender);
+			GroupsListView.SelectedIndex = -1;
+		}
+
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			flyout.Hide();
+		}
+
+		public event Context.EmptyDelegate AddGroup;
+
+		private void OnAddGroup()
+		{
+			var handler = AddGroup;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
+
+		private void AddGroupButtonClick(object sender, RoutedEventArgs e)
+		{
+			OnAddGroup();
+			flyout.Hide();
 		}
 	}
 }

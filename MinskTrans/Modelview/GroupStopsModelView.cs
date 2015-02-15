@@ -15,6 +15,7 @@ using MinskTrans.DesctopClient.Model;
 	{
 		
 		private GroupStop selectedGroupStop;
+		private IList<GroupStop> selectedGroups;
 
 		//public GroupStopsModelView() : this(null)
 		//{
@@ -45,11 +46,21 @@ using MinskTrans.DesctopClient.Model;
 				if (Equals(value, selectedGroupStop)) return;
 				selectedGroupStop = value;
 				OnPropertyChanged();
-				OnPropertyChanged("GroupTimeSchedule");
+				OnPropertyChanged("TimeSchedule");
 			}
 		}
 
-		public IEnumerable<KeyValuePair<Rout, int>> GroupTimeSchedule
+		public IList<GroupStop> SelectedGroups
+		{
+			get { return selectedGroups; }
+			set
+			{		
+				selectedGroups = value;
+				OnPropertyChanged();
+			}
+		}
+
+		override public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
 		{
 			get
 			{
@@ -61,7 +72,7 @@ using MinskTrans.DesctopClient.Model;
 				foreach (Stop stop in SelectedGroupStop.Stops)
 				{
 					FilteredSelectedStop = stop;
-					temp = temp.Concat(TimeSchedule);
+					temp = temp.Concat(base.TimeSchedule);
 				}
 				return temp.OrderBy(x => x.Value);
 			}

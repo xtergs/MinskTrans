@@ -86,7 +86,7 @@ namespace MinskTrans.Universal
 			return Task.Run(async () =>
 			{
 				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
-				var xx = (await FileIO.ReadBufferAsync(fl));
+				//var xx = (await FileIO.ReadBufferAsync(fl));
 				//var tt =await FileIO.ReadLinesAsync(fl);
 				var resultText = await FileIO.ReadTextAsync(fl);
 				return resultText;
@@ -96,7 +96,7 @@ namespace MinskTrans.Universal
 		protected override async Task<string> FileReadAllText(string file)
 		{
 			var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
-			var xx = (await FileIO.ReadBufferAsync(fl));
+			//var xx = (await FileIO.ReadBufferAsync(fl));
 			//var tt =await FileIO.ReadLinesAsync(fl);
 			var resultText = await FileIO.ReadTextAsync(fl);
 			return resultText;

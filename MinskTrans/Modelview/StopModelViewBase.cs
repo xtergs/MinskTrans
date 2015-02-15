@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.DesctopClient.Model;
 
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -47,7 +49,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			set { OnPropertyChanged();}
 		}
 
-		public Stop FilteredSelectedStop
+		public virtual Stop FilteredSelectedStop
 		{
 			get { return filteredSelectedStop; }
 			set
@@ -83,7 +85,19 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+		public GroupStop SelectedGroup
+		{
+			get { return selectedGroup; }
+			set
+			{
+				selectedGroup = value;
+				OnPropertyChanged();
+			}
+		}
+
 		private RelayCommand showStopMap;
+		private GroupStop selectedGroup;
+
 		public RelayCommand ShowStopMap
 		{
 			get
@@ -93,6 +107,12 @@ namespace MinskTrans.DesctopClient.Modelview
 						() => FilteredSelectedStop != null);
 				return showStopMap;
 			}
+		}
+
+
+		public RelayCommand AddStopToGroup
+		{
+			get { return new RelayCommand(()=>SelectedGroup.Stops.Add(FilteredSelectedStop) );}
 		}
 
 		public event Show ShowStop;

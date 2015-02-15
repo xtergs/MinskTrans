@@ -16,83 +16,83 @@
 	mc:Ignorable="d"
 	d:DataContext="{d:DesignInstance modelView:MainModelView}"
 	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
-	<Page.Resources>
+    <Page.Resources>
 
-		<ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-		<Converters:WeekdaysToStrConverter x:Key="WeekdaysToStrConverter"/>
+        <Converters:WeekdaysToStrConverter x:Key="WeekdaysToStrConverter"/>
 
-		<Converters:IntToVisibleConverter x:Key="IntToVisibleConverter"/>
-		<Converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter"/>
-		<Converters:StopsToStr x:Key="StopsToStr"/>
-		<Converters:TransportToImageConverter x:Key="TransportToImageConverter"/>
-		<local:MinsLeftConverter x:Key="MinsLeftConverter"/>
-		<local:MinsToTimeConverter x:Key="MinsToTimeConverter"/>
+        <Converters:IntToVisibleConverter x:Key="IntToVisibleConverter"/>
+        <Converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter"/>
+        <Converters:StopsToStr x:Key="StopsToStr"/>
+        <Converters:TransportToImageConverter x:Key="TransportToImageConverter"/>
+        <local:MinsLeftConverter x:Key="MinsLeftConverter"/>
+        <local:MinsToTimeConverter x:Key="MinsToTimeConverter"/>
 
-		<Style x:Key="FullListViewItem"  TargetType="ListViewItem">
-			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-			<Setter Property="MinHeight" Value="0"/>
-		</Style>
-		<Style x:Key="PushpinStyle1" TargetType="mapControl1:Pushpin">
-			<Setter Property="HorizontalAlignment" Value="Left" />
-			<Setter Property="VerticalAlignment" Value="Bottom" />
-			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-			<Setter Property="VerticalContentAlignment" Value="Stretch" />
-			<Setter Property="Padding" Value="3" />
-			<Setter Property="Foreground" Value="Black" />
-			<Setter Property="Background" Value="White" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="mapControl1:Pushpin">
-						<Grid x:Name="MainGrid">
-							<Grid.RowDefinitions>
-								<RowDefinition />
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
-							<Rectangle x:Name="Rectangle">
-								<Rectangle.Fill>
-									<SolidColorBrush x:Name="SolidColorBrush" Color="White" />
-								</Rectangle.Fill>
-							</Rectangle>
-							<Path x:Name="Path" Data="M0,-0.5L0,16 16,-0.5" Grid.Row="1">
-								<Path.Fill>
-									<SolidColorBrush x:Name="SolidColorBrush1" Color="White" />
-								</Path.Fill>
-							</Path>
-							<ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+        <Style x:Key="FullListViewItem"  TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="MinHeight" Value="0"/>
+        </Style>
+        <Style x:Key="PushpinStyle1" TargetType="mapControl1:Pushpin">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="mapControl1:Pushpin">
+                        <Grid x:Name="MainGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Rectangle x:Name="Rectangle">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush x:Name="SolidColorBrush" Color="White" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Path x:Name="Path" Data="M0,-0.5L0,16 16,-0.5" Grid.Row="1">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="SolidColorBrush1" Color="White" />
+                                </Path.Fill>
+                            </Path>
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
 								Content="{TemplateBinding Content}"
 								HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
 								Margin="{TemplateBinding Padding}"
 								VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-						</Grid>
+                        </Grid>
 
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-		<DataTemplate x:Key="ListStopsDataTemplate">
-			<Grid Margin="0,2">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Grid.ColumnSpan="10" 
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="ListStopsDataTemplate">
+            <Grid Margin="0,2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="10" 
 					Text="{Binding Name}"
 					FontSize="15"/>
-				<TextBlock Grid.ColumnSpan="10" 
+                <TextBlock Grid.ColumnSpan="10" 
 					Grid.Row="1"
 					TextWrapping="WrapWholeWords"
 						   Foreground="{StaticResource GreyGroundSolidColorBrush}"
 					Text="{Binding DirectionsString, Converter={StaticResource StopsToStr}}"
 					MaxLines="2"/>
-				<!--<ListView Grid.Row="2"
+                <!--<ListView Grid.Row="2"
 						  Grid.ColumnSpan="9"
 						  ItemsSource="{Binding Source=GroupedTypeRoutsView}">
 					<ListView.ItemsPanel>
@@ -111,675 +111,716 @@
 						</GroupStyle>
 					</ListView.GroupStyle>
 				</ListView>-->
-				<Controls:WrapPanel Grid.Row="2" Grid.ColumnSpan="9" HorizontalAlignment="Stretch" VerticalAlignment="Top" ScrollViewer.VerticalScrollBarVisibility="Disabled">
-					<Grid HorizontalAlignment="Left"
+                <Controls:WrapPanel Grid.Row="2" Grid.ColumnSpan="9" HorizontalAlignment="Stretch" VerticalAlignment="Top" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <Grid HorizontalAlignment="Left"
 						Visibility="{Binding TrolRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}" >
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Image Source="Image/trol.jpg"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/trol.jpg"
 							Height="{Binding ActualHeight, ElementName=TextBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							Grid.Column="0"
 							MinWidth="10" MinHeight="10"/>
-						<TextBlock x:Name="TextBlock"
+                        <TextBlock x:Name="TextBlock"
 							Grid.Column="1"
 							Foreground="{StaticResource BlueSolidColorBrush}"
 							FontSize="15"
 							Text="{Binding TrolRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,0,0,0"/>
-					</Grid>
-					<Grid HorizontalAlignment="Left" 
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" 
 						Visibility="{Binding BusRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}" Margin="2,0,0,0">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Image Source="Image/bus.jpg"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/bus.jpg"
 							Height="{Binding ActualHeight, ElementName=TextBlock1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							Grid.Column="0"
 							MinWidth="10" MinHeight="10"/>
-						<TextBlock x:Name="TextBlock1"
+                        <TextBlock x:Name="TextBlock1"
 							Grid.Column="1"
 							Foreground="{StaticResource GreenSolidColorBrush}"    
 							FontSize="15"
 							Text="{Binding BusRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,0,0,0"/>
-					</Grid>
-					<Grid HorizontalAlignment="Left" 
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" 
 						Visibility="{Binding TramRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}" Margin="2,0,0,0" >
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Image Source="Image/tram.jpg"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/tram.jpg"
 							   
 							Height="{Binding ActualHeight, ElementName=TextBlock2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinWidth="10" MinHeight="10"/>
-						<TextBlock x:Name="TextBlock2"
+                        <TextBlock x:Name="TextBlock2"
 							Grid.Column="1"
 							Foreground="{StaticResource RedSolidColorBrush}"
 							FontSize="15"
 							Text="{Binding TramRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}" Margin="3,0,0,0"/>
-					</Grid>
-					<Grid HorizontalAlignment="Left" 
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" 
 						Visibility="{Binding MetroRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}" Margin="2,0,0,0">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
-						<Image Source="Image/subway.jpg"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Image/subway.jpg"
 							Height="{Binding ActualHeight, ElementName=TextBlock3, UpdateSourceTrigger=PropertyChanged}"
 							Grid.Column="0" MinWidth="10" MinHeight="10"/>
-						<TextBlock x:Name="TextBlock3"
+                        <TextBlock x:Name="TextBlock3"
 							Grid.Column="1"
 							Foreground="{StaticResource VioletSolidColorBrush}"
 							FontSize="15"
 							Text="{Binding MetroRoutsNum, Converter={StaticResource RoutsToNumStrConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-					</Grid>
-				</Controls:WrapPanel>
+                    </Grid>
+                </Controls:WrapPanel>
 
-			</Grid>
-		</DataTemplate>
+            </Grid>
+        </DataTemplate>
 
-		<DataTemplate x:Key="DataTemplate2"
+        <DataTemplate x:Key="DataTemplate2"
 					  >
-			<Grid Margin="0,2">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-				<Image MinHeight="15" Source="{Binding Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
+                <Image MinHeight="15" Source="{Binding Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
 					Height="{Binding ActualHeight, ElementName=RouteNumTextBlock}" VerticalAlignment="Top"/>
-				<TextBlock Text="{Binding Rout.RouteNum}"
+                <TextBlock Text="{Binding Rout.RouteNum}"
 					Grid.Column="1"
 					FontSize="35"
 					x:Name="RouteNumTextBlock" VerticalAlignment="Top" Margin="5,0,0,0"/>
-				<ListBox Grid.Column="2" ItemsSource="{Binding Destinations}" Padding="0" Background="#00000000">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
+                <ListBox BorderThickness="0"  IsEnabled="False" Grid.Column="2" ItemsSource="{Binding Destinations}" Padding="0" Background="#00000000">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
 
-							<TextBlock MinHeight="0" Text="{Binding ''}" Margin="0,-10" Padding="0"
+                            <TextBlock MinHeight="0" Text="{Binding ''}" Margin="0,-10" Padding="0"
 								MaxLines="1"
 								TextTrimming="CharacterEllipsis"
 								FontSize="15" Foreground="White"/>
 
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-					<ListBox.ItemContainerStyle>
-						<Style  TargetType="ListBoxItem">
-							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-							<Setter Property="MinHeight" Value="0"/>
-						</Style>
-					</ListBox.ItemContainerStyle>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style  TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                   
 
-				</ListBox>
-			</Grid>
-		</DataTemplate>
-		<DataTemplate x:Key="DataTemplate3">
-			<StackPanel>
-				<TextBlock FontSize="15" Text="{Binding RouteName}"/>
-				<TextBlock FontSize="15" Text="{Binding Weekdays, Converter={StaticResource WeekdaysToStrConverter}}"/>
-			</StackPanel>
-		</DataTemplate>
+                </ListBox>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="DataTemplate3">
+            <StackPanel>
+                <TextBlock FontSize="15" Text="{Binding RouteName}"/>
+                <TextBlock FontSize="15" Text="{Binding Weekdays, Converter={StaticResource WeekdaysToStrConverter}}"/>
+            </StackPanel>
+        </DataTemplate>
 
 
-	</Page.Resources>
+    </Page.Resources>
 
-	<Grid x:Name="GgGrid">
-		<VisualStateManager.VisualStateGroups>
-			<VisualStateGroup x:Name="VisualStateGroup">
-				<VisualStateGroup.Transitions>
-					<VisualTransition GeneratedDuration="0:0:0.2" To="StopsVisualState">
-						<VisualTransition.GeneratedEasingFunction>
-							<ElasticEase EasingMode="EaseInOut"/>
-						</VisualTransition.GeneratedEasingFunction>
-					</VisualTransition>
-				</VisualStateGroup.Transitions>
-				<VisualState x:Name="StopsVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStop">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="ShowStopVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStop">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="TransportListVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="RoutsListVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsListGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindTrans">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="ShowRoutVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsListGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindTrans">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutViews">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-			</VisualStateGroup>
-			<VisualStateGroup x:Name="FavouriteVisualStateGroup">
-				<VisualState x:Name="FavouriteStopsVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="FavouriteShowStopVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStop">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="FavouriteRoutsVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="FavouriteRoutsListVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="FavouriteShowRoutVisualState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>True</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<x:Boolean>False</x:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStopsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsGrid">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsListView">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutViews1">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-			</VisualStateGroup>
-		</VisualStateManager.VisualStateGroups>
+    <Grid x:Name="GgGrid">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.2" To="StopsVisualState">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <ElasticEase EasingMode="EaseInOut"/>
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="StopsVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStop">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="ShowStopVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStop">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="TransportListVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="RoutsListVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsListGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindTrans">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="ShowRoutVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowRoutsListGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindTrans">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="StopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="RoutsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FindHyperButtonGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutViews">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="FavouriteVisualStateGroup">
+                <VisualState x:Name="FavouriteStopsVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="FavouriteShowStopVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStop">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="FavouriteRoutsVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="FavouriteRoutsListVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="FavouriteShowRoutVisualState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>True</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Boolean>False</x:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteStopsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ShowFavouriteRoutsListView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RoutViews1">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteStopsHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="FavouriteRoutssHyperlinkButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="GroupsVisualStateGroup">
+            	<VisualState x:Name="ListGroupsVisualState"/>
+            	<VisualState x:Name="ShowGroupVisualState">
+            		<Storyboard>
+            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="GroupsListView">
+            				<DiscreteObjectKeyFrame KeyTime="0">
+            					<DiscreteObjectKeyFrame.Value>
+            						<Visibility>Collapsed</Visibility>
+            					</DiscreteObjectKeyFrame.Value>
+            				</DiscreteObjectKeyFrame>
+            			</ObjectAnimationUsingKeyFrames>
+            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="showStopView">
+            				<DiscreteObjectKeyFrame KeyTime="0">
+            					<DiscreteObjectKeyFrame.Value>
+            						<Visibility>Visible</Visibility>
+            					</DiscreteObjectKeyFrame.Value>
+            				</DiscreteObjectKeyFrame>
+            			</ObjectAnimationUsingKeyFrames>
+            		</Storyboard>
+            	</VisualState>
+            	<VisualState x:Name="SelectToDeleteVisualState">
+            		<Storyboard>
+            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ListBox.SelectionMode)" Storyboard.TargetName="GroupsListView">
+            				<DiscreteObjectKeyFrame KeyTime="0">
+            					<DiscreteObjectKeyFrame.Value>
+            						<SelectionMode>Extended</SelectionMode>
+            					</DiscreteObjectKeyFrame.Value>
+            				</DiscreteObjectKeyFrame>
+            			</ObjectAnimationUsingKeyFrames>
+            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="appBarButton">
+            				<DiscreteObjectKeyFrame KeyTime="0">
+            					<DiscreteObjectKeyFrame.Value>
+            						<Visibility>Visible</Visibility>
+            					</DiscreteObjectKeyFrame.Value>
+            				</DiscreteObjectKeyFrame>
+            			</ObjectAnimationUsingKeyFrames>
+            		</Storyboard>
+            	</VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
-		<Pivot x:Name="Pivot" Margin="0" Padding="0"
+        <Pivot x:Name="Pivot" Margin="0" Padding="0"
 		   
 			Background="{StaticResource BackGroundSolidColorBrush}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
 
-			<PivotItem Header="Поиск"
+            <PivotItem Header="Поиск"
 				x:Name="SearchPivotItem"
 				DataContext="{Binding FindModelView}" BorderThickness="0,10,0,0" Margin="0" Padding="0"
 				BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-				<Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
+                <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
 
 
-						<Grid x:Name="FindHyperButtonGrid" Margin="10,0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
-							<HyperlinkButton x:Uid="StopsButton"  Content="Остановки" 
+                        <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <HyperlinkButton x:Uid="StopsButton"  Content="Остановки" 
 								IsEnabled="False"
 								x:Name="StopsHyperlinkButton"
 								>
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="Click">
-										<Core:GoToStateAction StateName="StopsVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-							</HyperlinkButton>
-							<HyperlinkButton Grid.Column="1"
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="Click">
+                                        <Core:GoToStateAction StateName="StopsVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </HyperlinkButton>
+                            <HyperlinkButton Grid.Column="1"
 								Content="Транспорт"
 								x:Name="RoutsHyperlinkButton"
 								>
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="Click">
-										<Core:GoToStateAction StateName="TransportListVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-							</HyperlinkButton>
-						</Grid>
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="Click">
+                                        <Core:GoToStateAction StateName="TransportListVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </HyperlinkButton>
+                        </Grid>
 
 
-						<Grid Grid.Row="1"
+                        <Grid Grid.Row="1"
 							Grid.ColumnSpan="2"
 							x:Name="ShowStopsGrid" Margin="10,0">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
 
-							<TextBox Grid.Row="0" 
+                            <TextBox Grid.Row="0" 
 								Visibility="Visible"
 								x:Name="FindStop" 
 								Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Search" IsTextPredictionEnabled="False"/>
-							<ListView Grid.Row="1" 
+                            <ListView Grid.Row="1" 
 								x:Name="StopsListView"
 								ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged}"
 								DataContext="{Binding StopModelView}"
 								SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								Grid.ColumnSpan="2" 
 								ItemTemplate="{StaticResource ListStopsDataTemplate}" IsSynchronizedWithCurrentItem="False">
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="SelectionChanged">
-										<Core:GoToStateAction StateName="ShowStopVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-								<ListView.ItemContainerStyle>
-									<Style TargetType="ListViewItem">
-										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-									</Style>
-								</ListView.ItemContainerStyle>
-							</ListView>
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:GoToStateAction StateName="ShowStopVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
 
-						</Grid>
-						
-						<local:ShowStopView x:Name="ShowStop" 
+                        </Grid>
+
+                        <local:ShowStopView x:Name="ShowStop" 
 							DataContext="{Binding StopModelView}"
 							Visibility="Collapsed"
+                                            ShowStatusBar="Visible"
 							Grid.Row="0"
 							Grid.RowSpan="2"
 							Grid.ColumnSpan="2"
 							Grid.Column="0"/>
-						
-						<Grid Grid.Row="1"
+
+                        <Grid Grid.Row="1"
 							Grid.ColumnSpan="2"
 							Visibility="Collapsed"
 							x:Name="ShowRoutsGrid" Margin="10,0">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
-							<TextBox Grid.Row="0" 
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBox Grid.Row="0" 
 								x:Name="FindTrans" 
 								Text="{Binding RoutsModelView.RoutNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number"/>
 
-							<ListView Grid.Row="1" 
+                            <ListView Grid.Row="1" 
 								x:Name="RoutsListView"
 								ItemsSource="{Binding RouteNums, UpdateSourceTrigger=PropertyChanged}"
 								DataContext="{Binding RoutsModelView}"
@@ -787,31 +828,31 @@
 								Grid.ColumnSpan="2" 
 								ItemTemplate="{StaticResource DataTemplate2}"
 								>
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="SelectionChanged">
-										<Core:GoToStateAction StateName="RoutsListVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-							</ListView>
-							<Grid Grid.Row="1"
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:GoToStateAction StateName="RoutsListVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                            <Grid Grid.Row="1"
 								Grid.ColumnSpan="2"
 								Visibility="Collapsed"
 								DataContext="{Binding RoutsModelView}"
 								x:Name="ShowRoutsListGrid">
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition/>
-								</Grid.RowDefinitions>
-								<Grid>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto"/>
-										<ColumnDefinition Width="Auto"/>
-									</Grid.ColumnDefinitions>
-									<Image MinHeight="15" MinWidth="15" Source="{Binding RouteNumSelectedValue.Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image MinHeight="15" MinWidth="15" Source="{Binding RouteNumSelectedValue.Rout.Transport, Converter={StaticResource TransportToImageConverter}}"
 										Height="{Binding ActualHeight, ElementName=TransportTextBlock, UpdateSourceTrigger=PropertyChanged}"/>
-									<TextBlock FontSize="20" x:Name="TransportTextBlock" Grid.Column="1" Text="{Binding RouteNumSelectedValue.Rout.RouteNum}"/>
-								</Grid>
-								<ListView Grid.Row="1" 
+                                    <TextBlock FontSize="20" x:Name="TransportTextBlock" Grid.Column="1" Text="{Binding RouteNumSelectedValue.Rout.RouteNum}"/>
+                                </Grid>
+                                <ListView Grid.Row="1" 
 							  
 									x:Name="ShowRoutsListView"
 									ItemsSource="{Binding RouteNames, UpdateSourceTrigger=PropertyChanged}"
@@ -820,178 +861,178 @@
 									Grid.ColumnSpan="2" 
 									ItemTemplate="{StaticResource DataTemplate3}"
 									>
-									<Interactivity:Interaction.Behaviors>
-										<Core:EventTriggerBehavior EventName="SelectionChanged">
-											<Core:GoToStateAction StateName="ShowRoutVisualState"/>
-										</Core:EventTriggerBehavior>
-									</Interactivity:Interaction.Behaviors>
-								</ListView>
-							</Grid>
-						</Grid>
-						<Grid x:Name="RoutViews" Visibility="Collapsed"
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                            <Core:GoToStateAction StateName="ShowRoutVisualState"/>
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                </ListView>
+                            </Grid>
+                        </Grid>
+                        <Grid x:Name="RoutViews" Visibility="Collapsed"
 							  DataContext="{Binding RoutsModelView}"
 		   
 			Grid.Row="0" Margin="10,0" Grid.RowSpan="3" Grid.ColumnSpan="3">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-								<RowDefinition Height="Auto"/>
-							</Grid.RowDefinitions>
-							
-							<Grid Grid.Row="1" Margin="0,5,0,0">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="Auto"/>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-								</Grid.ColumnDefinitions>
-								<Image MinHeight="15" Source="{Binding RouteSelectedValue.Transport, Converter={StaticResource TransportToImageConverter}, UpdateSourceTrigger=PropertyChanged}"
+                            <Grid Grid.Row="1" Margin="0,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+
+                                </Grid.ColumnDefinitions>
+                                <Image MinHeight="15" Source="{Binding RouteSelectedValue.Transport, Converter={StaticResource TransportToImageConverter}, UpdateSourceTrigger=PropertyChanged}"
 					Height="{Binding ActualHeight, ElementName=RouteNameTextBlock}"/>
-								<TextBlock Grid.Column="1"
+                                <TextBlock Grid.Column="1"
 					Text="{Binding RouteSelectedValue.RouteNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					FontSize="25" Margin="5,0,0,0"/>
-								<TextBlock Grid.Column="2"
+                                <TextBlock Grid.Column="2"
 					Text="{Binding RouteSelectedValue.RouteName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					x:Name="RouteNameTextBlock"
 					FontSize="25" Margin="5,0,0,0"/>
-							</Grid>
-							<ListView Grid.Row="2"
+                            </Grid>
+                            <ListView Grid.Row="2"
 				ItemsSource="{Binding TimesObservableCollection, UpdateSourceTrigger=PropertyChanged}"
 				ItemContainerStyle="{StaticResource FullListViewItem}">
 
-								<ListView.ItemTemplate>
-									<DataTemplate>
-										<Grid>
-											<Grid.RowDefinitions>
-												<RowDefinition Height="Auto"/>
-												<RowDefinition/>
-											</Grid.RowDefinitions>
-											<ToggleButton x:Name="ToggleButton"  
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <ToggleButton x:Name="ToggleButton"  
 								FontSize="17"
 								Style="{StaticResource ToggleButtonStyle1}"
 								Content="{Binding Key.Name}"
 								HorizontalAlignment="Stretch"/>
-											<ListView Grid.Row="1" 
+                                            <ListView Grid.Row="1" 
 								Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ToggleButton}" 
 								ItemsSource="{Binding Value}">
-												<ListView.ItemsPanel>
-													<ItemsPanelTemplate>
-														<Controls:WrapPanel/>
-													</ItemsPanelTemplate>
-												</ListView.ItemsPanel>
-												<ListView.ItemTemplate>
-													<DataTemplate>
-														<Grid
+                                                <ListView.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <Controls:WrapPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ListView.ItemsPanel>
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid
 											Margin="5,0">
-															<Grid.RowDefinitions>
-																<RowDefinition Height="Auto"/>
-																<RowDefinition Height="Auto"/>
-															</Grid.RowDefinitions>
-															<TextBlock Text="{Binding DaysStr}"
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="Auto"/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Text="{Binding DaysStr}"
 												FontSize="15"/>
-															<TextBlock Grid.Row="1"
+                                                            <TextBlock Grid.Row="1"
 												FontSize="13"
 												Text="{Binding ToStrTable}"/>
-														</Grid>
-													</DataTemplate>
-												</ListView.ItemTemplate>
-											</ListView>
-										</Grid>
-									</DataTemplate>
-								</ListView.ItemTemplate>
-							</ListView>
-							<Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
-								<Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-									<AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-									<AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
-								</Controls:WrapPanel>
-							</Border>
-						</Grid>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
+                                <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
+                                    <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                    <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                </Controls:WrapPanel>
+                            </Border>
+                        </Grid>
 
 
-					</Grid>
-				</Border>
+                    </Grid>
+                </Border>
 
-			</PivotItem>
-			<PivotItem Header="Избранное" 
+            </PivotItem>
+            <PivotItem Header="Избранное" 
 				x:Name ="FavourPivotItem"
 				Padding="0" Margin="0"
 				DataContext="{Binding FavouriteModelView}"
 				BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-				<Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition/>
-							<ColumnDefinition/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition/>
-						</Grid.RowDefinitions>
-						<HyperlinkButton Content="Остановки"
+                <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <HyperlinkButton Content="Остановки"
 							IsEnabled="False"
 							x:Name="FavouriteStopsHyperlinkButton"
 							 Margin="10,0,0,0">
-							<Interactivity:Interaction.Behaviors>
-								<Core:EventTriggerBehavior EventName="Click">
-									<Core:GoToStateAction StateName="FavouriteStopsVisualState"/>
-								</Core:EventTriggerBehavior>
-							</Interactivity:Interaction.Behaviors>
-						</HyperlinkButton>
-						<HyperlinkButton Grid.Column="1"
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="Click">
+                                    <Core:GoToStateAction StateName="FavouriteStopsVisualState"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                        </HyperlinkButton>
+                        <HyperlinkButton Grid.Column="1"
 							x:Name="FavouriteRoutssHyperlinkButton"
 							Content="Транспорт"
 							 Margin="0,0,10,0">
-							<Interactivity:Interaction.Behaviors>
-								<Core:EventTriggerBehavior EventName="Click">
-									<Core:GoToStateAction StateName="FavouriteRoutsVisualState"/>
-								</Core:EventTriggerBehavior>
-							</Interactivity:Interaction.Behaviors>
-						</HyperlinkButton>
-						<Grid Grid.Row="1"
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="Click">
+                                    <Core:GoToStateAction StateName="FavouriteRoutsVisualState"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                        </HyperlinkButton>
+                        <Grid Grid.Row="1"
 							Grid.ColumnSpan="2"
 							x:Name="ShowFavouriteStopsGrid" Margin="10,0">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
-							<ListView x:Name="FavouriteStopsListView" ItemsSource="{Binding Context.FavouriteStops}"
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ListView x:Name="FavouriteStopsListView" ItemsSource="{Binding Context.FavouriteStops}"
 								DataContext="{Binding StopModelView}"
 								SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								Grid.Row="1"
 								Grid.ColumnSpan="2" 
 								ItemTemplate="{StaticResource ListStopsDataTemplate}" 
 								 Margin="10,0">
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="SelectionChanged">
-										<Core:GoToStateAction StateName="FavouriteShowStopVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-								<ListView.ItemContainerStyle>
-									<Style TargetType="ListViewItem">
-										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-									</Style>
-								</ListView.ItemContainerStyle>
-							</ListView>
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:GoToStateAction StateName="FavouriteShowStopVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
 
-							<local:ShowStopView x:Name="ShowFavouriteStop"
+                            <local:ShowStopView x:Name="ShowFavouriteStop"
 								DataContext="{Binding StopModelView}"
 								Visibility="Collapsed"
 								Grid.Row="1"
 								Grid.Column="0"
 								Grid.ColumnSpan="2"/>
-						</Grid>
-						<Grid Grid.Row="1"
+                        </Grid>
+                        <Grid Grid.Row="1"
 							Grid.ColumnSpan="2"
 							Visibility="Collapsed"
 							x:Name="ShowFavouriteRoutsGrid" Margin="10,0">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-							<ListView Grid.Row="1" 
+                            <ListView Grid.Row="1" 
 								x:Name="FavouriteRoutsListView"
 								ItemsSource="{Binding Context.FavouriteRouts, UpdateSourceTrigger=PropertyChanged}"
 								DataContext="{Binding RoutsModelView}"
@@ -999,13 +1040,13 @@
 								Grid.ColumnSpan="2" 
 								ItemTemplate="{StaticResource DataTemplate2}"
 								>
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="SelectionChanged">
-										<Core:GoToStateAction StateName="FavouriteRoutsListVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-							</ListView>
-							<ListView Grid.Row="1" 
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:GoToStateAction StateName="FavouriteRoutsListVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                            <ListView Grid.Row="1" 
 								Visibility="Collapsed"
 								x:Name="ShowFavouriteRoutsListView"
 								ItemsSource="{Binding RouteNames, UpdateSourceTrigger=PropertyChanged}"
@@ -1015,127 +1056,198 @@
 								Grid.ColumnSpan="2" 
 						  
 								>
-								<Interactivity:Interaction.Behaviors>
-									<Core:EventTriggerBehavior EventName="SelectionChanged">
-										<Core:GoToStateAction StateName="FavouriteShowRoutVisualState"/>
-									</Core:EventTriggerBehavior>
-								</Interactivity:Interaction.Behaviors>
-							</ListView>
-							<Grid x:Name="RoutViews1" Visibility="Collapsed"
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:GoToStateAction StateName="FavouriteShowRoutVisualState"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                            <Grid x:Name="RoutViews1" Visibility="Collapsed"
 								DataContext="{Binding RoutsModelView}"
 		   
 								Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Height="549" Width="380">
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition Height="Auto"/>
-									<RowDefinition/>
-									<RowDefinition Height="Auto"/>
-								</Grid.RowDefinitions>
-							
-								<Grid Grid.Row="1" Margin="0,5,0,0">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto"/>
-										<ColumnDefinition Width="Auto"/>
-										<ColumnDefinition Width="Auto"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-									</Grid.ColumnDefinitions>
-									<Image MinHeight="15" Source="{Binding RouteSelectedValue.Transport, Converter={StaticResource TransportToImageConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                <Grid Grid.Row="1" Margin="0,5,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+
+                                    </Grid.ColumnDefinitions>
+                                    <Image MinHeight="15" Source="{Binding RouteSelectedValue.Transport, Converter={StaticResource TransportToImageConverter}, UpdateSourceTrigger=PropertyChanged}"
 										Height="{Binding ActualHeight, ElementName=RouteNameTextBlock}"/>
-									<TextBlock Grid.Column="1"
+                                    <TextBlock Grid.Column="1"
 										Text="{Binding RouteSelectedValue.RouteNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 										FontSize="25" Margin="5,0,0,0"/>
-									<TextBlock Grid.Column="2"
+                                    <TextBlock Grid.Column="2"
 										Text="{Binding RouteSelectedValue.RouteName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 										x:Name="RouteNameTextBlock1"
 										FontSize="25" Margin="5,0,0,0"/>
-								</Grid>
-								<ListView Grid.Row="2"
+                                </Grid>
+                                <ListView Grid.Row="2"
 									ItemsSource="{Binding TimesObservableCollection, UpdateSourceTrigger=PropertyChanged}"
 									ItemContainerStyle="{StaticResource FullListViewItem}">
 
-									<ListView.ItemTemplate>
-										<DataTemplate>
-											<Grid>
-												<Grid.RowDefinitions>
-													<RowDefinition Height="Auto"/>
-													<RowDefinition/>
-												</Grid.RowDefinitions>
-												<ToggleButton x:Name="ToggleButton"  
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <ToggleButton x:Name="ToggleButton"  
 													FontSize="17"
 													Style="{StaticResource ToggleButtonStyle1}"
 													Content="{Binding Key.Name}"
 													HorizontalAlignment="Stretch"/>
-												<ListView Grid.Row="1" 
+                                                <ListView Grid.Row="1" 
 													Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ToggleButton}" 
 													ItemsSource="{Binding Value}">
-													<ListView.ItemsPanel>
-														<ItemsPanelTemplate>
-															<Controls:WrapPanel/>
-														</ItemsPanelTemplate>
-													</ListView.ItemsPanel>
-													<ListView.ItemTemplate>
-														<DataTemplate>
-															<Grid
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <Controls:WrapPanel/>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                    <ListView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid
 																Margin="5,0">
-																<Grid.RowDefinitions>
-																	<RowDefinition Height="Auto"/>
-																	<RowDefinition Height="Auto"/>
-																</Grid.RowDefinitions>
-																<TextBlock Text="{Binding DaysStr}"
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                </Grid.RowDefinitions>
+                                                                <TextBlock Text="{Binding DaysStr}"
 																	FontSize="15"/>
-																<TextBlock Grid.Row="1"
+                                                                <TextBlock Grid.Row="1"
 																	FontSize="13"
 																	Text="{Binding ToStrTable}"/>
-															</Grid>
-														</DataTemplate>
-													</ListView.ItemTemplate>
-												</ListView>
-											</Grid>
-										</DataTemplate>
-									</ListView.ItemTemplate>
-								</ListView>
-								<Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
-									<Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-										<AppBarToggleButton IsChecked="{Binding IsRoutFavourite,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-			<AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRoutMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
-		</Controls:WrapPanel>
-		</Border>
-							</Grid>
-						</Grid>
-					</Grid>
-				</Border>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ListView.ItemTemplate>
+                                                </ListView>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
+                                    <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
+                                        <AppBarButton Icon="Add">
+                                            <AppBarButton.Flyout>
+                                                <Flyout>
+                                                    <StackPanel>
+                                                        <TextBlock Text="Выберите группу"/>
+                                                        <ListView ItemsSource="{Binding Context.Groups}" ItemContainerStyle="{StaticResource FullListViewItem}"></ListView>
+                                                        <Button Content="Ok"></Button>
+                                                    </StackPanel>
+                                                </Flyout>
+                                            </AppBarButton.Flyout>
+                                        </AppBarButton>
+                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRoutMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                    </Controls:WrapPanel>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Border>
 
-			</PivotItem>
+            </PivotItem>
+            <PivotItem Name="GroupsPivtoItem"  BorderBrush="{StaticResource LightBlueSolidColorBrush}" Header="Группы" Margin="0" Padding="0"
+                       DataContext="{Binding GroupStopsModelView}">
 
-			<PivotItem Header="Карта" 
+                <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ListBox FontSize="18" SelectionChanged="GroupSelectedListView" Name="GroupsListView" DisplayMemberPath="Name" SelectedItem="{Binding SelectedGroupStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Context.Groups, UpdateSourceTrigger=PropertyChanged}" IsDoubleTapEnabled="False" Background="{x:Null}" Foreground="White"  >
+                        	<Interactivity:Interaction.Behaviors>
+                        		<Core:EventTriggerBehavior EventName="Holding">
+                        			<Core:GoToStateAction StateName="SelectToDeleteVisualState"/>
+                        		</Core:EventTriggerBehavior>
+                        	</Interactivity:Interaction.Behaviors>
+                        	<!--<Interactivity:Interaction.Behaviors>
+                        		<Core:EventTriggerBehavior EventName="SelectionChanged">
+                        			<Core:GoToStateAction StateName="ShowGroupVisualState"/>
+                        		</Core:EventTriggerBehavior>
+                        	</Interactivity:Interaction.Behaviors>-->
+                            
+
+                        </ListBox>
+                        <!--<ListView DataContext="{Binding ElementName=GroupsListView, Path=SelectedItem}" DisplayMemberPath="Stops" Visibility="Collapsed"/>-->
+                        <local:ShowStopView ShowStatusBar="Collapsed" x:Name="showStopView" DataContext="{Binding}" Visibility="Collapsed"></local:ShowStopView>
+                        <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
+                            <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
+                                <AppBarButton x:Name="AddGroupAppBarButton"  HorizontalAlignment="Center" Icon="Add" IsCompact="True" Click="AppBarButton_Click">
+                                    <AppBarButton.Flyout>
+                                        <Flyout Placement="Bottom">
+                                            <StackPanel>
+                                                <TextBlock FontSize="18" Text="Название группы"/>
+                                                <TextBox Name="NameTextBox"/>
+                                                <Button Content="Добавить" Command="{Binding Context.CreateGroup}" CommandParameter="{Binding ElementName=NameTextBox, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Button>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </AppBarButton.Flyout>
+                                </AppBarButton>
+                                <AppBarButton x:Name="appBarButton" Command="{Binding Context.DeleteGroups}" CommandParameter="{Binding SelectedGroupStop, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Icon="Delete" Label=""  IsCompact="True" Visibility="Collapsed"/>
+                            </Controls:WrapPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </PivotItem>
+
+            <PivotItem Header="Карта" 
 					   DataContext="{Binding MapModelView}"
 				x:Name ="MapPivotItem"
 				Padding="0" Margin="0"
 				  
 				BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-				<Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-					<mapControl1:Map ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                    
+                    <mapControl1:Map ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
+                        <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
+                            <AppBarButton IsCompact="True" Click="AppBarButton_Click_1">
+                                    <AppBarButton.Icon>
+                                        <FontIcon Glyph="Я" />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
+                            
+                        </Controls:WrapPanel>
+                    </Border>
+                    </Grid>
+                </Border>
+            </PivotItem>
 
-				</Border>
-			</PivotItem>
 
-
-			<PivotItem Header="Настройки" 
+            <PivotItem Header="Настройки" 
 				x:Name ="SettingsPivotItem"
 				Padding="0" Margin="0"
 				DataContext="{Binding SettingsModelView}"
 				BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-				<Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-					<StackPanel>
-						<Button Content="Обновить расписание" Command="{Binding Context.UpdateDataCommand}"/>
-						<ToggleSwitch OnContent="Использовать WiFi"
+                <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                    <StackPanel>
+                        <Button Content="Обновить расписание" Command="{Binding Context.UpdateDataCommand}"/>
+                        <ToggleSwitch OnContent="Использовать WiFi"
 							OffContent="Не использовать WiFi"
 							IsOn="{Binding UpdateOnWiFi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-						<ToggleSwitch OnContent="Использовать мобильное соединение"
+                        <ToggleSwitch OnContent="Использовать мобильное соединение"
 							OffContent="Не использовать мобильное соединение"
 							IsOn="{Binding UpdateOnMobileData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-						<TextBlock Text="Дата обновления расписания"/>
-						<TextBlock Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Дата обновления расписания"/>
+                        <TextBlock Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -1148,19 +1260,19 @@
                             <TextBlock Grid.Column="2" Text=" мин"/>
 
                         </Grid>
-						<Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
-                        <HyperlinkButton Content="Оставить отзыв" NavigateUri="https://www.google.by"></HyperlinkButton>
-					</StackPanel>
-				</Border>
-			</PivotItem>
+                        <Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
+                        <HyperlinkButton Content="Оставить отзыв" NavigateUri="http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"></HyperlinkButton>
+                    </StackPanel>
+                </Border>
+            </PivotItem>
 
-			<!--<PivotItem Header="Избранное">
+            <!--<PivotItem Header="Избранное">
 			<Grid>
 
 
 			</Grid>
 		</PivotItem>-->
-			<!--<PivotItem Header="Debug" Visibility="Collapsed" >
+            <!--<PivotItem Header="Debug" Visibility="Collapsed" >
 				<Grid Loaded="Grid_Loaded">
 					<Button Content="Button" HorizontalAlignment="Left" Margin="98,72,0,0" VerticalAlignment="Top" Click="Button_Click"/>
 					<Button Content="Button" HorizontalAlignment="Left" Margin="98,128,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
@@ -1172,11 +1284,11 @@
 
 				</Grid>
 			</PivotItem>-->
-		</Pivot>
+        </Pivot>
 
-	   
 
-		<ProgressBar x:Name="ProgressBar"  IsEnabled="True" IsIndeterminate="True" Height="10" VerticalAlignment="Top"/>
 
-	</Grid>
+        <ProgressBar x:Name="ProgressBar"  IsEnabled="True" IsIndeterminate="True" Height="10" VerticalAlignment="Top"/>
+
+    </Grid>
 </Page>

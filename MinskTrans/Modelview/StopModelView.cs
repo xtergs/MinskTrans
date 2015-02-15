@@ -180,7 +180,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
+		virtual public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
 		{
 			get
 			{

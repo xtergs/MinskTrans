@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
@@ -18,6 +19,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
@@ -82,6 +84,12 @@ namespace MinskTrans.Universal
 				else if (args.NewState == FavouriteRoutsListVisualState)
 					FavouriteRoutsListView.SelectedIndex = -1;
 			};
+
+			GroupsVisualStateGroup.CurrentStateChanged += (sender, args) =>
+			{
+				if (args.NewState == ListGroupsVisualState || args.NewState == SelectToDeleteVisualState)
+					GroupsListView.SelectedIndex = -1;
+			};
 			
 			//model.ShowStop += OnShowStop;
 
@@ -135,19 +143,27 @@ namespace MinskTrans.Universal
 				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
 				//model.MapModelView.Inicialize();
 			};
-			//model.Context.Load();
+			
+			ShowFavouriteStop.AddGroup += ShowAddGroup;
+			ShowStop.AddGroup += ShowAddGroup;
 
-
-			//model.Context.DownloadUpdate();
-			//model.Context.UpdateAsync();
-			model.MapModelView = new MapModelView(model.Context, map);
+			//model.MapModelView = new MapModelView(model.Context, map);
 
 			DataContext = model;
 
 		}
 
+		private void ShowAddGroup(object sender, EventArgs args)
+		{
+			Pivot.SelectedItem = GroupsPivtoItem;
+		}
+
+		private MapPanel mappanel;
+
 		public void InicializeMap()
 		{
+			mappanel = new MapPanel();
+			mappanel.ParentMap = map;	
 			if (model.Context.ActualStops != null)
 			{
 				pushpins = new List<Pushpin>(model.Context.ActualStops.Count);
@@ -170,7 +186,8 @@ namespace MinskTrans.Universal
 #endif
 					MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
 					pushpins.Add(pushpin);
-					map.Children.Add(pushpin);
+					//mappanel.Children.Add(pushpin);
+					//map.Children.Add(pushpin);
 
 
 				}
@@ -255,9 +272,19 @@ namespace MinskTrans.Universal
 				else
 					e.Handled = false;
 
+			}else if (Pivot.SelectedItem == GroupsPivtoItem)
+			{
+				e.Handled = true;
+				if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+				else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+				else
+				{
+					e.Handled = false;
+				}
 			}
-			else
-				Application.Current.Exit();
+			
 		}
 
 	private bool pushpinsAll = true;
@@ -301,30 +328,41 @@ namespace MinskTrans.Universal
 			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 
-		public void RefreshPushPins()
+		public void RefreshPushPinsAsync()
 		{
 			if (pushpins == null)
 				return;
 			if (pushpinsAll)
+			{
+				var northWest = map.ViewportPointToLocation(new Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
 				foreach (var child in pushpins)
 				{
-					if (map.ZoomLevel <= 15)
+					if (map.ZoomLevel <= 14)
 					{
-						child.Visibility = Visibility.Collapsed;
+						map.Children.Remove(child);
+						//child.Visibility = Visibility.Collapsed;
 					}
 					else
 					{
-						child.Visibility = Visibility.Visible;
+						var x = MapPanel.GetLocation(child);
+						if (x.Latitude < northWest.Latitude && x.Longitude > northWest.Longitude && 
+							x.Latitude > southEast.Latitude && x.Longitude < southEast.Longitude &&  
+							!map.Children.Contains(child))
+							map.Children.Add(child);
+						//child.Visibility = Visibility.Visible;
 					}
 
 
 
 				}
+			}
 		}
 
 		private void map_ViewportChanged(object sender, EventArgs e)
 		{
-			RefreshPushPins();
+
+			RefreshPushPinsAsync();
 		}
 
 		private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -340,6 +378,55 @@ namespace MinskTrans.Universal
 			//model.Context.Save();
 		}
 
+		private void AppBarButton_Click(object sender, RoutedEventArgs e)
+		{
+			var flyoutBase = ((AppBarButton)sender).Flyout;
+			if (flyoutBase != null)
+				flyoutBase.ShowAt((FrameworkElement)sender);
+			//AddGroupAppBarButton.Flyout.ShowAt(this);
+		}
+
+		private void GroupSelectedListView(object sender, SelectionChangedEventArgs e)
+		{
+			if (((Selector)sender).SelectedIndex == -1 || ((ListBox)sender).SelectionMode != SelectionMode.Single)
+				;
+			else
+				VisualStateManager.GoToState(mainPage, "ShowGroupVisualState", true);
+		}
+
+		private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+		{
+			Geolocator geolocator = new Geolocator();
+			geolocator.DesiredAccuracyInMeters = 50;
+
+			try
+			{
+				Geoposition geoposition = await geolocator.GetGeopositionAsync(
+					maximumAge: TimeSpan.FromMinutes(5),
+					timeout: TimeSpan.FromSeconds(10)
+					);
+
+				map.Center = new Location(geoposition.Coordinate.Latitude, geoposition.Coordinate.Longitude);
+				
+			}
+			catch (Exception ex)
+			{
+				if ((uint)ex.HResult == 0x80004004)
+				{
+					// the application does not have the right capability or the location master switch is off
+					MessageDialog dialog = new MessageDialog("location  is disabled in phone settings.");
+					dialog.ShowAsync();
+					
+				}
+				//else
+				{
+					// something else happened acquring the location
+				}
+			}
+		}
+
+
+		
 		
 	}
 }

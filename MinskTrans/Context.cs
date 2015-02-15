@@ -91,11 +91,22 @@ namespace MinskTrans.DesctopClient
 		}
 		public ObservableCollection<GroupStop> Groups
 		{
-			get { return groups; }
+			get
+			{
+				if (groups == null)
+					Groups = new ObservableCollection<GroupStop>();
+				return groups;
+			}
 			set
 			{
-				groups = value; 
+				groups = value;
+				groups.CollectionChanged += (sender, args) =>
+				{
+					OnPropertyChanged("Groups.Count");
+					var s = Groups.Count;
+				};
 				OnPropertyChanged();
+
 			}
 		}
 
@@ -199,6 +210,11 @@ namespace MinskTrans.DesctopClient
 			OnApplyUpdateStarted();
 			try
 			{
+#if DEBUG
+				Stopwatch watch1 = new Stopwatch();
+				watch1.Start();
+#endif
+
 				Parallel.ForEach(list, async keyValuePair =>
 					//foreach (var keyValuePair in list)
 				{
@@ -209,6 +225,10 @@ namespace MinskTrans.DesctopClient
 						FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
 					}
 				});
+
+#if DEBUG
+				watch1.Stop();
+#endif
 				//Stops.Clear();
 				//Routs.Clear();
 				//Times.Clear();
@@ -216,11 +236,24 @@ namespace MinskTrans.DesctopClient
 				//Parallel.ForEach(newRoutes, rout => Routs.Add(rout));
 				//Parallel.ForEach(newSchedule, time => Times.Add(time));
 
+#if DEBUG
+				watch1.Reset();
+				watch1.Start();
+#endif
+
 				Stops = new ObservableCollection<Stop>(newStops);
 				Routs = new ObservableCollection<Rout>(newRoutes);
 				Times = new ObservableCollection<Schedule>(newSchedule);
-
+#if DEBUG
+				watch1.Stop();
+				watch1.Reset();
+				watch1.Start();
+#endif
 				Connect(Routs, Stops);
+
+#if DEBUG
+				watch1.Stop();
+#endif
 
 				LastUpdateDataDateTime = DateTime.UtcNow;
 
@@ -582,7 +615,28 @@ namespace MinskTrans.DesctopClient
 				}
 					);
 			}
-		} 
+		}
+
+		public RelayCommand<string> CreateGroup
+		{
+			get
+			{
+				return new RelayCommand<string>(x=>Groups.Add(new GroupStop(){Name=x}), p=>!string.IsNullOrWhiteSpace(p));
+			}
+		}
+
+		public RelayCommand<GroupStop> DeleteGroups
+		{
+			get
+			{
+				return new RelayCommand<GroupStop>(x =>
+				{
+					if (x != null)
+						Groups.Remove(x);
+						OnPropertyChanged("Groups");
+				});
+			}
+		}
 
 		public event Show ShowStop;
 		public event Show ShowRoute;

@@ -17,13 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StopsToStr.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\TransportToImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\WeekdaysToStrConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\ExpanderControl.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\HeaderedItemsControl.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\HierarchicalDataTemplate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\ItemsControlHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExpaControl\VisualTreeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expander\BooleanToVisibilityConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Expander\ExpanderControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OrientedSize.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WrapPanel.cs" />
   </ItemGroup>
@@ -37,10 +31,6 @@
     <Content Include="$(MSBuildThisFileDirectory)Image\trol.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="$(MSBuildThisFileDirectory)Expander\ExpanderControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="$(MSBuildThisFileDirectory)ExpaResource\ExpanderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

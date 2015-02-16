@@ -1,4 +1,4 @@
-MainPackage=a:\wp\bin\Release\MinskTrans.Universal.WindowsPhone_1.1.1.4_Bundle\MinskTrans.Universal.WindowsPhone_1.1.1.4_AnyCPU.appx
-SymbolPackage=C:\Programming\MinskTrans\MinskTrans.Universal\MinskTrans.Universal.WindowsPhone\AppPackages\MinskTrans.Universal.WindowsPhone_1.1.1.4_Test\MinskTrans.Universal.WindowsPhone_1.1.1.4_AnyCPU.appxsym
-ResourcePack=a:\wp\bin\Release\MinskTrans.Universal.WindowsPhone_1.1.1.4_Bundle\MinskTrans.Universal.WindowsPhone_1.1.1.4_scale-100.appx
-ResourcePack=a:\wp\bin\Release\MinskTrans.Universal.WindowsPhone_1.1.1.4_Bundle\MinskTrans.Universal.WindowsPhone_1.1.1.4_scale-140.appx
+MainPackage=a:\wp\bin\Release\MinskTrans.Universal.WindowsPhone_1.2.2.8_Bundle\MinskTrans.Universal.WindowsPhone_1.2.2.8_AnyCPU.appx
+SymbolPackage=C:\Programming\MinskTrans\MinskTrans.Universal\MinskTrans.Universal.WindowsPhone\AppPackages\MinskTrans.Universal.WindowsPhone_1.2.2.8_Test\MinskTrans.Universal.WindowsPhone_1.2.2.8_AnyCPU.appxsym
+ResourcePack=a:\wp\bin\Release\MinskTrans.Universal.WindowsPhone_1.2.2.8_Bundle\MinskTrans.Universal.WindowsPhone_1.2.2.8_scale-100.appx
+ResourcePack=a:\wp\bin\Release\MinskTrans.Universal.WindowsPhone_1.2.2.8_Bundle\MinskTrans.Universal.WindowsPhone_1.2.2.8_scale-140.appx

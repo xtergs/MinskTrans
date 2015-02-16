@@ -316,6 +316,8 @@ namespace MinskTrans.Universal
 			Pivot.SelectedItem = MapPivotItem;
 			var x = args.SelectedRoute;
 			pushpinsAll = false;
+			if (pushpins == null)
+				InicializeMap();
 			foreach (var child in pushpins)
 			{
 				map.Children.Remove(child);

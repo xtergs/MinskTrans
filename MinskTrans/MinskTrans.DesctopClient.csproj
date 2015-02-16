@@ -91,7 +91,6 @@
     <Compile Include="GroupAddWindow.xaml.cs">
       <DependentUpon>GroupAddWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model.cs" />
     <Compile Include="Modelview\BaseModelView.cs" />
     <Compile Include="Modelview\FavouriteModelView.cs" />
     <Compile Include="Modelview\FindModelView.cs" />

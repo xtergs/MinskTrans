@@ -7,7 +7,6 @@ using Windows.Storage;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Storage.Streams;
-using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
 
 namespace MinskTrans.Universal

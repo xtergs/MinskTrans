@@ -292,27 +292,43 @@ namespace MinskTrans.DesctopClient
 		
 		protected void Connect(IEnumerable<Rout> routs, IEnumerable<Stop> stops)
 		{
-#if DEBUG
-			Stopwatch watch = new Stopwatch();
-			watch.Start();
-#endif
+
 			Parallel.ForEach(routs, rout =>
 			{
 				rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
 				if (rout.Time != null)
 					rout.Time.Rout = rout;
 
-				rout.Stops = rout.RouteStops.Select(x => Stops.First(d =>
+#if DEBUG
+				Stopwatch watch = new Stopwatch();
+				watch.Start();
+#endif
+				rout.Stops = rout.RouteStops.Join(Stops, i => i, stop => stop.ID, (i, stop) =>
 				{
-					if (d.ID == x)
-					{
-						if (d.Routs == null)
-							d.Routs = new List<Rout>();
-						d.Routs.Add(rout);
-						return true;
-					}
-					return false;
-				})).ToList();
+					if (stop.Routs == null)
+						stop.Routs = new List<Rout>();
+					stop.Routs.Add(rout);
+					return stop;
+				}).ToList();
+#if DEBUG
+				watch.Stop();
+				//watch.Restart();
+#endif
+//				rout.Stops = rout.RouteStops.Select(x => Stops.First(d =>
+//				{
+//					if (d.ID == x)
+//					{
+//						if (d.Routs == null)
+//							d.Routs = new List<Rout>();
+//						d.Routs.Add(rout);
+//						return true;
+//					}
+//					return false;
+//				})).ToList();
+//#if DEBUG
+//				watch.Stop();
+//				watch.Stop();
+//#endif
 				
 				//rout.Stops = stops.Where(x =>
 				//{
@@ -332,9 +348,7 @@ namespace MinskTrans.DesctopClient
 				//	stop.Routs.Add(rout);
 				//}
 			});
-#if DEBUG
-			watch.Stop();
-#endif
+
 		}
 
 		//async public void Update()

@@ -61,7 +61,8 @@ namespace MinskTrans.Universal
 		public MainPage()
 		{
 			this.InitializeComponent();
-			TileImageLoader.Cache = new MapControl.Caching.FileDbCache("map.dat", ApplicationData.Current.LocalCacheFolder);
+			//TileImageLoader.Cache = new MapControl.Caching.ImageFileCache();
+			//TileImageLoader.DefaultCacheExpiration = new TimeSpan(10, 0, 0, 0,0);
 			
 
 			//model = MainModelView.Create(new UniversalContext());

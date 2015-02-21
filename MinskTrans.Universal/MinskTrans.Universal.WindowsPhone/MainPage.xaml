@@ -32,6 +32,19 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="MinHeight" Value="0"/>
         </Style>
+        <Style x:Key="PushpinItemStyle" TargetType="mapControl1:MapItem">
+            <Setter Property="mapControl1:MapPanel.Location" Value="{Binding Location}"/>
+            
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="mapControl1:MapItem">
+                        <mapControl1:Pushpin Content="{Binding Name}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            
+        </Style>
         <Style x:Key="PushpinStyle1" TargetType="mapControl1:Pushpin">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -1219,7 +1232,9 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <mapControl1:Map ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <mapControl1:Map DoubleTapped="ZoomIn" ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TileGridChanged="map_TileGridChanged">
+                          
+                        </mapControl1:Map>
                         <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                             <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
                                 <AppBarButton IsCompact="True" Click="AppBarButton_Click_1">
@@ -1264,7 +1279,8 @@
 
                         </Grid>
                         <Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
-                        <HyperlinkButton Content="Оставить отзыв" NavigateUri="http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"></HyperlinkButton>
+                        <Button Content="Оставить отзыв" Click="ShowInStore" ></Button>
+                        <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
                     </StackPanel>
                 </Border>
             </PivotItem>

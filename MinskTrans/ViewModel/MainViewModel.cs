@@ -1,6 +1,6 @@
 using GalaSoft.MvvmLight;
 
-namespace MinskTrans.Library.ViewModel
+namespace MinskTrans.DesctopClient.ViewModel
 {
     /// <summary>
     /// This class contains properties that the main View can data bind to.

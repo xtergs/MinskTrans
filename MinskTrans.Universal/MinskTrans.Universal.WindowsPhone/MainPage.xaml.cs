@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Appointments;
+using Windows.ApplicationModel.Email;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -23,6 +29,7 @@ using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.Universal.Annotations;
 using MinskTrans.Universal.Model;
 using MinskTrans.Universal.ModelView;
 
@@ -34,7 +41,7 @@ namespace MinskTrans.Universal
 	/// <summary>
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
-	public sealed partial class MainPage : Page
+	public sealed partial class MainPage : Page, INotifyPropertyChanged
 	{
 		private MainModelView model;
 
@@ -46,7 +53,7 @@ namespace MinskTrans.Universal
 			RoutList,
 			RoutView
 		}
-		private List<Pushpin> pushpins;
+		private List<PushpinLocation> pushpins;
 		States state = States.Stops;
 
 		
@@ -54,6 +61,8 @@ namespace MinskTrans.Universal
 		public MainPage()
 		{
 			this.InitializeComponent();
+			TileImageLoader.Cache = new MapControl.Caching.FileDbCache("map.dat", ApplicationData.Current.LocalCacheFolder);
+			
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
@@ -161,36 +170,34 @@ namespace MinskTrans.Universal
 
 		private MapPanel mappanel;
 
+
+
 		public void InicializeMap()
 		{
-			//mappanel = new MapPanel();
-			//mappanel.ParentMap = map;	
 			if (model != null && model.Context.ActualStops != null)
 			{
-				pushpins = new List<Pushpin>(model.Context.ActualStops.Count);
+				pushpins = new List<PushpinLocation>(model.Context.ActualStops.Count);
 				foreach (var st in model.Context.ActualStops)
 				{
-					var pushpin = new Pushpin { Tag = st, Content = st.Name };
-					//pushpin.templ
+					var tempPushPin = new PushpinLocation(){Location = new Location(st.Lat, st.Lng)};
+					//var pushpin = new Pushpin { Tag = st, Content = st.Name };
+					tempPushPin.Style = (Style)mainPage.Resources["PushpinStyle1"];
+					tempPushPin.Stop = st;
 #if WINDOWS_PHONE_APP
-					pushpin.Tapped += (sender, argss) =>
-					{
-						((Pushpin)sender).BringToFront();
-					};
-					pushpin.Tapped += (o, argss) =>
-					{
-						Pushpin tempPushpin = (Pushpin)o;
-						Stop tmStop = (Stop)tempPushpin.Tag;
-						//model.StopMovelView.FilteredSelectedStop = tmStop;
-						//MapPivotItem.Focus(FocusState.Programmatic);
-					};
+					//pushpin.Tapped += (sender, argss) =>
+					//{
+					//	((Pushpin)sender).BringToFront();
+					//};
+					//pushpin.Tapped += (o, argss) =>
+					//{
+					//	Pushpin tempPushpin = (Pushpin)o;
+					//	Stop tmStop = (Stop)tempPushpin.Tag;
+					//	//model.StopMovelView.FilteredSelectedStop = tmStop;
+					//	//MapPivotItem.Focus(FocusState.Programmatic);
+					//};
 #endif
-					MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
-					pushpins.Add(pushpin);
-					//mappanel.Children.Add(pushpin);
-					//map.Children.Add(pushpin);
-
-
+					//MapPanel.SetLocation(tempPushPin.Pushpin, tempPushPin.Location);
+					pushpins.Add(tempPushPin);					
 				}
 				map.Center = new Location(model.Context.ActualStops.First().Lat, model.Context.ActualStops.First().Lng);
 			}
@@ -318,57 +325,101 @@ namespace MinskTrans.Universal
 			pushpinsAll = false;
 			if (pushpins == null)
 				InicializeMap();
-			foreach (var child in pushpins)
-			{
-				map.Children.Remove(child);
-				//child.Visibility = Visibility.Collapsed;
-			}
+			//foreach (var child in pushpins)
+			//{
+				
+			//	//map.Children.Remove(child);
+			//	//child.Visibility = Visibility.Collapsed;
+			//}
 			//var tempRoute = args.SelectedRoute;
-			foreach (var child in pushpins.Where(d => x.Stops.Any(p => p.ID == ((Stop)d.Tag).ID)))
+			Pushpins.Clear();
+			foreach (var child in pushpins.Where(d => x.Stops.Any(p => p.ID == ((Stop)d.Pushpin.Tag).ID)).Select(d=>d.Pushpin))
 			{
-				map.Children.Add(child);
+				Pushpins.Add(child);
+				//map.Children.Add(child);
 				//child.Visibility = Visibility.Visible;
 			}
+			ShowOnMap();
 			map.Center = new Location(x.StartStop.Lat, x.StartStop.Lng);
 			ShowAllPushPins.Visibility = Visibility.Visible;
 			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 
-		public void RefreshPushPinsAsync()
+		void ShowOnMap()
 		{
+			for (int i = 1; i < map.Children.Count; i++)
+				if (!Pushpins.Contains(map.Children.ElementAt(i)))
+					map.Children.RemoveAt(i);
+			foreach (var pushpin in Pushpins.Where(x => !map.Children.Contains(x)))
+			{
+				try
+				{
+					map.Children.Add(pushpin);
+				}
+				catch (System.Exception ex)
+				{ }
+			}
+		}
+
+		public ObservableCollection<Pushpin> Pushpins
+		{
+			get
+			{
+				if (pushpins1 == null)
+					pushpins1 = new ObservableCollection<Pushpin>();
+				return pushpins1;
+			}
+			set
+			{
+				if (Equals(value, pushpins1)) return;
+				pushpins1 = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public async void RefreshPushPinsAsync()
+		{
+			
 			if (pushpins == null)
 				InicializeMap();
-			if (pushpinsAll && map!=null)
+			if (pushpinsAll && map!=null && pushpins!=null)
 			{
-				var northWest = map.ViewportPointToLocation(new Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
-				foreach (var child in pushpins)
-				{
-					if (map.ZoomLevel <= 14)
+				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
+				double zoomLevel = map.ZoomLevel;
+				Pushpins.Clear();
+
+				//await Task.Run(() =>
+				//{
+					foreach (var child in pushpins.AsParallel())
 					{
-						map.Children.Remove(child);
-						//child.Visibility = Visibility.Collapsed;
+						if (zoomLevel <= 14)
+						{
+							ShowOnMap();
+							return;
+							//map.Children.Remove(child);
+							//child.Visibility = Visibility.Collapsed;
+						}
+						else
+						{
+							//var x = MapPanel.GetLocation(child);
+							if (child.Location.Latitude <= northWest.Latitude && child.Location.Longitude >= northWest.Longitude &&
+							    child.Location.Latitude >= southEast.Latitude && child.Location.Longitude <= southEast.Longitude)
+							{
+								Pushpins.Add(child.Pushpin);
+							}
+						}
 					}
-					else
-					{
-						var x = MapPanel.GetLocation(child);
-						if (x.Latitude <= northWest.Latitude && x.Longitude >= northWest.Longitude && 
-							x.Latitude >= southEast.Latitude && x.Longitude <= southEast.Longitude &&  
-							!map.Children.Contains(child))
-							map.Children.Add(child);
-						//child.Visibility = Visibility.Visible;
-					}
-
-
-
-				}
+				//});
+				ShowOnMap();
 			}
+
+			
 		}
 
 		private void map_ViewportChanged(object sender, EventArgs e)
 		{
-
-			RefreshPushPinsAsync();
+			if (map != null) RefreshPushPinsAsync();
 		}
 
 		private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -401,6 +452,7 @@ namespace MinskTrans.Universal
 		}
 
 		private Pushpin ipushpin;
+		private ObservableCollection<Pushpin> pushpins1;
 
 		public Pushpin Ipushpin
 		{
@@ -416,7 +468,8 @@ namespace MinskTrans.Universal
 		private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
 		{
 			Geolocator geolocator = new Geolocator();
-			geolocator.DesiredAccuracyInMeters = 50;
+			geolocator.DesiredAccuracy = PositionAccuracy.High;
+			//geolocator.DesiredAccuracyInMeters = 5;
 
 			try
 			{
@@ -452,6 +505,40 @@ namespace MinskTrans.Universal
 			pushpinsAll = true;
 			RefreshPushPinsAsync();
 			ShowAllPushPins.Visibility = Visibility.Collapsed;
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			var handler = PropertyChanged;
+			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		private void map_TileGridChanged(object sender, EventArgs e)
+		{
+			
+		}
+
+		private void ZoomIn(object sender, DoubleTappedRoutedEventArgs e)
+		{
+			
+			
+		}
+
+		private void StartEmailToDeveloper(object sender, RoutedEventArgs e)
+		{
+			EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
+			{
+				Subject = "Минский общественный транспорт",
+				To = { new EmailRecipient("xtergs@gmail.com") }
+			});
+		}
+
+		private void ShowInStore(object sender, RoutedEventArgs e)
+		{
+			Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
 		}
 	}
 }

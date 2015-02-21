@@ -1,7 +1,7 @@
 /*
   In App.xaml:
   <Application.Resources>
-      <vm:ViewModelLocator xmlns:vm="clr-namespace:MinskTrans.Library"
+      <vm:ViewModelLocator xmlns:vm="clr-namespace:MinskTrans.DesctopClient"
                            x:Key="Locator" />
   </Application.Resources>
   
@@ -16,7 +16,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 
-namespace MinskTrans.Library.ViewModel
+namespace MinskTrans.DesctopClient.ViewModel
 {
     /// <summary>
     /// This class contains static references to all the view models in the

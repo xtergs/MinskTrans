@@ -15,7 +15,24 @@ namespace MinskTrans.DesctopClient
 	{
 		private Schedule()
 		{ }
-		public Schedule(string str)
+
+		private string[] splitStr;
+		private List<List<Time>> timesDictionary;
+
+		public Schedule(string str, bool lazyInicialize = false)
+		{
+			char sym = ',';
+
+			//Route id
+			splitStr = str.Split(new[] { ",," }, StringSplitOptions.RemoveEmptyEntries);
+			Inicialize(splitStr[0], ",");
+			RoutId = GetInt().Value;
+
+			if (!lazyInicialize)
+				InicializeTime();
+		}
+
+		void InicializeTime()
 		{
 			char sym = ',';
 			var timesDictionary = new List<Time>();
@@ -23,9 +40,7 @@ namespace MinskTrans.DesctopClient
 			TimesDictionary = new List<List<Time>>();
 
 			//Route id
-			string[] splitStr = str.Split(new[] {",,"}, StringSplitOptions.RemoveEmptyEntries);
-			Inicialize(splitStr[0], ",");
-			RoutId = GetInt().Value;
+			
 			int val = 0;
 			int hour = 0;
 
@@ -33,7 +48,6 @@ namespace MinskTrans.DesctopClient
 			var list = new List<List<int>>();
 			list.Add(new List<int>());
 			List<int> listValue = list[0];
-			var dictionary = new Dictionary<int, List<int>>();
 
 			while (true) // парсинг времени
 			{
@@ -59,7 +73,7 @@ namespace MinskTrans.DesctopClient
 				if (i >= list.Count)
 					timesDictionary[timesDictionary.Count - 1].Days += curValue;
 				else
-					timesDictionary.Add(new Time {Days = curValue, Times = list[i++], Schedule = this});
+					timesDictionary.Add(new Time { Days = curValue, Times = list[i++], Schedule = this });
 				if (GetStr() == null)
 					break;
 			}
@@ -131,7 +145,16 @@ namespace MinskTrans.DesctopClient
 		/// <summary>
 		///     first - stops, second - varios days
 		/// </summary>
-		public List<List<Time>> TimesDictionary { get; set; }
+		public List<List<Time>> TimesDictionary
+		{
+			get
+			{
+				if (timesDictionary == null)
+					InicializeTime();
+				return timesDictionary;
+			}
+			private set { timesDictionary = value; }
+		}
 
 		public List2<Rout, int> GetListTimes(int stop, int day, int startedTime, int endTime = int.MaxValue)
 		{

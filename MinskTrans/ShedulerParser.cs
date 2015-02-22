@@ -156,7 +156,7 @@ namespace MinskTrans.DesctopClient
 				//if (i % 50 == 0)
 				//	OnLogMessage(i + "times parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
-					resultList.Add(new Schedule(listStr[i]));
+					resultList.Add(new Schedule(listStr[i], true));
 			//}
 				});
 

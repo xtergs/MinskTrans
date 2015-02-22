@@ -32,6 +32,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
 using MinskTrans.Universal.Model;
 using MinskTrans.Universal.ModelView;
+using SOMAWP81;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -162,7 +163,39 @@ namespace MinskTrans.Universal
 
 			DataContext = model;
 
+
+			#region AdViewerr
+
+			ad = new SomaAd();
+			ad.Adspace = 130000429;
+			ad.Pub = 1100000268;
+			ad.GetAdError += (sender, code, description) =>
+			{
+
+			};
+			AdViewer.InitializeComponent();
+			AdViewer.Pub = ad.Pub;
+			AdViewer.Adspace = ad.Adspace;
+			AdViewer.StartAds();
+			AdViewer.NewAdAvailable += (sender, args) =>
+			{
+
+			};
+			AdViewer.AdError += (sender, code, description) =>
+			{
+
+			};
+			ad.NewAdAvailable += (sender, args) =>
+			{
+				
+			};
+			ad.GetAd();
+
+
+			#endregion
 		}
+
+		private SomaAd ad;
 
 		private void ShowAddGroup(object sender, EventArgs args)
 		{

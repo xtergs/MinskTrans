@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -56,25 +57,26 @@ namespace MinskTrans.Universal
 			return await FileExistss(file);
 		}
 
-		protected override async void FileDelete(string file)
+		protected override async Task FileDelete(string file)
 		{
 			try
 			{
 				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
-				fl.DeleteAsync();
+				await fl.DeleteAsync();
 			}
 			catch (FileNotFoundException fileNotFound)
 			{
+				return;
 			}
 
 		}
 
-		protected override async void FileMove(string oldFile, string newFile)
+		protected override async Task FileMove(string oldFile, string newFile)
 		{
 			try
 			{
 				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(oldFile);
-				fl.RenameAsync(newFile);
+				await fl.RenameAsync(newFile);
 			}
 			catch (FileNotFoundException fileNOtFound)
 			{
@@ -156,36 +158,23 @@ namespace MinskTrans.Universal
 
 				await Task.WhenAll(Task.Run(async () =>
 				{
-					ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
-
 					StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileStops);
-					OnLogMessage("get file" + list[0].Key);
-					newStops = ShedulerParser.ParsStops(await ReadAllFile(file));
-					OnLogMessage("parsed file" + list[0].Key);
+					newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await ReadAllFile(file)));
 				}),
 					Task.Run(async () =>
 					{
-						ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
-
 						StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileRouts);
-						OnLogMessage("get file" + list[1].Key);
-
-						newRoutes = ShedulerParser.ParsRout(await ReadAllFile(file));
-						OnLogMessage("parsed file" + list[1].Key);
+						newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await ReadAllFile(file)));
 
 					}),
 					Task.Run(async () =>
 					{
-						ShedulerParser.LogMessage += (sender, args) => OnLogMessage(args.Message);
-
 						StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileTimes);
-						OnLogMessage("get file" + list[2].Key);
-
-						newSchedule = ShedulerParser.ParsTime(await ReadAllFile(file));
-						OnLogMessage("parsed file" + list[2].Key);
+						newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await ReadAllFile(file)));
 
 					}));
-				OnLogMessage("All threads ended");
+				Debug.WriteLine("All threads ended");
+				//OnLogMessage("All threads ended");
 			}
 			catch (FileNotFoundException e)
 			{
@@ -195,7 +184,7 @@ namespace MinskTrans.Universal
 			catch (Exception e)
 			{
 				OnLogMessage(e.Message);
-				throw new Exception(e.Message);
+				return false;
 			}
 			if (checkUpdate)
 			{
@@ -243,10 +232,29 @@ namespace MinskTrans.Universal
 		}
 
 		
-		public override async void Save()
+		public override async Task Save()
 		{
 
-			await IsolatedStorageOperations.Save(this, "data.dat");
+			//await IsolatedStorageOperations.Save(this, "data.dat");
+
+			var storage = ApplicationData.Current.LocalFolder;
+			StorageFile stream = null;
+
+			try
+			{
+				stream = await storage.CreateFileAsync("data.dat" + ".temp", CreationCollisionOption.ReplaceExisting);
+
+				using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
+				{
+					WriteXml(writer);
+				}
+
+				await stream.RenameAsync("data.dat", NameCollisionOption.ReplaceExisting);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message, e.InnerException);
+			}
 		}
 
 		public override async Task Load()
@@ -280,10 +288,13 @@ namespace MinskTrans.Universal
 
 				//if (storage.FileExists(file))
 						var stream = await storage.OpenStreamForReadAsync(nameFile);
-				var type = GetType();
-						XmlSerializer serializer = new XmlSerializer(GetType());
-						var abj = (Context)serializer.Deserialize(stream);
-				
+				//var type = GetType();
+				//		XmlSerializer serializer = new XmlSerializer(GetType());
+				//		var abj = (Context)serializer.Deserialize(stream);
+				using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+				{
+					ReadXml(reader);
+				}
 				//XmlReader reader = XmlReader.Create(stream);
 				//		//serializer.Deserialize()
 				//ReadXml(reader);
@@ -308,35 +319,38 @@ namespace MinskTrans.Universal
 				}
 				//await obj.Save(file);
 				//return obj;
-					abj.FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-				foreach (var favouriteRoutsId in abj.FavouriteRoutsIds)
-				{
-					abj.FavouriteRouts.Add(new RoutWithDestinations(Routs.First(x=>x.RoutId == favouriteRoutsId), this));
-				}
-				abj.FavouriteStops = new ObservableCollection<Stop>();
-				foreach (var favouriteStopsId in abj.FavouriteStopsIds)
-				{
-					abj.FavouriteStops.Add(Stops.First(x=>x.ID == favouriteStopsId));
-				}
-				abj.Groups = new ObservableCollection<GroupStop>();
-				foreach (var groupsStopId in abj.GroupsStopIds)
-				{
-					var group = new GroupStop();
-					group.Name = groupsStopId.Name;
-					group.Stops = new ObservableCollection<Stop>();
-					foreach (var i in groupsStopId.StopID)
-					{
-						group.Stops.Add(Stops.First(x=>x.ID == i));
-					}
-					abj.Groups.Add(group);
-				}
-					FavouriteRouts = abj.FavouriteRouts;
-					FavouriteStops = abj.FavouriteStops;
-				Groups = abj.Groups;
-				abj.FavouriteRoutsIds = null;
-				abj.FavouriteStopsIds = null;
-				abj.GroupsStopIds = null;
-				abj = null;
+				
+				
+					FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x => 
+					new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)));
+					FavouriteRoutsIds = null;
+
+					FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x=> Stops.First(d=>d.ID == x)));
+
+				//abj.FavouriteStops = new ObservableCollection<Stop>();
+				//foreach (var favouriteStopsId in abj.FavouriteStopsIds)
+				//{
+				//	abj.FavouriteStops.Add(Stops.First(x=>x.ID == favouriteStopsId));
+				//}
+				//abj.Groups = new ObservableCollection<GroupStop>();
+				//foreach (var groupsStopId in abj.GroupsStopIds)
+				//{
+				//	var group = new GroupStop();
+				//	group.Name = groupsStopId.Name;
+				//	group.Stops = new ObservableCollection<Stop>();
+				//	foreach (var i in groupsStopId.StopID)
+				//	{
+				//		group.Stops.Add(Stops.First(x=>x.ID == i));
+				//	}
+				//	abj.Groups.Add(group);
+				//}
+				//	FavouriteRouts = abj.FavouriteRouts;
+				//	FavouriteStops = abj.FavouriteStops;
+				//Groups = abj.Groups;
+				//abj.FavouriteRoutsIds = null;
+				//abj.FavouriteStopsIds = null;
+				//abj.GroupsStopIds = null;
+				//abj = null;
 
 
 

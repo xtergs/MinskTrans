@@ -117,10 +117,10 @@ namespace MinskTrans.DesctopClient
 		public string RouteName { get; set; }
 		public string Weekdays { get; set; }
 		public int RoutId { get; set; }
-		public Schedule Time { get; set; }
+		public virtual Schedule Time { get; set; }
 		public string Entry { get; set; }
 		public List<int> RouteStops { get; set; }
-		public List<Stop> Stops { get; set; }
+		public virtual List<Stop> Stops { get; set; }
 		public string Data { get; set; }
 		public string Datestart { get; set; }
 

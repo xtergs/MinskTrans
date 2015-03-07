@@ -135,6 +135,9 @@
     <Compile Include="..\..\MinskTrans\Model\Rout.cs">
       <Link>Model\Rout.cs</Link>
     </Compile>
+    <Compile Include="..\..\MinskTrans\Model\RoutEx.cs">
+      <Link>Model\RoutEx.cs</Link>
+    </Compile>
     <Compile Include="..\..\MinskTrans\Model\RoutWithDestinations.cs">
       <Link>Model\RoutWithDestinations.cs</Link>
     </Compile>
@@ -143,6 +146,9 @@
     </Compile>
     <Compile Include="..\..\MinskTrans\Model\Stop.cs">
       <Link>Model\Stop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MinskTrans\Model\StopEx.cs">
+      <Link>Model\StopEx.cs</Link>
     </Compile>
     <Compile Include="..\..\MinskTrans\Model\Time.cs">
       <Link>Model\Time.cs</Link>
@@ -164,6 +170,9 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModelDb\Rout.cs" />
+    <Compile Include="ModelDb\schedule.cs" />
+    <Compile Include="ModelDb\Stop.cs" />
     <Compile Include="ModelView\FavouriteModelView.cs" />
     <Compile Include="ModelView\FindModelView.cs" />
     <Compile Include="ModelView\MainModelView.cs" />

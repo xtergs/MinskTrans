@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
-
+using System.Xml.Linq;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 using System.Runtime.Serialization.Formatters.Binary;
 using MinskTrans.DesctopClient.Annotations;
@@ -145,6 +145,7 @@ namespace MinskTrans.DesctopClient
 			{
 				if (Equals(value, stops)) return;
 				stops = value;
+				actualStops = null;
 				//ActualStops = new ObservableCollection<Stop>(value.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
 				OnPropertyChanged();
 				OnPropertyChanged("ActualStops");
@@ -153,7 +154,11 @@ namespace MinskTrans.DesctopClient
 
 		public ObservableCollection<Stop> ActualStops
 		{
-			get {
+			get
+			{
+				if ((actualStops == null || actualStops.Count == 0) && Stops != null)
+					actualStops =
+						new ObservableCollection<Stop>(Stops.Where(x => Routs != null && Routs.Any(d => d.Stops.Any(s => s.ID == x.ID))));
 				return actualStops;
 			}
 
@@ -189,9 +194,9 @@ namespace MinskTrans.DesctopClient
 		
 		protected abstract Task<bool> FileExists(string file);
 
-		protected abstract void FileDelete(string file);
+		protected abstract Task FileDelete(string file);
 
-		protected abstract void FileMove(string oldFile, string newFile);
+		protected abstract Task FileMove(string oldFile, string newFile);
 
 		protected abstract Task<string> FileReadAllText(string file);
 
@@ -199,9 +204,9 @@ namespace MinskTrans.DesctopClient
 
 		
 
-		protected List<Rout> newRoutes;
-		protected List<Stop> newStops;
-		protected List<Schedule> newSchedule;
+		protected ObservableCollection<Rout> newRoutes;
+		protected ObservableCollection<Stop> newStops;
+		protected ObservableCollection<Schedule> newSchedule;
 
 		public abstract Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate);
 
@@ -215,16 +220,18 @@ namespace MinskTrans.DesctopClient
 				watch1.Start();
 #endif
 
-				Parallel.ForEach(list, async keyValuePair =>
-					//foreach (var keyValuePair in list)
-				{
-					if (await FileExists(keyValuePair.Key + ".new"))
+				//Parallel.ForEach(list, async keyValuePair =>
+				if (await FileExists(list[0].Key + ".new") && 
+					await FileExists(list[1].Key + ".new") && 
+					await FileExists(list[2].Key + ".new"))
+					foreach (var keyValuePair in list)
 					{
-						FileDelete(keyValuePair.Key + ".old");
-						FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
-						FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
+
+						await FileDelete(keyValuePair.Key + ".old");
+						await FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
+						await FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
+
 					}
-				});
 
 #if DEBUG
 				watch1.Stop();
@@ -241,15 +248,15 @@ namespace MinskTrans.DesctopClient
 				watch1.Start();
 #endif
 
-				Stops = new ObservableCollection<Stop>(newStops);
-				Routs = new ObservableCollection<Rout>(newRoutes);
-				Times = new ObservableCollection<Schedule>(newSchedule);
+				Stops =newStops;
+				Routs = newRoutes;
+				Times = newSchedule;
 #if DEBUG
 				watch1.Stop();
 				watch1.Reset();
 				watch1.Start();
 #endif
-				Connect(Routs, Stops);
+				Connect(Routs, Stops, Times);
 
 #if DEBUG
 				watch1.Stop();
@@ -263,18 +270,19 @@ namespace MinskTrans.DesctopClient
 			}
 			catch (Exception e)
 			{
-				OnLogMessage("Apply update: " + e.Message);
+				Debug.WriteLine("Apply update: " + e.Message);
+				//OnLogMessage("Apply update: " + e.Message);
 				throw new Exception(e.Message, e.InnerException);
 			}
 
-			ActualStops = new ObservableCollection<Stop>(Stops.Where(x => Routs != null && Routs.Any(d => d.Stops.Contains(x))));
+			//ActualStops = ;
 
 			AllPropertiesChanged();
 
 			OnApplyUpdateEnded();
 		}
 
-		public abstract void Save();
+		public abstract Task Save();
 
 		public abstract Task Load();
 
@@ -290,12 +298,24 @@ namespace MinskTrans.DesctopClient
 		}
 
 		
-		protected void Connect(IEnumerable<Rout> routs, IEnumerable<Stop> stops)
+		static protected void Connect([NotNull] IEnumerable<Rout> routsl, [NotNull] IEnumerable<Stop> stopsl,
+			[NotNull] IEnumerable<Schedule> timesl)
 		{
-
-			Parallel.ForEach(routs, rout =>
+			if (routsl == null) throw new ArgumentNullException("routsl");
+			if (stopsl == null) throw new ArgumentNullException("stopsl");
+			if (timesl == null) throw new ArgumentNullException("timesl");
+#if DEBUG
+			Stopwatch watch1 = new Stopwatch();
+			watch1.Start();
+#endif
+			Parallel.ForEach(routsl, rout =>
 			{
-				rout.Time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+				rout.Time = timesl.FirstOrDefault(x =>
+				{
+					if (x == null)
+						return false;
+					return x.RoutId == rout.RoutId;
+				});
 				if (rout.Time != null)
 					rout.Time.Rout = rout;
 
@@ -303,51 +323,26 @@ namespace MinskTrans.DesctopClient
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
 #endif
-				rout.Stops = rout.RouteStops.Join(Stops, i => i, stop => stop.ID, (i, stop) =>
+				rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
 				{
 					if (stop.Routs == null)
-						stop.Routs = new List<Rout>();
+						stop.Routs = new List<Rout>(10);
 					stop.Routs.Add(rout);
 					return stop;
 				}).ToList();
+
+
 #if DEBUG
 				watch.Stop();
-				//watch.Restart();
+				watch.Restart();
 #endif
-//				rout.Stops = rout.RouteStops.Select(x => Stops.First(d =>
-//				{
-//					if (d.ID == x)
-//					{
-//						if (d.Routs == null)
-//							d.Routs = new List<Rout>();
-//						d.Routs.Add(rout);
-//						return true;
-//					}
-//					return false;
-//				})).ToList();
-//#if DEBUG
-//				watch.Stop();
-//				watch.Stop();
-//#endif
-				
-				//rout.Stops = stops.Where(x =>
-				//{
-				//	if (rout.RouteStops.Contains(x.ID))
-				//	{
-				//		if (x.Routs == null)
-				//			x.Routs = new List<Rout>();
-				//		x.Routs.Add(rout);
-				//		return true;
-				//	}
-				//	return false;
-				//}).ToList();
-				//foreach (int st in rout.RouteStops)
-				//{
-				//	var stop = (stops.First(x => x.ID == st));
-				//	rout.Stops.Add(stop);
-				//	stop.Routs.Add(rout);
-				//}
 			});
+
+
+#if DEBUG
+			watch1.Stop();
+			watch1.Restart();
+#endif
 
 		}
 
@@ -449,83 +444,109 @@ namespace MinskTrans.DesctopClient
 		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
 		public void ReadXml(XmlReader reader)
 		{
-			
-			//reader.ReadStartElement("ContextDesctop");
-			LastUpdateDataDateTime = Convert.ToDateTime(reader.GetAttribute("LastUpdateTime"));
-			//Routs = new ObservableCollection<Rout>();
-
-			reader.ReadStartElement();
-			int count = Convert.ToInt32(reader.GetAttribute("Count"));
-			FavouriteRoutsIds = new ObservableCollection<int>();
-			for (int i = 0; i < count; i ++)
+			try
 			{
-				reader.ReadStartElement();
-				FavouriteRoutsIds.Add(int.Parse(reader.GetAttribute("id")));
-				
-				//reader.ReadStartElement("Rout");
-				//var rout = new Rout();
-				//rout.ReadXml(reader);
-				//Routs.Add(rout);
-				//reader.ReadEndElement();
-				if (!reader.IsEmptyElement)
-					reader.ReadEndElement();
-				
-			}
 
-			if (!reader.IsEmptyElement)
-				reader.ReadEndElement();
-			else
-			{
-				reader.ReadStartElement();
-				if (reader.NodeType == XmlNodeType.EndElement)
-					reader.ReadEndElement();
-			}
+			var node = XDocument.Load(reader);
+			var document = (XDocument)node;
 
-			//reader.ReadStartElement();
-			count = Convert.ToInt32(reader.GetAttribute("Count"));
-			FavouriteStopsIds = new ObservableCollection<int>();
-			for (int i = 0; i < count; i++)
-			{
-				reader.ReadStartElement();
-				FavouriteStopsIds.Add(int.Parse(reader.GetAttribute("id")));
+			//document.Root.Attribute("LastUpdateTime").Value;
 
-				if (!reader.IsEmptyElement)
-					reader.ReadEndElement();
+				LastUpdateDataDateTime = (DateTime) document.Root.Attribute("LastUpdateTime");
 
-			}
-			if (!reader.IsEmptyElement)
-				reader.ReadEndElement();
-			else
-			{
-				reader.ReadStartElement();
-				if (reader.NodeType == XmlNodeType.EndElement)
-					reader.ReadEndElement();				
-			}
+				FavouriteRoutsIds = new ObservableCollection<int>(document.Elements("FavouritRouts").Select(x => (int) x));
+				FavouriteStopsIds = new ObservableCollection<int>(document.Elements("FavouriteStops").Select(x => (int)x));
 
-			//reader.ReadStartElement();
-			count = Convert.ToInt32(reader.GetAttribute("Count"));
-			GroupsStopIds = new ObservableCollection<GroupStopId>();
-			for (int i = 0; i < count; i++)
-			{
-				var group = new GroupStopId();
-				reader.ReadStartElement();
-				group.Name = reader.GetAttribute("Name");
-				int countt = int.Parse(reader.GetAttribute("Count"));
-				group.StopID = new List<int>(countt);
-				for (int j = 0; j < countt; j++)
+				GroupsStopIds = new ObservableCollection<GroupStopId>(document.Element("Groups").Elements("Group").Select(XGroup =>
 				{
-					reader.ReadStartElement();
-					group.StopID.Add(int.Parse(reader.GetAttribute("id")));
-					if (!reader.IsEmptyElement)
-						reader.ReadEndElement();
-
-				}
-				GroupsStopIds.Add(group);
-
-				if (!reader.IsEmptyElement)
-					reader.ReadEndElement();
-
+					var groupid = new GroupStopId();
+					groupid.Name = (string)XGroup.Attribute("Name");
+					groupid.StopID =XGroup.Elements("ID").Select(id=>(int)id).ToList();
+					return groupid;
+				}));
 			}
+			catch (Exception e)
+			{
+
+				return;
+			}
+
+			//reader.ReadStartElement("ContextDesctop");
+			//LastUpdateDataDateTime = Convert.ToDateTime(reader.GetAttribute("LastUpdateTime"));
+			////Routs = new ObservableCollection<Rout>();
+
+			//reader.ReadStartElement();
+			//int count = Convert.ToInt32(reader.GetAttribute("Count"));
+			//FavouriteRoutsIds = new ObservableCollection<int>();
+			//for (int i = 0; i < count; i ++)
+			//{
+			//	reader.ReadStartElement();
+			//	FavouriteRoutsIds.Add(int.Parse(reader.GetAttribute("id")));
+				
+			//	//reader.ReadStartElement("Rout");
+			//	//var rout = new Rout();
+			//	//rout.ReadXml(reader);
+			//	//Routs.Add(rout);
+			//	//reader.ReadEndElement();
+			//	if (!reader.IsEmptyElement)
+			//		reader.ReadEndElement();
+				
+			//}
+
+			//if (!reader.IsEmptyElement)
+			//	reader.ReadEndElement();
+			//else
+			//{
+			//	reader.ReadStartElement();
+			//	if (reader.NodeType == XmlNodeType.EndElement)
+			//		reader.ReadEndElement();
+			//}
+
+			////reader.ReadStartElement();
+			//count = Convert.ToInt32(reader.GetAttribute("Count"));
+			//FavouriteStopsIds = new ObservableCollection<int>();
+			//for (int i = 0; i < count; i++)
+			//{
+			//	reader.ReadStartElement();
+			//	FavouriteStopsIds.Add(int.Parse(reader.GetAttribute("id")));
+
+			//	if (!reader.IsEmptyElement)
+			//		reader.ReadEndElement();
+
+			//}
+			//if (!reader.IsEmptyElement)
+			//	reader.ReadEndElement();
+			//else
+			//{
+			//	reader.ReadStartElement();
+			//	if (reader.NodeType == XmlNodeType.EndElement)
+			//		reader.ReadEndElement();				
+			//}
+
+			////reader.ReadStartElement();
+			//count = Convert.ToInt32(reader.GetAttribute("Count"));
+			//GroupsStopIds = new ObservableCollection<GroupStopId>();
+			//for (int i = 0; i < count; i++)
+			//{
+			//	var group = new GroupStopId();
+			//	reader.ReadStartElement();
+			//	group.Name = reader.GetAttribute("Name");
+			//	int countt = int.Parse(reader.GetAttribute("Count"));
+			//	group.StopID = new List<int>(countt);
+			//	for (int j = 0; j < countt; j++)
+			//	{
+			//		reader.ReadStartElement();
+			//		group.StopID.Add(int.Parse(reader.GetAttribute("id")));
+			//		if (!reader.IsEmptyElement)
+			//			reader.ReadEndElement();
+
+			//	}
+			//	GroupsStopIds.Add(group);
+
+			//	if (!reader.IsEmptyElement)
+			//		reader.ReadEndElement();
+
+			//}
 			//reader.ReadEndElement();
 		}
 
@@ -535,47 +556,74 @@ namespace MinskTrans.DesctopClient
 		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
 		public void WriteXml(XmlWriter writer)
 		{
+			XElement element = new XElement("Context");
+			XDocument document = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), element);
+			//document.Declaration = new XDeclaration("1.0", "UTF", "yes");
 
-			writer.WriteAttributeString("LastUpdateTime", LastUpdateDataDateTime.ToString());
+			element.SetAttributeValue("LastUpdateTime", LastUpdateDataDateTime);
+			element.SetAttributeValue("V", 1);
 
-			writer.WriteStartElement("FavouritRouts");
-			writer.WriteAttributeString("Count", FavouriteRouts.Count.ToString());
-			foreach (var rout in FavouriteRouts)
+
+			XElement el = new XElement("FavouritRouts", FavouriteRouts.Select(x => new XElement("ID", x.Rout.RoutId)));
+
+			element.Add(el);
+
+			el = new XElement("FavouriteStops", FavouriteStops.Select(x => new XElement("ID", x.ID)));
+
+			element.Add(el);
+
+			el = new XElement("Groups", Groups.Select(x =>
 			{
-				writer.WriteStartElement("Rout");
-				writer.WriteAttributeString("id", rout.Rout.RoutId.ToString());
-				writer.WriteEndElement();
-			}
-			writer.WriteEndElement();
+				var elem = new XElement("Group", x.Stops.Select(y => new XElement("ID", y.ID)));
+				elem.SetAttributeValue("Name", x.Name);
+				return elem;
+			}));
+			
 
-			writer.WriteStartElement("FavouriteStops");
-			writer.WriteAttributeString("Count", FavouriteStops.Count.ToString());
-			foreach (var stop in FavouriteStops)
-			{
-				writer.WriteStartElement("Stop");
-				writer.WriteAttributeString("id", stop.ID.ToString());
-				writer.WriteEndElement();
-			}
-			writer.WriteEndElement();
+			element.Add(el);
 
-			writer.WriteStartElement("Groups");
-			writer.WriteAttributeString("Count", Groups.Count.ToString());
-			foreach (var group in Groups)
-			{
-				writer.WriteStartElement("Group");
-				writer.WriteAttributeString("Name", group.Name);
-				writer.WriteAttributeString("Count", group.Stops.Count.ToString());
+			document.Save(writer);
 
-				foreach (var stop in group.Stops)
-				{
-					writer.WriteStartElement("Stop");
-					writer.WriteAttributeString("id", stop.ID.ToString());
-					writer.WriteEndElement();
-				}
-				group.WriteXml(writer);
-				writer.WriteEndElement();
-			}
-			writer.WriteEndElement();
+			//writer.WriteAttributeString("LastUpdateTime", LastUpdateDataDateTime.ToString());
+
+			//writer.WriteStartElement("FavouritRouts");
+			//writer.WriteAttributeString("Count", FavouriteRouts.Count.ToString());
+			//foreach (var rout in FavouriteRouts)
+			//{
+			//	writer.WriteStartElement("Rout");
+			//	writer.WriteAttributeString("id", rout.Rout.RoutId.ToString());
+			//	writer.WriteEndElement();
+			//}
+			//writer.WriteEndElement();
+
+			//writer.WriteStartElement("FavouriteStops");
+			//writer.WriteAttributeString("Count", FavouriteStops.Count.ToString());
+			//foreach (var stop in FavouriteStops)
+			//{
+			//	writer.WriteStartElement("Stop");
+			//	writer.WriteAttributeString("id", stop.ID.ToString());
+			//	writer.WriteEndElement();
+			//}
+			//writer.WriteEndElement();
+
+			//writer.WriteStartElement("Groups");
+			//writer.WriteAttributeString("Count", Groups.Count.ToString());
+			//foreach (var group in Groups)
+			//{
+			//	writer.WriteStartElement("Group");
+			//	writer.WriteAttributeString("Name", group.Name);
+			//	writer.WriteAttributeString("Count", group.Stops.Count.ToString());
+
+			//	foreach (var stop in group.Stops)
+			//	{
+			//		writer.WriteStartElement("Stop");
+			//		writer.WriteAttributeString("id", stop.ID.ToString());
+			//		writer.WriteEndElement();
+			//	}
+			//	group.WriteXml(writer);
+			//	writer.WriteEndElement();
+			//}
+			//writer.WriteEndElement();
 		}
 
 		#endregion

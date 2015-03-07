@@ -108,10 +108,12 @@
     <Compile Include="Model\GroupStopId.cs" />
     <Compile Include="Model\List2.cs" />
     <Compile Include="Model\Rout.cs" />
+    <Compile Include="Model\RoutEx.cs" />
     <Compile Include="Model\RoutsStops.cs" />
     <Compile Include="Model\RoutWithDestinations.cs" />
     <Compile Include="Model\Schedule.cs" />
     <Compile Include="Model\Stop.cs" />
+    <Compile Include="Model\StopEx.cs" />
     <Compile Include="Model\Time.cs" />
     <Compile Include="Model\TimeEx.cs" />
     <Compile Include="Model\Transport.cs" />

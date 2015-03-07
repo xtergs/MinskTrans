@@ -192,7 +192,7 @@ namespace MinskTrans.DesctopClient
 					tempRouts = null;
 					tempTimes = null;
 
-					Connect(Routs, Stops);
+					//Connect(Routs, Stops);
 
 					Groups = new ObservableCollection<GroupStop>();
 					foreach (var groupStopId in tempGroup)

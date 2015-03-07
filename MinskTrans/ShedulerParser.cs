@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient
 {
 	public class ShedulerParser
 	{
-		public static List<Stop> ParsStops(string stops)
+		public static IEnumerable<Stop> ParsStops(string stops, Context context = null)
 		{
 			OnLogMessage("ParsStops Started");
 			int indexEnd = stops.IndexOf(' ');
@@ -42,7 +43,10 @@ namespace MinskTrans.DesctopClient
 				//	OnLogMessage(i + " strings are parsed");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 				{
-					resultList.Add(new Stop(listStr[i], stopOld));
+					if (context == null)
+						resultList.Add(new Stop(listStr[i], stopOld));
+					else
+						resultList.Add(new StopEx(context, listStr[i], stopOld));
 					stopOld = resultList[resultList.Count - 1];
 				}
 			}
@@ -71,7 +75,7 @@ namespace MinskTrans.DesctopClient
 			return resultList;
 		}
 
-		public static List<Rout> ParsRout(string routs)
+		public static IEnumerable<Rout> ParsRout(string routs, Context context = null)
 		{
 			OnLogMessage("ParsRout Started");
 			int indexEnd = routs.IndexOf(' ');
@@ -108,7 +112,10 @@ namespace MinskTrans.DesctopClient
 				//	OnLogMessage(i+ "routs pares");
 				if (!String.IsNullOrWhiteSpace(listStr[i]))
 				{
-					resultList.Add(new Rout(listStr[i], rout));
+					if (context == null)
+						resultList.Add(new Rout(listStr[i], rout));
+					else
+						resultList.Add(new RoutEx(context, listStr[i], rout));
 					rout = resultList[resultList.Count - 1];
 				}
 			}
@@ -117,7 +124,7 @@ namespace MinskTrans.DesctopClient
 			return resultList;
 		}
 
-		public static List<Schedule> ParsTime(string times)
+		public static IEnumerable<Schedule> ParsTime(string times)
 		{
 			OnLogMessage("ParsTime Started");
 			//int indexEnd = times.IndexOf(' ');

@@ -1284,6 +1284,7 @@
                         <Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
                         <Button Content="Оставить отзыв" Click="ShowInStore" ></Button>
                         <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
+                        <Button Click="Test" ></Button>
                         <SOMAWP81:SomaAdViewer_300x250 x:Name="AdViewer" Height="50" LocationUseOK="False" />
                     </StackPanel>
                 </Border>

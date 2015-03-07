@@ -574,5 +574,14 @@ namespace MinskTrans.Universal
 		{
 			Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
 		}
+
+		private async void Test(object sender, RoutedEventArgs e)
+		{
+			await model.Context.Save();
+			var file = await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat");
+			//var result = await FileIO.ReadTextAsync(file);
+			//var sizeFile = await file.Properties.GetDocumentPropertiesAsync();
+			await model.Context.Load();
+		}
 	}
 }

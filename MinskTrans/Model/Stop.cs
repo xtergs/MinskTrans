@@ -19,7 +19,7 @@ namespace MinskTrans.DesctopClient
 	public class Stop : BaseModel, IXmlSerializable
 	{
 		private string name;
-		private List<Rout> routs;
+		protected List<Rout> routs;
 
 		private Stop()
 		{ }
@@ -117,7 +117,7 @@ namespace MinskTrans.DesctopClient
 		public List<Stop> Stops { get; set; }
 		public string StopNum { get; set; }
 
-		public List<Rout> Routs
+		public virtual List<Rout> Routs
 		{
 			get
 			{

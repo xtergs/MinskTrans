@@ -5,12 +5,14 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
+using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
 #endif
+	[JsonObject(MemberSerialization.OptIn)]
 	public class Time : BaseModel, IXmlSerializable
 	{
 		public Time()
@@ -27,7 +29,7 @@ namespace MinskTrans.DesctopClient
 			}
 			Schedule = time.Schedule;
 		}
-
+		[JsonProperty]
 		public string Days { get; set; }
 
 		
@@ -54,7 +56,7 @@ namespace MinskTrans.DesctopClient
 				return strBuilder.ToString();
 			}
 		}
-
+		[JsonProperty]
 		public List<int> Times { get; set; }
 
 		public Dictionary<int, List<int>> DictionaryTime

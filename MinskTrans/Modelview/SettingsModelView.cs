@@ -3,7 +3,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 using MinskTrans.DesctopClient.Properties;
-using MinskTrans.Library;
+
 #else
 	using Windows.Storage;
 

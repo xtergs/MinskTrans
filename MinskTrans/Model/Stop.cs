@@ -16,9 +16,9 @@ namespace MinskTrans.DesctopClient
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
 #endif
-	public class Stop : BaseModel, IXmlSerializable
+	public class Stop : StopBase, IXmlSerializable
 	{
-		private string name;
+		
 		protected List<Rout> routs;
 
 		private Stop()
@@ -94,28 +94,38 @@ namespace MinskTrans.DesctopClient
 			Routs = new List<Rout>();
 		}
 
-		public int ID { get; set; }
-		public string City { get; set; }
-		public string Area { get; set; }
-		public string Streat { get; set; }
+		protected string Sym = "";
+		protected string getIntStr = "";
+		protected int indexEnd = 0;
+		protected int indexStart = 0;
+		private List<Stop> stops;
 
-		public string Name
+		protected virtual void Inicialize(string str, string sym)
 		{
-			get { return name; }
-			set
-			{
-				name = value;
-				SearchName = value.ToLower().Trim();
-			}
+			getIntStr = str;
+			Sym = sym;
+			indexStart = 0;
 		}
 
-		public string SearchName { get; set; }
-		public string Info { get; set; }
-		public double Lng { get; set; }
-		public double Lat { get; set; }
-		public string StopsStr { get; set; }
-		public List<Stop> Stops { get; set; }
-		public string StopNum { get; set; }
+		protected int? GetInt()
+		{
+			string temp = GetStr();
+			if (temp == null)
+				return null;
+			return int.Parse(temp);
+		}
+
+
+		public List<Stop> Stops
+		{
+			get
+			{
+				if (stops == null)
+					stops = new List<Stop>();
+				return stops;
+			}
+			set { stops = value; }
+		}
 
 		public virtual List<Rout> Routs
 		{
@@ -128,27 +138,27 @@ namespace MinskTrans.DesctopClient
 			set { routs = value; }
 		}
 
-		public IEnumerable<IGrouping<Rout.TransportType, Rout>> GroupedTypeRouts
+		public IEnumerable<IGrouping<TransportType, Rout>> GroupedTypeRouts
 		{
 			get { return Routs.GroupBy(x => x.Transport); }
 		}
 
 		public IEnumerable<Rout> TrolRouts
 		{
-			get { return Routs.Where(x => x.Transport == Rout.TransportType.Trol); }
+			get { return Routs.Where(x => x.Transport == TransportType.Trol); }
 		}
 		public IEnumerable<Rout> BusRouts
 		{
-			get { return Routs.Where(x => x.Transport == Rout.TransportType.Bus); }
+			get { return Routs.Where(x => x.Transport == TransportType.Bus); }
 		}
 		public IEnumerable<Rout> TramRouts
 		{
-			get { return Routs.Where(x => x.Transport == Rout.TransportType.Tram); }
+			get { return Routs.Where(x => x.Transport == TransportType.Tram); }
 		}
 
 		public IEnumerable<Rout> MetroRouts
 		{
-			get { return Routs.Where(x => x.Transport == Rout.TransportType.Metro); }
+			get { return Routs.Where(x => x.Transport == TransportType.Metro); }
 		}
 
 		public ObservableCollection<string> TrolRoutsNum
@@ -184,7 +194,7 @@ namespace MinskTrans.DesctopClient
 		
 		#region Overrides of BaseModel
 
-		protected override string GetStr()
+		protected string GetStr()
 		{
 			indexEnd = getIntStr.IndexOf(Sym, indexStart);
 

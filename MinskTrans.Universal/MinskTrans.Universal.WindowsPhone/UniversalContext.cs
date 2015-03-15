@@ -17,7 +17,11 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using Buffer = Windows.Storage.Streams.Buffer;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
@@ -116,9 +120,9 @@ namespace MinskTrans.Universal
 				OnDataBaseDownloadStarted();
 				await Task.WhenAll(new List<Task>()
 				{
-					Download(list[0].Value, list[0].Key + ".new"),
-					Download(list[1].Value, list[1].Key + ".new"),
-					Download(list[2].Value, list[2].Key + ".new")
+					Download(list[0].Value, list[0].Key + NewExt),
+					Download(list[1].Value, list[1].Key + NewExt),
+					Download(list[2].Value, list[2].Key + NewExt)
 				});
 				OnDataBaseDownloadEnded();
 
@@ -210,24 +214,31 @@ namespace MinskTrans.Universal
 
 		private async Task Download(string uri, string file)
 		{
-			var httpClient = new HttpClient();
-			// Increase the max buffer size for the response so we don't get an exception with so many web sites
-
-			httpClient.DefaultRequestHeaders.Add("user-agent",
-				"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-
-			HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
-			response.EnsureSuccessStatusCode();
-
-			//string str= response.StatusCode + " " + response.ReasonPhrase + Environment.NewLine;
-			var fileGet =
-				await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
-			using (var writeStream = await fileGet.OpenAsync(FileAccessMode.ReadWrite))
+			try
 			{
-				using (var outputStream = writeStream.GetOutputStreamAt(0))
+				var httpClient = new HttpClient();
+				// Increase the max buffer size for the response so we don't get an exception with so many web sites
+
+				httpClient.DefaultRequestHeaders.Add("user-agent",
+					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+
+				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
+				response.EnsureSuccessStatusCode();
+
+				//string str= response.StatusCode + " " + response.ReasonPhrase + Environment.NewLine;
+				var fileGet =
+					await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
+				using (var writeStream = await fileGet.OpenAsync(FileAccessMode.ReadWrite))
 				{
-					var responseBodyAsText = await response.Content.WriteToStreamAsync(outputStream);
+					using (var outputStream = writeStream.GetOutputStreamAt(0))
+					{
+						var responseBodyAsText = await response.Content.WriteToStreamAsync(outputStream);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				throw new TaskCanceledException(e.Message, e);
 			}
 		}
 
@@ -242,128 +253,166 @@ namespace MinskTrans.Universal
 
 			try
 			{
-				stream = await storage.CreateFileAsync("data.dat" + ".temp", CreationCollisionOption.ReplaceExisting);
+				stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
 
 				using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
 				{
 					WriteXml(writer);
 				}
 
-				await stream.RenameAsync("data.dat", NameCollisionOption.ReplaceExisting);
+				await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
+
+				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
+
+				await Task.WhenAll(Task.Run(async () =>
+				{
+					string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
+					var routsFile = await storage.CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
+					await FileIO.WriteTextAsync(routsFile, routs);
+					routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
+
+				}),
+					Task.Run(async () =>
+					{
+						string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
+						var stopsFile = await storage.CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
+						await FileIO.WriteTextAsync(stopsFile, routs);
+						stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
+
+					}), Task.Run(async () =>
+					{
+						string routs = JsonConvert.SerializeObject(Times, jsonSettings);
+						var timesFile = await storage.CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
+						await FileIO.WriteTextAsync(timesFile, routs);
+						timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
+
+					}));
 			}
 			catch (Exception e)
 			{
-				throw new Exception(e.Message, e.InnerException);
+				throw new Exception(e.Message, e);
 			}
 		}
 
 		public override async Task Load()
 		{
 			OnLoadStarted();
-			foreach (var keyValuePair in list)
+			
+			var storage = ApplicationData.Current.LocalFolder;
+
+			try
+			{
+				await Task.WhenAll(
+					Task.Run(async () =>
+					{
+						try
+						{
+							var routsFile = await storage.GetFileAsync(NameFileRouts);
+							var routs = await FileIO.ReadTextAsync(routsFile);
+							Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					}),
+					Task.Run(async () =>
+					{
+						try
+						{
+							var stopsFile = await storage.GetFileAsync(NameFileStops);
+							var stops = await FileIO.ReadTextAsync(stopsFile);
+							Stops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					}),
+					Task.Run(async () =>
+					{
+						try
+						{
+
+							var timesFile = await storage.GetFileAsync(NameFileTimes);
+							var times = await FileIO.ReadTextAsync(timesFile);
+
+							Times = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					})
+					);
+				await Task.Run(async () =>
+				{
+					if (await FileExistss(NameFileFavourite))
+					{
+						try
+						{
+
+							var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
+
+							using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+							{
+								ReadXml(reader);
+							}
+
+							FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
+								new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
+							FavouriteRoutsIds = null;
+
+							FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
+							FavouriteStopsIds = null;
+
+							Groups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+							{
+								Name = x.Name,
+								Stops = new ObservableCollection<Stop>(Stops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+							}));
+						}
+						catch (FileNotFoundException e)
+						{
+							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+							return;
+						}
+						catch (Exception e)
+						{
+							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+							throw new Exception(e.Message, e);
+						}
+					}
+					else
+					{
+						FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+						FavouriteStops = new ObservableCollection<Stop>();
+					}
+				});
+			}
+			catch (TaskCanceledException e)
+			{
+				Routs = null;
+				Stops = null;
+				Times = null;
+				OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
+				return;
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Context.Load: " + e.Message );
+				throw new Exception(e.Message, e);
+			}
+			
+			if (Routs == null || Stops == null)
 			{
 
-				if (!await FileExistss(keyValuePair.Key))
-				{
-					OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
-					return;
-				}
+				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize });
+				return;
 			}
 
-			await HaveUpdate(list[0].Key, list[1].Key, list[2].Key, false);
-			await ApplyUpdate();
-			//string str =await ReadAllFile(await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat"));
-			string nameFile = "data.dat";
-			if (await FileExistss(nameFile))
-			{
-
-				if (Routs == null || Stops == null)
-				{
-
-					OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize});
-					return;
-				}
-				var storage = ApplicationData.Current.LocalFolder;
-				
-
-				//if (storage.FileExists(file))
-						var stream = await storage.OpenStreamForReadAsync(nameFile);
-				//var type = GetType();
-				//		XmlSerializer serializer = new XmlSerializer(GetType());
-				//		var abj = (Context)serializer.Deserialize(stream);
-				using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
-				{
-					ReadXml(reader);
-				}
-				//XmlReader reader = XmlReader.Create(stream);
-				//		//serializer.Deserialize()
-				//ReadXml(reader);
-				{
-					//IsolatedStorageFileStream stream = null;
-					try
-					{
-					}
-					catch (Exception e)
-					{
-					}
-					finally
-					{
-
-						//if (stream != null)
-						//{
-						//	stream.Close();
-						//	stream.Dispose();
-						//}
-					}
-					//return obj;
-				}
-				//await obj.Save(file);
-				//return obj;
-				
-				
-					FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x => 
-					new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)));
-					FavouriteRoutsIds = null;
-
-					FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x=> Stops.First(d=>d.ID == x)));
-
-				//abj.FavouriteStops = new ObservableCollection<Stop>();
-				//foreach (var favouriteStopsId in abj.FavouriteStopsIds)
-				//{
-				//	abj.FavouriteStops.Add(Stops.First(x=>x.ID == favouriteStopsId));
-				//}
-				//abj.Groups = new ObservableCollection<GroupStop>();
-				//foreach (var groupsStopId in abj.GroupsStopIds)
-				//{
-				//	var group = new GroupStop();
-				//	group.Name = groupsStopId.Name;
-				//	group.Stops = new ObservableCollection<Stop>();
-				//	foreach (var i in groupsStopId.StopID)
-				//	{
-				//		group.Stops.Add(Stops.First(x=>x.ID == i));
-				//	}
-				//	abj.Groups.Add(group);
-				//}
-				//	FavouriteRouts = abj.FavouriteRouts;
-				//	FavouriteStops = abj.FavouriteStops;
-				//Groups = abj.Groups;
-				//abj.FavouriteRoutsIds = null;
-				//abj.FavouriteStopsIds = null;
-				//abj.GroupsStopIds = null;
-				//abj = null;
-
-
-
-			}
-			else
-			{
-				FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-				FavouriteStops = new ObservableCollection<Stop>();
-			}
-
-			//Stops = tempThis.Stops;
-			//Routs = tempThis.Routs;
-			//Times = tempThis.Times;
+			Connect(Routs, Stops, Times);
+			
 			AllPropertiesChanged();
 			OnLoadEnded();
 		}

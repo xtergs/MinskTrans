@@ -1,5 +1,7 @@
 ﻿
 
+using System.Xml.Linq;
+
 namespace MinskTrans.DesctopClient.Modelview
 {
 using System;
@@ -30,7 +32,7 @@ using GalaSoft.MvvmLight.Command;
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
-		private Rout.TransportType typeTransport;
+		private TransportType typeTransport;
 
 		//public RoutesModelview()
 		//{
@@ -43,7 +45,7 @@ using GalaSoft.MvvmLight.Command;
 			OnPropertyChanged("RouteNums");
 		}
 
-		public Rout.TransportType TypeTransport
+		public TransportType TypeTransport
 		{
 			get
 			{
@@ -259,17 +261,17 @@ using GalaSoft.MvvmLight.Command;
 
 		public RelayCommand ShowBusCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Bus); }
+			get { return new RelayCommand(() => TypeTransport = TransportType.Bus); }
 		}
 
 		public RelayCommand ShowTrolCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Trol); }
+			get { return new RelayCommand(() => TypeTransport = TransportType.Trol); }
 		}
 
 		public RelayCommand ShowTramCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Tram); }
+			get { return new RelayCommand(() => TypeTransport = TransportType.Tram); }
 		}
 
 		public event Show ShowStop;

@@ -33,7 +33,7 @@ namespace MinskTrans.Universal.ModelView
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
-		private Rout.TransportType typeTransport;
+		private TransportType typeTransport;
 
 		//public RoutesModelview()
 		//{
@@ -58,7 +58,7 @@ namespace MinskTrans.Universal.ModelView
 			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
 		}
 
-		public Rout.TransportType TypeTransport
+		public TransportType TypeTransport
 		{
 			get
 			{
@@ -123,7 +123,9 @@ namespace MinskTrans.Universal.ModelView
 			{
 				if (Context.Routs != null)
 					routeObservableCollection =
-						new ObservableCollection<Rout>(Context.Routs.Where(x => RouteNumSelectedValue != null && x.RouteNum == RouteNumSelectedValue.Rout.RouteNum));
+						new ObservableCollection<Rout>(Context.Routs.Where(x => RouteNumSelectedValue != null 
+							&& x.RouteNum == RouteNumSelectedValue.Rout.RouteNum 
+							&& x.Transport == RouteNumSelectedValue.Rout.Transport));
 				return routeObservableCollection;
 			}
 		}
@@ -301,17 +303,17 @@ namespace MinskTrans.Universal.ModelView
 
 		public RelayCommand ShowBusCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Bus); }
+			get { return new RelayCommand(() => TypeTransport = TransportType.Bus); }
 		}
 
 		public RelayCommand ShowTrolCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Trol); }
+			get { return new RelayCommand(() => TypeTransport = TransportType.Trol); }
 		}
 
 		public RelayCommand ShowTramCommand
 		{
-			get { return new RelayCommand(() => TypeTransport = Rout.TransportType.Tram); }
+			get { return new RelayCommand(() => TypeTransport = TransportType.Tram); }
 		}
 
 		public event Show ShowStop;

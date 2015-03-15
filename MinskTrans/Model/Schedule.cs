@@ -5,17 +5,22 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
+using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
 #endif
+	[JsonObject(MemberSerialization.OptIn)]
 	public class Schedule : BaseModel, IXmlSerializable
 	{
-		private Schedule()
-		{ }
-
+		[JsonConstructor]
+		public Schedule()
+		{
+			
+		}
+		[JsonProperty]
 		private string[] splitStr;
 		private List<List<Time>> timesDictionary;
 
@@ -31,7 +36,7 @@ namespace MinskTrans.DesctopClient
 			if (!lazyInicialize)
 				InicializeTime();
 		}
-
+		
 		void InicializeTime()
 		{
 			char sym = ',';
@@ -48,7 +53,8 @@ namespace MinskTrans.DesctopClient
 			var list = new List<List<int>>();
 			list.Add(new List<int>());
 			List<int> listValue = list[0];
-
+			Inicialize(splitStr[0], ",");
+			var tmp = GetInt().Value;
 			while (true) // парсинг времени
 			{
 				int? curValue = GetInt();
@@ -138,13 +144,16 @@ namespace MinskTrans.DesctopClient
 
 			//TimesDictionary.Add();
 		}
-		
+		[JsonProperty]
 		public int RoutId { get; set; }
+		
 		public Rout Rout { get; set; }
 
 		/// <summary>
 		///     first - stops, second - varios days
 		/// </summary>
+		/// 
+		
 		public List<List<Time>> TimesDictionary
 		{
 			get

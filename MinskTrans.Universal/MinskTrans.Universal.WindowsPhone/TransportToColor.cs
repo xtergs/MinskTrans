@@ -13,12 +13,12 @@ namespace MinskTrans.Universal.Converters
 
 		public object Convert(object value, Type targetType, object parameter, string language)
 		{
-			Rout.TransportType type = (Rout.TransportType) value;
-			if (type == Rout.TransportType.Bus)
+			TransportType type = (TransportType) value;
+			if (type == TransportType.Bus)
 				return Application.Current.Resources["GreenSolidColorBrush"];
-			if (type == Rout.TransportType.Trol)
+			if (type == TransportType.Trol)
 				return Application.Current.Resources["BlueSolidColorBrush"];
-			if (type==Rout.TransportType.Tram)
+			if (type==TransportType.Tram)
 				return Application.Current.Resources["RedSolidColorBrush"];
 			return Application.Current.Resources["VioletSolidColorBrush"];
 		}

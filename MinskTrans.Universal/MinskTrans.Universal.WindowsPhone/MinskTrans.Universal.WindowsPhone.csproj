@@ -135,6 +135,9 @@
     <Compile Include="..\..\MinskTrans\Model\Rout.cs">
       <Link>Model\Rout.cs</Link>
     </Compile>
+    <Compile Include="..\..\MinskTrans\Model\RoutBase.cs">
+      <Link>Model\RoutBase.cs</Link>
+    </Compile>
     <Compile Include="..\..\MinskTrans\Model\RoutEx.cs">
       <Link>Model\RoutEx.cs</Link>
     </Compile>
@@ -146,6 +149,9 @@
     </Compile>
     <Compile Include="..\..\MinskTrans\Model\Stop.cs">
       <Link>Model\Stop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MinskTrans\Model\StopBase.cs">
+      <Link>Model\StopBase.cs</Link>
     </Compile>
     <Compile Include="..\..\MinskTrans\Model\StopEx.cs">
       <Link>Model\StopEx.cs</Link>
@@ -192,6 +198,7 @@
     <Compile Include="TextBoxDelete.cs" />
     <Compile Include="Themes\EmptyToVisibility.cs" />
     <Compile Include="TransportToColor.cs" />
+    <Compile Include="TransportToImageConverter.cs" />
     <Compile Include="UniversalContext.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -254,12 +261,12 @@
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\..\packages\MvvmLightLibs.5.1.1.0\lib\wpa81\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="MapControl.WinRT, Version=2.4.8.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\XAML.MapControl.2.4.8\lib\wpa81\MapControl.WinRT.dll</HintPath>
+    <Reference Include="MapControl.WinRT">
+      <HintPath>..\..\packages\XAML.MapControl.2.4.9\lib\wpa81\MapControl.WinRT.dll</HintPath>
     </Reference>
-    <Reference Include="SOMA_SDK">
-      <HintPath>.\SOMA_SDK.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

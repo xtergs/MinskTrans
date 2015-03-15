@@ -186,7 +186,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				if (Context.Times != null)
 				{
-					IEnumerable<Schedule> dd = Context.Times.Where(x => x.Rout != null && (x.Rout.Stops.Contains(FilteredSelectedStop)));
+					IEnumerable<Schedule> dd = Context.Times.Where(x => x!=null && x.Rout != null && (x.Rout.Stops.Contains(FilteredSelectedStop)));
 					IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
 					IEnumerable<KeyValuePair<Rout, int>> tt = new List<KeyValuePair<Rout, int>>();
 					//foreach (var schedule in dd)
@@ -213,11 +213,11 @@ namespace MinskTrans.DesctopClient.Modelview
 						IEnumerable<KeyValuePair<Rout, int>> temp =
 							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - settingsModelView.TimeInPast).Where(x =>
 							{
-								if (x.Key.Transport == Rout.TransportType.Bus)
+								if (x.Key.Transport == TransportType.Bus)
 									return Bus;
-								if (x.Key.Transport == Rout.TransportType.Trol)
+								if (x.Key.Transport == TransportType.Trol)
 									return Trol;
-								if (x.Key.Transport == Rout.TransportType.Tram)
+								if (x.Key.Transport == TransportType.Tram)
 									return Tram;
 								return true;
 							});

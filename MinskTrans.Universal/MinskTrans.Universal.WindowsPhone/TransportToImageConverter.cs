@@ -12,16 +12,17 @@ namespace MinskTrans.Universal.Converters
 
 		public object Convert(object value, Type targetType, object parameter, string language)
 		{
-			MinskTrans.DesctopClient.Rout.TransportType strValue = (MinskTrans.DesctopClient.Rout.TransportType)value;
+			
+			TransportType strValue = (MinskTrans.DesctopClient.TransportType)value;
 			switch (strValue)
 			{
-				case Rout.TransportType.Trol:
+				case TransportType.Trol:
 					return "Image/trol.jpg";
-				case Rout.TransportType.Bus:
+				case TransportType.Bus:
 					return "Image/bus.jpg";
-				case Rout.TransportType.Tram:
+				case TransportType.Tram:
 					return "Image/tram.jpg";
-				case Rout.TransportType.Metro:
+				case TransportType.Metro:
 					return "Image/subway.jpg";
 			}
 			return "";

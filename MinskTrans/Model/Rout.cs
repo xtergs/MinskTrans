@@ -11,25 +11,9 @@ namespace MinskTrans.DesctopClient
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
 #endif
-	public class Rout :BaseModel, IXmlSerializable
+	public class Rout : RoutBase, IXmlSerializable
 	{
-		public enum TransportType
-		{
-			None,
-			Trol,
-			Bus,
-			Tram,
-			Metro
-		}
-
-		static Dictionary<string, TransportType> transportTypeDictionary = new Dictionary<string, TransportType>()
-		{
-			{"", TransportType.None},
-			{"trol", TransportType.Trol},
-			{"bus", TransportType.Bus},
-			{"metro", TransportType.Metro},
-			{"tram", TransportType.Tram}
-		}; 
+		
 		
 		private string str = "";
 		private char sym = ';';
@@ -103,26 +87,19 @@ namespace MinskTrans.DesctopClient
 			Data = GetNext();
 			Datestart = GetNext();
 		}
-
-		public string RouteNum { get; set; }
-		public string Authority { get; set; }
-		public string City { get; set; }
-		public TransportType Transport { get; set; }
-		public string Operator { get; set; }
-		public string ValidityPeriods { get; set; }
-		public string SpecialDates { get; set; }
-		public string RoutTag { get; set; }
-		public string RoutType { get; set; }
-		public string Commercial { get; set; }
-		public string RouteName { get; set; }
-		public string Weekdays { get; set; }
-		public int RoutId { get; set; }
+		
 		public virtual Schedule Time { get; set; }
-		public string Entry { get; set; }
-		public List<int> RouteStops { get; set; }
-		public virtual List<Stop> Stops { get; set; }
-		public string Data { get; set; }
-		public string Datestart { get; set; }
+
+		public virtual List<Stop> Stops
+		{
+			get
+			{
+				if (stops == null)
+					stops = new List<Stop>();
+				return stops;
+			}
+			set { stops = value; }
+		}
 
 		#region Overrides of Object
 
@@ -138,6 +115,46 @@ namespace MinskTrans.DesctopClient
 		}
 
 		#endregion
+
+		protected string Sym = "";
+		protected string getIntStr = "";
+		protected int indexEnd = 0;
+		protected int indexStart = 0;
+		private List<Stop> stops;
+
+		protected virtual void Inicialize(string str, string sym)
+		{
+			getIntStr = str;
+			Sym = sym;
+			indexStart = 0;
+		}
+
+		protected int? GetInt()
+		{
+			string temp = GetStr();
+			if (temp == null)
+				return null;
+			return int.Parse(temp);
+		}
+
+		protected virtual string GetStr()
+		{
+			indexEnd = getIntStr.IndexOf(Sym, indexStart);
+			if (indexStart == indexEnd || indexStart < 0)
+				return null;
+			string temp;
+			if (indexEnd < 0)
+			{
+				temp = getIntStr.Substring(indexStart);
+				getIntStr = Sym;
+				indexStart = 0;
+				indexEnd = -1;
+			}
+			else
+				temp = getIntStr.Substring(indexStart, indexEnd - indexStart);
+			indexStart = indexEnd + 1;
+			return temp;
+		}
 
 		private void Inicialize(string str)
 		{

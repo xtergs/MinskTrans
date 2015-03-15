@@ -15,7 +15,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsToTimeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\RoutsToNumStrConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StopsToStr.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\TransportToImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\WeekdaysToStrConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expander\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OrientedSize.cs" />

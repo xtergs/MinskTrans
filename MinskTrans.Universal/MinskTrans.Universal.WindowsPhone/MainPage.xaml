@@ -1,4 +1,4 @@
-﻿<Page xmlns:SOMAWP81="using:SOMAWP81"  
+﻿<Page 
       xmlns:UI="using:Microsoft.Advertising.Mobile.UI" 
       xmlns:ExpaControl="using:ExpanderViewMaster.ExpaControl" 
       xmlns:Controls="using:NumberConverter.WinRTXamlToolkit.Controls"
@@ -1284,8 +1284,8 @@
                         <Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
                         <Button Content="Оставить отзыв" Click="ShowInStore" ></Button>
                         <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
-                        <Button Click="Test" ></Button>
-                        <SOMAWP81:SomaAdViewer_300x250 x:Name="AdViewer" Height="50" LocationUseOK="False" />
+                        <Button Click="Test" Visibility="Collapsed" ></Button>
+                        
                     </StackPanel>
                 </Border>
             </PivotItem>
@@ -1312,7 +1312,7 @@
 
 
 
-        <ProgressBar x:Name="ProgressBar"  IsEnabled="True" IsIndeterminate="True" Height="10" VerticalAlignment="Top"/>
+        <ProgressBar x:Name="ProgressBar"  IsEnabled="True" IsIndeterminate="True" Height="10" VerticalAlignment="Top" Visibility="Collapsed"/>
 
     </Grid>
 </Page>

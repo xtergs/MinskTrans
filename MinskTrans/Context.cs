@@ -26,6 +26,7 @@ using MinskTrans.Universal.Annotations;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Model;
+using Newtonsoft.Json;
 
 
 namespace MinskTrans.DesctopClient
@@ -41,6 +42,63 @@ namespace MinskTrans.DesctopClient
 			new KeyValuePair<string, string>("routes.txt", @"http://www.minsktrans.by/city/minsk/routes.txt"),
 			new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
 		};
+
+		public string TempExt
+		{
+			get { return ".temp"; }
+		}
+
+		public string OldExt { get { return ".old"; } }
+		public string NewExt { get { return ".new"; } }
+
+		public string GetTempFileName(string filename)
+		{
+			return filename + TempExt;
+		}
+
+		public string NameFileFavourite
+		{
+			get
+			{
+				if (String.IsNullOrWhiteSpace(nameFileFavourite))
+					nameFileFavourite = "data.dat";
+				return nameFileFavourite;
+			}
+			set { nameFileFavourite = value; }
+		}
+
+		public string NameFileRouts
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(nameFileRouts))
+					nameFileRouts = "dataRouts.dat";
+				return nameFileRouts;
+			}
+			set { nameFileRouts = value; }
+		}
+
+		public string NameFileStops
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(nameFileStops))
+					nameFileStops = "dataStops.dat";
+				return nameFileStops;
+			}
+			set { nameFileStops = value; }
+		}
+
+		public string NameFileTimes
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(nameFileTimes))
+					nameFileTimes = "dataTimes.dat";
+				return nameFileTimes;
+			}
+			set { nameFileTimes = value; }
+		}
 
 		private ObservableCollection<Rout> routs;
 		private ObservableCollection<Stop> stops;
@@ -145,7 +203,7 @@ namespace MinskTrans.DesctopClient
 			{
 				if (Equals(value, stops)) return;
 				stops = value;
-				actualStops = null;
+				//actualStops = null;
 				//ActualStops = new ObservableCollection<Stop>(value.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
 				OnPropertyChanged();
 				OnPropertyChanged("ActualStops");
@@ -156,15 +214,11 @@ namespace MinskTrans.DesctopClient
 		{
 			get
 			{
-				if ((actualStops == null || actualStops.Count == 0) && Stops != null)
-					actualStops =
-						new ObservableCollection<Stop>(Stops.Where(x => Routs != null && Routs.Any(d => d.Stops.Any(s => s.ID == x.ID))));
-				return actualStops;
+				return Stops;
 			}
 
 			private set
 			{
-				actualStops = value;
 				OnPropertyChanged();
 			}
 		}
@@ -221,15 +275,15 @@ namespace MinskTrans.DesctopClient
 #endif
 
 				//Parallel.ForEach(list, async keyValuePair =>
-				if (await FileExists(list[0].Key + ".new") && 
-					await FileExists(list[1].Key + ".new") && 
-					await FileExists(list[2].Key + ".new"))
+				if (await FileExists(list[0].Key + NewExt) && 
+					await FileExists(list[1].Key + NewExt) && 
+					await FileExists(list[2].Key + NewExt))
 					foreach (var keyValuePair in list)
 					{
 
-						await FileDelete(keyValuePair.Key + ".old");
-						await FileMove(keyValuePair.Key, keyValuePair.Key + ".old");
-						await FileMove(keyValuePair.Key + ".new", keyValuePair.Key);
+						await FileDelete(keyValuePair.Key + OldExt);
+						await FileMove(keyValuePair.Key, keyValuePair.Key + OldExt);
+						await FileMove(keyValuePair.Key + NewExt, keyValuePair.Key);
 
 					}
 
@@ -359,9 +413,24 @@ namespace MinskTrans.DesctopClient
 			//throw new NotImplementedException();
 
 			OnUpdateStarted();
-			await DownloadUpdate();
-			if (await HaveUpdate(list[0].Key + ".new", list[1].Key + ".new", list[2].Key + ".new", true))
+			try
+			{
+				await DownloadUpdate();
+			}
+			catch (TaskCanceledException e)
+			{
+				FileDelete(list[0].Key + NewExt);
+				FileDelete(list[1].Key + NewExt);
+				FileDelete(list[2].Key + NewExt);
+
+				OnErrorDownloading();
+				return;
+			}
+			if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
+			{
 				await ApplyUpdate();
+				Save();
+			}
 			OnUpdateEnded();
 		}
 
@@ -457,17 +526,21 @@ namespace MinskTrans.DesctopClient
 				FavouriteRoutsIds = new ObservableCollection<int>(document.Elements("FavouritRouts").Select(x => (int) x));
 				FavouriteStopsIds = new ObservableCollection<int>(document.Elements("FavouriteStops").Select(x => (int)x));
 
-				GroupsStopIds = new ObservableCollection<GroupStopId>(document.Element("Groups").Elements("Group").Select(XGroup =>
-				{
-					var groupid = new GroupStopId();
-					groupid.Name = (string)XGroup.Attribute("Name");
-					groupid.StopID =XGroup.Elements("ID").Select(id=>(int)id).ToList();
-					return groupid;
-				}));
+				var xGroups = document.Element("Groups");
+				if (xGroups != null)
+					GroupsStopIds = new ObservableCollection<GroupStopId>(xGroups.Elements("Group").Select(XGroup =>
+					{
+						var groupid = new GroupStopId();
+						groupid.Name = (string) XGroup.Attribute("Name");
+						groupid.StopID = XGroup.Elements("ID").Select(id => (int) id).ToList();
+						return groupid;
+					}));
+				else
+					GroupsStopIds = new ObservableCollection<GroupStopId>();
 			}
 			catch (Exception e)
 			{
-
+				Debug.WriteLine("Context.ReadXml: " + e.Message);
 				return;
 			}
 
@@ -632,6 +705,10 @@ namespace MinskTrans.DesctopClient
 
 		private bool updating = false;
 		private ObservableCollection<Stop> actualStops;
+		private string nameFileFavourite;
+		private string nameFileRouts;
+		private string nameFileStops;
+		private string nameFileTimes;
 
 		public RelayCommand UpdateDataCommand
 		{

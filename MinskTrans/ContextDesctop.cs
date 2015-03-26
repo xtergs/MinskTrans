@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
-using MinskTrans.Library;
+
 using MinskTrans.Universal.Model;
 
 namespace MinskTrans.DesctopClient
@@ -43,7 +43,7 @@ namespace MinskTrans.DesctopClient
 		}
 		#region Overrides of Context
 
-		public override void Save()
+		public async override Task Save()
 		{
 			//throw new NotImplementedException();
 			var groupsId = Groups.Select(groupStop => new GroupStopId(groupStop)).ToList();
@@ -71,7 +71,7 @@ namespace MinskTrans.DesctopClient
 			return Task<bool>.Run(()=>File.Exists(file));
 		}
 
-		protected override void FileDelete(string file)
+		protected async override Task FileDelete(string file)
 		{
 			if (File.Exists(file))
 				File.Delete(file);
@@ -130,7 +130,7 @@ namespace MinskTrans.DesctopClient
 				return true;
 			});
 		}
-		protected override void FileMove(string oldFile, string newFile)
+		protected async override Task FileMove(string oldFile, string newFile)
 		{
 			if (File.Exists(oldFile) && !File.Exists(newFile))
 				File.Move(oldFile, newFile);

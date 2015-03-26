@@ -72,7 +72,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				if (StopNameFilter != null)
+				if (StopNameFilter != null && Context.ActualStops != null)
 				{
 					var tempSt = StopNameFilter.ToLower();
 					var temp = Context.ActualStops.AsParallel().Where(

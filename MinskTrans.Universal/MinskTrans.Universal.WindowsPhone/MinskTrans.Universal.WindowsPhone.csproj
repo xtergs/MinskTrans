@@ -262,7 +262,7 @@
       <HintPath>..\..\packages\MvvmLightLibs.5.1.1.0\lib\wpa81\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
     <Reference Include="MapControl.WinRT">
-      <HintPath>..\..\packages\XAML.MapControl.2.4.9\lib\wpa81\MapControl.WinRT.dll</HintPath>
+      <HintPath>..\..\packages\XAML.MapControl.2.4.10\lib\wpa81\MapControl.WinRT.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

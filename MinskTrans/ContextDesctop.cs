@@ -105,9 +105,9 @@ namespace MinskTrans.DesctopClient
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
 #endif
-				newStops = ShedulerParser.ParsStops(await FileReadAllText(fileStops));
-				newRoutes = ShedulerParser.ParsRout(await FileReadAllText(fileRouts));
-				newSchedule = ShedulerParser.ParsTime(await FileReadAllText(fileTimes));
+				newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await FileReadAllText(fileStops)));
+				newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await FileReadAllText(fileRouts)));
+				newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await FileReadAllText(fileTimes)));
 #if DEBUG
 				watch.Stop();
 #endif
@@ -151,9 +151,9 @@ namespace MinskTrans.DesctopClient
 				using (var client = new WebClient())
 				{
 					//Task.WhenAll(
-					client.DownloadFile(list[0].Value, list[0].Key + ".new");
-					client.DownloadFile(list[1].Value, list[1].Key + ".new");
-					client.DownloadFile(list[2].Value, list[2].Key + ".new");
+					client.DownloadFile(list[0].Value, list[0].Key + NewExt);
+					client.DownloadFile(list[1].Value, list[1].Key + NewExt);
+					client.DownloadFile(list[2].Value, list[2].Key + NewExt);
 					//);
 				}
 				OnDataBaseDownloadEnded();

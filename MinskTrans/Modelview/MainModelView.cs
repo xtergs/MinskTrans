@@ -4,6 +4,7 @@
 
 using System.Linq;
 using GalaSoft.MvvmLight;
+using MapControl;
 using MinskTrans.DesctopClient.ModelView;
 
 
@@ -18,6 +19,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private readonly StopModelView stopMovelView;
 		private readonly FavouriteModelView favouriteModelView;
 		private readonly FindModelView findModelView;
+		private readonly MapModelView mapModelView;
 
 
 		public MainModelView(Context newContext)
@@ -33,6 +35,20 @@ namespace MinskTrans.DesctopClient.Modelview
 			if (IsInDesignMode)
 			{
 				StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));
+			}
+		}
+
+		public MainModelView(Context newContext, Map map)
+			:this(newContext)
+		{
+			mapModelView = new MapModelView(newContext, map);
+		}
+
+		public MapModelView MapModelView
+		{
+			get
+			{
+				return mapModelView;
 			}
 		}
 

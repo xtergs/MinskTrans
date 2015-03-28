@@ -55,6 +55,7 @@
             <Setter Property="Padding" Value="3" />
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Background" Value="White" />
+           
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type mapControl:Pushpin}">
@@ -95,6 +96,7 @@
                                             <ColorAnimation Storyboard.TargetName="SolidColorBrush1"
                                                             Storyboard.TargetProperty="Color"
                                                             To="Aqua"
+                                                              
                                                             Duration="0:0:0:1" />
 
 
@@ -117,6 +119,45 @@
                                 </MultiTrigger.ExitActions>
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PushpinStyleSelected" TargetType="{x:Type mapControl:Pushpin}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Background" Value="Red" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type mapControl:Pushpin}">
+                        <Grid x:Name="MainGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Rectangle x:Name="Rectangle">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush x:Name="SolidColorBrush" Color="Red" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Path x:Name="Path" Data="M0,-0.5L0,16 16,-0.5" Grid.Row="1">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="SolidColorBrush1" Color="Red" />
+                                </Path.Fill>
+                            </Path>
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                       
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -204,6 +245,7 @@
                                      Margin="5,0" GroupName="Type" />
                         <RadioButton x:Name="TramButton" Command="{Binding ShowTramCommand}" Content="Tram"
                                      Margin="5,0" GroupName="Type" />
+                        
 
                         <CheckBox Content="Actual"
                                   Visibility="Collapsed"
@@ -373,7 +415,15 @@
                     <DockPanel Grid.Column="1">
                         <TextBlock DockPanel.Dock="Top"
                                    Text="{Binding FilteredSelectedStop.Name,  UpdateSourceTrigger=PropertyChanged}" />
-                        <ListView Grid.Column="1"
+                        <Grid DockPanel.Dock="Bottom" VerticalAlignment="Bottom" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Destination:" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding DestinationStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                        </Grid>
+                        <ListView Grid.Column="1" DockPanel.Dock="Bottom"
                                   ItemsSource="{Binding TimeSchedule, UpdateSourceTrigger=PropertyChanged}"
                                     ItemTemplate="{StaticResource DataTemplate1}" >
                             <ListView.ItemContainerStyle>
@@ -410,6 +460,7 @@
                                     Binding="{Binding Value, ConverterParameter=Value, Converter={StaticResource MinsLeftConverter}, Mode=OneWay}" />
                             </DataGrid.Columns>-->
                         </ListView>
+                        
                     </DockPanel>
                     <DockPanel Grid.Column="2">
                         <TextBox DockPanel.Dock="Top"
@@ -535,12 +586,14 @@
 
                 </Grid>
             </TabItem>
-            <TabItem x:Name="mapTabItem" Header="Map">
+            <TabItem x:Name="mapTabItem" Header="Map" DataContext="{Binding MapModelView}">
                 <Grid x:Name="MapGrid"
                       VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <WrapPanel>
                         <CheckBox Content="Bus" Visibility="Collapsed" />
@@ -550,10 +603,22 @@
                     <mapControl:Map Grid.Row="1" x:Name="map" ZoomLevel="7" Margin="0"
                                     ViewportChanged="map_ViewportChanged">
                         <mapControl:Map.Center>
-                            <mapControl:Location Longitude="27" Latitude="53" />
+                            <mapControl:Location Longitude="53" Latitude="27" />
                         </mapControl:Map.Center>
 
                     </mapControl:Map>
+                    <WrapPanel Grid.Row="2">
+                        <TextBlock Text="Start stop: "/>
+                        <TextBox Text="{Binding StartStop.Name, UpdateSourceTrigger=PropertyChanged }" IsReadOnly="True"/>
+                        <Button Content="&lt;-&gt;" Command="{Binding SwitchStopsCommand}"/>
+                        <TextBlock Text="End stop: "/>
+                        <TextBox Text="{Binding EndStop.Name, UpdateSourceTrigger=PropertyChanged }" IsReadOnly="True"/>
+                        <Button Content="Calculate" Command="{Binding CalculateRoutCommand}"/>
+                    </WrapPanel>
+                    <DockPanel Grid.Row="3">
+                        <TextBlock Text="Result: "/>
+                        <TextBox Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}"/>
+                    </DockPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Map1">
@@ -658,7 +723,8 @@
                     </Grid>
                 </DockPanel>
             </TabItem>
-            <Button Content="Button" Height="100" Width="75" Click="Button_Click_7"/>
+            <Button Content="Button" Height="100" Width="75" Click="Button_Click_8"/>
+            <Button Content="Button" Height="100" Width="75" Click="Button_Click_8"/>
 
         </TabControl>
         <StatusBar Grid.Row="2"

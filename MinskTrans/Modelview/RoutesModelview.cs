@@ -32,7 +32,7 @@ using GalaSoft.MvvmLight.Command;
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
-		private TransportType typeTransport;
+		private TransportType typeTransport = TransportType.Bus;
 
 		//public RoutesModelview()
 		//{
@@ -50,7 +50,7 @@ using GalaSoft.MvvmLight.Command;
 			get
 			{
 				//if (String.IsNullOrWhiteSpace(typeTransport))
-					if (Context.Routs != null && Context.Routs.Count > 0) 
+					if (typeTransport == TransportType.None && Context.Routs != null && Context.Routs.Count > 0) 
 						TypeTransport = Context.Routs[0].Transport;
 				return typeTransport;
 			}
@@ -71,7 +71,7 @@ using GalaSoft.MvvmLight.Command;
 			{
 				if (Context.Routs != null)
 				{
-					IEnumerable<string> temp = Context.Routs.Select(x => x.RouteNum).Distinct();
+					IEnumerable<string> temp = Context.Routs.Where(rout=> rout.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
 					if (RoutNum != null)
 						temp = temp.Where(x => x.Contains(routNum));
 					if (temp.Any())
@@ -104,7 +104,7 @@ using GalaSoft.MvvmLight.Command;
 			{
 				if (Context.Routs != null)
 					routeObservableCollection =
-						new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue));
+						new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue && x.Transport == TypeTransport));
 				return routeObservableCollection;
 			}
 		}

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using System.Windows.Threading;
 using MinskTrans.DesctopClient.Modelview;
 
@@ -63,7 +66,34 @@ namespace MinskTrans.DesctopClient
 
 		public MainWindow()
 		{
-			ShedulerModelView = new MainModelView(new ContextDesctop());
+			InitializeComponent();
+			//TileImageLoader.Cache = new FileDbCache("map", "cache");
+			MapModelView.StylePushpin = (Style)Resources["PushpinStyle1"];
+			ShedulerModelView = new MainModelView(new ContextDesctop(), map);
+
+			//Map model view events
+			ShedulerModelView.MapModelView.StartStopSeted += (sender, args) => ShedulerModelView.MapModelView.StartStopPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+			ShedulerModelView.MapModelView.EndStopSeted += (sender, args) => ShedulerModelView.MapModelView.EndStopPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+			ShedulerModelView.MapModelView.MapInicialized += (sender, args) =>
+			{
+				foreach (var pushpin in ShedulerModelView.MapModelView.Pushpins)
+				{
+					pushpin.MouseLeftButtonDown += (o, argsr) =>
+					{
+						Pushpin tempPushpin = (Pushpin) o;
+						Stop tmStop = (Stop) tempPushpin.Tag;
+						ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
+						stopTabItem.Focus();
+					};
+					//pushpin.MouseRightButtonDown += (o, eventArgs) =>
+					//{
+					//	Pushpin tempPushpin = (Pushpin)o;
+					//	tempPushpin.ContextMenu.IsOpen = true;
+					//	currentPushpin = (Pushpin)o;
+					//};
+				}
+			};
+
 			//BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
 			DispatcherTimer tm = new DispatcherTimer();
 			tm.Interval = new TimeSpan(0, 0, 1);
@@ -83,7 +113,6 @@ namespace MinskTrans.DesctopClient
 			checkUpdateTimer.Interval = 1000*60*60;
 			checkUpdateTimer.Enabled = true;
 			checkUpdateTimer.Start();
-			InitializeComponent();
 			ShedulerModelView.RoutesModelview.ShowRoute += OnShowRoute;
 			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
 			ShedulerModelView.StopMovelView.ShowStop += OnShowStop;
@@ -100,38 +129,7 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
 			//var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
-			ShedulerModelView.Context.UpdateEnded += (sender, args) =>
-			{
-				map.Center = new Location(53, 27);
-				pushpins = new List<Pushpin>();
-				if (ShedulerModelView.Context.ActualStops != null)
-					foreach (var st in ShedulerModelView.Context.ActualStops)
-					{
-						var pushpin = new Pushpin();
-						pushpin.Tag = st;
-						pushpin.Style = (Style) Resources["PushpinStyle1"];
-						//pushpin.templ
-						pushpin.Content = st.ID;
-						pushpin.MouseMove += (senderr, argsr) =>
-						{
-							((Pushpin) senderr).BringToFront();
-						};
-						pushpin.MouseDown += (o, argsr) =>
-						{
-							Pushpin tempPushpin = (Pushpin) o;
-							Stop tmStop = (Stop) tempPushpin.Tag;
-							ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
-							stopTabItem.Focus();
-						};
-						MapPanel.SetLocation(pushpin, new Location(st.Lat, st.Lng));
-						pushpins.Add(pushpin);
-						map.Children.Add(pushpin);
-
-					}
-				//map.
-				//MapControl.Caching.ImageFileCache
-				map.ZoomLevel = 19;
-			};
+			
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");
 			
 			
@@ -146,30 +144,18 @@ namespace MinskTrans.DesctopClient
 			//ShedulerModelView.Context.Load();
 		}
 
+		Pushpin currentPushpin { get; set; }
+
 		private void OnShowStop(object sender, ShowArgs args)
 		{
-			pushpinsAll = true;
 			mapTabItem.Focus();
-			var temp = args.SelectedStop;
-			map.Center = new Location(temp.Lat, temp.Lng);
-			map.ZoomLevel = 19;
+			ShedulerModelView.MapModelView.ShowStopCommand.Execute(args.SelectedStop);
 		}
 
 		private void OnShowRoute(object sender, ShowArgs args)
 		{
-			pushpinsAll = false;
 			mapTabItem.Focus();
-			foreach (var child in pushpins)
-			{
-				child.Visibility = Visibility.Collapsed;
-			}
-			var tempRoute = args.SelectedRoute;
-			foreach (var child in pushpins.Where(x=>tempRoute.Stops.Contains((Stop)x.Tag)))
-			{
-				child.Visibility = Visibility.Visible;
-			}
-			map.Center = new Location(tempRoute.Stops[0].Lat, tempRoute.Stops[0].Lng);
-			map.ZoomLevel = 15;
+			ShedulerModelView.MapModelView.ShowRoutCommand.Execute(args.SelectedRoute);
 		}
 
 		private MainModelView ShedulerModelView { get; set; }
@@ -253,16 +239,6 @@ namespace MinskTrans.DesctopClient
 			timerr.Dispose();
 		}
 
-		private void Button_Click_2(object sender, RoutedEventArgs e)
-		{
-			
-		}
-
-		private void Button_Click_3(object sender, RoutedEventArgs e)
-		{
-			
-		}
-
 		private void routeFilterTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
 		{
 			routeNumsListView.SelectedIndex = 0;
@@ -302,35 +278,13 @@ namespace MinskTrans.DesctopClient
 			BusButton.IsChecked = false;
 		}
 
-		private bool pushpinsAll = true;
 		private bool isShowBusStops;
 		private bool isShowTrolStops;
 		private bool isShowTramStops;
 
-		public void RefreshPushPins()
-		{
-			if (pushpins == null)
-				return;
-			if (pushpinsAll)
-				foreach (var child in pushpins)
-				{
-					if (map.ZoomLevel <= 13)
-					{
-						child.Visibility = Visibility.Collapsed;
-					}
-					else
-					{
-						child.Visibility = Visibility.Visible;
-					}
-
-
-
-				}
-		}
-
 		private void map_ViewportChanged(object sender, EventArgs e)
 		{
-			RefreshPushPins();
+			//RefreshPushPins();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -382,6 +336,32 @@ namespace MinskTrans.DesctopClient
 			CalculateRout calculate = new CalculateRout(ShedulerModelView.Context);
 			calculate.CreateGraph();
 			calculate.FindPath(ShedulerModelView.Context.ActualStops.First(x => x.ID == 15757), ShedulerModelView.Context.ActualStops.First(x => x.ID == 15754));
+		}
+
+		public Stop StartStop { get; set; }
+		public Stop EndStop { get; set; }
+	
+
+		private void ContextClickStartStop(object sender, RoutedEventArgs e)
+		{
+			//Pushpin curPopup = (Pushpin)((ContextMenu)((MenuItem)sender).Parent).Parent;
+			StartStop = (Stop) currentPushpin.Tag;
+			currentPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+		}
+
+		private void ContextClickEndStop(object sender, RoutedEventArgs e)
+		{
+			//Pushpin curPopup = (Pushpin)((ContextMenu)((MenuItem)sender).Parent).Parent;
+			EndStop = (Stop)currentPushpin.Tag;
+			currentPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+		}
+
+		private void Button_Click_8(object sender, RoutedEventArgs e)
+		{
+			CalculateRout calculaterout = new CalculateRout(ShedulerModelView.Context);
+			calculaterout.CreateGraph();
+			calculaterout.FindPath(ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15757),
+				ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15628));
 		}
 	}
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 
 namespace MinskTrans.DesctopClient
 {
@@ -40,13 +42,33 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public void FindPath(Stop start, Stop destin)
+		public Stack<KeyValuePair<Rout, IEnumerable<Stop>>> resultRout;
+
+		public bool FindPath(Stop start, Stop destin)
 		{
 			var startNode = meshGraphs.First(x => x.Stop.ID == start.ID);
 			var endNode = meshGraphs.First(x => x.Stop.ID == destin.ID);
-
+			ResultStopList = new Stack<NodeGraph>();
 			var result = Findpath(startNode, endNode);
+			var listStop = ResultStopList.Select(node=> node.Stop).ToList();
+			Stop startStop = listStop.First();
+			resultRout = new Stack<KeyValuePair<Rout, IEnumerable<Stop>>>();
+			foreach (var rout in context.Routs)
+			{
+				if (rout.Stops.Any(stop => stop.ID == startStop.ID))
+				{
+					var intersects = rout.Stops.Intersect(listStop).ToList();
+					if (intersects.Count > 2)
+					{
+						startStop = intersects.Last();
+						resultRout.Push(new KeyValuePair<Rout, IEnumerable<Stop>>(rout, intersects));
+					}
+				}
+			}
+			return result;
 		}
+
+		private Stack<NodeGraph> ResultStopList;  
 
 		bool Findpath(NodeGraph start, NodeGraph end)
 		{
@@ -56,17 +78,23 @@ namespace MinskTrans.DesctopClient
 			{
 				if (!connectedStop.Black)
 					if (connectedStop != end)
-						stack.Push(connectedStop);
+					{
+						connectedStop.Black = true;
+						if (Findpath(connectedStop, end))
+						{
+							ResultStopList.Push(connectedStop);
+							return true;
+						}
+					}
 					else
 					{
+						ResultStopList.Push(connectedStop);
 						return true;
 					}
 			}
-			foreach (var nodeGraph in stack)
-			{
-				if (Findpath(nodeGraph, end))
-					return true;
-			}
+			
+			if (ResultStopList.Any())
+				ResultStopList.Pop();
 			return false;
 		}
 	}

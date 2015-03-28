@@ -28,6 +28,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private int nowTimeMin;
 		private bool tram;
 		private bool trol;
+		private string destinationStop;
 
 		//public StopModelView()
 		//	: this(null)
@@ -52,7 +53,23 @@ namespace MinskTrans.DesctopClient.Modelview
 		get { return settingsModelView; }
 	}
 
-		
+		public string DestinationStop
+		{
+			get
+			{
+				if (destinationStop == null)
+					destinationStop = "";
+				return destinationStop;
+			}
+			set
+			{
+				destinationStop = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+
 		public bool AutoDay
 		{
 			get { return autoDay; }
@@ -186,7 +203,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				if (Context.Times != null)
 				{
-					IEnumerable<Schedule> dd = Context.Times.Where(x => x!=null && x.Rout != null && (x.Rout.Stops.Contains(FilteredSelectedStop)));
+					IEnumerable<Schedule> dd = Context.Times.Where(time => time != null && time.Rout != null && (time.Rout.Stops.Contains(FilteredSelectedStop) &&
+						time.Rout.Stops.Any(stop=> stop.SearchName.Contains(DestinationStop.Trim().ToLower()))));
 					IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
 					IEnumerable<KeyValuePair<Rout, int>> tt = new List<KeyValuePair<Rout, int>>();
 					//foreach (var schedule in dd)

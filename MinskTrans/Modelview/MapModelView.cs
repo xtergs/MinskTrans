@@ -2,18 +2,25 @@
 
 
 
+using System.Windows.Controls;
+using RelayCommand = GalaSoft.MvvmLight.CommandWpf.RelayCommand;
 using System.Text;
 using System.ComponentModel;
 using System;
-using MinskTrans.DesctopClient.Properties;
 using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Windows.Controls;
 using MapControl;
+using MinskTrans.Universal;
+using GalaSoft.MvvmLight.CommandWpf;
+
+
 #if (WINDOWS_PHONE_APP )
+using Windows.UI.Xaml;
+using MinskTrans.DesctopClient.Properties;
+using System.Windows.Controls;
 
 #else
 using System.Windows;

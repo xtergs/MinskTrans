@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,19 +62,21 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		private TimeSpan secs = new TimeSpan(0,1,0,0,0);
+		private TimeSpan secs = new TimeSpan(0, 1, 0, 0, 0);
 		private System.Timers.Timer checkUpdateTimer;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
-			MapModelView.StylePushpin = (Style)Resources["PushpinStyle1"];
+			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
 			ShedulerModelView = new MainModelView(new ContextDesctop(), map);
 
 			//Map model view events
-			ShedulerModelView.MapModelView.StartStopSeted += (sender, args) => ShedulerModelView.MapModelView.StartStopPushpin.Style = (Style)Resources["PushpinStyleSelected"];
-			ShedulerModelView.MapModelView.EndStopSeted += (sender, args) => ShedulerModelView.MapModelView.EndStopPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+			ShedulerModelView.MapModelView.StartStopSeted +=
+				(sender, args) => ShedulerModelView.MapModelView.StartStopPushpin.Style = (Style) Resources["PushpinStyleSelected"];
+			ShedulerModelView.MapModelView.EndStopSeted +=
+				(sender, args) => ShedulerModelView.MapModelView.EndStopPushpin.Style = (Style) Resources["PushpinStyleSelected"];
 			ShedulerModelView.MapModelView.MapInicialized += (sender, args) =>
 			{
 				foreach (var pushpin in ShedulerModelView.MapModelView.Pushpins)
@@ -117,7 +120,7 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
 			ShedulerModelView.StopMovelView.ShowStop += OnShowStop;
 
-			ShedulerModelView.Context.DataBaseDownloadStarted += (sender, args) => statusMessages.Dispatcher.Invoke(()=>
+			ShedulerModelView.Context.DataBaseDownloadStarted += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
 			{
 				statusMessages.Content = "Data had started downloading";
 			});
@@ -129,13 +132,13 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
 			//var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
-			
+
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");
-			
-			
+
+
 			DataContext = ShedulerModelView;
 			//timer = new Timer((x)=>{});
-			
+
 			timerr = new System.Timers.Timer(10000);
 			timerr.Elapsed += (sender, args) => ShedulerModelView.StopMovelView.RefreshTimeSchedule.Execute(null);
 			timerr.Start();
@@ -144,7 +147,7 @@ namespace MinskTrans.DesctopClient
 			//ShedulerModelView.Context.Load();
 		}
 
-		Pushpin currentPushpin { get; set; }
+		private Pushpin currentPushpin { get; set; }
 
 		private void OnShowStop(object sender, ShowArgs args)
 		{
@@ -315,7 +318,9 @@ namespace MinskTrans.DesctopClient
 			var result = window.ShowDialog();
 			if (result.Value)
 			{
-				if (ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
+				if (
+					ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(
+						ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
 					if (ShedulerModelView.GroupStopsModelView.AddGroup.CanExecute(window.Group))
 					{
 						ShedulerModelView.GroupStopsModelView.RemoveGorup.Execute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop);
@@ -327,7 +332,8 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_6(object sender, RoutedEventArgs e)
 		{
-			if (ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
+			if (
+				ShedulerModelView.GroupStopsModelView.RemoveGorup.CanExecute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop))
 				ShedulerModelView.GroupStopsModelView.RemoveGorup.Execute(ShedulerModelView.GroupStopsModelView.SelectedGroupStop);
 		}
 
@@ -335,25 +341,26 @@ namespace MinskTrans.DesctopClient
 		{
 			CalculateRout calculate = new CalculateRout(ShedulerModelView.Context);
 			calculate.CreateGraph();
-			calculate.FindPath(ShedulerModelView.Context.ActualStops.First(x => x.ID == 15757), ShedulerModelView.Context.ActualStops.First(x => x.ID == 15754));
+			calculate.FindPath(ShedulerModelView.Context.ActualStops.First(x => x.ID == 15757),
+				ShedulerModelView.Context.ActualStops.First(x => x.ID == 15754));
 		}
 
 		public Stop StartStop { get; set; }
 		public Stop EndStop { get; set; }
-	
+
 
 		private void ContextClickStartStop(object sender, RoutedEventArgs e)
 		{
 			//Pushpin curPopup = (Pushpin)((ContextMenu)((MenuItem)sender).Parent).Parent;
 			StartStop = (Stop) currentPushpin.Tag;
-			currentPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+			currentPushpin.Style = (Style) Resources["PushpinStyleSelected"];
 		}
 
 		private void ContextClickEndStop(object sender, RoutedEventArgs e)
 		{
 			//Pushpin curPopup = (Pushpin)((ContextMenu)((MenuItem)sender).Parent).Parent;
-			EndStop = (Stop)currentPushpin.Tag;
-			currentPushpin.Style = (Style)Resources["PushpinStyleSelected"];
+			EndStop = (Stop) currentPushpin.Tag;
+			currentPushpin.Style = (Style) Resources["PushpinStyleSelected"];
 		}
 
 		private void Button_Click_8(object sender, RoutedEventArgs e)
@@ -362,6 +369,35 @@ namespace MinskTrans.DesctopClient
 			calculaterout.CreateGraph();
 			calculaterout.FindPath(ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15757),
 				ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15628));
+		}
+
+		private void Button_Click_2(object sender, RoutedEventArgs e)
+		{
+			CalculateRout calculator = new CalculateRout(ShedulerModelView.Context);
+			string ResultString;
+			calculator.CreateGraph();
+			if (!calculator.FindPath(StartStop, EndStop))
+				ResultString = "Bad";
+			else
+			{
+				StringBuilder builder = new StringBuilder();
+				foreach (var keyValuePair in calculator.resultRout)
+				{
+					builder.Append(keyValuePair.Key.Transport);
+					builder.Append(" ");
+					builder.Append(keyValuePair.Key);
+					builder.Append('\n');
+					foreach (var stop in keyValuePair.Value)
+					{
+						builder.Append(stop.Name);
+						builder.Append(", ");
+					}
+					builder.Append("\n\n");
+
+				}
+				ResultString = builder.ToString();
+			}
+			ResulTextBox.Text = ResultString;
 		}
 	}
 }

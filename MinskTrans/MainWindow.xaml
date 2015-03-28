@@ -613,11 +613,11 @@
                         <Button Content="&lt;-&gt;" Command="{Binding SwitchStopsCommand}"/>
                         <TextBlock Text="End stop: "/>
                         <TextBox Text="{Binding EndStop.Name, UpdateSourceTrigger=PropertyChanged }" IsReadOnly="True"/>
-                        <Button Content="Calculate" Command="{Binding CalculateRoutCommand}"/>
+                        <Button Content="Calculate" Click="Button_Click_2"/>
                     </WrapPanel>
                     <DockPanel Grid.Row="3">
-                        <TextBlock Text="Result: "/>
-                        <TextBox Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Result: " DockPanel.Dock="Top"/>
+                        <TextBox DockPanel.Dock="Top" x:Name="ResulTextBox" Text=""/>
                     </DockPanel>
                 </Grid>
             </TabItem>

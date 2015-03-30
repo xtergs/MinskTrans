@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
 
 using MinskTrans.Universal.Model;
+using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient
 {
@@ -45,24 +46,41 @@ namespace MinskTrans.DesctopClient
 
 		public async override Task Save()
 		{
-			//throw new NotImplementedException();
-			var groupsId = Groups.Select(groupStop => new GroupStopId(groupStop)).ToList();
-			BinaryFormatter serializer = new BinaryFormatter();
-			var streamWriter = new FileStream("data.dat", FileMode.Create, FileAccess.Write);
 			try
 			{
-				serializer.Serialize(streamWriter, LastUpdateDataDateTime);
-				serializer.Serialize(streamWriter, Stops);
-				serializer.Serialize(streamWriter, Routs);
-				serializer.Serialize(streamWriter, Times);
-				serializer.Serialize(streamWriter, groupsId);
-				serializer.Serialize(streamWriter, FavouriteRouts);
-				serializer.Serialize(streamWriter, FavouriteStops);
+				using (var stream = File.Open(NameFileFavourite + TempExt, FileMode.Create))
+				{
+					using (var writer = XmlWriter.Create(stream))
+					{
+						WriteXml(writer);
+					}
+				}
+				File.Move(NameFileFavourite + TempExt, NameFileFavourite);
 
+				var jsonSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+
+				await Task.WhenAll(Task.Run(async () =>
+				{
+					string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
+					File.WriteAllText(NameFileRouts + TempExt, routs);
+					File.Move(NameFileRouts + TempExt, NameFileRouts);
+				}),
+					Task.Run(async () =>
+					{
+						string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
+						File.WriteAllText(NameFileStops + TempExt, routs);
+						File.Move(NameFileStops + TempExt, NameFileStops);
+
+					}), Task.Run(async () =>
+					{
+						string routs = JsonConvert.SerializeObject(Times, jsonSettings);
+						File.WriteAllText(NameFileTimes + TempExt, routs);
+						File.Move(NameFileTimes + TempExt, NameFileTimes);
+					}));
 			}
-			finally
+			catch (Exception e)
 			{
-				streamWriter.Close();
+				throw new Exception(e.Message, e);
 			}
 		}
 
@@ -97,38 +115,56 @@ namespace MinskTrans.DesctopClient
 
 		async public override Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate)
 		{
-			return await Task.Run(async () =>
+			OnLogMessage("Have update started");
+			try
 			{
-				if (!File.Exists(fileStops) || !File.Exists(fileRouts) || !File.Exists(fileTimes))
-					return false;
-#if DEBUG
-				Stopwatch watch = new Stopwatch();
-				watch.Start();
-#endif
-				newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await FileReadAllText(fileStops)));
-				newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await FileReadAllText(fileRouts)));
-				newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await FileReadAllText(fileTimes)));
-#if DEBUG
-				watch.Stop();
-#endif
-				if (checkUpdate)
+				//#if DEBUG
+
+				await Task.WhenAll(Task.Run(async () =>
 				{
-					if (Stops == null || Routs == null || Times == null)
-						return true;
-
-					if (newStops.Count == Stops.Count && newRoutes.Count == Routs.Count && newSchedule.Count == Times.Count)
-						return false;
-
-					foreach (var newRoute in newRoutes)
+					newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await FileReadAllText(fileStops)));
+				}),
+					Task.Run(async () =>
 					{
-						if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart == newRoute.Datestart))
-							return false;
-					}
+						newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await FileReadAllText(fileRouts)));
 
+					}),
+					Task.Run(async () =>
+					{
+						newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await FileReadAllText(fileTimes)));
+
+					}));
+				Debug.WriteLine("All threads ended");
+				//OnLogMessage("All threads ended");
+			}
+			catch (FileNotFoundException e)
+			{
+				OnLogMessage(e.Message);
+				return false;
+			}
+			catch (Exception e)
+			{
+				OnLogMessage(e.Message);
+				return false;
+			}
+			if (checkUpdate)
+			{
+				if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
+					return true;
+
+				if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+					return true;
+
+				foreach (var newRoute in newRoutes)
+				{
+					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart != newRoute.Datestart))
+						return true;
 				}
+			}
 
-				return true;
-			});
+
+			OnLogMessage("don't have update true");
+			return false;
 		}
 		protected async override Task FileMove(string oldFile, string newFile)
 		{
@@ -165,53 +201,123 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public override Task Load()
+		public async override Task Load()
 		{
-			//throw new NotImplementedException();
-			return Task.Run(() =>
+			OnLoadStarted();
+
+			try
 			{
-				BinaryFormatter serializer = new BinaryFormatter();
-				var streamWriter = new FileStream("data.dat", FileMode.Open, FileAccess.Read);
-				try
-				{
-					var tempDateTime = (DateTime) serializer.Deserialize(streamWriter);
-					var tempStops = (ObservableCollection<Stop>) serializer.Deserialize(streamWriter);
-					var tempRouts = (ObservableCollection<Rout>) serializer.Deserialize(streamWriter);
-					var tempTimes = (ObservableCollection<Schedule>) serializer.Deserialize(streamWriter);
-					var tempGroup = (List<GroupStopId>) serializer.Deserialize(streamWriter);
-					FavouriteRouts = (ObservableCollection<RoutWithDestinations>) serializer.Deserialize(streamWriter);
-					FavouriteStops = (ObservableCollection<Stop>) serializer.Deserialize(streamWriter);
-
-
-					LastUpdateDataDateTime = tempDateTime;
-					Stops = tempStops;
-					Routs = tempRouts;
-					Times = tempTimes;
-
-					tempStops = null;
-					tempRouts = null;
-					tempTimes = null;
-
-					//Connect(Routs, Stops);
-
-					Groups = new ObservableCollection<GroupStop>();
-					foreach (var groupStopId in tempGroup)
+				await Task.WhenAll(
+					Task.Run(async () =>
 					{
-						var newGroupStop = new GroupStop();
-						newGroupStop.Name = groupStopId.Name;
-						newGroupStop.Stops = new ObservableCollection<Stop>();
-						foreach (var i in groupStopId.StopID)
+						try
 						{
-							newGroupStop.Stops.Add(Stops.First(x => x.ID == i));
+							var routs = File.ReadAllText(NameFileRouts);
+							Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					}),
+					Task.Run(async () =>
+					{
+						try
+						{
+							var stops = File.ReadAllText(NameFileStops);
+							Stops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					}),
+					Task.Run(async () =>
+					{
+						try
+						{
+
+							//var timesFile = await storage.GetFileAsync(NameFileTimes);
+							var times = File.ReadAllText(NameFileTimes);
+
+							Times = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					})
+					);
+				await Task.Run(async () =>
+				{
+					if (await FileExists(NameFileFavourite))
+					{
+						try
+						{
+
+							//var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
+							var stream = File.Open(NameFileFavourite, FileMode.OpenOrCreate);
+							using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+							{
+								ReadXml(reader);
+							}
+
+							FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
+								new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
+							FavouriteRoutsIds = null;
+
+							FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
+							FavouriteStopsIds = null;
+
+							Groups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+							{
+								Name = x.Name,
+								Stops = new ObservableCollection<Stop>(Stops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+							}));
+						}
+						catch (FileNotFoundException e)
+						{
+							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+							return;
+						}
+						catch (Exception e)
+						{
+							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+							throw new Exception(e.Message, e);
 						}
 					}
-					//Connect(FavouriteRouts, FavouriteStops);
-				}
-				finally
-				{
-					streamWriter.Close();
-				}
-			});
+					else
+					{
+						FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+						FavouriteStops = new ObservableCollection<Stop>();
+					}
+				});
+			}
+			catch (TaskCanceledException e)
+			{
+				Routs = null;
+				Stops = null;
+				Times = null;
+				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles });
+				return;
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Context.Load: " + e.Message);
+				throw new Exception(e.Message, e);
+			}
+
+			if (Routs == null || Stops == null)
+			{
+
+				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize });
+				return;
+			}
+
+			Connect(Routs, Stops, Times);
+
+			AllPropertiesChanged();
+			OnLoadEnded();
 		}
 
 		

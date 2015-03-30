@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CalculateRout.cs" />
+    <Compile Include="Comparer\StopComparer.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="ContextDesctop.cs" />
     <Compile Include="Converters\listConverter.cs" />

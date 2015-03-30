@@ -376,7 +376,7 @@ namespace MinskTrans.DesctopClient
 			CalculateRout calculator = new CalculateRout(ShedulerModelView.Context);
 			string ResultString;
 			calculator.CreateGraph();
-			if (!calculator.FindPath(StartStop, EndStop))
+			if (!calculator.FindPath(ShedulerModelView.MapModelView.StartStop, ShedulerModelView.MapModelView.EndStop))
 				ResultString = "Bad";
 			else
 			{

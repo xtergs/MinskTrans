@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls;
+using MinskTrans.DesctopClient.Comparer;
 
 namespace MinskTrans.DesctopClient
 {
@@ -31,6 +32,8 @@ namespace MinskTrans.DesctopClient
 
 				foreach (var rout in meshGraph.Stop.Routs)
 				{
+					if (rout == null)
+						continue;
 					int index = rout.Stops.IndexOf(meshGraph.Stop);
 					if (index+1 >= rout.Stops.Count)
 						continue;
@@ -46,21 +49,28 @@ namespace MinskTrans.DesctopClient
 
 		public bool FindPath(Stop start, Stop destin)
 		{
+			if (start == null || destin == null)
+				return false;
 			var startNode = meshGraphs.First(x => x.Stop.ID == start.ID);
 			var endNode = meshGraphs.First(x => x.Stop.ID == destin.ID);
 			ResultStopList = new Stack<NodeGraph>();
 			var result = Findpath(startNode, endNode);
 			var listStop = ResultStopList.Select(node=> node.Stop).ToList();
-			Stop startStop = listStop.First();
+			Stop startStop = start;
 			resultRout = new Stack<KeyValuePair<Rout, IEnumerable<Stop>>>();
 			foreach (var rout in context.Routs)
 			{
 				if (rout.Stops.Any(stop => stop.ID == startStop.ID))
 				{
-					var intersects = rout.Stops.Intersect(listStop).ToList();
-					if (intersects.Count > 2)
+					var intersects = listStop.Intersect(rout.Stops.SkipWhile(stop=> stop != startStop), new StopComparer()).ToList();
+#if DEBUG
+					var stringListStop = listStop.Select(x=>x.Name).ToList();
+					var stringRoutStops = rout.Stops.Select(x => x.Name).ToList();
+					var intersectsStops = intersects.Select(x => x.Name).ToList();
+#endif
+					if (intersects.Count > 2 && rout.Stops.IndexOf(startStop) < rout.Stops.IndexOf(intersects.Last()))
 					{
-						startStop = intersects.Last();
+						//startStop = intersects.Last();
 						resultRout.Push(new KeyValuePair<Rout, IEnumerable<Stop>>(rout, intersects));
 					}
 				}

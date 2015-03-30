@@ -43,6 +43,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Pushpin startStopPushpin;
 		private Pushpin endStopPushpin;
 		private string resultString;
+		private SettingsModelView settings;
 
 		private MapModelView(Context context)
 			:base(context)
@@ -52,7 +53,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public static Style StylePushpin { get; set; }
 
-		public MapModelView(Context context, Map map)
+		public MapModelView(Context context, Map map, SettingsModelView newSettigns = null)
 			: base(context)
 		{
 			this.map = map;
@@ -62,6 +63,24 @@ namespace MinskTrans.DesctopClient.Modelview
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.55, 27.33);
+			
+		}
+
+		public SettingsModelView Settings
+		{
+			get { return settings; }
+			set
+			{
+				if (settings != null)
+					settings.PropertyChanged -= SettingsOnPropertyChanged;
+				settings = value;
+				settings.PropertyChanged += SettingsOnPropertyChanged;
+				OnPropertyChanged();
+			}
+		}
+
+		private void SettingsOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+		{
 			
 		}
 

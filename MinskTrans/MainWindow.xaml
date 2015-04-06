@@ -593,7 +593,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" MaxHeight="300" />
+                        <RowDefinition Height="150" />
                     </Grid.RowDefinitions>
                     <WrapPanel>
                         <CheckBox Content="Bus" Visibility="Collapsed" />
@@ -617,7 +617,7 @@
                     </WrapPanel>
                     <DockPanel Grid.Row="3">
                         <TextBlock Text="Result: " DockPanel.Dock="Top"/>
-                        <TextBox DockPanel.Dock="Top" x:Name="ResulTextBox" Text="" VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+                        <ListBox DockPanel.Dock="Top" x:Name="ResulTextBox" ScrollViewer.CanContentScroll="True"/>
                     </DockPanel>
                 </Grid>
             </TabItem>

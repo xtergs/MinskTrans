@@ -376,8 +376,9 @@ namespace MinskTrans.DesctopClient
 			CalculateRout calculator = new CalculateRout(ShedulerModelView.Context);
 			string ResultString;
 			calculator.CreateGraph();
+			List<string> reusltList = new List<string>();
 			if (!calculator.FindPath(ShedulerModelView.MapModelView.StartStop, ShedulerModelView.MapModelView.EndStop))
-				ResultString = "Bad";
+				reusltList.Add("Bad");
 			else
 			{
 				StringBuilder builder = new StringBuilder();
@@ -392,12 +393,13 @@ namespace MinskTrans.DesctopClient
 						builder.Append(stop.Name);
 						builder.Append(", ");
 					}
-					builder.Append("\n\n");
+					reusltList.Add(builder.ToString());
+					builder.Clear();
 
 				}
 				ResultString = builder.ToString();
 			}
-			ResulTextBox.Text = ResultString;
+			ResulTextBox.ItemsSource = reusltList;
 		}
 	}
 }

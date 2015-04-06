@@ -56,24 +56,25 @@ namespace MinskTrans.DesctopClient
 			ResultStopList = new Stack<NodeGraph>();
 			var result = Findpath(startNode, endNode);
 			var listStop = ResultStopList.Select(node=> node.Stop).ToList();
+			listStop.Add(start);
 			Stop startStop = start;
 			resultRout = new Stack<KeyValuePair<Rout, IEnumerable<Stop>>>();
 			foreach (var rout in context.Routs)
 			{
-				if (rout.Stops.Any(stop => stop.ID == startStop.ID))
-				{
+				//if (rout.Stops.Any(stop => stop.ID == startStop.ID))
+				//{
 					var intersects = listStop.Intersect(rout.Stops.SkipWhile(stop=> stop != startStop), new StopComparer()).ToList();
 #if DEBUG
 					var stringListStop = listStop.Select(x=>x.Name).ToList();
 					var stringRoutStops = rout.Stops.Select(x => x.Name).ToList();
 					var intersectsStops = intersects.Select(x => x.Name).ToList();
 #endif
-					if (intersects.Count > 2 && rout.Stops.IndexOf(startStop) < rout.Stops.IndexOf(intersects.Last()))
+					if (intersects.Count > 1 )
 					{
 						//startStop = intersects.Last();
 						resultRout.Push(new KeyValuePair<Rout, IEnumerable<Stop>>(rout, intersects));
 					}
-				}
+				//}
 			}
 			return result;
 		}

@@ -2,11 +2,11 @@
 
 
 
-using System.Windows.Controls;
-using RelayCommand = GalaSoft.MvvmLight.CommandWpf.RelayCommand;
+
 using System.Text;
 using System.ComponentModel;
 using System;
+
 using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -14,15 +14,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using MapControl;
 using MinskTrans.Universal;
-using GalaSoft.MvvmLight.CommandWpf;
+
 
 
 #if (WINDOWS_PHONE_APP )
 using Windows.UI.Xaml;
-using MinskTrans.DesctopClient.Properties;
-using System.Windows.Controls;
+using GalaSoft.MvvmLight.Command;
 
 #else
+using MinskTrans.DesctopClient.Properties;
+using System.Windows.Controls;
+using System.Windows.Controls;
+using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
 using GalaSoft.MvvmLight.CommandWpf;
 #endif
@@ -170,8 +173,13 @@ namespace MinskTrans.DesctopClient.Modelview
 				InicializeMap();
 			if (pushpinsAll && map != null && pushpins != null)
 			{
-				var northWest = map.ViewportPointToLocation(new Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
+#if WINDOWS_PHONE_APP
+				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
+#else
+
+				
+#endif
 				double zoomLevel = map.ZoomLevel;
 				Pushpins.Clear();
 
@@ -228,7 +236,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					//	//model.StopMovelView.FilteredSelectedStop = tmStop;
 					//	//MapPivotItem.Focus(FocusState.Programmatic);
 					//};
-#endif
+#else
 					tempPushPin.Pushpin.ContextMenu = new ContextMenu();
 					var menuItem = new MenuItem();
 					menuItem.Command = SetStartStop;
@@ -246,6 +254,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					{
 						((Pushpin)senderr).BringToFront();
 					};
+#endif
 					//tempPushPin.Pushpin.MouseLeftButtonDown += (o, argsr) =>
 					//{
 					//	Pushpin tempPushpin = (Pushpin)o;

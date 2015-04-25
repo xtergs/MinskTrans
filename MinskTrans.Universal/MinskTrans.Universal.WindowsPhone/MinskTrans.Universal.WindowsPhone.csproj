@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -87,6 +88,12 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\MinskTrans\CalculateRout.cs">
+      <Link>CalculateRout.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MinskTrans\Comparer\StopComparer.cs">
+      <Link>StopComparer.cs</Link>
+    </Compile>
     <Compile Include="..\..\MinskTrans\Context.cs">
       <Link>Context.cs</Link>
     </Compile>
@@ -158,6 +165,9 @@
     </Compile>
     <Compile Include="..\..\MinskTrans\Model\Time.cs">
       <Link>Model\Time.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MinskTrans\NodeGraph.cs">
+      <Link>NodeGraph.cs</Link>
     </Compile>
     <Compile Include="..\..\MinskTrans\ShedulerParser.cs">
       <Link>ShedulerParser.cs</Link>
@@ -261,8 +271,9 @@
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\..\packages\MvvmLightLibs.5.1.1.0\lib\wpa81\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="MapControl.WinRT">
-      <HintPath>..\..\packages\XAML.MapControl.2.4.10\lib\wpa81\MapControl.WinRT.dll</HintPath>
+    <Reference Include="MapControl.WinRT, Version=2.4.11.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XAML.MapControl.2.4.11\lib\wpa81\MapControl.WinRT.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

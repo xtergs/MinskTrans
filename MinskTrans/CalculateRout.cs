@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
+
 using MinskTrans.DesctopClient.Comparer;
 
 namespace MinskTrans.DesctopClient
@@ -46,6 +46,8 @@ namespace MinskTrans.DesctopClient
 		}
 
 		public Stack<KeyValuePair<Rout, IEnumerable<Stop>>> resultRout;
+		public Stack<KeyValuePair<Rout, IEnumerable<Stop>>> resultRouts;
+		public List<List<KeyValuePair<Rout, IEnumerable<Stop>>>> globalResult;
 
 		public bool FindPath(Stop start, Stop destin)
 		{
@@ -76,8 +78,53 @@ namespace MinskTrans.DesctopClient
 					}
 				//}
 			}
+
+			//Second method
+			resultRouts = new Stack<KeyValuePair<Rout, IEnumerable<Stop>>>();
+			globalResult = new List<List<KeyValuePair<Rout, IEnumerable<Stop>>>>();
+			bool method2 = FindRout(listStop, 0);
+
+			
+
 			return result;
 		}
+
+		bool FindRout( IEnumerable<Stop> stops, int index)
+		{
+			if (stops == null || stops.Count() == 0)
+				return false;
+			if (index >= stops.Count())
+				return false;
+			int startIndex = index;
+			Stop startStopRout = stops.ElementAt(index);
+			foreach (var rout in startStopRout.Routs)
+			{
+				resultRouts = new Stack<KeyValuePair<Rout, IEnumerable<Stop>>>();
+				index = startIndex;
+				while (index < stops.Count() && rout.Stops.Any(stop => stop.ID == stops.ElementAt(index).ID))
+				{
+					index++;
+				}
+				var sequenceStops =
+					stops.SkipWhile(stop => stop.ID != startStopRout.ID)
+						.TakeWhile(stop => stop.ID != stops.ElementAt(index - 1).ID).Union(stops.Where(stop => stop.ID == stops.ElementAt(index - 1).ID)).ToList();
+				
+				if (sequenceStops.Count > 1)
+					resultRouts.Push(new KeyValuePair<Rout, IEnumerable<Stop>>(rout, sequenceStops));
+				if (sequenceStops.Last().ID == stops.Last().ID)
+				{
+					globalResult.Add(resultRouts.ToList());	
+				}
+				else
+					if (FindRout(stops, index))
+						return true;
+				if (resultRouts.Count > 0)
+					resultRouts.Pop();
+			}
+			return false;
+		}
+
+		
 
 		private Stack<NodeGraph> ResultStopList;  
 

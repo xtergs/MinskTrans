@@ -254,7 +254,7 @@ namespace MinskTrans.DesctopClient
 
 		protected abstract Task<string> FileReadAllText(string file);
 
-		public abstract Task DownloadUpdate();
+		public abstract Task<bool> DownloadUpdate();
 
 		
 
@@ -269,10 +269,6 @@ namespace MinskTrans.DesctopClient
 			OnApplyUpdateStarted();
 			try
 			{
-#if DEBUG
-				Stopwatch watch1 = new Stopwatch();
-				watch1.Start();
-#endif
 
 				//Parallel.ForEach(list, async keyValuePair =>
 				if (await FileExists(list[0].Key + NewExt) && 
@@ -287,9 +283,6 @@ namespace MinskTrans.DesctopClient
 
 					}
 
-#if DEBUG
-				watch1.Stop();
-#endif
 				//Stops.Clear();
 				//Routs.Clear();
 				//Times.Clear();
@@ -297,24 +290,13 @@ namespace MinskTrans.DesctopClient
 				//Parallel.ForEach(newRoutes, rout => Routs.Add(rout));
 				//Parallel.ForEach(newSchedule, time => Times.Add(time));
 
-#if DEBUG
-				watch1.Reset();
-				watch1.Start();
-#endif
+
+
+				Connect(newRoutes, newStops, newSchedule);
 
 				Stops =newStops;
 				Routs = newRoutes;
 				Times = newSchedule;
-#if DEBUG
-				watch1.Stop();
-				watch1.Reset();
-				watch1.Start();
-#endif
-				Connect(Routs, Stops, Times);
-
-#if DEBUG
-				watch1.Stop();
-#endif
 
 				LastUpdateDataDateTime = DateTime.UtcNow;
 
@@ -352,52 +334,66 @@ namespace MinskTrans.DesctopClient
 		}
 
 		
-		static protected void Connect([NotNull] IEnumerable<Rout> routsl, [NotNull] IEnumerable<Stop> stopsl,
+		static protected async void Connect([NotNull] IEnumerable<Rout> routsl, [NotNull] IEnumerable<Stop> stopsl,
 			[NotNull] IEnumerable<Schedule> timesl)
 		{
 			if (routsl == null) throw new ArgumentNullException("routsl");
 			if (stopsl == null) throw new ArgumentNullException("stopsl");
 			if (timesl == null) throw new ArgumentNullException("timesl");
-#if DEBUG
-			Stopwatch watch1 = new Stopwatch();
-			watch1.Start();
-#endif
-			Parallel.ForEach(routsl, rout =>
+
+			await Task.WhenAll(new[]
 			{
-				rout.Time = timesl.FirstOrDefault(x =>
+				Task.Run(() =>
 				{
-					if (x == null)
-						return false;
-					return x.RoutId == rout.RoutId;
-				});
-				if (rout.Time != null)
-					rout.Time.Rout = rout;
+					foreach (var rout in routsl)
+					{
+						rout.Time = timesl.FirstOrDefault(x =>
+						{
+							if (x == null)
+								return false;
+							return x.RoutId == rout.RoutId;
+						});
+						if (rout.Time != null)
+							rout.Time.Rout = rout;
 
-#if DEBUG
-				Stopwatch watch = new Stopwatch();
-				watch.Start();
-#endif
-				rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+
+						rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+						{
+							
+							return stop;
+						}).ToList();
+					}
+				}),
+				Task.Run(() =>
 				{
-					if (stop.Routs == null)
-						stop.Routs = new List<Rout>(10);
-					stop.Routs.Add(rout);
-					return stop;
-				}).ToList();
-
-
-#if DEBUG
-				watch.Stop();
-				watch.Restart();
-#endif
+					foreach (var stop in stopsl)
+					{
+						stop.Routs = routsl.Where(rout => rout.RouteStops.Any(st => st == stop.ID)).ToList();
+					}
+				})
 			});
 
+			//Parallel.ForEach(routsl, rout =>
+			//{
+			//	rout.Time = timesl.FirstOrDefault(x =>
+			//	{
+			//		if (x == null)
+			//			return false;
+			//		return x.RoutId == rout.RoutId;
+			//	});
+			//	if (rout.Time != null)
+			//		rout.Time.Rout = rout;
 
-#if DEBUG
-			watch1.Stop();
-			watch1.Restart();
-#endif
 
+			//	rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+			//	{
+			//		if (stop.Routs == null)
+			//			stop.Routs = new List<Rout>(50);
+			//		stop.Routs.Add(rout);
+			//		return stop;
+			//	}).ToList();
+				
+			//});
 		}
 
 		//async public void Update()
@@ -415,7 +411,8 @@ namespace MinskTrans.DesctopClient
 			OnUpdateStarted();
 			try
 			{
-				await DownloadUpdate();
+				if (!await DownloadUpdate())
+					return;
 			}
 			catch (TaskCanceledException e)
 			{
@@ -431,6 +428,9 @@ namespace MinskTrans.DesctopClient
 				await ApplyUpdate();
 				Save();
 			}
+			FileDelete(list[0].Key + NewExt);
+			FileDelete(list[1].Key + NewExt);
+			FileDelete(list[2].Key + NewExt);
 			OnUpdateEnded();
 		}
 

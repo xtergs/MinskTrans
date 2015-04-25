@@ -109,7 +109,7 @@ namespace MinskTrans.Universal
 
 		}
 
-		public override async Task DownloadUpdate()
+		public override async Task<bool> DownloadUpdate()
 		{
 //#if DEBUG
 //			OnDataBaseDownloadEnded();
@@ -130,7 +130,9 @@ namespace MinskTrans.Universal
 			catch (System.Net.WebException e)
 			{
 				OnErrorDownloading();
+				return false;
 			}
+			return true;
 		}
 
 		private async void OnDataBaseDownloadEnded(object sender, EventArgs args)

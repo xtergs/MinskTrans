@@ -98,11 +98,11 @@ namespace MinskTrans.DesctopClient
 		{
 			//TODO
 			//throw new NotImplementedException();
-			if (File.Exists("data.dat"))
-			{
-				//Load();
-				return;
-			}
+			//if (File.Exists(NameFileRouts) && File.Exists(NameFileStops) && File.Exists(NameFileTimes))
+			//{
+			//	await Load();
+			//	return;
+			//}
 			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
@@ -177,7 +177,7 @@ namespace MinskTrans.DesctopClient
 			return await Task.Run(() => File.ReadAllText(file));
 		}
 
-		public override async Task DownloadUpdate()
+		public override async Task<bool> DownloadUpdate()
 		{
 			//TODO
 			//throw new NotImplementedException();
@@ -198,7 +198,9 @@ namespace MinskTrans.DesctopClient
 			catch (System.Net.WebException e)
 			{
 				OnErrorDownloading();
+				return false;
 			}
+			return true;
 		}
 
 		public async override Task Load()
@@ -316,8 +318,8 @@ namespace MinskTrans.DesctopClient
 
 			Connect(Routs, Stops, Times);
 
-			AllPropertiesChanged();
 			OnLoadEnded();
+			AllPropertiesChanged();
 		}
 
 		

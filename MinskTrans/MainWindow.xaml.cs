@@ -62,8 +62,9 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		private TimeSpan secs = new TimeSpan(0, 1, 0, 0, 0);
+		private TimeSpan updateTimerInterval = new TimeSpan(0, 1, 0, 0, 0);
 		private System.Timers.Timer checkUpdateTimer;
+		DispatcherTimer updateTime = new DispatcherTimer();
 
 		public MainWindow()
 		{
@@ -71,6 +72,7 @@ namespace MinskTrans.DesctopClient
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
 			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
 			ShedulerModelView = new MainModelView(new ContextDesctop(), map);
+			ShedulerModelView.Context.Load();
 
 			//Map model view events
 			ShedulerModelView.MapModelView.StartStopSeted +=
@@ -98,24 +100,21 @@ namespace MinskTrans.DesctopClient
 			};
 
 			//BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
-			DispatcherTimer tm = new DispatcherTimer();
-			tm.Interval = new TimeSpan(0, 0, 1);
-			tm.Tick += (sender, args) =>
+			
+			updateTime.Interval = new TimeSpan(0, 0, 1);
+			updateTime.Tick += (sender, args) =>
 			{
-				if (secs == new TimeSpan(0, 0, 0))
+				if (updateTimerInterval == new TimeSpan(0, 0, 0))
 				{
-					secs = new TimeSpan(0, 1, 0, 0, 0);
+					ResetUpdateTimer();
 					if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
 						ShedulerModelView.Context.UpdateDataCommand.Execute(null);
 				}
-				secs = secs.Subtract(new TimeSpan(0, 0, 1));
-				tickTimer.Content = secs;
+				updateTimerInterval = updateTimerInterval.Subtract(new TimeSpan(0, 0, 1));
+				tickTimer.Content = updateTimerInterval;
 			};
-			tm.Start();
-			checkUpdateTimer = new System.Timers.Timer();
-			checkUpdateTimer.Interval = 1000*60*60;
-			checkUpdateTimer.Enabled = true;
-			checkUpdateTimer.Start();
+			updateTime.Start();
+			
 			ShedulerModelView.RoutesModelview.ShowRoute += OnShowRoute;
 			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
 			ShedulerModelView.StopMovelView.ShowStop += OnShowStop;
@@ -128,6 +127,9 @@ namespace MinskTrans.DesctopClient
 			{
 				statusMessages.Content = "Data has been downloaded";
 			});
+			ShedulerModelView.Context.LoadStarted += (sender, args) => StopUpdateTimer();
+			ShedulerModelView.Context.LoadEnded += (sender, args) => StartUpdateTimer();
+			ShedulerModelView.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
 
 			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
@@ -147,6 +149,21 @@ namespace MinskTrans.DesctopClient
 			//ShedulerModelView.Context.Load();
 		}
 
+		void StopUpdateTimer()
+		{
+			updateTime.Stop();
+		}
+
+		private void ResetUpdateTimer()
+		{
+			updateTimerInterval = new TimeSpan(0, 1, 0, 0, 0);
+		}
+
+		void StartUpdateTimer()
+		{
+			ResetUpdateTimer();
+			updateTime.Start();
+		}
 		private Pushpin currentPushpin { get; set; }
 
 		private void OnShowStop(object sender, ShowArgs args)
@@ -165,8 +182,8 @@ namespace MinskTrans.DesctopClient
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
-				ShedulerModelView.Context.UpdateDataCommand.Execute(null);
+			//if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
+			//	ShedulerModelView.Context.UpdateDataCommand.Execute(null);
 		}
 
 		private int w(char x, char y)

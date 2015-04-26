@@ -14,6 +14,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using MinskTrans.DesctopClient.Comparer;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 using System.Runtime.Serialization.Formatters.Binary;
 using MinskTrans.DesctopClient.Annotations;
@@ -101,6 +102,7 @@ namespace MinskTrans.DesctopClient
 		}
 
 		private ObservableCollection<Rout> routs;
+		
 		private ObservableCollection<Stop> stops;
 		private ObservableCollection<Schedule> times;
 		private ObservableCollection<GroupStop> groups;
@@ -191,6 +193,7 @@ namespace MinskTrans.DesctopClient
 			get { return times; }
 			set
 			{
+				if (Equals(value, times)) return;
 				times = value;
 				OnPropertyChanged();
 			}
@@ -294,8 +297,8 @@ namespace MinskTrans.DesctopClient
 
 				Connect(newRoutes, newStops, newSchedule);
 
-				Stops =newStops;
-				Routs = newRoutes;
+				Stops = new ObservableCollection<Stop>(newStops.Where(stop=> stop.Routs.Any()));
+				Routs = new ObservableCollection<Rout>(newRoutes.Where(rout=> rout.Stops.Any()));
 				Times = newSchedule;
 
 				LastUpdateDataDateTime = DateTime.UtcNow;
@@ -340,38 +343,72 @@ namespace MinskTrans.DesctopClient
 			if (routsl == null) throw new ArgumentNullException("routsl");
 			if (stopsl == null) throw new ArgumentNullException("stopsl");
 			if (timesl == null) throw new ArgumentNullException("timesl");
+			
+			//Stopwatch watch1 = new Stopwatch();
+			//watch1.Start();
+			//foreach (var rout in routsl)
+			//{
+			//	rout.Time = timesl.FirstOrDefault(x =>
+			//	{
+			//		if (x == null)
+			//			return false;
+			//		return x.RoutId == rout.RoutId;
+			//	});
+			//	if (rout.Time != null)
+			//		rout.Time.Rout = rout;
+			//}
+			
+			//var xxx = routsl.ToLookup(rout => rout, rout =>
+			//{
+			//	var s1 = stopsl.Where(stop =>
+			//	{
+			//		var s2 = rout.RouteStops.Contains(stop.ID);
+			//		return s2;
+			//	}).ToList();
+			//	return s1;
 
-			await Task.WhenAll(new[]
-			{
-				Task.Run(() =>
-				{
-					foreach (var rout in routsl)
-					{
-						rout.Time = timesl.FirstOrDefault(x =>
-						{
-							if (x == null)
-								return false;
-							return x.RoutId == rout.RoutId;
-						});
-						if (rout.Time != null)
-							rout.Time.Rout = rout;
+			//});
+			//var xxxx = stopsl.ToLookup(stop => stop, stop => routsl.Where(rout => rout.RouteStops.Any(x => x == stop.ID)).ToList(), new StopComparer());
+			//watch1.Stop();
+			//watch1.Reset();
+			//var dddddd = xxx[routsl.First()];
+			//watch1.Start();
+
+			//await Task.WhenAll(new[]
+			//{
+			//	Task.Run(() =>
+			//	{
+			//		foreach (var rout in routsl)
+			//		{
+			//			rout.Time = timesl.FirstOrDefault(x =>
+			//			{
+			//				if (x == null)
+			//					return false;
+			//				return x.RoutId == rout.RoutId;
+			//			});
+			//			if (rout.Time != null)
+			//				rout.Time.Rout = rout;
 
 
-						rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-						{
+			//			rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+			//			{
 							
-							return stop;
-						}).ToList();
-					}
-				}),
-				Task.Run(() =>
-				{
-					foreach (var stop in stopsl)
-					{
-						stop.Routs = routsl.Where(rout => rout.RouteStops.Any(st => st == stop.ID)).ToList();
-					}
-				})
-			});
+			//				return stop;
+			//			}).ToList();
+			//		}
+			//	}),
+			//	Task.Run(() =>
+			//	{
+			//		foreach (var stop in stopsl)
+			//		{
+			//			stop.Routs = routsl.Where(rout => rout.RouteStops.Any(st => st == stop.ID)).ToList();
+			//		}
+			//	})
+			//});
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
 
 			//Parallel.ForEach(routsl, rout =>
 			//{
@@ -388,12 +425,67 @@ namespace MinskTrans.DesctopClient
 			//	rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
 			//	{
 			//		if (stop.Routs == null)
-			//			stop.Routs = new List<Rout>(50);
+			//			stop.Routs = new List<Rout>();
 			//		stop.Routs.Add(rout);
 			//		return stop;
 			//	}).ToList();
-				
+
 			//});
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
+
+			//foreach (var rout in routsl.AsParallel())
+			//{
+			//	rout.Time = timesl.FirstOrDefault(x =>
+			//	{
+			//		if (x == null)
+			//			return false;
+			//		return x.RoutId == rout.RoutId;
+			//	});
+			//	if (rout.Time != null)
+			//		rout.Time.Rout = rout;
+
+
+			//	rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+			//	{
+			//		if (stop.Routs == null)
+			//			stop.Routs = new List<Rout>();
+			//		stop.Routs.Add(rout);
+			//		return stop;
+			//	}).ToList();
+			//}
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
+
+			foreach (var rout in routsl)
+			{
+				rout.Time = timesl.FirstOrDefault(x =>
+				{
+					if (x == null)
+						return false;
+					return x.RoutId == rout.RoutId;
+				});
+				if (rout.Time != null)
+					rout.Time.Rout = rout;
+
+
+				rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+				{
+					if (stop.Routs == null)
+						stop.Routs = new List<Rout>();
+					stop.Routs.Add(rout);
+					return stop;
+				}).ToList();
+
+			}
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
 		}
 
 		//async public void Update()

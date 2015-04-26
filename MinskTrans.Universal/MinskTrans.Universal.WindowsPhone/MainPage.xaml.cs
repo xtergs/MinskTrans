@@ -474,6 +474,7 @@ namespace MinskTrans.Universal
 		private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
 		{
 			Geolocator geolocator = new Geolocator();
+			
 			geolocator.DesiredAccuracy = PositionAccuracy.High;
 			//geolocator.DesiredAccuracyInMeters = 5;
 

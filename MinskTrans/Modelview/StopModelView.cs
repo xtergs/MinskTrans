@@ -201,7 +201,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				if (Context.Times != null)
+				if (Context.Times != null && FilteredSelectedStop != null)
 				{
 					IEnumerable<Schedule> dd = Context.Times.Where(time => time != null && time.Rout != null && (time.Rout.Stops.Contains(FilteredSelectedStop) &&
 						time.Rout.Stops.Any(stop=> stop.SearchName.Contains(DestinationStop.Trim().ToLower()))));

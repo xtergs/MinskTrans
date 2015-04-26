@@ -296,107 +296,206 @@ namespace MinskTrans.Universal
 			}
 		}
 
+		
+		
+
 		public override async Task Load()
 		{
 			OnLoadStarted();
 			
 			var storage = ApplicationData.Current.LocalFolder;
+			ObservableCollection<Rout> tpRouts;
+			ObservableCollection<Stop> tpStops;
+			ObservableCollection<Schedule> tpTimes;
+			ObservableCollection<Stop> tpFavouriteStops = null;
+			ObservableCollection<RoutWithDestinations> tpFavouriteRouts = null;
+			ObservableCollection<GroupStop> tpGroups = null;
 
 			try
 			{
-				await Task.WhenAll(
-					Task.Run(async () =>
-					{
-						try
-						{
-							var routsFile = await storage.GetFileAsync(NameFileRouts);
-							var routs = await FileIO.ReadTextAsync(routsFile);
-							Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
-						}
-						catch (FileNotFoundException e)
-						{
-							throw new TaskCanceledException(e.Message, e);
-						}
-					}),
-					Task.Run(async () =>
-					{
-						try
-						{
-							var stopsFile = await storage.GetFileAsync(NameFileStops);
-							var stops = await FileIO.ReadTextAsync(stopsFile);
-							Stops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
-						}
-						catch (FileNotFoundException e)
-						{
-							throw new TaskCanceledException(e.Message, e);
-						}
-					}),
-					Task.Run(async () =>
-					{
-						try
-						{
-
-							var timesFile = await storage.GetFileAsync(NameFileTimes);
-							var times = await FileIO.ReadTextAsync(timesFile);
-
-							Times = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
-						}
-						catch (FileNotFoundException e)
-						{
-							throw new TaskCanceledException(e.Message, e);
-						}
-					})
-					);
-				await Task.Run(async () =>
+				try
 				{
-					if (await FileExistss(NameFileFavourite))
+					var routsFile = await storage.GetFileAsync(NameFileRouts);
+					var routs = await FileIO.ReadTextAsync(routsFile);
+					tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
+				}
+				catch (FileNotFoundException e)
+				{
+					throw new TaskCanceledException(e.Message, e);
+				}
+				try
+				{
+					var stopsFile = await storage.GetFileAsync(NameFileStops);
+					var stops = await FileIO.ReadTextAsync(stopsFile);
+					tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+				}
+				catch (FileNotFoundException e)
+				{
+					throw new TaskCanceledException(e.Message, e);
+				}
+				try
+				{
+
+					var timesFile = await storage.GetFileAsync(NameFileTimes);
+					var times = await FileIO.ReadTextAsync(timesFile);
+
+					tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+				}
+				catch (FileNotFoundException e)
+				{
+					throw new TaskCanceledException(e.Message, e);
+				}
+
+				if (await FileExistss(NameFileFavourite))
+				{
+					try
 					{
-						try
+
+						var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
+
+						using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
 						{
+							ReadXml(reader);
+						}
 
-							var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
-
-							using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
-							{
-								ReadXml(reader);
-							}
-
-							FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
+						if (FavouriteRoutsIds != null)
+						{
+							tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
 								new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
 							FavouriteRoutsIds = null;
+						}
 
-							FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
+						if (FavouriteStopsIds != null)
+						{
+							tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
 							FavouriteStopsIds = null;
-
-							Groups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+						}
+						if (GroupsStopIds != null)
+						{
+							tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
 							{
 								Name = x.Name,
 								Stops = new ObservableCollection<Stop>(Stops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
 							}));
 						}
-						catch (FileNotFoundException e)
-						{
-							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-							return;
-						}
-						catch (Exception e)
-						{
-							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-							throw new Exception(e.Message, e);
-						}
 					}
-					else
+					catch (FileNotFoundException e)
 					{
-						FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-						FavouriteStops = new ObservableCollection<Stop>();
+						Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+						return;
 					}
-				});
+					catch (Exception e)
+					{
+						Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+						throw new Exception(e.Message, e);
+					}
+				}
+				else
+				{
+					tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+					tpFavouriteStops = new ObservableCollection<Stop>();
+					tpGroups = new ObservableCollection<GroupStop>();
+				}
+
+				 //await Task.WhenAll(
+				 //   Task.Run(async () =>
+				 //   {
+				 //	   try
+				 //	   {
+				 //		   var routsFile = await storage.GetFileAsync(NameFileRouts);
+				 //		   var routs = await FileIO.ReadTextAsync(routsFile);
+				 //		   Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
+				 //	   }
+				 //	   catch (FileNotFoundException e)
+				 //	   {
+				 //		   throw new TaskCanceledException(e.Message, e);
+				 //	   }
+				 //   }),
+				 //	Task.Run(async () =>
+				 //   {
+				 //	   try
+				 //	   {
+				 //		   var stopsFile = await storage.GetFileAsync(NameFileStops);
+				 //		   var stops = await FileIO.ReadTextAsync(stopsFile);
+				 //		   Stops =  JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+				 //	   }
+				 //	   catch (FileNotFoundException e)
+				 //	   {
+				 //		   throw new TaskCanceledException(e.Message, e);
+				 //	   }
+				 //   }),
+				 //   Task.Run(async () =>
+				 //   {
+				 //	   try
+				 //	   {
+
+				 //		   var timesFile = await storage.GetFileAsync(NameFileTimes);
+				 //		   var times = await FileIO.ReadTextAsync(timesFile);
+
+				 //		   Times =  JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+				 //	   }
+				 //	   catch (FileNotFoundException e)
+				 //	   {
+				 //		   throw new TaskCanceledException(e.Message, e);
+				 //	   }
+				 //   })
+				 //   );
+				//await Task.Run(async () =>
+				//{
+				//	if (await FileExistss(NameFileFavourite))
+				//	{
+				//		try
+				//		{
+
+				//			var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
+
+				//			using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+				//			{
+				//				ReadXml(reader);
+				//			}
+
+				//			if (FavouriteRoutsIds != null)
+				//			{
+				//				tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
+				//					new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
+				//				FavouriteRoutsIds = null;
+				//			}
+
+				//			if (FavouriteStopsIds != null)
+				//			{
+				//				tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
+				//				FavouriteStopsIds = null;
+				//			}
+				//			if (GroupsStopIds != null)
+				//			{
+				//				tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+				//				{
+				//					Name = x.Name,
+				//					Stops = new ObservableCollection<Stop>(Stops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+				//				}));
+				//			}
+				//		}
+				//		catch (FileNotFoundException e)
+				//		{
+				//			Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+				//			return;
+				//		}
+				//		catch (Exception e)
+				//		{
+				//			Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+				//			throw new Exception(e.Message, e);
+				//		}
+				//	}
+				//	else
+				//	{
+				//		FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+				//		FavouriteStops = new ObservableCollection<Stop>();
+				//	}
+				//});
 			}
 			catch (TaskCanceledException e)
 			{
-				Routs = null;
-				Stops = null;
-				Times = null;
+				//CleanTp();
 				OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
 				return;
 			}
@@ -406,18 +505,31 @@ namespace MinskTrans.Universal
 				throw new Exception(e.Message, e);
 			}
 			
-			if (Routs == null || Stops == null)
+			if (tpRouts == null || tpStops == null)
 			{
-
-				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize });
+				//CleanTp();
+				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles });
 				return;
 			}
 
-			Connect(Routs, Stops, Times);
-			
+			Connect(tpRouts, tpStops, tpTimes);
+			//lock (o)
+			//{
+			Routs = tpRouts;
+			Stops = tpStops;
+			Times = tpTimes;
+				
+			//}
+			FavouriteRouts = tpFavouriteRouts;
+			FavouriteStops = tpFavouriteStops;
+			Groups = tpGroups;
+
+			//CleanTp();
 			AllPropertiesChanged();
 			OnLoadEnded();
 		}
+
+		private static object o = new Object();
 
 		#endregion
 	}

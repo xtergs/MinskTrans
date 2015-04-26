@@ -10,6 +10,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -105,13 +106,20 @@ namespace MinskTrans.Universal
 				}, null, new TimeSpan(0,0,30,0,0), new TimeSpan(0, 0, 30, 0, 0));
 				
 
-				model.Context.ErrorLoading += (sender, args) =>
+				model.Context.ErrorLoading += async (sender, args) =>
 				{
+					
 					if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
 					{
-						Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+						
+
+
+						rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
 						{
-							Commands =
+
+							Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+							{
+								Commands =
 							{
 								new UICommand("Обновить", command =>
 								{
@@ -120,8 +128,10 @@ namespace MinskTrans.Universal
 
 								})
 							}
-						};
-						dialog.ShowAsync();
+							};
+							await dialog.ShowAsync();
+							
+						});
 					}
 				};
 				Task.Run(()=> { model.Context.Load(); });

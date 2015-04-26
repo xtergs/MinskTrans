@@ -1285,6 +1285,7 @@
                         <Button Content="Оставить отзыв" Click="ShowInStore" ></Button>
                         <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
                         <Button Click="Test" Visibility="Collapsed" ></Button>
+                        <HyperlinkButton NavigateUri="ms-settings-location://" Content="Settings Location"></HyperlinkButton>
                         
                     </StackPanel>
                 </Border>

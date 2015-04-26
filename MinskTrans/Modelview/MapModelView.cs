@@ -3,6 +3,7 @@
 
 
 
+using Windows.Devices.Geolocation;
 using System.Text;
 using System.ComponentModel;
 using System;
@@ -48,6 +49,8 @@ namespace MinskTrans.DesctopClient.Modelview
 		private string resultString;
 		private SettingsModelView settings;
 
+		private Geolocator geolocator;
+
 		private MapModelView(Context context)
 			:base(context)
 		{
@@ -61,7 +64,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			this.map = map;
 			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
-			
+			geolocator = new Geolocator();
 
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
@@ -77,6 +80,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (settings != null)
 					settings.PropertyChanged -= SettingsOnPropertyChanged;
 				settings = value;
+
 				settings.PropertyChanged += SettingsOnPropertyChanged;
 				OnPropertyChanged();
 			}
@@ -84,7 +88,21 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private void SettingsOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
 		{
-			
+			if (propertyChangedEventArgs.PropertyName == "UseGPS")
+			{
+				if (settings.UseGPS)
+				{
+					geolocator.MovementThreshold = 5;
+					geolocator.PositionChanged +=
+						(sender1, args) =>
+							MapPanel.SetLocation(Ipushpin,
+								new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude));
+				}
+				else
+				{
+					
+				}
+			}
 		}
 
 		public Pushpin StartStopPushpin
@@ -338,6 +356,14 @@ namespace MinskTrans.DesctopClient.Modelview
 					pushpinsAll = true;
 				});
 			}
+		}
+
+		public RelayCommand ShowICommand
+		{
+			get { return new RelayCommand(() =>
+			{
+				
+			}); }
 		}
 
 		public RelayCommand<Rout> ShowRoutCommand

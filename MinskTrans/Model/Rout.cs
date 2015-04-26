@@ -56,6 +56,8 @@ namespace MinskTrans.DesctopClient
 
 			if (string.IsNullOrWhiteSpace(Datestart))
 				Datestart = routR.Datestart;
+			if (stops == null)
+				stops = new List<Stop>();
 		}
 
 		public Rout(string rout)
@@ -86,6 +88,8 @@ namespace MinskTrans.DesctopClient
 			}
 			Data = GetNext();
 			Datestart = GetNext();
+			if (stops == null)
+				stops = new List<Stop>();
 		}
 		
 		public virtual Schedule Time { get; set; }
@@ -94,8 +98,6 @@ namespace MinskTrans.DesctopClient
 		{
 			get
 			{
-				if (stops == null)
-					stops = new List<Stop>();
 				return stops;
 			}
 			set { stops = value; }
@@ -177,7 +179,11 @@ namespace MinskTrans.DesctopClient
 
 		public Stop DestinationStop
 		{
-			get { return Stops.Last(); }
+			get
+			{
+				if (Stops != null) return Stops.Last();
+				return null;
+			}
 		}
 
 		public Stop StartStop

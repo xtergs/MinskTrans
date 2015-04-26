@@ -1,4 +1,6 @@
 ﻿
+using System.Runtime.CompilerServices;
+
 namespace MinskTrans.DesctopClient.Modelview
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
@@ -12,11 +14,17 @@ using MinskTrans.DesctopClient.Properties;
 	public class SettingsModelView : BaseModelView, ISettingsModelView
 	{
 
+		
 
 		public SettingsModelView(Context newContext)
 			: base(newContext)
 		{
 
+		}
+
+		string SettingsToStr([CallerMemberName] string propertyName = null)
+		{
+			return propertyName;
 		}
 
 		public int TimeInPast
@@ -44,6 +52,44 @@ using MinskTrans.DesctopClient.Properties;
 #endif
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		public bool UseGPS
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					UpdateOnWiFi = true;
+				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public int IntervalAutoUpdate
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					UpdateOnWiFi = true;
+				return (int)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
 			}
 		}
 

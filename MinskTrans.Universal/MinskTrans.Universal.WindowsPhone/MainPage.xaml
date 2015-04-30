@@ -34,6 +34,7 @@
         <Style x:Key="FullListViewItem"  TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Padding" Value="0"></Setter>
         </Style>
         <Style x:Key="PushpinItemStyle" TargetType="mapControl1:MapItem">
             <Setter Property="mapControl1:MapPanel.Location" Value="{Binding Location}"/>
@@ -1240,7 +1241,7 @@
                         </mapControl1:Map>
                         <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                             <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                                <AppBarButton IsCompact="True" Click="AppBarButton_Click_1">
+                                <AppBarButton IsCompact="True" Command="{ Binding ShowICommand}" >
                                     <AppBarButton.Icon>
                                         <FontIcon Glyph="Я" />
                                     </AppBarButton.Icon>
@@ -1259,7 +1260,8 @@
 				DataContext="{Binding SettingsModelView}"
 				BorderBrush="{StaticResource LightBlueSolidColorBrush}">
                 <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-                    <StackPanel>
+                    <ListView Margin="5,0,5,0" MinHeight="0" IsItemClickEnabled="False" ItemContainerStyle="{StaticResource FullListViewItem}">
+                        
                         <Button Content="Обновить расписание" Command="{Binding Context.UpdateDataCommand}"/>
                         <ToggleSwitch OnContent="Использовать WiFi"
 							OffContent="Не использовать WiFi"
@@ -1267,8 +1269,24 @@
                         <ToggleSwitch OnContent="Использовать мобильное соединение"
 							OffContent="Не использовать мобильное соединение"
 							IsOn="{Binding UpdateOnMobileData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ToggleSwitch OnContent="Использовать GPS"
+							OffContent="Не использовать GPS"
+							IsOn="{Binding UseGPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                      
                         <TextBlock Text="Дата обновления расписания"/>
-                        <TextBlock Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="1" Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -1280,14 +1298,28 @@
                             <TextBlock Grid.Column="1" Text="{Binding TimeInPast, Mode=OneWay, UpdateSourceTrigger=Default}"></TextBlock>
                             <TextBlock Grid.Column="2" Text=" мин"/>
 
+                        
                         </Grid>
-                        <Slider Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
+                        <Slider Grid.Row="1" Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Интервал автообновления "/>
+                            <TextBlock Grid.Column="1" Text="{Binding  InvervalAutoUpdateTimeSpan, Mode=OneWay, UpdateSourceTrigger=Default}"></TextBlock>
+
+                        </Grid>
+                        <Slider Minimum="1" Maximum="1000" Value="{Binding IntervalAutoUpdate, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
                         <Button Content="Оставить отзыв" Click="ShowInStore" ></Button>
                         <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
-                        <Button Click="Test" Visibility="Collapsed" ></Button>
-                        <HyperlinkButton NavigateUri="ms-settings-location://" Content="Settings Location"></HyperlinkButton>
+                        <Button Content="Настройка сервисов местоположения" Click="OnOffLocationServises"></Button>
+                        <Button Content="Политика безопасности" Click="ShowPolicity"/>
                         
-                    </StackPanel>
+                    </ListView>
                 </Border>
             </PivotItem>
 

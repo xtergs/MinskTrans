@@ -68,6 +68,7 @@ namespace MinskTrans.Universal
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
+			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.Context.ShowRoute += OnShowRoute;
 			model.Context.ShowStop += OnShowStop;
@@ -555,6 +556,17 @@ namespace MinskTrans.Universal
 			//var result = await FileIO.ReadTextAsync(file);
 			//var sizeFile = await file.Properties.GetDocumentPropertiesAsync();
 			await model.Context.Load();
+		}
+
+		private void OnOffLocationServises(object sender, RoutedEventArgs e)
+		{
+			Launcher.LaunchUriAsync(new Uri("ms-settings-location://"));
+		}
+
+		private void ShowPolicity(object sender, RoutedEventArgs e)
+		{
+			MessageDialog dialog = new MessageDialog(model.SettingsModelView.PrivatyPolicity);
+			dialog.ShowAsync();
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Runtime.CompilerServices;
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -73,14 +74,21 @@ using MinskTrans.DesctopClient.Properties;
 				OnPropertyChanged();
 			}
 		}
-
-		public int IntervalAutoUpdate
+		public string PrivatyPolicity
+		{
+			get
+			{
+				return
+					@"Приложение Минский общественный транспорт не хранит пользовательских данных. Приложение использует интернет подключение только для получения последних обновлений расписания транспорта.";
+			}
+		}
+		public TimeSpan InvervalAutoUpdateTimeSpan
 		{
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					UpdateOnWiFi = true;
-				return (int)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+					InvervalAutoUpdateTimeSpan = new TimeSpan(0, 1, 0, 0, 0);
+				return (TimeSpan)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
 			}
 
 			set
@@ -91,6 +99,26 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+		}
+
+		public double IntervalAutoUpdate
+		{
+			get { return InvervalAutoUpdateTimeSpan.TotalMinutes; }
+			set
+			{
+				InvervalAutoUpdateTimeSpan = TimeSpan.FromMinutes(value);
+				OnPropertyChanged();
+			}
+		}
+
+		public int GPSThreshholdMeters
+		{
+			get { return 5; }
+		}
+
+		public uint GPSInterval
+		{
+			get { return 1000; }
 		}
 
 		public bool UpdateOnWiFi

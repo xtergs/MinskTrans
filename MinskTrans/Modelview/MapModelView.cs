@@ -3,11 +3,12 @@
 
 
 
-using Windows.Devices.Geolocation;
+
 using System.Text;
 using System.ComponentModel;
 using System;
-
+using Windows.UI.Core;
+using Windows.UI.Xaml.Media.Animation;
 using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ using MinskTrans.Universal;
 using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
 
+using Windows.Devices.Geolocation;
 #else
 using MinskTrans.DesctopClient.Properties;
 using System.Windows.Controls;
@@ -63,6 +65,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			: base(context)
 		{
 			this.map = map;
+			Settings = newSettigns;
 			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
 			geolocator = new Geolocator();
 
@@ -70,6 +73,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.55, 27.33);
 			
+			SetGPS();
 		}
 
 		public SettingsModelView Settings
@@ -90,19 +94,62 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (propertyChangedEventArgs.PropertyName == "UseGPS")
 			{
-				if (settings.UseGPS)
-				{
-					geolocator.MovementThreshold = 5;
-					geolocator.PositionChanged +=
-						(sender1, args) =>
-							MapPanel.SetLocation(Ipushpin,
-								new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude));
-				}
-				else
-				{
-					
-				}
+				SetGPS();
 			}
+		}
+
+		void SetGPS()
+		{
+			if (settings.UseGPS)
+			{
+				if (geolocator == null)
+					geolocator = new Geolocator();
+				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+
+				geolocator.ReportInterval = Settings.GPSInterval;
+				geolocator.StatusChanged += GeolocatorOnStatusChanged;
+				geolocator.PositionChanged += GeolocatorOnPositionChanged;
+						
+				
+			}
+			else
+			{
+				geolocator.PositionChanged -= GeolocatorOnPositionChanged;
+				geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+				Ipushpin = null;
+				ShowICommand.RaiseCanExecuteChanged();
+				geolocator = null;
+			}
+			ShowICommand.RaiseCanExecuteChanged();
+		}
+
+		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
+		{
+			if (args.Status == PositionStatus.Ready)
+			{
+				map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				{
+					ipushpin = new Pushpin();
+					ipushpin.Content = "Я";
+				});
+				ShowICommand.RaiseCanExecuteChanged();
+			}
+			else if (args.Status == PositionStatus.Disabled ||
+					 args.Status == PositionStatus.NotAvailable)
+			{
+				Ipushpin = null;
+				ShowICommand.RaiseCanExecuteChanged();
+			}
+		}
+
+		private void GeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		{
+			map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+			{
+				MapPanel.SetLocation(Ipushpin,
+					new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude));
+				RefreshPushPinsAsync();
+			});
 		}
 
 		public Pushpin StartStopPushpin
@@ -155,6 +202,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 					//map.Children.RemoveAt(i);
 			except = Pushpins.Except(temp).ToList();
+			
 			foreach (var pushpin in except)
 			{
 				try
@@ -222,6 +270,8 @@ namespace MinskTrans.DesctopClient.Modelview
 						}
 					}
 				}
+				if (Ipushpin != null)
+					Pushpins.Add(Ipushpin);
 				//});
 				ShowOnMap();
 			}
@@ -289,6 +339,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					//MapPanel.SetLocation(tempPushPin.Pushpin, tempPushPin.Location);
 					pushpins.Add(tempPushPin);
 				}
+				
 				map.Center = new Location(Context.ActualStops.First().Lat, Context.ActualStops.First().Lng);
 				OnMapInicialized();
 			}
@@ -297,8 +348,6 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				if (ipushpin == null)
-					ipushpin = new Pushpin() { Content = "Я" };
 				return ipushpin;
 			}
 			set { ipushpin = value; }
@@ -358,12 +407,30 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+		private RelayCommand showICommand;
+
 		public RelayCommand ShowICommand
 		{
-			get { return new RelayCommand(() =>
+			get
 			{
-				
-			}); }
+				if (showICommand == null)
+					showICommand = new RelayCommand(() =>
+					{
+						ShowPushpin(Ipushpin);
+					}, () =>
+					{
+						return Ipushpin != null;
+					});
+				return showICommand;
+			}
+		}
+
+		void ShowPushpin(Pushpin push)
+		{
+			map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+			{
+				map.TargetCenter = MapPanel.GetLocation(push);
+			});
 		}
 
 		public RelayCommand<Rout> ShowRoutCommand

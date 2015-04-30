@@ -103,7 +103,7 @@ namespace MinskTrans.Universal
 					if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
 						if (model.Context.UpdateDataCommand.CanExecute(null))
 							model.Context.UpdateAsync();
-				}, null, new TimeSpan(0,0,30,0,0), new TimeSpan(0, 0, 30, 0, 0));
+				}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
 				
 
 				model.Context.ErrorLoading += async (sender, args) =>
@@ -134,7 +134,7 @@ namespace MinskTrans.Universal
 						});
 					}
 				};
-				Task.Run(()=> { model.Context.Load(); });
+				 model.Context.Load(); 
 			}
 
 

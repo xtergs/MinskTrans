@@ -1,11 +1,15 @@
 <Application x:Class="MinskTrans.Universal.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:MinskTrans.Universal">
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Resourse/Brushes.xaml" />
-        <ResourceDictionary Source="Resourse/Styles.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-      
-    </ResourceDictionary>
-  </Application.Resources>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default"  Source="Resourse/Brushes.xaml"></ResourceDictionary>
+                <ResourceDictionary x:Key="Light"  Source="Resourse/BrushesLight.xaml"></ResourceDictionary>
+
+            </ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="Resourse/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

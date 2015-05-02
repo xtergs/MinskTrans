@@ -27,7 +27,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			context = newContext;
 			settingsModelView = new SettingsModelView(context);
 			routesModelview = new RoutesModelview(context);
-			stopMovelView = new StopModelView(context, settingsModelView);
+			stopMovelView = new StopModelView(context, settingsModelView, true);
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context);
 			findModelView = new FindModelView(context, settingsModelView);

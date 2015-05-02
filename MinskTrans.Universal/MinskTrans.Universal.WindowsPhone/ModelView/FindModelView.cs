@@ -22,7 +22,7 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public FindModelView(Context newContext, ISettingsModelView settingsModelView) : base(newContext)
+		public FindModelView(Context newContext, SettingsModelView settingsModelView) : base(newContext)
 		{
 			stopModelView = new StopModelView(newContext, settingsModelView);
 			routsModelview = new RoutsModelView(newContext);

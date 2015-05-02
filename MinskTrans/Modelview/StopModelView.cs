@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Windows.Devices.Geolocation;
+using MapControl;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 
 using GalaSoft.MvvmLight.CommandWpf;
@@ -29,25 +30,105 @@ namespace MinskTrans.DesctopClient.Modelview
 		private bool tram;
 		private bool trol;
 		private string destinationStop;
+		private Location lastLocation;
+		private Geolocator geolocator;
 
 		//public StopModelView()
 		//	: this(null)
 		//{
 		//}
 
-		public StopModelView(Context newContext, ISettingsModelView settings)
-			: base(newContext)
+		public StopModelView(Context newContext, SettingsModelView settings, bool UseGPS = false)
+			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
 			settingsModelView = settings;
-
+			lastLocation = new Location();
 			settingsModelView.PropertyChanged += (sender, args) =>
 			{
-				if (args.PropertyName == "TimeInPast")
-					Refresh();
+				switch (args.PropertyName)
+				{
+					case "TimeInPast":Refresh();break;
+					case "UseGPS":SetGPS();break;
+					default: break;
+				}
 			};
+			if (UseGPS)
+				SetGPS();
 		}
 
+		void SetGPS()
+		{
+			if (Settings.UseGPS)
+			{
+				if (geolocator == null)
+					geolocator = new Geolocator();
+				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+				
+				geolocator.ReportInterval = Settings.GPSInterval;
+				geolocator.StatusChanged += GeolocatorOnStatusChanged;
+				geolocator.PositionChanged += (sender, args) =>
+				{
+					lastLocation.Latitude = args.Position.Coordinate.Latitude;
+					lastLocation.Longitude = args.Position.Coordinate.Longitude;
+					Refresh();
+				};
+
+
+			}
+			else
+			{
+				geolocator.PositionChanged -= GeolocatorOnPositionChanged;
+				geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+
+				geolocator = null;
+			}
+		}
+
+		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
+		{
+			if (args.Status == PositionStatus.Ready)
+			{
+
+			}
+			else if (args.Status == PositionStatus.Disabled ||
+					 args.Status == PositionStatus.NotAvailable)
+			{
+				lastLocation = null;
+			}
+		}
+
+		private void GeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		{
+			lastLocation = new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude);
+			Refresh();
+		}
+
+		public override IEnumerable<Stop> FilteredStops
+		{
+			get
+			{
+				if (StopNameFilter != null && Context.ActualStops != null)
+				{
+					var tempSt = StopNameFilter.ToLower();
+					var temp = Context.ActualStops.AsParallel().Where(
+							x => x.SearchName.Contains(tempSt));
+					if (lastLocation != null)
+						return temp.OrderBy(Distance);
+					else
+						return temp.OrderBy(x => x.SearchName);
+				}
+				if (Context.ActualStops != null)
+					return lastLocation == null ? Context.ActualStops.OrderBy(x => x.SearchName) :
+												  Context.ActualStops.OrderBy(Distance);
+				return null;
+			}
+		}
+
+		private double Distance(Stop x)
+		{
+			return Math.Abs(Math.Sqrt(Math.Pow(lastLocation.Longitude - x.Lng, 2) + Math.Pow(lastLocation.Latitude - x.Lat, 2)));
+		}
 	public ISettingsModelView SettingsModelView
 	{
 		get { return settingsModelView; }

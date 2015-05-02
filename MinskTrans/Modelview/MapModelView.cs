@@ -53,6 +53,11 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private Geolocator geolocator;
 
+		public Geolocator  Geolocator
+		{
+			get { return geolocator;}
+		}
+
 		private MapModelView(Context context)
 			:base(context)
 		{
@@ -98,7 +103,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		void SetGPS()
+		private void SetGPS()
 		{
 			if (settings.UseGPS)
 			{
@@ -109,8 +114,6 @@ namespace MinskTrans.DesctopClient.Modelview
 				geolocator.ReportInterval = Settings.GPSInterval;
 				geolocator.StatusChanged += GeolocatorOnStatusChanged;
 				geolocator.PositionChanged += GeolocatorOnPositionChanged;
-						
-				
 			}
 			else
 			{
@@ -135,7 +138,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				ShowICommand.RaiseCanExecuteChanged();
 			}
 			else if (args.Status == PositionStatus.Disabled ||
-					 args.Status == PositionStatus.NotAvailable)
+			         args.Status == PositionStatus.NotAvailable)
 			{
 				Ipushpin = null;
 				ShowICommand.RaiseCanExecuteChanged();

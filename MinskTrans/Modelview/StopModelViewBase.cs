@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text.RegularExpressions;
+using Windows.Devices.Geolocation;
+using Windows.UI.Core;
 using GalaSoft.MvvmLight.Command;
+using MapControl;
 using MinskTrans.DesctopClient.Model;
 
 
@@ -11,14 +15,30 @@ namespace MinskTrans.DesctopClient.Modelview
 	{
 		private Stop filteredSelectedStop;
 		private string stopNameFilter;
+		
+		private SettingsModelView settings;
 
-		public StopModelViewBase(Context newContext) : base(newContext)
+		public SettingsModelView Settings
 		{
+			get { return settings; }
+		}
+
+		private Location lastLocation;
+
+		public StopModelViewBase(Context newContext, SettingsModelView newSettings) : base(newContext)
+		{
+			settings = newSettings;
 			newContext.PropertyChanged+= (sender, args) =>
 			{
 				if (args.PropertyName == "ActualStops")
 				Refresh();
 			};
+			settings.PropertyChanged += (sender, args) =>
+			{
+				//if (args.PropertyName == "UseGPS")
+				//	SetGPS();
+			};
+			//SetGPS();
 		}
 
 		#region Overrides of BaseModelView
@@ -68,7 +88,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 
-		public IEnumerable<Stop> FilteredStops
+		
+
+		public virtual IEnumerable<Stop> FilteredStops
 		{
 			get
 			{
@@ -77,12 +99,21 @@ namespace MinskTrans.DesctopClient.Modelview
 					var tempSt = StopNameFilter.ToLower();
 					var temp = Context.ActualStops.AsParallel().Where(
 							x => x.SearchName.Contains(tempSt));
-					return temp.OrderBy(x=>x.SearchName);
+					if (lastLocation != null)
+						return temp.OrderBy(Distance);
+					else
+						return temp.OrderBy(x=>x.SearchName);
 				}
-				if (Context.ActualStops != null) 
-					return Context.ActualStops.OrderBy(x => x.SearchName);
+				if (Context.ActualStops != null)
+					return lastLocation == null ? Context.ActualStops.OrderBy(x => x.SearchName) :
+												  Context.ActualStops.OrderBy(Distance);
 				return null;
 			}
+		}
+
+		private double Distance(Stop x)
+		{
+			return Math.Abs(Math.Sqrt(Math.Pow(lastLocation.Longitude - x.Lng, 2) + Math.Pow(lastLocation.Latitude - x.Lat, 2)));
 		}
 
 		public GroupStop SelectedGroup

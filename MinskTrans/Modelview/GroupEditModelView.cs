@@ -15,7 +15,7 @@ using MinskTrans.DesctopClient.Model;
 		private GroupStop stop;
 		private Stop selectedStopGroup;
 
-		public GroupEditModelView(Context newContext) : base(newContext)
+		public GroupEditModelView(Context newContext, SettingsModelView settings) : base(newContext, settings)
 		{
 		}
 

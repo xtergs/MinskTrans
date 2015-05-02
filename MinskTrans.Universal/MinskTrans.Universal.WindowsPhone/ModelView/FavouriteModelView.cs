@@ -11,7 +11,7 @@ namespace MinskTrans.Universal.ModelView
 	public class FavouriteModelView:FindModelView
 	{
 		
-		public FavouriteModelView(Context newContext, ISettingsModelView settingsModelView) : base(newContext, settingsModelView)
+		public FavouriteModelView(Context newContext, SettingsModelView settingsModelView) : base(newContext, settingsModelView)
 		{
 			
 		}

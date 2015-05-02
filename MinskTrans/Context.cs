@@ -441,12 +441,19 @@ namespace MinskTrans.DesctopClient
 			if (variantLoad == 2)
 				foreach (var rout in routsl.AsParallel())
 				{
-					rout.Time = timesl.FirstOrDefault(x =>
+					Schedule first = null;
+					var rout1 = rout;
+					foreach (var schedule in timesl.Where(x =>
 					{
 						if (x == null)
 							return false;
-						return x.RoutId == rout.RoutId;
-					});
+						return x.RoutId == rout1.RoutId;
+					}))
+					{
+						first = schedule;
+						break;
+					}
+					rout.Time = first;
 					if (rout.Time != null)
 						rout.Time.Rout = rout;
 
@@ -477,7 +484,7 @@ namespace MinskTrans.DesctopClient
 						rout.Time.Rout = rout;
 
 
-					rout.Stops = rout.RouteStops.Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
+					rout.Stops = rout.RouteStops.AsParallel().Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
 					{
 						if (stop.Routs == null)
 							stop.Routs = new List<Rout>();

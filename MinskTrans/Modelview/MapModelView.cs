@@ -4,6 +4,7 @@
 
 
 
+using Windows.UI.Popups;
 using System.Text;
 using System.ComponentModel;
 using System;
@@ -107,6 +108,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (settings.UseGPS)
 			{
+<<<<<<< refactor
 				if (geolocator == null)
 					geolocator = new Geolocator();
 				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
@@ -114,6 +116,32 @@ namespace MinskTrans.DesctopClient.Modelview
 				geolocator.ReportInterval = Settings.GPSInterval;
 				geolocator.StatusChanged += GeolocatorOnStatusChanged;
 				geolocator.PositionChanged += GeolocatorOnPositionChanged;
+=======
+				try
+				{
+					if (geolocator == null)
+						geolocator = new Geolocator();
+					geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+
+					geolocator.ReportInterval = Settings.GPSInterval;
+					geolocator.StatusChanged += GeolocatorOnStatusChanged;
+					geolocator.PositionChanged += GeolocatorOnPositionChanged;
+				}
+				catch (Exception ex)
+				{
+					if (unchecked ((uint)ex.HResult == 0x80004004))
+					{
+						// the application does not have the right capability or the location master switch is off
+						MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+						box.ShowAsync();
+					}
+					//else
+					{
+						// something else happened acquring the location
+					}
+				}
+
+>>>>>>> local
 			}
 			else
 			{

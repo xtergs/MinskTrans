@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Email;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
@@ -47,7 +49,28 @@ namespace MinskTrans.Universal
 		{
 			this.InitializeComponent();
 			this.Suspending += this.OnSuspending;
+#if BETA
+			this.UnhandledException += OnUnhandledException;
+#endif
 			MainModelView.Create(new UniversalContext());
+		}
+
+		private void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+		{
+			StringBuilder builder = new StringBuilder(unhandledExceptionEventArgs.Exception.ToString());
+			builder.Append("\n");
+			builder.Append(unhandledExceptionEventArgs.Message);
+			builder.Append("\n");
+			builder.Append(unhandledExceptionEventArgs.Exception.StackTrace);
+			EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
+			{
+				Subject = "Минский общественный транспорт",
+				To =
+				{
+					new EmailRecipient("xtergs@gmail.com")
+				},
+				Body = builder.ToString()
+			});
 		}
 
 		#region Overrides of Application

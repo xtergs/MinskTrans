@@ -69,6 +69,7 @@ namespace MinskTrans.DesctopClient
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
 			Name = GetStr().Trim();
+			SearchName = Name.ToLower();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);

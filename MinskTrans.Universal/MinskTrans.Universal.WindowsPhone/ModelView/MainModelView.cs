@@ -39,7 +39,7 @@ namespace MinskTrans.Universal.ModelView
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context, settingsModelView);
 			findModelView = new FindModelView(context, settingsModelView);
-
+			Context.VariantLoad = SettingsModelView.VariantConnect;
 			if (IsInDesignMode)
 			{
 				StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));

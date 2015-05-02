@@ -25,6 +25,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.Universal.WP.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestApp1", "UnitTestApp1\UnitTestApp1.csproj", "{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3EE8BF01-423E-4D28-B648-512BFFFEAE2A}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems*{59beb27b-8c75-4e30-a0d1-5ed336038c3c}*SharedItemsImports = 13
@@ -228,5 +233,8 @@ Global
 		{1D8E7A1E-95BF-4052-B60E-9D87CCF404F8} = {B33B7725-3735-4693-A3E1-77A0972BE758}
 		{86DFE06A-EA16-4BAD-B04C-9B292F1A5789} = {B33B7725-3735-4693-A3E1-77A0972BE758}
 		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD} = {B33B7725-3735-4693-A3E1-77A0972BE758}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

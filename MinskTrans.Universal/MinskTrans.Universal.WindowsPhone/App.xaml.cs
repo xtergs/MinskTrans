@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -67,12 +68,14 @@ namespace MinskTrans.Universal
 		/// <param name="e">Details about the launch request and process.</param>
 		async protected override void OnLaunched(LaunchActivatedEventArgs e)
 		{
+			Debug.WriteLine("App.OnLaunched started");
 #if DEBUG
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
 				this.DebugSettings.EnableFrameRateCounter = true;
 			}
 #endif
+			var model = MainModelView.MainModelViewGet;
 
 			Frame rootFrame = Window.Current.Content as Frame;
 
@@ -94,17 +97,6 @@ namespace MinskTrans.Universal
 
 				// Place the frame in the current Window
 				Window.Current.Content = rootFrame;
-
-				var model = MainModelView.MainModelViewGet;
-
-				timer = new Timer(state =>
-				{
-					UpdateNetworkInformation();
-					if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
-						if (model.Context.UpdateDataCommand.CanExecute(null))
-							model.Context.UpdateAsync();
-				}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
-				
 
 				model.Context.ErrorLoading += async (sender, args) =>
 				{
@@ -134,7 +126,18 @@ namespace MinskTrans.Universal
 						});
 					}
 				};
-				 model.Context.Load(); 
+				model.Context.Load();
+				
+
+				timer = new Timer(state =>
+				{
+					UpdateNetworkInformation();
+					if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
+						if (model.Context.UpdateDataCommand.CanExecute(null))
+							model.Context.UpdateAsync();
+				}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
+				
+
 			}
 
 
@@ -167,6 +170,7 @@ namespace MinskTrans.Universal
 
 			// Ensure the current window is active
 			Window.Current.Activate();
+			Debug.WriteLine("App.OnLaunched ended");
 		}
 
 #if WINDOWS_PHONE_APP

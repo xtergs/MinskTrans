@@ -36,7 +36,7 @@ namespace MinskTrans.Universal
 		{
 			try
 			{
-				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
 				OnLogMessage("file " + file + " exist");
 				return true;
 			}
@@ -65,7 +65,7 @@ namespace MinskTrans.Universal
 		{
 			try
 			{
-				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
 				await fl.DeleteAsync();
 			}
 			catch (FileNotFoundException fileNotFound)
@@ -79,7 +79,7 @@ namespace MinskTrans.Universal
 		{
 			try
 			{
-				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(oldFile);
+				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(oldFile);
 				await fl.RenameAsync(newFile);
 			}
 			catch (FileNotFoundException fileNOtFound)
@@ -91,7 +91,7 @@ namespace MinskTrans.Universal
 		{
 			return Task.Run(async () =>
 			{
-				var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
 				//var xx = (await FileIO.ReadBufferAsync(fl));
 				//var tt =await FileIO.ReadLinesAsync(fl);
 				var resultText = await FileIO.ReadTextAsync(fl);
@@ -101,7 +101,7 @@ namespace MinskTrans.Universal
 
 		protected override async Task<string> FileReadAllText(string file)
 		{
-			var fl = await ApplicationData.Current.LocalFolder.GetFileAsync(file);
+			var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
 			//var xx = (await FileIO.ReadBufferAsync(fl));
 			//var tt =await FileIO.ReadLinesAsync(fl);
 			var resultText = await FileIO.ReadTextAsync(fl);
@@ -164,18 +164,18 @@ namespace MinskTrans.Universal
 
 				await Task.WhenAll(Task.Run(async () =>
 				{
-					StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileStops);
+					StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileStops);
 					newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await ReadAllFile(file)));
 				}),
 					Task.Run(async () =>
 					{
-						StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileRouts);
+						StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileRouts);
 						newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await ReadAllFile(file)));
 
 					}),
 					Task.Run(async () =>
 					{
-						StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileTimes);
+						StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileTimes);
 						newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await ReadAllFile(file)));
 
 					}));
@@ -229,7 +229,7 @@ namespace MinskTrans.Universal
 
 				//string str= response.StatusCode + " " + response.ReasonPhrase + Environment.NewLine;
 				var fileGet =
-					await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
+					await ApplicationData.Current.RoamingFolder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
 				using (var writeStream = await fileGet.OpenAsync(FileAccessMode.ReadWrite))
 				{
 					using (var outputStream = writeStream.GetOutputStreamAt(0))
@@ -244,25 +244,34 @@ namespace MinskTrans.Universal
 			}
 		}
 
+		protected override async Task SaveFavourite()
+		{
+			await SaveFavourite(ApplicationData.Current.RoamingFolder);
+		}
+		async  Task SaveFavourite(StorageFolder storage)
+		{
+			StorageFile stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
+
+			using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
+			{
+				WriteXml(writer);
+			}
+
+			await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
+		}
 		
 		public override async Task Save()
 		{
 
 			//await IsolatedStorageOperations.Save(this, "data.dat");
 
-			var storage = ApplicationData.Current.LocalFolder;
+			var storage = ApplicationData.Current.RoamingFolder;
 			StorageFile stream = null;
 
 			try
 			{
-				stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
-
-				using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
-				{
-					WriteXml(writer);
-				}
-
-				await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
+				
+				await SaveFavourite(storage);
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
 
@@ -301,145 +310,107 @@ namespace MinskTrans.Universal
 
 		public override async Task Load()
 		{
+			Debug.WriteLine("UniversalContext.Load started");
+			Debug.WriteLine("UniversalContext LoadSourceData started");
 			OnLoadStarted();
-			
-			var storage = ApplicationData.Current.LocalFolder;
-			ObservableCollection<Rout> tpRouts;
-			ObservableCollection<Stop> tpStops;
-			ObservableCollection<Schedule> tpTimes;
+
+			var storage = ApplicationData.Current.RoamingFolder;
+			ObservableCollection<Rout> tpRouts = null;
+			ObservableCollection<Stop> tpStops = null;
+			ObservableCollection<Schedule> tpTimes = null;
 			ObservableCollection<Stop> tpFavouriteStops = null;
 			ObservableCollection<RoutWithDestinations> tpFavouriteRouts = null;
 			ObservableCollection<GroupStop> tpGroups = null;
 
 			try
 			{
-				try
-				{
-					var routsFile = await storage.GetFileAsync(NameFileRouts);
-					var routs = await FileIO.ReadTextAsync(routsFile);
-					tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
-				}
-				catch (FileNotFoundException e)
-				{
-					throw new TaskCanceledException(e.Message, e);
-				}
-				try
-				{
-					var stopsFile = await storage.GetFileAsync(NameFileStops);
-					var stops = await FileIO.ReadTextAsync(stopsFile);
-					tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
-				}
-				catch (FileNotFoundException e)
-				{
-					throw new TaskCanceledException(e.Message, e);
-				}
-				try
-				{
-
-					var timesFile = await storage.GetFileAsync(NameFileTimes);
-					var times = await FileIO.ReadTextAsync(timesFile);
-
-					tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
-				}
-				catch (FileNotFoundException e)
-				{
-					throw new TaskCanceledException(e.Message, e);
-				}
-
-				if (await FileExistss(NameFileFavourite))
-				{
-					try
+				await Task.WhenAll(
+					Task.Run(async () =>
 					{
-
-						var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
-
-						using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+						try
 						{
-							ReadXml(reader);
+							var routsFile = await storage.GetFileAsync(NameFileRouts);
+							var routs = await FileIO.ReadTextAsync(routsFile);
+							tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
 						}
 
-						if (FavouriteRoutsIds != null)
+						catch (FileNotFoundException e)
 						{
-							tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
-								new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
-							FavouriteRoutsIds = null;
+							throw new TaskCanceledException(e.Message, e);
 						}
-
-						if (FavouriteStopsIds != null)
-						{
-							tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
-							FavouriteStopsIds = null;
-						}
-						if (GroupsStopIds != null)
-						{
-							tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
-							{
-								Name = x.Name,
-								Stops = new ObservableCollection<Stop>(Stops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
-							}));
-						}
-					}
-					catch (FileNotFoundException e)
+					}), Task.Run(async () =>
 					{
-						Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-						return;
-					}
-					catch (Exception e)
+						try
+						{
+							var stopsFile = await storage.GetFileAsync(NameFileStops);
+							var stops = await FileIO.ReadTextAsync(stopsFile);
+							tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					}), Task.Run(async () =>
 					{
-						Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-						throw new Exception(e.Message, e);
-					}
-				}
-				else
-				{
-					tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-					tpFavouriteStops = new ObservableCollection<Stop>();
-					tpGroups = new ObservableCollection<GroupStop>();
-				}
+						try
+						{
 
-				 //await Task.WhenAll(
-				 //   Task.Run(async () =>
-				 //   {
-				 //	   try
-				 //	   {
-				 //		   var routsFile = await storage.GetFileAsync(NameFileRouts);
-				 //		   var routs = await FileIO.ReadTextAsync(routsFile);
-				 //		   Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
-				 //	   }
-				 //	   catch (FileNotFoundException e)
-				 //	   {
-				 //		   throw new TaskCanceledException(e.Message, e);
-				 //	   }
-				 //   }),
-				 //	Task.Run(async () =>
-				 //   {
-				 //	   try
-				 //	   {
-				 //		   var stopsFile = await storage.GetFileAsync(NameFileStops);
-				 //		   var stops = await FileIO.ReadTextAsync(stopsFile);
-				 //		   Stops =  JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
-				 //	   }
-				 //	   catch (FileNotFoundException e)
-				 //	   {
-				 //		   throw new TaskCanceledException(e.Message, e);
-				 //	   }
-				 //   }),
-				 //   Task.Run(async () =>
-				 //   {
-				 //	   try
-				 //	   {
+							var timesFile = await storage.GetFileAsync(NameFileTimes);
+							var times = await FileIO.ReadTextAsync(timesFile);
 
-				 //		   var timesFile = await storage.GetFileAsync(NameFileTimes);
-				 //		   var times = await FileIO.ReadTextAsync(timesFile);
+							tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+						}
+						catch (FileNotFoundException e)
+						{
+							throw new TaskCanceledException(e.Message, e);
+						}
+					}));
 
-				 //		   Times =  JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
-				 //	   }
-				 //	   catch (FileNotFoundException e)
-				 //	   {
-				 //		   throw new TaskCanceledException(e.Message, e);
-				 //	   }
-				 //   })
-				 //   );
+
+
+				//await Task.WhenAll(
+				//   Task.Run(async () =>
+				//   {
+				//	   try
+				//	   {
+				//		   var routsFile = await storage.GetFileAsync(NameFileRouts);
+				//		   var routs = await FileIO.ReadTextAsync(routsFile);
+				//		   Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
+				//	   }
+				//	   catch (FileNotFoundException e)
+				//	   {
+				//		   throw new TaskCanceledException(e.Message, e);
+				//	   }
+				//   }),
+				//	Task.Run(async () =>
+				//   {
+				//	   try
+				//	   {
+				//		   var stopsFile = await storage.GetFileAsync(NameFileStops);
+				//		   var stops = await FileIO.ReadTextAsync(stopsFile);
+				//		   Stops =  JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+				//	   }
+				//	   catch (FileNotFoundException e)
+				//	   {
+				//		   throw new TaskCanceledException(e.Message, e);
+				//	   }
+				//   }),
+				//   Task.Run(async () =>
+				//   {
+				//	   try
+				//	   {
+
+				//		   var timesFile = await storage.GetFileAsync(NameFileTimes);
+				//		   var times = await FileIO.ReadTextAsync(timesFile);
+
+				//		   Times =  JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+				//	   }
+				//	   catch (FileNotFoundException e)
+				//	   {
+				//		   throw new TaskCanceledException(e.Message, e);
+				//	   }
+				//   })
+				//   );
 				//await Task.Run(async () =>
 				//{
 				//	if (await FileExistss(NameFileFavourite))
@@ -512,21 +483,77 @@ namespace MinskTrans.Universal
 				return;
 			}
 
-			Connect(tpRouts, tpStops, tpTimes);
+			Debug.WriteLine("UniversalContext LoadSourceData ended");
+			Connect(tpRouts, tpStops, tpTimes, VariantLoad);
+
 			//lock (o)
 			//{
 			Routs = tpRouts;
 			Stops = tpStops;
 			Times = tpTimes;
+			Debug.WriteLine("UniversalContext loadfavourite started");
+			if (await FileExistss(NameFileFavourite))
+			{
+				try
+				{
+
+					var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
+
+					using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+					{
+						ReadXml(reader);
+					}
+
+					if (FavouriteRoutsIds != null)
+					{
+						var temp1 = FavouriteRoutsIds.Select(x =>
+							new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
+						tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
+						FavouriteRoutsIds = null;
+					}
+
+					if (FavouriteStopsIds != null)
+					{
+						tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => tpStops.First(d => d.ID == x)));
+						FavouriteStopsIds = null;
+					}
+					if (GroupsStopIds != null)
+					{
+						tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+						{
+							Name = x.Name,
+							Stops = new ObservableCollection<Stop>(tpStops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+						}));
+					}
+				}
+				catch (FileNotFoundException e)
+				{
+					Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+					return;
+				}
+				catch (Exception e)
+				{
+					Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+					throw new Exception(e.Message, e);
+				}
+			}
+			else
+			{
+				tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+				tpFavouriteStops = new ObservableCollection<Stop>();
+				tpGroups = new ObservableCollection<GroupStop>();
+			}
 				
 			//}
 			FavouriteRouts = tpFavouriteRouts;
 			FavouriteStops = tpFavouriteStops;
 			Groups = tpGroups;
+			Debug.WriteLine("UniversalContext loadfavourite ended");
 
 			//CleanTp();
 			AllPropertiesChanged();
 			OnLoadEnded();
+			Debug.WriteLine("UniversalContext.Load ended");
 		}
 
 		private static object o = new Object();

@@ -23,13 +23,15 @@ namespace MinskTrans.DesctopClient.Model
 		[JsonProperty]
 		public string Name
 		{
-			get { return name; }
-			set
-			{
-				name = value;
-				SearchName = value.ToLower().Trim();
-			}
+			get; set;
+			//get { return name; }
+			//set
+			//{
+			//	name = value;
+			//	SearchName = value.ToLower().Trim();
+			//}
 		}
+		[JsonProperty]
 		public string SearchName { get; set; }
 		[JsonProperty]
 		public string Info { get; set; }

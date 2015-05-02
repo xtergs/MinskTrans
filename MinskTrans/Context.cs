@@ -102,7 +102,7 @@ namespace MinskTrans.DesctopClient
 		}
 
 		private ObservableCollection<Rout> routs;
-		
+		private int variantLoad;
 		private ObservableCollection<Stop> stops;
 		private ObservableCollection<Schedule> times;
 		private ObservableCollection<GroupStop> groups;
@@ -110,6 +110,11 @@ namespace MinskTrans.DesctopClient
 		private ObservableCollection<Stop> favouriteStops;
 		private DateTime lastUpdateDataDateTime;
 
+		public int VariantLoad
+		{
+			get { return variantLoad; }
+			set { variantLoad = value; }
+		}
 		public DateTime LastUpdateDataDateTime
 		{
 			get { return lastUpdateDataDateTime; }
@@ -195,7 +200,7 @@ namespace MinskTrans.DesctopClient
 			{
 				if (Equals(value, times)) return;
 				times = value;
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 
@@ -208,8 +213,8 @@ namespace MinskTrans.DesctopClient
 				stops = value;
 				//actualStops = null;
 				//ActualStops = new ObservableCollection<Stop>(value.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
-				OnPropertyChanged();
-				OnPropertyChanged("ActualStops");
+				//OnPropertyChanged();
+				//OnPropertyChanged("ActualStops");
 			}
 		}
 
@@ -222,7 +227,7 @@ namespace MinskTrans.DesctopClient
 
 			private set
 			{
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 
@@ -234,7 +239,7 @@ namespace MinskTrans.DesctopClient
 				if (Equals(value, routs))
 					return;
 				routs = value;
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 
@@ -295,7 +300,7 @@ namespace MinskTrans.DesctopClient
 
 
 
-				Connect(newRoutes, newStops, newSchedule);
+				 Connect(newRoutes, newStops, newSchedule, VariantLoad);
 
 				Stops = new ObservableCollection<Stop>(newStops.Where(stop=> stop.Routs.Any()));
 				Routs = new ObservableCollection<Rout>(newRoutes.Where(rout=> rout.Stops.Any()));
@@ -321,6 +326,7 @@ namespace MinskTrans.DesctopClient
 			OnApplyUpdateEnded();
 		}
 
+		protected abstract Task SaveFavourite();
 		public abstract Task Save();
 
 		public abstract Task Load();
@@ -338,25 +344,29 @@ namespace MinskTrans.DesctopClient
 
 		
 		static protected async void Connect([NotNull] IEnumerable<Rout> routsl, [NotNull] IEnumerable<Stop> stopsl,
-			[NotNull] IEnumerable<Schedule> timesl)
+			[NotNull] IEnumerable<Schedule> timesl, int variantLoad)
 		{
+			Debug.WriteLine("Connect Started" + DateTime.Now);
+			
 			if (routsl == null) throw new ArgumentNullException("routsl");
 			if (stopsl == null) throw new ArgumentNullException("stopsl");
 			if (timesl == null) throw new ArgumentNullException("timesl");
 			
 			//Stopwatch watch1 = new Stopwatch();
 			//watch1.Start();
-			//foreach (var rout in routsl)
-			//{
-			//	rout.Time = timesl.FirstOrDefault(x =>
-			//	{
-			//		if (x == null)
-			//			return false;
-			//		return x.RoutId == rout.RoutId;
-			//	});
-			//	if (rout.Time != null)
-			//		rout.Time.Rout = rout;
-			//}
+			
+			 
+				//foreach (var rout in routsl)
+				//{
+				//	rout.Time = timesl.FirstOrDefault(x =>
+				//	{
+				//		if (x == null)
+				//			return false;
+				//		return x.RoutId == rout.RoutId;
+				//	});
+				//	if (rout.Time != null)
+				//		rout.Time.Rout = rout;
+				//}
 			
 			//var xxx = routsl.ToLookup(rout => rout, rout =>
 			//{
@@ -373,72 +383,115 @@ namespace MinskTrans.DesctopClient
 			//watch1.Reset();
 			//var dddddd = xxx[routsl.First()];
 			//watch1.Start();
-
-			//await Task.WhenAll(new[]
-			//{
-			//	Task.Run(() =>
-			//	{
-			//		foreach (var rout in routsl)
-			//		{
-			//			rout.Time = timesl.FirstOrDefault(x =>
-			//			{
-			//				if (x == null)
-			//					return false;
-			//				return x.RoutId == rout.RoutId;
-			//			});
-			//			if (rout.Time != null)
-			//				rout.Time.Rout = rout;
-
-
-			//			rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-			//			{
-							
-			//				return stop;
-			//			}).ToList();
-			//		}
-			//	}),
-			//	Task.Run(() =>
-			//	{
-			//		foreach (var stop in stopsl)
-			//		{
-			//			stop.Routs = routsl.Where(rout => rout.RouteStops.Any(st => st == stop.ID)).ToList();
-			//		}
-			//	})
-			//});
+			if (variantLoad == 0)
+				await Task.WhenAll(new[]
+				{
+					Task.Run(() =>
+					{
+						foreach (var rout in routsl)
+						{
+							rout.Time = timesl.FirstOrDefault(x =>
+							{
+								if (x == null)
+									return false;
+								return x.RoutId == rout.RoutId;
+							});
+							if (rout.Time != null)
+								rout.Time.Rout = rout;
+						}
+					}),
+					Task.Run(() =>
+					{
+						foreach (var stop in stopsl)
+						{
+							stop.Routs = routsl.Where(rout => rout.RouteStops.Any(st => st == stop.ID)).ToList();
+						}
+					})
+				});
 
 			//watch1.Stop();
 			//watch1.Reset();
 			//watch1.Start();
+			if (variantLoad == 1)
+				Parallel.ForEach(routsl, rout =>
+				{
+					rout.Time = timesl.FirstOrDefault(x =>
+					{
+						if (x == null)
+							return false;
+						return x.RoutId == rout.RoutId;
+					});
+					if (rout.Time != null)
+						rout.Time.Rout = rout;
 
-			//Parallel.ForEach(routsl, rout =>
-			//{
-			//	rout.Time = timesl.FirstOrDefault(x =>
-			//	{
-			//		if (x == null)
-			//			return false;
-			//		return x.RoutId == rout.RoutId;
-			//	});
-			//	if (rout.Time != null)
-			//		rout.Time.Rout = rout;
 
+					rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+					{
+						if (stop.Routs == null)
+							stop.Routs = new List<Rout>();
+						stop.Routs.Add(rout);
+						return stop;
+					}).ToList();
 
-			//	rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-			//	{
-			//		if (stop.Routs == null)
-			//			stop.Routs = new List<Rout>();
-			//		stop.Routs.Add(rout);
-			//		return stop;
-			//	}).ToList();
-
-			//});
+				});
 
 			//watch1.Stop();
 			//watch1.Reset();
 			//watch1.Start();
+			if (variantLoad == 2)
+				foreach (var rout in routsl.AsParallel())
+				{
+					rout.Time = timesl.FirstOrDefault(x =>
+					{
+						if (x == null)
+							return false;
+						return x.RoutId == rout.RoutId;
+					});
+					if (rout.Time != null)
+						rout.Time.Rout = rout;
 
+
+					rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+					{
+						if (stop.Routs == null)
+							stop.Routs = new List<Rout>();
+						stop.Routs.Add(rout);
+						return stop;
+					}).ToList();
+				}
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
+			if (variantLoad == 3)
+				foreach (var rout in routsl.AsParallel())
+				{
+					int routId = rout.RoutId;
+					rout.Time = timesl.FirstOrDefault(x =>
+					{
+						if (x == null)
+							return false;
+						return x.RoutId == routId;
+					});
+					if (rout.Time != null)
+						rout.Time.Rout = rout;
+
+
+					rout.Stops = rout.RouteStops.Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
+					{
+						if (stop.Routs == null)
+							stop.Routs = new List<Rout>();
+						stop.Routs.Add(rout);
+						return stop;
+					}).ToList();
+				}
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
 			//foreach (var rout in routsl.AsParallel())
 			//{
-			//	rout.Time = timesl.FirstOrDefault(x =>
+			//	rout.Time = timesl.AsParallel().FirstOrDefault(x =>
 			//	{
 			//		if (x == null)
 			//			return false;
@@ -455,37 +508,67 @@ namespace MinskTrans.DesctopClient
 			//		stop.Routs.Add(rout);
 			//		return stop;
 			//	}).ToList();
+
+			//}
+
+			//watch1.Stop();
+			//watch1.Reset();
+			//watch1.Start();
+			//foreach (var source in stopsl.AsParallel())
+			//{
+			//	source.Routs = new List<Rout>(10);
+			//}
+			//foreach (var rout in routsl.AsParallel())
+			//{
+			//	rout.Time = timesl.AsParallel().FirstOrDefault(x =>
+			//	{
+			//		if (x == null)
+			//			return false;
+			//		return x.RoutId == rout.RoutId;
+			//	});
+			//	if (rout.Time != null)
+			//		rout.Time.Rout = rout;
+
+
+			//	rout.Stops = rout.RouteStops.AsParallel().Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
+			//	{
+
+			//		stop.Routs.Add(rout);
+			//		return stop;
+			//	}).ToList();
+
 			//}
 
 			//watch1.Stop();
 			//watch1.Reset();
 			//watch1.Start();
 
-			foreach (var rout in routsl)
-			{
-				rout.Time = timesl.FirstOrDefault(x =>
-				{
-					if (x == null)
-						return false;
-					return x.RoutId == rout.RoutId;
-				});
-				if (rout.Time != null)
-					rout.Time.Rout = rout;
+			//foreach (var rout in routsl)
+			//{
+			//	rout.Time = timesl.FirstOrDefault(x =>
+			//	{
+			//		if (x == null)
+			//			return false;
+			//		return x.RoutId == rout.RoutId;
+			//	});
+			//	if (rout.Time != null)
+			//		rout.Time.Rout = rout;
 
 
-				rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-				{
-					if (stop.Routs == null)
-						stop.Routs = new List<Rout>();
-					stop.Routs.Add(rout);
-					return stop;
-				}).ToList();
+			//	rout.Stops = rout.RouteStops.AsParallel().Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
+			//	{
+			//		if (stop.Routs == null)
+			//			stop.Routs = new List<Rout>();
+			//		stop.Routs.Add(rout);
+			//		return stop;
+			//	}).ToList();
 
-			}
+			//}
 
 			//watch1.Stop();
 			//watch1.Reset();
 			//watch1.Start();
+			Debug.WriteLine("Connect Ended");
 		}
 
 		//async public void Update()
@@ -609,14 +692,24 @@ namespace MinskTrans.DesctopClient
 			{
 
 			var node = XDocument.Load(reader);
-			var document = (XDocument)node;
+			var document = (XElement)node.Root;
 
 			//document.Root.Attribute("LastUpdateTime").Value;
 
-				LastUpdateDataDateTime = (DateTime) document.Root.Attribute("LastUpdateTime");
+				LastUpdateDataDateTime = (DateTime) document.Attribute("LastUpdateTime");
 
-				FavouriteRoutsIds = new ObservableCollection<int>(document.Elements("FavouritRouts").Select(x => (int) x));
-				FavouriteStopsIds = new ObservableCollection<int>(document.Elements("FavouriteStops").Select(x => (int)x));
+				var temp1 = document.Elements("FavouriteStops").Elements("ID");
+				FavouriteStopsIds = new ObservableCollection<int>(temp1.Select(x => (int)(x)).ToList());
+
+				var temp = document.Elements("FavouritRouts").Elements("ID").ToList();
+				if (temp.Count() <= 0)
+					;
+				else
+					FavouriteRoutsIds = new ObservableCollection<int>(temp.Select(x =>
+					{
+
+						return (int) x;
+					}));
 
 				var xGroups = document.Element("Groups");
 				if (xGroups != null)
@@ -824,21 +917,39 @@ namespace MinskTrans.DesctopClient
 
 		public RelayCommand<RoutWithDestinations> AddFavouriteRoutCommand
 		{
-			get { return new RelayCommand<RoutWithDestinations>(x => FavouriteRouts.Add(x), p => p != null && !FavouriteRouts.Contains(p)); }
+			get { return new RelayCommand<RoutWithDestinations>(x => 
+				{
+				FavouriteRouts.Add(x);
+					SaveFavourite();
+				}, p => p != null && !FavouriteRouts.Contains(p)); }
 		}
 
 		public RelayCommand<Stop> AddFavouriteSopCommand
 		{
-			get { return new RelayCommand<Stop>(x => FavouriteStops.Add(x), p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p)); }
+			get { return new RelayCommand<Stop>(x =>
+			{
+				FavouriteStops.Add(x); 
+				SaveFavourite();
+			}
+
+				, p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p)); }
 		}
 		public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
 		{
-			get { return new RelayCommand<RoutWithDestinations>(x => FavouriteRouts.Remove(x), p => p != null && FavouriteRouts.Contains(p)); }
+			get { return new RelayCommand<RoutWithDestinations>(x =>
+			{
+				FavouriteRouts.Remove(x);
+				SaveFavourite();
+			}, p => p != null && FavouriteRouts.Contains(p)); }
 		}
 
 		public RelayCommand<Stop> RemoveFavouriteSopCommand
 		{
-			get { return new RelayCommand<Stop>(x => FavouriteStops.Remove(x), p => p != null && FavouriteStops.Contains(p)); }
+			get { return new RelayCommand<Stop>(x =>
+			{
+				FavouriteStops.Remove(x);
+				SaveFavourite();
+			}, p => p != null && FavouriteStops.Contains(p)); }
 		}
 		#endregion
 
@@ -897,7 +1008,11 @@ namespace MinskTrans.DesctopClient
 		{
 			get
 			{
-				return new RelayCommand<string>(x=>Groups.Add(new GroupStop(){Name=x}), p=>!string.IsNullOrWhiteSpace(p));
+				return new RelayCommand<string>(x =>
+				{
+					Groups.Add(new GroupStop() {Name = x});
+					SaveFavourite();
+				}, p=>!string.IsNullOrWhiteSpace(p));
 			}
 		}
 
@@ -908,8 +1023,11 @@ namespace MinskTrans.DesctopClient
 				return new RelayCommand<GroupStop>(x =>
 				{
 					if (x != null)
+					{
 						Groups.Remove(x);
+						SaveFavourite();
 						OnPropertyChanged("Groups");
+					}
 				});
 			}
 		}

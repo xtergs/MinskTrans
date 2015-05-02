@@ -316,7 +316,7 @@ namespace MinskTrans.DesctopClient
 				return;
 			}
 
-			Connect(Routs, Stops, Times);
+			await Connect(Routs, Stops, Times);
 
 			OnLoadEnded();
 			AllPropertiesChanged();

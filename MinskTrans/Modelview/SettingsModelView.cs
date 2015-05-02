@@ -61,7 +61,7 @@ using MinskTrans.DesctopClient.Properties;
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					UpdateOnWiFi = true;
+					UseGPS = true;
 				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
 			}
 
@@ -93,6 +93,26 @@ using MinskTrans.DesctopClient.Properties;
 
 			set
 			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public int VariantConnect
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					VariantConnect = 2;
+				return (int)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+			set
+			{
+				if (value < 0)
+					return;
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
 					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
 				else

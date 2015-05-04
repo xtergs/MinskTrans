@@ -79,6 +79,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (Equals(value, filteredSelectedStop)) return;
 				ShowStopMap.RaiseCanExecuteChanged();
 				filteredSelectedStop = value;
+				Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 				OnPropertyChanged("IsStopFavourite");
@@ -100,13 +101,13 @@ namespace MinskTrans.DesctopClient.Modelview
 					var temp = Context.ActualStops.AsParallel().Where(
 							x => x.SearchName.Contains(tempSt));
 					if (lastLocation != null)
-						return temp.OrderBy(Distance);
+						return temp.OrderByDescending(x=>Context.GetCounter(x)).ThenBy(Distance);
 					else
-						return temp.OrderBy(x=>x.SearchName);
+						return temp.OrderByDescending(x => Context.GetCounter(x)).ThenBy(x => x.SearchName);
 				}
 				if (Context.ActualStops != null)
-					return lastLocation == null ? Context.ActualStops.OrderBy(x => x.SearchName) :
-												  Context.ActualStops.OrderBy(Distance);
+					return lastLocation == null ? Context.ActualStops.OrderByDescending(x => Context.GetCounter(x)).ThenBy(x => x.SearchName) :
+												  Context.ActualStops.OrderByDescending(x => Context.GetCounter(x)).ThenBy(Distance);
 				return null;
 			}
 		}

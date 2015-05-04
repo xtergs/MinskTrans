@@ -74,6 +74,25 @@ using MinskTrans.DesctopClient.Properties;
 				OnPropertyChanged();
 			}
 		}
+
+		public bool KeepTracking
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					KeepTracking = true;
+				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+		}
 		public string PrivatyPolicity
 		{
 			get

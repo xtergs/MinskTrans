@@ -44,6 +44,25 @@ namespace MinskTrans.DesctopClient
 			new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
 		};
 
+		protected Dictionary<int, uint> counterViewStops;
+
+		public void IncrementCounter(Stop stop)
+		{
+			if (!counterViewStops.Keys.Contains(stop.ID))
+			{
+				counterViewStops.Add(stop.ID, 1);
+			}
+			else
+			{
+				counterViewStops[stop.ID]++;
+			}
+		}
+
+		public uint GetCounter(Stop stop)
+		{
+			return counterViewStops.Keys.Contains(stop.ID) ? counterViewStops[stop.ID] : 0;
+		}
+
 		public string TempExt
 		{
 			get { return ".temp"; }
@@ -99,6 +118,17 @@ namespace MinskTrans.DesctopClient
 				return nameFileTimes;
 			}
 			set { nameFileTimes = value; }
+		}
+
+		public string NameFileCounter
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(nameFileTimes))
+					nameFileCounter = "counters.dat";
+				return nameFileCounter;
+			}
+			set { nameFileCounter = value; }
 		}
 
 		private ObservableCollection<Rout> routs;
@@ -1082,6 +1112,8 @@ namespace MinskTrans.DesctopClient
 			var handler = ErrorLoading;
 			if (handler != null) handler(this, args);
 		}
+
+		public string nameFileCounter { get; set; }
 	}
 
 	public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);

@@ -193,6 +193,7 @@ namespace MinskTrans.DesctopClient
 		}
 
 		
+		
 		#region Overrides of BaseModel
 
 		protected string GetStr()

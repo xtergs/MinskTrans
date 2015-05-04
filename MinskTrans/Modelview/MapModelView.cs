@@ -108,15 +108,6 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (settings.UseGPS)
 			{
-<<<<<<< refactor
-				if (geolocator == null)
-					geolocator = new Geolocator();
-				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
-
-				geolocator.ReportInterval = Settings.GPSInterval;
-				geolocator.StatusChanged += GeolocatorOnStatusChanged;
-				geolocator.PositionChanged += GeolocatorOnPositionChanged;
-=======
 				try
 				{
 					if (geolocator == null)
@@ -132,8 +123,8 @@ namespace MinskTrans.DesctopClient.Modelview
 					if (unchecked ((uint)ex.HResult == 0x80004004))
 					{
 						// the application does not have the right capability or the location master switch is off
-						MessageDialog box = new MessageDialog("location  is disabled in phone settings");
-						box.ShowAsync();
+						//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+						//box.ShowAsync();
 					}
 					//else
 					{
@@ -141,17 +132,21 @@ namespace MinskTrans.DesctopClient.Modelview
 					}
 				}
 
->>>>>>> local
 			}
 			else
 			{
-				geolocator.PositionChanged -= GeolocatorOnPositionChanged;
-				geolocator.StatusChanged -= GeolocatorOnStatusChanged;
-				Ipushpin = null;
-				ShowICommand.RaiseCanExecuteChanged();
-				geolocator = null;
+				StopGPS();
 			}
 			ShowICommand.RaiseCanExecuteChanged();
+		}
+
+		public void StopGPS()
+		{
+			geolocator.PositionChanged -= GeolocatorOnPositionChanged;
+			geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+			Ipushpin = null;
+			ShowICommand.RaiseCanExecuteChanged();
+			geolocator = null;
 		}
 
 		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)

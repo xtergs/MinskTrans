@@ -274,6 +274,11 @@ namespace MinskTrans.Universal
 				await SaveFavourite(storage);
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
+				
+				string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
+				var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
+				await FileIO.WriteTextAsync(counterFile, counter);
+				counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
 
 				await Task.WhenAll(Task.Run(async () =>
 				{
@@ -324,6 +329,17 @@ namespace MinskTrans.Universal
 
 			try
 			{
+				try
+				{
+					var routsFile = await storage.GetFileAsync(NameFileCounter);
+					var routs = await FileIO.ReadTextAsync(routsFile);
+					counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
+				}
+
+				catch (FileNotFoundException e)
+				{
+					counterViewStops = new Dictionary<int, uint>();
+				}
 				await Task.WhenAll(
 					Task.Run(async () =>
 					{

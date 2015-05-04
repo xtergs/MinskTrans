@@ -120,47 +120,48 @@ namespace MinskTrans.Universal
 
 				// Place the frame in the current Window
 				Window.Current.Content = rootFrame;
-
-				model.Context.ErrorLoading += async (sender, args) =>
+				if (e.PreviousExecutionState != ApplicationExecutionState.Running)
 				{
-					
-					if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
+					model.Context.ErrorLoading += async (sender, args) =>
 					{
-						
 
-
-						rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+						if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
 						{
 
-							Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+
+
+							rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
 							{
-								Commands =
-							{
-								new UICommand("Обновить", command =>
+
+								Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
 								{
-									if (model.Context.UpdateDataCommand.CanExecute(null))
-										model.Context.UpdateDataCommand.Execute(null);
+									Commands =
+									{
+										new UICommand("Обновить", command =>
+										{
+											if (model.Context.UpdateDataCommand.CanExecute(null))
+												model.Context.UpdateDataCommand.Execute(null);
 
-								})
-							}
-							};
-							await dialog.ShowAsync();
-							
-						});
-					}
-				};
-				model.Context.Load();
-				
+										})
+									}
+								};
+								await dialog.ShowAsync();
 
-				timer = new Timer(state =>
-				{
-					UpdateNetworkInformation();
-					if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
-						if (model.Context.UpdateDataCommand.CanExecute(null))
-							model.Context.UpdateAsync();
-				}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
-				
+							});
+						}
+					};
+					model.Context.Load();
 
+
+					timer = new Timer(state =>
+					{
+						UpdateNetworkInformation();
+						if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
+							if (model.Context.UpdateDataCommand.CanExecute(null))
+								model.Context.UpdateAsync();
+					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
+
+				}
 			}
 
 
@@ -220,8 +221,10 @@ namespace MinskTrans.Universal
 		private void OnSuspending(object sender, SuspendingEventArgs e)
 		{
 			var deferral = e.SuspendingOperation.GetDeferral();
-
-			MainModelView.MainModelViewGet.Context.Save();
+			var model = MainModelView.MainModelViewGet;
+			model.Context.Save();
+			if (!model.SettingsModelView.KeepTracking)
+				model.MapModelView.StopGPS();
 			deferral.Complete();
 		}
 

@@ -43,5 +43,6 @@ namespace MinskTrans.DesctopClient.Model
 		public string StopsStr { get; set; }
 		[JsonProperty]
 		public string StopNum { get; set; }
+		
 	}
 }

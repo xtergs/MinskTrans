@@ -20,6 +20,20 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : StopModelViewBase
 	{
+		class LocationXX
+		{
+			private static Location loc;
+			static readonly object o = new object();
+			public static Location Get()
+			{
+				lock (o)
+				{
+					if (loc == null)
+						loc = new Location(0, 0);			
+				}
+				return loc;
+			}
+		}
 		private ISettingsModelView settingsModelView;
 		private bool autoDay;
 		private bool autoNowTime;
@@ -30,7 +44,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private bool tram;
 		private bool trol;
 		private string destinationStop;
-		private Location lastLocation;
+		//private LocationXX lastLocation;
 		private Geolocator geolocator;
 
 		//public StopModelView()
@@ -43,7 +57,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
 			settingsModelView = settings;
-			lastLocation = new Location();
+			
 			settingsModelView.PropertyChanged += (sender, args) =>
 			{
 				switch (args.PropertyName)
@@ -61,28 +75,48 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (Settings.UseGPS)
 			{
-				if (geolocator == null)
-					geolocator = new Geolocator();
-				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
-				
-				geolocator.ReportInterval = Settings.GPSInterval;
-				geolocator.StatusChanged += GeolocatorOnStatusChanged;
-				geolocator.PositionChanged += (sender, args) =>
+				try
 				{
-					lastLocation.Latitude = args.Position.Coordinate.Latitude;
-					lastLocation.Longitude = args.Position.Coordinate.Longitude;
-					Refresh();
-				};
+					if (geolocator == null)
+						geolocator = new Geolocator();
+					geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+
+					geolocator.ReportInterval = Settings.GPSInterval;
+					geolocator.StatusChanged += GeolocatorOnStatusChanged;
+					geolocator.PositionChanged += OnGeolocatorOnPositionChanged;
+				}
+				catch (Exception ex)
+				{
+					if (unchecked ((uint) ex.HResult == 0x80004004))
+					{
+						// the application does not have the right capability or the location master switch is off
+						//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+						//box.ShowAsync();
+					}
+					//else
+					{
+						// something else happened acquring the location
+					}
+				}
 
 
 			}
 			else
 			{
-				geolocator.PositionChanged -= GeolocatorOnPositionChanged;
+				geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
 				geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 
 				geolocator = null;
 			}
+		}
+
+
+		private void OnGeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		{
+			LocationXX.Get().Latitude = args.Position.Coordinate.Latitude;
+			LocationXX.Get().Longitude = args.Position.Coordinate.Longitude;
+			OnPropertyChanged("StopNameFilter");
+			OnPropertyChanged("FilteredStops");
 		}
 
 		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
@@ -94,15 +128,11 @@ namespace MinskTrans.DesctopClient.Modelview
 			else if (args.Status == PositionStatus.Disabled ||
 					 args.Status == PositionStatus.NotAvailable)
 			{
-				lastLocation = null;
+				//LocationXX.Get() = null;
 			}
 		}
 
-		private void GeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
-		{
-			lastLocation = new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude);
-			Refresh();
-		}
+		static Location defaultLocation = new Location(0,0);
 
 		public override IEnumerable<Stop> FilteredStops
 		{
@@ -113,21 +143,21 @@ namespace MinskTrans.DesctopClient.Modelview
 					var tempSt = StopNameFilter.ToLower();
 					var temp = Context.ActualStops.AsParallel().Where(
 							x => x.SearchName.Contains(tempSt));
-					if (lastLocation != null)
-						return temp.OrderBy(Distance);
+					if (!Equals(LocationXX.Get(), defaultLocation))
+						return temp.OrderByDescending(Context.GetCounter).ThenBy(Distance);
 					else
-						return temp.OrderBy(x => x.SearchName);
+						return temp.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName);
 				}
 				if (Context.ActualStops != null)
-					return lastLocation == null ? Context.ActualStops.OrderBy(x => x.SearchName) :
-												  Context.ActualStops.OrderBy(Distance);
+					return Equals(LocationXX.Get(), defaultLocation) ? Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName) :
+												  Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(Distance);
 				return null;
 			}
 		}
 
 		private double Distance(Stop x)
 		{
-			return Math.Abs(Math.Sqrt(Math.Pow(lastLocation.Longitude - x.Lng, 2) + Math.Pow(lastLocation.Latitude - x.Lat, 2)));
+			return Math.Abs(Math.Sqrt(Math.Pow(LocationXX.Get().Longitude - x.Lng, 2) + Math.Pow(LocationXX.Get().Latitude - x.Lat, 2)));
 		}
 	public ISettingsModelView SettingsModelView
 	{

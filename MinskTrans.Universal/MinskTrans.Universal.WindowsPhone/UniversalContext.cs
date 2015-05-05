@@ -259,6 +259,15 @@ namespace MinskTrans.Universal
 
 			await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
 		}
+
+		async Task SaveStatistics(JsonSerializerSettings jsonSettings, StorageFolder storage)
+		{
+			string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
+			var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
+			await FileIO.WriteTextAsync(counterFile, counter);
+			counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
+
+		}
 		
 		public override async Task Save()
 		{
@@ -275,11 +284,7 @@ namespace MinskTrans.Universal
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
 				
-				string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
-				var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
-				await FileIO.WriteTextAsync(counterFile, counter);
-				counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
-
+				
 				await Task.WhenAll(Task.Run(async () =>
 				{
 					string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
@@ -310,7 +315,7 @@ namespace MinskTrans.Universal
 			}
 		}
 
-		
+		private Timer saveTimer;
 		
 
 		public override async Task Load()
@@ -318,6 +323,13 @@ namespace MinskTrans.Universal
 			Debug.WriteLine("UniversalContext.Load started");
 			Debug.WriteLine("UniversalContext LoadSourceData started");
 			OnLoadStarted();
+
+			saveTimer = new Timer((x) =>
+			{
+				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
+				var storagee = ApplicationData.Current.RoamingFolder;
+				SaveStatistics( jsonSettings, storagee);
+			},null, new TimeSpan(0,0, 10,0,0), new TimeSpan(0,0,0, 30,0) );
 
 			var storage = ApplicationData.Current.RoamingFolder;
 			ObservableCollection<Rout> tpRouts = null;

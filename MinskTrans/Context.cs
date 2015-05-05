@@ -469,7 +469,7 @@ namespace MinskTrans.DesctopClient
 			//watch1.Reset();
 			//watch1.Start();
 			if (variantLoad == 2)
-				foreach (var rout in routsl.AsParallel())
+				foreach (var rout in routsl)
 				{
 					Schedule first = null;
 					var rout1 = rout;
@@ -501,7 +501,7 @@ namespace MinskTrans.DesctopClient
 			//watch1.Reset();
 			//watch1.Start();
 			if (variantLoad == 3)
-				foreach (var rout in routsl.AsParallel())
+				foreach (var rout in routsl)
 				{
 					int routId = rout.RoutId;
 					rout.Time = timesl.FirstOrDefault(x =>

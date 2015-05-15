@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="16444ArtemShaban.beta" Publisher="CN=1A51811B-286B-4548-A66F-E4361E191A0F" Version="1.2.5.3" />
+  <Identity Name="16444ArtemShaban.beta" Publisher="CN=1A51811B-286B-4548-A66F-E4361E191A0F" Version="1.3.5.8" />
   <mp:PhoneIdentity PhoneProductId="6fc80119-39bf-4a9e-ac29-e107ded1550a" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Минский общественный транспорт beta</DisplayName>

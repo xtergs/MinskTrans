@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace MinskTrans.Universal
 {
-	#if BETA
-			
-
 	partial class  Logger
 	{
 		private static Logger log;
@@ -48,5 +45,4 @@ namespace MinskTrans.Universal
 			return builder.ToString();
 		}
 	}
-#endif
 }

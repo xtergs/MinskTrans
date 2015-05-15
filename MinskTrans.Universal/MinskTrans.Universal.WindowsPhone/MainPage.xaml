@@ -759,9 +759,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-
-
-
+                        
                         <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
@@ -1313,6 +1311,7 @@
                         <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
                         <Button Content="Настройка сервисов местоположения" Click="OnOffLocationServises"></Button>
                         <Button Content="Политика безопасности" Click="ShowPolicity"/>
+                        <Button Content="Отправить лог разработчику" Click="SendLog"/>
                         
                     </ListView>
                 </Border>

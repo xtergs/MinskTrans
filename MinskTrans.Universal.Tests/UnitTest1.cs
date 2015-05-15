@@ -12,7 +12,7 @@ namespace MinskTrans.Universal.Tests
         [TestMethod]
         public void TestMethod1()
         {
-			UniversalContext 
+		
         }
     }
 }

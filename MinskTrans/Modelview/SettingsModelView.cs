@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Runtime.CompilerServices;
+using MinskTrans.Universal;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -14,8 +15,12 @@ using MinskTrans.DesctopClient.Properties;
 
 	public class SettingsModelView : BaseModelView, ISettingsModelView
 	{
-
-		
+		public enum Error
+		{
+			None = 0,
+			Critical = 1,
+			Repeated = 2
+		}
 
 		public SettingsModelView(Context newContext)
 			: base(newContext)
@@ -26,6 +31,12 @@ using MinskTrans.DesctopClient.Properties;
 		string SettingsToStr([CallerMemberName] string propertyName = null)
 		{
 			return propertyName;
+		}
+
+		public bool HaveConnection()
+		{
+			return InternetHelper.Is_Connected && (InternetHelper.Is_InternetAvailable ||
+			                                       InternetHelper.Is_Wifi_Connected == UpdateOnWiFi);
 		}
 
 		public int TimeInPast
@@ -116,6 +127,25 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
 				else
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public Error TypeError
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					TypeError = Error.None;
+				return (Error)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
 				OnPropertyChanged();
 			}
 		}

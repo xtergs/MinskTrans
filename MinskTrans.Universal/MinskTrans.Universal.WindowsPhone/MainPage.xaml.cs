@@ -58,9 +58,11 @@ namespace MinskTrans.Universal
 		States state = States.Stops;
 
 		
-
 		public MainPage()
 		{
+#if BETA
+			Logger.Log("MainPage");
+#endif
 			this.InitializeComponent();
 			//TileImageLoader.Cache = new MapControl.Caching.ImageFileCache();
 			//TileImageLoader.DefaultCacheExpiration = new TimeSpan(10, 0, 0, 0,0);
@@ -68,6 +70,9 @@ namespace MinskTrans.Universal
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
+			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical || 
+				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
+				SendEmailToDeveloper(Logger.Log().ToString());
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.Context.ShowRoute += OnShowRoute;
@@ -537,10 +542,19 @@ namespace MinskTrans.Universal
 
 		private void StartEmailToDeveloper(object sender, RoutedEventArgs e)
 		{
+			SendEmailToDeveloper("");
+		}
+
+		void SendEmailToDeveloper(string str)
+		{
 			EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
 			{
 				Subject = "Минский общественный транспорт",
-				To = { new EmailRecipient("xtergs@gmail.com") }
+				To =
+				{
+					new EmailRecipient("xtergs@gmail.com")
+				},
+				Body = str
 			});
 		}
 
@@ -567,6 +581,11 @@ namespace MinskTrans.Universal
 		{
 			MessageDialog dialog = new MessageDialog(model.SettingsModelView.PrivatyPolicity);
 			dialog.ShowAsync();
+		}
+
+		private void SendLog(object sender, RoutedEventArgs e)
+		{
+			SendEmailToDeveloper(Logger.Log().ToString());
 		}
 	}
 }

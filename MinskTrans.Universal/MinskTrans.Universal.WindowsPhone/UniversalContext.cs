@@ -584,6 +584,13 @@ namespace MinskTrans.Universal
 			Debug.WriteLine("UniversalContext.Load ended");
 		}
 
+		public async override Task Recover()
+		{
+			await FileDelete(NameFileRouts);
+			await FileDelete(NameFileStops);
+			await FileDelete(NameFileTimes);
+		}
+
 		private static object o = new Object();
 
 		#endregion

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Devices.Geolocation;
+using Windows.System.Threading;
 using MapControl;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 

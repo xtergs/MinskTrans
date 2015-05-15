@@ -182,8 +182,10 @@
     <Compile Include="Class2.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="InternetHelper.cs" />
     <Compile Include="LocationToVisibilityConverter.cs" />
     <Compile Include="LocationX.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

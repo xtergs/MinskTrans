@@ -26,6 +26,7 @@ using MinskTrans.Universal.Annotations;
 #endif
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.Universal;
 using MinskTrans.Universal.Model;
 using Newtonsoft.Json;
 
@@ -361,6 +362,8 @@ namespace MinskTrans.DesctopClient
 
 		public abstract Task Load();
 
+		public abstract Task Recover();
+
 		public void AllPropertiesChanged()
 		{
 			OnPropertyChanged("ActualStops");
@@ -376,100 +379,16 @@ namespace MinskTrans.DesctopClient
 		static protected async void Connect([NotNull] IEnumerable<Rout> routsl, [NotNull] IEnumerable<Stop> stopsl,
 			[NotNull] IEnumerable<Schedule> timesl, int variantLoad)
 		{
+#if BETA
+			Logger.Log("Connect started");
+#endif
 			Debug.WriteLine("Connect Started" + DateTime.Now);
 			
 			if (routsl == null) throw new ArgumentNullException("routsl");
 			if (stopsl == null) throw new ArgumentNullException("stopsl");
 			if (timesl == null) throw new ArgumentNullException("timesl");
 			
-			//Stopwatch watch1 = new Stopwatch();
-			//watch1.Start();
-			
-			 
-				//foreach (var rout in routsl)
-				//{
-				//	rout.Time = timesl.FirstOrDefault(x =>
-				//	{
-				//		if (x == null)
-				//			return false;
-				//		return x.RoutId == rout.RoutId;
-				//	});
-				//	if (rout.Time != null)
-				//		rout.Time.Rout = rout;
-				//}
-			
-			//var xxx = routsl.ToLookup(rout => rout, rout =>
-			//{
-			//	var s1 = stopsl.Where(stop =>
-			//	{
-			//		var s2 = rout.RouteStops.Contains(stop.ID);
-			//		return s2;
-			//	}).ToList();
-			//	return s1;
-
-			//});
-			//var xxxx = stopsl.ToLookup(stop => stop, stop => routsl.Where(rout => rout.RouteStops.Any(x => x == stop.ID)).ToList(), new StopComparer());
-			//watch1.Stop();
-			//watch1.Reset();
-			//var dddddd = xxx[routsl.First()];
-			//watch1.Start();
-			if (variantLoad == 0)
-				await Task.WhenAll(new[]
-				{
-					Task.Run(() =>
-					{
-						foreach (var rout in routsl)
-						{
-							rout.Time = timesl.FirstOrDefault(x =>
-							{
-								if (x == null)
-									return false;
-								return x.RoutId == rout.RoutId;
-							});
-							if (rout.Time != null)
-								rout.Time.Rout = rout;
-						}
-					}),
-					Task.Run(() =>
-					{
-						foreach (var stop in stopsl)
-						{
-							stop.Routs = routsl.Where(rout => rout.RouteStops.Any(st => st == stop.ID)).ToList();
-						}
-					})
-				});
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
-			if (variantLoad == 1)
-				Parallel.ForEach(routsl, rout =>
-				{
-					rout.Time = timesl.FirstOrDefault(x =>
-					{
-						if (x == null)
-							return false;
-						return x.RoutId == rout.RoutId;
-					});
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
-
-
-					rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-					{
-						if (stop.Routs == null)
-							stop.Routs = new List<Rout>();
-						stop.Routs.Add(rout);
-						return stop;
-					}).ToList();
-
-				});
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
-			if (variantLoad == 2)
-				foreach (var rout in routsl)
+			foreach (var rout in routsl)
 				{
 					Schedule first = null;
 					var rout1 = rout;
@@ -496,116 +415,10 @@ namespace MinskTrans.DesctopClient
 						return stop;
 					}).ToList();
 				}
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
-			if (variantLoad == 3)
-				foreach (var rout in routsl)
-				{
-					int routId = rout.RoutId;
-					rout.Time = timesl.FirstOrDefault(x =>
-					{
-						if (x == null)
-							return false;
-						return x.RoutId == routId;
-					});
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
-
-
-					rout.Stops = rout.RouteStops.AsParallel().Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
-					{
-						if (stop.Routs == null)
-							stop.Routs = new List<Rout>();
-						stop.Routs.Add(rout);
-						return stop;
-					}).ToList();
-				}
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
-			//foreach (var rout in routsl.AsParallel())
-			//{
-			//	rout.Time = timesl.AsParallel().FirstOrDefault(x =>
-			//	{
-			//		if (x == null)
-			//			return false;
-			//		return x.RoutId == rout.RoutId;
-			//	});
-			//	if (rout.Time != null)
-			//		rout.Time.Rout = rout;
-
-
-			//	rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-			//	{
-			//		if (stop.Routs == null)
-			//			stop.Routs = new List<Rout>();
-			//		stop.Routs.Add(rout);
-			//		return stop;
-			//	}).ToList();
-
-			//}
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
-			//foreach (var source in stopsl.AsParallel())
-			//{
-			//	source.Routs = new List<Rout>(10);
-			//}
-			//foreach (var rout in routsl.AsParallel())
-			//{
-			//	rout.Time = timesl.AsParallel().FirstOrDefault(x =>
-			//	{
-			//		if (x == null)
-			//			return false;
-			//		return x.RoutId == rout.RoutId;
-			//	});
-			//	if (rout.Time != null)
-			//		rout.Time.Rout = rout;
-
-
-			//	rout.Stops = rout.RouteStops.AsParallel().Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
-			//	{
-
-			//		stop.Routs.Add(rout);
-			//		return stop;
-			//	}).ToList();
-
-			//}
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
-
-			//foreach (var rout in routsl)
-			//{
-			//	rout.Time = timesl.FirstOrDefault(x =>
-			//	{
-			//		if (x == null)
-			//			return false;
-			//		return x.RoutId == rout.RoutId;
-			//	});
-			//	if (rout.Time != null)
-			//		rout.Time.Rout = rout;
-
-
-			//	rout.Stops = rout.RouteStops.AsParallel().Join(stopsl.AsParallel(), i => i, stop => stop.ID, (i, stop) =>
-			//	{
-			//		if (stop.Routs == null)
-			//			stop.Routs = new List<Rout>();
-			//		stop.Routs.Add(rout);
-			//		return stop;
-			//	}).ToList();
-
-			//}
-
-			//watch1.Stop();
-			//watch1.Reset();
-			//watch1.Start();
 			Debug.WriteLine("Connect Ended");
+#if BETA
+			Logger.Log("Connect Ended");
+#endif
 		}
 
 		//async public void Update()
@@ -938,6 +751,9 @@ namespace MinskTrans.DesctopClient
 			{
 				return new RelayCommand(async () =>
 				{
+					InternetHelper.UpdateNetworkInformation();
+					if (!InternetHelper.Is_Connected)
+						return;
 					updating = true;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 					await UpdateAsync();

@@ -13,6 +13,7 @@ using Windows.ApplicationModel.Email;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -24,6 +25,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
 
 
@@ -47,6 +49,9 @@ namespace MinskTrans.Universal
 		/// </summary>
 		public App()
 		{
+#if BETA
+			Logger.Log("App");
+#endif
 			this.InitializeComponent();
 			this.Suspending += this.OnSuspending;
 #if BETA
@@ -55,8 +60,24 @@ namespace MinskTrans.Universal
 			MainModelView.Create(new UniversalContext());
 		}
 
-		private void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+		async Task SaveToFile(string str)
 		{
+			var storage = await ApplicationData.Current.LocalFolder.CreateFileAsync("Error.txt");
+			await FileIO.WriteTextAsync(storage, str);
+		}
+
+		private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+		{
+#if BETA
+			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
+				.WriteLine(unhandledExceptionEventArgs.Message);
+			await SaveToFile(Logger.Log().ToString());
+#endif
+			var settings = MainModelView.MainModelViewGet.SettingsModelView;
+			if (settings.TypeError == SettingsModelView.Error.Critical)
+				settings.TypeError = SettingsModelView.Error.Repeated;
+			if (settings.TypeError == SettingsModelView.Error.Repeated)
+				MainModelView.MainModelViewGet.Context.Recover();
 			StringBuilder builder = new StringBuilder(unhandledExceptionEventArgs.Exception.ToString());
 			builder.Append("\n");
 			builder.Append(unhandledExceptionEventArgs.Message);
@@ -77,6 +98,9 @@ namespace MinskTrans.Universal
 
 		protected override void OnActivated(IActivatedEventArgs args)
 		{
+#if BETA
+			Logger.Log("App OnActivated");
+#endif
 			base.OnActivated(args);
 			MainModelView.MainModelViewGet.Context.Load();
 		}
@@ -91,6 +115,9 @@ namespace MinskTrans.Universal
 		/// <param name="e">Details about the launch request and process.</param>
 		async protected override void OnLaunched(LaunchActivatedEventArgs e)
 		{
+#if BETA
+			Logger.Log("App.OnLaunched started");
+#endif
 			Debug.WriteLine("App.OnLaunched started");
 #if DEBUG
 			if (System.Diagnostics.Debugger.IsAttached)
@@ -106,6 +133,9 @@ namespace MinskTrans.Universal
 			// just ensure that the window is active
 			if (rootFrame == null)
 			{
+#if BETA
+				Logger.Log("RestoreAppState");
+#endif
 				// Create a Frame to act as the navigation context and navigate to the first page
 				rootFrame = new Frame();
 
@@ -114,6 +144,9 @@ namespace MinskTrans.Universal
 
 				if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
 				{
+#if BETA
+					Logger.Log("Load after suspending");
+#endif
 					// TODO: Load state from previously suspended application
 					//MainModelView.MainModelViewGet.Context.Load();
 				}
@@ -122,6 +155,9 @@ namespace MinskTrans.Universal
 				Window.Current.Content = rootFrame;
 				if (e.PreviousExecutionState != ApplicationExecutionState.Running)
 				{
+#if BETA
+					Logger.Log("Prev state != Running");
+#endif
 					model.Context.ErrorLoading += async (sender, args) =>
 					{
 
@@ -155,8 +191,11 @@ namespace MinskTrans.Universal
 
 					timer = new Timer(state =>
 					{
-						UpdateNetworkInformation();
-						if (Is_Connected && (Is_InternetAvailable || Is_Wifi_Connected == model.SettingsModelView.UpdateOnWiFi))
+#if BETA
+						Logger.Log("autoupdate timer elapsed");
+#endif
+						InternetHelper.UpdateNetworkInformation();
+						if ( model.SettingsModelView.HaveConnection())
 							if (model.Context.UpdateDataCommand.CanExecute(null))
 								model.Context.UpdateAsync();
 					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
@@ -191,6 +230,9 @@ namespace MinskTrans.Universal
 					throw new Exception("Failed to create initial page");
 				}
 			}
+#if BETA
+			Logger.Log("Activate window");
+#endif
 
 			// Ensure the current window is active
 			Window.Current.Activate();
@@ -220,57 +262,19 @@ namespace MinskTrans.Universal
 		/// <param name="e">Details about the suspend request.</param>
 		private void OnSuspending(object sender, SuspendingEventArgs e)
 		{
+#if BETA
+			Logger.Log("Onsuspending");
+#endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			model.Context.Save();
+			SaveToFile(Logger.Log().ToString());
+			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
 			deferral.Complete();
 		}
 
-		public void UpdateNetworkInformation()
-		{
-			// Get current Internet Connection Profile.
-			ConnectionProfile internetConnectionProfile = Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile();
-			Is_Connected = true;
-			//air plan mode is on...
-			if (internetConnectionProfile == null)
-			{
-				Is_Connected = false;
-				return;
-			}
-
-			//if true, internet is accessible.
-			this.Is_InternetAvailable = internetConnectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
-
-			// Check the connection details.
-			if (internetConnectionProfile.NetworkAdapter.IanaInterfaceType != 71)// Connection is not a Wi-Fi connection. 
-			{
-				Is_Roaming = internetConnectionProfile.GetConnectionCost().Roaming;
-
-				/// user is Low on Data package only send low data.
-				Is_LowOnData = internetConnectionProfile.GetConnectionCost().ApproachingDataLimit;
-
-				//User is over limit do not send data
-				Is_OverDataLimit = internetConnectionProfile.GetConnectionCost().OverDataLimit;
-
-			}
-			else //Connection is a Wi-Fi connection. Data restrictions are not necessary. 
-			{
-				Is_Wifi_Connected = true;
-			}
-		}
-
-		public bool Is_Wifi_Connected { get; private set; }
-
-		public bool Is_OverDataLimit { get; private set; }
-
-		public bool Is_LowOnData { get; private set; }
-
-		public bool Is_Roaming { get; private set; }
-
-		public bool Is_InternetAvailable { get; private set; }
-
-		public bool Is_Connected { get; private set; }
+		
 	}
 }

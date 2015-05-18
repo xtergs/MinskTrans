@@ -328,7 +328,7 @@ namespace MinskTrans.Universal
 			{
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
 				var storagee = ApplicationData.Current.RoamingFolder;
-				SaveStatistics( jsonSettings, storagee);
+				//SaveStatistics( jsonSettings, storagee);
 			},null, new TimeSpan(0,0, 10,0,0), new TimeSpan(0,0,0, 30,0) );
 
 			var storage = ApplicationData.Current.RoamingFolder;

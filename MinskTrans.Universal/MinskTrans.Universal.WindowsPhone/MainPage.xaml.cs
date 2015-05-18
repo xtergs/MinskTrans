@@ -57,6 +57,23 @@ namespace MinskTrans.Universal
 		private List<PushpinLocation> pushpins;
 		States state = States.Stops;
 
+		void ShowPopup(string text)
+		{
+			TextBlock textBlock = new TextBlock()
+			{
+				Text = text,
+				FontSize = 20
+			};
+			Popup popup = new Popup()
+			{
+				VerticalAlignment = VerticalAlignment.Bottom,
+				Child = textBlock,
+				IsLightDismissEnabled = true
+			};
+
+			popup.IsOpen = true;
+		}
+
 		
 		public MainPage()
 		{
@@ -70,9 +87,12 @@ namespace MinskTrans.Universal
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
-			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical || 
-				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
+			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical ||
+			    model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
+			{
+				ShowPopup("Произошла ошибка, отправьте лог разработчику");
 				SendEmailToDeveloper(Logger.Log().ToString());
+			}
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.Context.ShowRoute += OnShowRoute;
@@ -171,7 +191,9 @@ namespace MinskTrans.Universal
 			DataContext = model;
 
 
-			
+#if BETA
+			Logger.Log("MainPage ended");
+#endif
 		}
 
 

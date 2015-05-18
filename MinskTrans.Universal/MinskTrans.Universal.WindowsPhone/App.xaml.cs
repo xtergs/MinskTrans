@@ -13,6 +13,7 @@ using Windows.ApplicationModel.Email;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
+using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -24,6 +25,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.WindowsAzure.Messaging;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
@@ -38,6 +40,44 @@ namespace MinskTrans.Universal
 	/// </summary>
 	public sealed partial class App : Application
 	{
+		private async void InitNotificationsAsync()
+		{
+			//var channel = HttpNotificationChannel.Find("MyPushChannel");
+			//if (channel == null)
+			//{
+			//	channel = new HttpNotificationChannel("MyPushChannel");
+			//	channel.Open();
+			//	channel.BindToShellToast();
+			//}
+
+			//channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(async (o, args) =>
+			//{
+			//	var hub = new NotificationHub("<hub name>", "<connection string>");
+			//	await hub.RegisterNativeAsync(args.ChannelUri.ToString());
+			//});
+
+			var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+			var hub = new NotificationHub("MinskTransNotificationBeta", "Endpoint=sb://minsktransnotificationbeta-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=GdFTAoJMnCEI3TFpI4g5Pn0jQy6lk0UEG4UatPHFX8A=");
+			
+			var result = await hub.RegisterNativeAsync(channel.Uri);
+
+			// Displays the registration ID so you know it was successful
+			if (result.RegistrationId != null)
+			{
+				var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
+				dialog.Commands.Add(new UICommand("OK"));
+				Popup popup = new Popup();
+				TextBlock text = new TextBlock();
+				
+				text.FontSize = 20;
+				text.Text = "Registration successful: " + result.RegistrationId;
+				popup.Child = text;
+				popup.IsLightDismissEnabled = true;
+				
+				popup.IsOpen = true;
+				//await dialog.ShowAsync();
+			}
+		}
 		private Timer timer;
 #if WINDOWS_PHONE_APP
 		private TransitionCollection transitions;
@@ -63,7 +103,7 @@ namespace MinskTrans.Universal
 		async Task SaveToFile(string str)
 		{
 			var storage = await ApplicationData.Current.LocalFolder.CreateFileAsync("Error.txt");
-			await FileIO.WriteTextAsync(storage, str);
+			await FileIO.AppendTextAsync(storage, str);
 		}
 
 		private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
@@ -71,13 +111,19 @@ namespace MinskTrans.Universal
 #if BETA
 			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
 				.WriteLine(unhandledExceptionEventArgs.Message);
-			await SaveToFile(Logger.Log().ToString());
+			await Logger.Log().SaveToFile();
 #endif
 			var settings = MainModelView.MainModelViewGet.SettingsModelView;
 			if (settings.TypeError == SettingsModelView.Error.Critical)
 				settings.TypeError = SettingsModelView.Error.Repeated;
-			if (settings.TypeError == SettingsModelView.Error.Repeated)
+			else if (settings.TypeError == SettingsModelView.Error.Repeated)
+			{
 				MainModelView.MainModelViewGet.Context.Recover();
+			}
+			else
+			{
+				settings.TypeError = SettingsModelView.Error.Critical;
+			}
 			StringBuilder builder = new StringBuilder(unhandledExceptionEventArgs.Exception.ToString());
 			builder.Append("\n");
 			builder.Append(unhandledExceptionEventArgs.Message);
@@ -115,6 +161,7 @@ namespace MinskTrans.Universal
 		/// <param name="e">Details about the launch request and process.</param>
 		async protected override void OnLaunched(LaunchActivatedEventArgs e)
 		{
+			InitNotificationsAsync();
 #if BETA
 			Logger.Log("App.OnLaunched started");
 #endif
@@ -125,6 +172,7 @@ namespace MinskTrans.Universal
 				this.DebugSettings.EnableFrameRateCounter = true;
 			}
 #endif
+			
 			var model = MainModelView.MainModelViewGet;
 
 			Frame rootFrame = Window.Current.Content as Frame;
@@ -264,11 +312,11 @@ namespace MinskTrans.Universal
 		{
 #if BETA
 			Logger.Log("Onsuspending");
+			Logger.Log().SaveToFile();
 #endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			model.Context.Save();
-			SaveToFile(Logger.Log().ToString());
 			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();

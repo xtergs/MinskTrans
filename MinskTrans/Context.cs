@@ -347,7 +347,10 @@ namespace MinskTrans.DesctopClient
 			{
 				Debug.WriteLine("Apply update: " + e.Message);
 				//OnLogMessage("Apply update: " + e.Message);
-				throw new Exception(e.Message, e.InnerException);
+#if BETA
+				Logger.Log("ApplyUpdate exception").WriteLine(e.Message).WriteLine(e.StackTrace).SaveToFile();
+#endif
+				throw;
 			}
 
 			//ActualStops = ;

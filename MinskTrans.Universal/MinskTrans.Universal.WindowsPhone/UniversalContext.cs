@@ -43,6 +43,9 @@ namespace MinskTrans.Universal
 			catch (FileNotFoundException ex)
 			{
 				OnLogMessage("file " + file + "not exist");
+#if BETA
+				Logger.Log("FileExistss").WriteLine(ex.Message).WriteLine(ex.FileName);
+#endif
 				return false;
 			}
 		}
@@ -189,7 +192,9 @@ namespace MinskTrans.Universal
 			}
 			catch (Exception e)
 			{
-				OnLogMessage(e.Message);
+#if BETA
+				Logger.Log("HaveUpdate").WriteLineTime(e.Message).WriteLine(e.StackTrace);
+#endif
 				return false;
 			}
 			if (checkUpdate)
@@ -240,6 +245,9 @@ namespace MinskTrans.Universal
 			}
 			catch (Exception e)
 			{
+#if BETA
+				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
+#endif
 				throw new TaskCanceledException(e.Message, e);
 			}
 		}
@@ -283,7 +291,7 @@ namespace MinskTrans.Universal
 				await SaveFavourite(storage);
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
-				
+				SaveStatistics(jsonSettings, storage);
 				
 				await Task.WhenAll(Task.Run(async () =>
 				{
@@ -311,7 +319,11 @@ namespace MinskTrans.Universal
 			}
 			catch (Exception e)
 			{
-				throw new Exception(e.Message, e);
+#if BETA
+				Logger.Log("Save exception").WriteLineTime(e.Message).WriteLine(e.StackTrace);
+				Logger.Log().SaveToFile();
+#endif
+				throw;
 			}
 		}
 
@@ -322,6 +334,9 @@ namespace MinskTrans.Universal
 		{
 			Debug.WriteLine("UniversalContext.Load started");
 			Debug.WriteLine("UniversalContext LoadSourceData started");
+#if BETA
+			Logger.Log().WriteLineTime("Load started");
+#endif
 			OnLoadStarted();
 
 			saveTimer = new Timer((x) =>
@@ -496,12 +511,20 @@ namespace MinskTrans.Universal
 			{
 				//CleanTp();
 				OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
+#if BETA
+				Logger.Log("Load taskcanceledException").WriteLineTime(e.Message).WriteLine(e.StackTrace);
+				Logger.Log().SaveToFile();
+#endif
 				return;
 			}
 			catch (Exception e)
 			{
 				Debug.WriteLine("Context.Load: " + e.Message );
-				throw new Exception(e.Message, e);
+#if BETA
+				Logger.Log("Load exception").WriteLineTime(e.Message).WriteLine(e.StackTrace);
+				Logger.Log().SaveToFile();
+#endif
+				throw;
 			}
 			
 			if (tpRouts == null || tpStops == null)
@@ -557,12 +580,19 @@ namespace MinskTrans.Universal
 				catch (FileNotFoundException e)
 				{
 					Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
+#if BETA
+					Logger.Log().WriteLineTime("Load favourite filenotFound");
+#endif
 					return;
 				}
 				catch (Exception e)
 				{
 					Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-					throw new Exception(e.Message, e);
+#if BETA
+					Logger.Log("Load favourite exception").WriteLineTime(e.Message).WriteLine(e.StackTrace);
+					Logger.Log().SaveToFile();
+#endif
+					throw;
 				}
 			}
 			else
@@ -582,13 +612,22 @@ namespace MinskTrans.Universal
 			AllPropertiesChanged();
 			OnLoadEnded();
 			Debug.WriteLine("UniversalContext.Load ended");
+#if BETA
+			Logger.Log().WriteLineTime("Load ended");
+#endif
 		}
 
 		public async override Task Recover()
 		{
+#if BETA
+			Logger.Log().WriteLineTime("Recover started");
+#endif
 			await FileDelete(NameFileRouts);
 			await FileDelete(NameFileStops);
 			await FileDelete(NameFileTimes);
+#if BETA
+			Logger.Log().WriteLineTime("Recover ended");
+#endif
 		}
 
 		private static object o = new Object();

@@ -49,6 +49,8 @@ namespace MinskTrans.Universal
 		public async Task SaveToFile(string file = "Error.txt")
 		{
 			StorageFile storage = null;
+			string buffer = builder.ToString();
+			builder.Clear();
 			try
 			{
 				storage = await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.OpenIfExists);
@@ -58,7 +60,7 @@ namespace MinskTrans.Universal
 			catch (FileNotFoundException e)
 			{
 			}
-			await FileIO.AppendTextAsync(storage, builder.ToString());
+			await FileIO.AppendTextAsync(storage, buffer);
 		}
 
 		public async Task<string> GetAllText(string file = "Error.txt")

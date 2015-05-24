@@ -116,6 +116,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			LocationXX.Get().Latitude = args.Position.Coordinate.Latitude;
 			LocationXX.Get().Longitude = args.Position.Coordinate.Longitude;
+			
 			OnPropertyChanged("StopNameFilter");
 			OnPropertyChanged("FilteredStops");
 		}
@@ -145,13 +146,13 @@ namespace MinskTrans.DesctopClient.Modelview
 					var temp = Context.ActualStops.AsParallel().Where(
 							x => x.SearchName.Contains(tempSt));
 					if (!Equals(LocationXX.Get(), defaultLocation))
-						return temp.OrderByDescending(Context.GetCounter).ThenBy(Distance);
+						return temp.OrderBy(Distance).ThenByDescending(Context.GetCounter);
 					else
 						return temp.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName);
 				}
 				if (Context.ActualStops != null)
 					return Equals(LocationXX.Get(), defaultLocation) ? Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName) :
-												  Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(Distance);
+												  Context.ActualStops.OrderBy(Distance).ThenByDescending(Context.GetCounter);
 				return null;
 			}
 		}

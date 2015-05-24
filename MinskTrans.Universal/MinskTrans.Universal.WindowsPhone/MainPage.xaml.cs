@@ -87,12 +87,7 @@ namespace MinskTrans.Universal
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
-			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical ||
-			    model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
-			{
-				ShowPopup("Произошла ошибка, отправьте лог разработчику");
-				SendEmailToDeveloper(Logger.Log().ToString());
-			}
+			
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.Context.ShowRoute += OnShowRoute;
@@ -264,7 +259,9 @@ namespace MinskTrans.Universal
 
 		private async void Page_Loaded(object sender, RoutedEventArgs e)
 		{
-			
+#if BETA
+			Logger.Log("Page_Loaded");
+#endif
 
 #if WINDOWS_PHONE_APP
 			Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
@@ -280,7 +277,16 @@ namespace MinskTrans.Universal
 						this.CoreWindow_PointerPressed;
 				}
 #endif
-			
+			model = MainModelView.MainModelViewGet;
+			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical ||
+				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
+			{
+				ShowPopup("Произошла ошибка, отправьте лог разработчику");
+				SendEmailToDeveloper(await Logger.Log().GetAllText());
+			}
+#if BETA
+			Logger.Log("Page_Loaded ended").SaveToFile();
+#endif
 		}
 
 		private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
@@ -605,9 +611,9 @@ namespace MinskTrans.Universal
 			dialog.ShowAsync();
 		}
 
-		private void SendLog(object sender, RoutedEventArgs e)
+		private async void SendLog(object sender, RoutedEventArgs e)
 		{
-			SendEmailToDeveloper(Logger.Log().ToString());
+			SendEmailToDeveloper(await Logger.Log().GetAllText());
 		}
 	}
 }

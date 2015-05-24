@@ -86,6 +86,11 @@ using MinskTrans.DesctopClient.Properties;
 			}
 		}
 
+		public TimeSpan ReconnectPushServerTimeSpan
+		{
+			get { return new TimeSpan(0, 0, 1, 0); }
+		}
+
 		public bool KeepTracking
 		{
 			get

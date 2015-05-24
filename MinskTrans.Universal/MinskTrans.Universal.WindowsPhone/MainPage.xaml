@@ -795,19 +795,21 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-
+                            
 
                             <local:MyTextBox Grid.Row="0" 
 								Visibility="Visible"
 								x:Name="FindStop" 
 								Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  InputScope="Search" IsTextPredictionEnabled="False" />
+                            
                             <ListView Grid.Row="1" 
 								x:Name="StopsListView"
-								ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged}"
+								ItemsSource="{Binding FilteredStops, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 								DataContext="{Binding StopModelView}"
 								SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								Grid.ColumnSpan="2" 
 								ItemTemplate="{StaticResource ListStopsDataTemplate}" IsSynchronizedWithCurrentItem="False">
+                                
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:GoToStateAction StateName="ShowStopVisualState"/>

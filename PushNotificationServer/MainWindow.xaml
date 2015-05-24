@@ -1,0 +1,20 @@
+﻿<Window x:Class="PushNotificationServer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <CheckBox Grid.Column="1" Content="Autorun"></CheckBox>
+        <TextBlock>
+            
+        </TextBlock>
+        <Button Grid.Row="1" Content="TestRawPushNotification" Click="SendRawPushNotification"></Button>
+    </Grid>
+</Window>

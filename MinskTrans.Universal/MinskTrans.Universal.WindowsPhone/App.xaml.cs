@@ -12,9 +12,11 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Email;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Diagnostics;
 using Windows.Networking.Connectivity;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -40,8 +42,23 @@ namespace MinskTrans.Universal
 	/// </summary>
 	public sealed partial class App : Application
 	{
-		private async void InitNotificationsAsync()
+
+		readonly TimeSpan maxDifTime = new TimeSpan(0,1,0,0);
+		private System.Threading.Timer reconnectPushServerTimer;
+
+		void CallBackReconnectPushServerTimer(object state)
 		{
+			InitNotificationsAsync();
+		}
+
+		private PushNotificationChannel channel = null;
+		private NotificationHub hub = null;
+		Registration result = null;
+
+		private async Task InitNotificationsAsync()
+		{
+
+			
 			//var channel = HttpNotificationChannel.Find("MyPushChannel");
 			//if (channel == null)
 			//{
@@ -55,15 +72,67 @@ namespace MinskTrans.Universal
 			//	var hub = new NotificationHub("<hub name>", "<connection string>");
 			//	await hub.RegisterNativeAsync(args.ChannelUri.ToString());
 			//});
-
-			var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-			var hub = new NotificationHub("MinskTransNotificationBeta", "Endpoint=sb://minsktransnotificationbeta-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=GdFTAoJMnCEI3TFpI4g5Pn0jQy6lk0UEG4UatPHFX8A=");
+			if (channel == null && hub == null)
+			{
+				channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+				hub = new NotificationHub("MinskTransNotificationBeta",
+					"Endpoint=sb://minsktransnotificationbeta-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=GdFTAoJMnCEI3TFpI4g5Pn0jQy6lk0UEG4UatPHFX8A=");
+			}
 			
-			var result = await hub.RegisterNativeAsync(channel.Uri);
+			try
+			{
+				result = await hub.RegisterNativeAsync(channel.Uri);
+			}
+			catch (NotificationHubNotFoundException e)
+			{
+#if BETA
+				Logger.Log()
+					.WriteLineTime(e.Timestamp.ToString())
+					.WriteLineTime(e.Message)
+					.WriteLineTime(e.InnerException.ToString())
+					.WriteLineTime(e.StackTrace);
+#endif
+				if (reconnectPushServerTimer == null)
+					reconnectPushServerTimer = new Timer(CallBackReconnectPushServerTimer, null, MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan,
+				MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan);
+			}
+			catch (RegistrationAuthorizationException e)
+			{
+#if BETA
+				Logger.Log()
+					.WriteLineTime(e.Timestamp.ToString())
+					.WriteLineTime(e.Message)
+					.WriteLineTime(e.InnerException.ToString())
+					.WriteLineTime(e.StackTrace);
+#endif
+				if ((e.Timestamp - DateTime.Now) != maxDifTime)
+				{
+					if (reconnectPushServerTimer == null)
+					{
+						reconnectPushServerTimer = new Timer(CallBackReconnectPushServerTimer, null,
+							MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan,
+							MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan);
+						MessageDialog dialog =
+							new MessageDialog("Возможно на вашем устройстве установленны неправильные настройки времени");
+						//dialog.Commands.Add(new UICommand("Настройки", command => Launcher.LaunchUriAsync(new Uri("ms-settings"))));
+						dialog.ShowAsync();
+					}
+					return;
+				}
+			}
 
 			// Displays the registration ID so you know it was successful
-			if (result.RegistrationId != null)
+			if (result != null && result.RegistrationId != null)
 			{
+#if BETA
+				Logger.Log().WriteLineTime("PushServer connection successful");
+#endif
+				if (reconnectPushServerTimer != null)
+				{
+					reconnectPushServerTimer.Dispose();
+					reconnectPushServerTimer = null;
+				}
+				channel.PushNotificationReceived += ChannelOnPushNotificationReceived;
 				var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
 				dialog.Commands.Add(new UICommand("OK"));
 				Popup popup = new Popup();
@@ -74,10 +143,30 @@ namespace MinskTrans.Universal
 				popup.Child = text;
 				popup.IsLightDismissEnabled = true;
 				
-				popup.IsOpen = true;
+				//popup.IsOpen = true;
 				//await dialog.ShowAsync();
 			}
 		}
+
+		private Timer autoUpdateAfterFailurTimer;
+		private bool stillNeddUpdate = false;
+
+		private void ChannelOnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
+		{
+			if (args.NotificationType == PushNotificationType.Raw)
+			{
+				if (MainModelView.MainModelViewGet.SettingsModelView.HaveConnection())
+				{
+					MainModelView.MainModelViewGet.Context.UpdateDataCommand.Execute(null);
+				}
+				else
+				{
+					stillNeddUpdate = true;
+					throw new NotImplementedException();
+				}
+			}
+		}
+
 		private Timer timer;
 #if WINDOWS_PHONE_APP
 		private TransitionCollection transitions;
@@ -90,14 +179,17 @@ namespace MinskTrans.Universal
 		public App()
 		{
 #if BETA
-			Logger.Log("App");
+			Logger.Log().WriteLine(Environment.NewLine+Environment.NewLine + Environment.NewLine).WriteLineTime("App");
 #endif
 			this.InitializeComponent();
 			this.Suspending += this.OnSuspending;
-#if BETA
+
 			this.UnhandledException += OnUnhandledException;
-#endif
+
 			MainModelView.Create(new UniversalContext());
+#if BETA
+			Logger.Log("App ended");
+#endif
 		}
 
 		async Task SaveToFile(string str)
@@ -110,7 +202,7 @@ namespace MinskTrans.Universal
 		{
 #if BETA
 			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
-				.WriteLine(unhandledExceptionEventArgs.Message);
+				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
 			await Logger.Log().SaveToFile();
 #endif
 			var settings = MainModelView.MainModelViewGet.SettingsModelView;
@@ -124,20 +216,6 @@ namespace MinskTrans.Universal
 			{
 				settings.TypeError = SettingsModelView.Error.Critical;
 			}
-			StringBuilder builder = new StringBuilder(unhandledExceptionEventArgs.Exception.ToString());
-			builder.Append("\n");
-			builder.Append(unhandledExceptionEventArgs.Message);
-			builder.Append("\n");
-			builder.Append(unhandledExceptionEventArgs.Exception.StackTrace);
-			EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
-			{
-				Subject = "Минский общественный транспорт",
-				To =
-				{
-					new EmailRecipient("xtergs@gmail.com")
-				},
-				Body = builder.ToString()
-			});
 		}
 
 		#region Overrides of Application
@@ -149,6 +227,9 @@ namespace MinskTrans.Universal
 #endif
 			base.OnActivated(args);
 			MainModelView.MainModelViewGet.Context.Load();
+#if BETA
+			Logger.Log("App OnActivated, context loaded");
+#endif
 		}
 
 		#endregion

@@ -200,16 +200,16 @@ namespace MinskTrans.Universal
 
 		private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
 		{
-#if BETA
-			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
-				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
-			Logger.Log().SaveToFile();
-#endif
 			var settings = MainModelView.MainModelViewGet.SettingsModelView;
 			StringBuilder builder = new StringBuilder(DateTime.Now.ToString());
 			builder.Append(": ").Append(unhandledExceptionEventArgs.Exception.ToString()).
 				AppendLine(unhandledExceptionEventArgs.Message).AppendLine(unhandledExceptionEventArgs.Exception.StackTrace);
 			settings.LastUnhandeledException = builder.ToString();
+#if BETA
+			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
+				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
+			Logger.Log().SaveToFile();
+#endif
 			if (settings.TypeError == SettingsModelView.Error.Critical)
 				settings.TypeError = SettingsModelView.Error.Repeated;
 			else if (settings.TypeError == SettingsModelView.Error.Repeated)

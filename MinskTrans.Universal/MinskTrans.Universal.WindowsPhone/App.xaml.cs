@@ -203,9 +203,13 @@ namespace MinskTrans.Universal
 #if BETA
 			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
 				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
-			await Logger.Log().SaveToFile();
+			Logger.Log().SaveToFile();
 #endif
 			var settings = MainModelView.MainModelViewGet.SettingsModelView;
+			StringBuilder builder = new StringBuilder(DateTime.Now.ToString());
+			builder.Append(": ").Append(unhandledExceptionEventArgs.Exception.ToString()).
+				AppendLine(unhandledExceptionEventArgs.Message).AppendLine(unhandledExceptionEventArgs.Exception.StackTrace);
+			settings.LastUnhandeledException = builder.ToString();
 			if (settings.TypeError == SettingsModelView.Error.Critical)
 				settings.TypeError = SettingsModelView.Error.Repeated;
 			else if (settings.TypeError == SettingsModelView.Error.Repeated)

@@ -39,6 +39,25 @@ using MinskTrans.DesctopClient.Properties;
 			                                       InternetHelper.Is_Wifi_Connected == UpdateOnWiFi);
 		}
 
+		public string LastUnhandeledException
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					LastUnhandeledException = "";
+				return (string)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+		}
+
 		public int TimeInPast
 		{
 			get

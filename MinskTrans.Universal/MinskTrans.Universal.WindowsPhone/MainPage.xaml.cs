@@ -282,7 +282,7 @@ namespace MinskTrans.Universal
 				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
 			{
 				ShowPopup("Произошла ошибка, отправьте лог разработчику");
-				SendEmailToDeveloper(await Logger.Log().GetAllText());
+				SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
 			}
 #if BETA
 			Logger.Log("Page_Loaded ended").SaveToFile();

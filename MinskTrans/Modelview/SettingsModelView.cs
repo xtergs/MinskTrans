@@ -58,6 +58,25 @@ using MinskTrans.DesctopClient.Properties;
 			}
 		}
 
+		public bool ShowTopStopsByCoordinats
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ShowTopStopsByCoordinats = true;
+				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+		}
+
 		public int TimeInPast
 		{
 			get

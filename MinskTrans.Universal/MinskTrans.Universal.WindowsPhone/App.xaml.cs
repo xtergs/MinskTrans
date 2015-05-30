@@ -208,7 +208,7 @@ namespace MinskTrans.Universal
 #if BETA
 			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
 				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
-			Logger.Log().SaveToFile();
+			await Logger.Log().SaveToFile();
 #endif
 			if (settings.TypeError == SettingsModelView.Error.Critical)
 				settings.TypeError = SettingsModelView.Error.Repeated;

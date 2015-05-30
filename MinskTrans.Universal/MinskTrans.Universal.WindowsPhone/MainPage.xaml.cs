@@ -282,7 +282,7 @@ namespace MinskTrans.Universal
 				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
 			{
 				ShowPopup("Произошла ошибка, отправьте лог разработчику");
-				SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
+				SendLog();
 			}
 #if BETA
 			Logger.Log("Page_Loaded ended").SaveToFile();
@@ -613,7 +613,12 @@ namespace MinskTrans.Universal
 
 		private async void SendLog(object sender, RoutedEventArgs e)
 		{
-			SendEmailToDeveloper(await Logger.Log().GetAllText());
+			SendLog();
+		}
+
+		async void SendLog()
+		{
+			SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
 		}
 	}
 }

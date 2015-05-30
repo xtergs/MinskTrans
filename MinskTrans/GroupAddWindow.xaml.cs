@@ -26,7 +26,7 @@ namespace MinskTrans.DesctopClient
 		public GroupAddWindow(Context newContext)
 		{
 			InitializeComponent();
-			groupEditModelView = new GroupEditModelView(newContext);
+			groupEditModelView = new GroupEditModelView(newContext, null);
 			DataContext = groupEditModelView;
 		}
 

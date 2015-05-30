@@ -44,6 +44,11 @@ namespace MinskTrans.DesctopClient
 		}
 		#region Overrides of Context
 
+		protected override Task SaveFavourite()
+		{
+			File.WriteAllText(NameFileCounter, counterViewStops.ToString());
+		}
+
 		public async override Task Save()
 		{
 			try
@@ -322,7 +327,10 @@ namespace MinskTrans.DesctopClient
 			AllPropertiesChanged();
 		}
 
-		
+		public override Task Recover()
+		{
+			throw new NotImplementedException();
+		}
 
 		#endregion
 	}

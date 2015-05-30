@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Windows.Devices.Geolocation;
-using Windows.System.Threading;
+
 using MapControl;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 
@@ -10,7 +9,8 @@ using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Properties;
 
 #else
-
+using Windows.Devices.Geolocation;
+using Windows.System.Threading;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using MinskTrans.Universal;
@@ -46,7 +46,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		private bool trol;
 		private string destinationStop;
 		//private LocationXX lastLocation;
+#if WINDOWS_PHONE_APP
 		private Geolocator geolocator;
+#endif
 
 		//public StopModelView()
 		//	: this(null)
@@ -74,6 +76,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		void SetGPS()
 		{
+			#if WINDOWS_PHONE_APP && WINDOWS_AP
 			if (Settings.UseGPS)
 			{
 				try
@@ -109,9 +112,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 				geolocator = null;
 			}
+#endif
 		}
 
-
+#if WINDOWS_PHONE_APP
 		private void OnGeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
 		{
 			LocationXX.Get().Latitude = args.Position.Coordinate.Latitude;
@@ -133,6 +137,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//LocationXX.Get() = null;
 			}
 		}
+#endif
 
 		static Location defaultLocation = new Location(0,0);
 

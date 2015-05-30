@@ -4,12 +4,11 @@
 
 
 
-using Windows.UI.Popups;
+
 using System.Text;
 using System.ComponentModel;
 using System;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Media.Animation;
+
 using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -21,6 +20,9 @@ using MinskTrans.Universal;
 
 
 #if (WINDOWS_PHONE_APP )
+using Windows.UI.Popups;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
 
@@ -51,13 +53,14 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Pushpin endStopPushpin;
 		private string resultString;
 		private SettingsModelView settings;
-
+#if WINDOWS_PHONE_APP
 		private Geolocator geolocator;
 
 		public Geolocator  Geolocator
 		{
 			get { return geolocator;}
 		}
+#endif
 
 		private MapModelView(Context context)
 			:base(context)
@@ -142,13 +145,16 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public void StopGPS()
 		{
+#if WINDOWS_PHONE_APP
 			geolocator.PositionChanged -= GeolocatorOnPositionChanged;
 			geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 			Ipushpin = null;
 			ShowICommand.RaiseCanExecuteChanged();
 			geolocator = null;
+#endif
 		}
 
+#if WINDOWS_PHONE_APP
 		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
 		{
 			if (args.Status == PositionStatus.Ready)
@@ -177,6 +183,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				RefreshPushPinsAsync();
 			});
 		}
+#endif
 
 		public Pushpin StartStopPushpin
 		{
@@ -269,7 +276,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
 				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
 #else
-
+				var northWest = map.ViewportPointToLocation(new Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
 				
 #endif
 				double zoomLevel = map.ZoomLevel;

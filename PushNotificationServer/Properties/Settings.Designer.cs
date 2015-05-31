@@ -34,5 +34,39 @@ namespace PushNotificationServer.Properties {
                 this["CheckUpdateEveryMins"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime LastUpdatedNews {
+            get {
+                return ((global::System.DateTime)(this["LastUpdatedNews"]));
+            }
+            set {
+                this["LastUpdatedNews"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool NewsAutoUpdate {
+            get {
+                return ((bool)(this["NewsAutoUpdate"]));
+            }
+            set {
+                this["NewsAutoUpdate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime LastUpdatedHotNews {
+            get {
+                return ((global::System.DateTime)(this["LastUpdatedHotNews"]));
+            }
+            set {
+                this["LastUpdatedHotNews"] = value;
+            }
+        }
     }
 }

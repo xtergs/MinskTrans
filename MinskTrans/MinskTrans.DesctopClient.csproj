@@ -121,6 +121,7 @@
     <Compile Include="Modelview\BaseModelView.cs" />
     <Compile Include="Modelview\FavouriteModelView.cs" />
     <Compile Include="Modelview\FindModelView.cs" />
+    <Compile Include="Modelview\Geolocator.cs" />
     <Compile Include="Modelview\GroupEditModelView.cs" />
     <Compile Include="Modelview\GroupStopsModelView.cs" />
     <Compile Include="Modelview\MainModelView.cs" />

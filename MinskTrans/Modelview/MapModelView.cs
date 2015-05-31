@@ -53,14 +53,14 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Pushpin endStopPushpin;
 		private string resultString;
 		private SettingsModelView settings;
-#if WINDOWS_PHONE_APP
+
 		private Geolocator geolocator;
 
 		public Geolocator  Geolocator
 		{
 			get { return geolocator;}
 		}
-#endif
+
 
 		private MapModelView(Context context)
 			:base(context)
@@ -118,8 +118,10 @@ namespace MinskTrans.DesctopClient.Modelview
 					geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
 
 					geolocator.ReportInterval = Settings.GPSInterval;
+#if WINDOWS_PHONE_APP
 					geolocator.StatusChanged += GeolocatorOnStatusChanged;
 					geolocator.PositionChanged += GeolocatorOnPositionChanged;
+#endif
 				}
 				catch (Exception ex)
 				{
@@ -461,10 +463,12 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		void ShowPushpin(Pushpin push)
 		{
+#if WINDOWS_PHONE_APP
 			map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 			{
 				map.TargetCenter = MapPanel.GetLocation(push);
 			});
+#endif
 		}
 
 		public RelayCommand<Rout> ShowRoutCommand

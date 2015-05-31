@@ -16,7 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Windows.Networking.PushNotifications;
+
+
 using Microsoft.VisualBasic.Logging;
 using Microsoft.Win32;
 using Microsoft.WindowsAzure.Messaging;
@@ -33,12 +34,20 @@ namespace PushNotificationServer
 	{
 
 		private ContextDesctop context;
+		private Timer timerNewsAutoUpdate;
 		public MainWindow()
 		{
 			InitializeComponent();
 			context = new ContextDesctop();
 			context.UpdateEnded += (sender, args) => { };
 			InicializeSettings();
+
+			ServerEngine.Engine.Inicialize();
+			NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
+			AutoUpdateNewsCheckBox.DataContext = ServerEngine.Engine;
+			this.DataContext = ServerEngine.Engine;
+
+			SetAutoUpdateTimer(NewsAutoUpdate);
 		}
 
 		void InicializeSettings()
@@ -80,24 +89,56 @@ namespace PushNotificationServer
 
 		private async void SendRawPushNotification(object sender, RoutedEventArgs e)
 		{
-			PushNotificationChannel channel = null;
+			//PushNotificationChannel channel = null;
 
-			try
-			{
-				channel = await  PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-			}
+			//try
+			//{
+			//	channel = await  PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+			//}
 
-			catch (Exception ex)
-			{
-				// Could not create a channel. 
-			}
+			//catch (Exception ex)
+			//{
+			//	// Could not create a channel. 
+			//}
 
-			HttpWebRequest sendNotificationRequest = HttpWebRequest.CreateHttp(channel.Uri);
-			sendNotificationRequest.Method = "POST";
-			sendNotificationRequest.ContentType = "text/xml";
-			sendNotificationRequest.Headers.Add("X-NotificationClass", "[batching interval]");
-			var responce = sendNotificationRequest.GetResponse();
+			//HttpWebRequest sendNotificationRequest = HttpWebRequest.CreateHttp(channel.Uri);
+			//sendNotificationRequest.Method = "POST";
+			//sendNotificationRequest.ContentType = "text/xml";
+			//sendNotificationRequest.Headers.Add("X-NotificationClass", "[batching interval]");
+			//var responce = sendNotificationRequest.GetResponse();
 			
+		}
+
+		public ServerEngine Engine
+		{
+			get { return ServerEngine.Engine; }
+		}
+		public bool NewsAutoUpdate
+		{
+			get { return Properties.Settings.Default.NewsAutoUpdate; }
+			set
+			{
+				Properties.Settings.Default.NewsAutoUpdate = value;
+				Properties.Settings.Default.Save();
+				SetAutoUpdateTimer(NewsAutoUpdate);
+				OnPropertyChanged();
+			}
+		}
+
+		public void SetAutoUpdateTimer(bool turnOn)
+		{
+			if (turnOn)
+			{
+				if (timerNewsAutoUpdate == null)
+					timerNewsAutoUpdate = new Timer(UpdateNews, UpdateNewsButton, new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
+				else
+					timerNewsAutoUpdate.Change(new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
+			}
+			else
+			{
+				timerNewsAutoUpdate.Dispose();
+				timerNewsAutoUpdate = null;
+			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -107,6 +148,38 @@ namespace PushNotificationServer
 		{
 			var handler = PropertyChanged;
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		async void UpdateNews(object sender)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				if (sender is UIElement)
+					((UIElement) sender).IsEnabled = false;
+				Progress.Visibility = Visibility.Visible;
+				Progress.IsIndeterminate = true;
+			});
+
+			try
+			{
+				await ServerEngine.Engine.CheckNews();
+			}
+			catch (TaskCanceledException e)
+			{
+				
+			}
+
+			Dispatcher.Invoke(() =>
+			{
+				Progress.Visibility = Visibility.Collapsed;
+				if (sender is UIElement)
+					((UIElement) sender).IsEnabled = true;
+			});
+		}
+
+		async private void CheckNewsButtonClick(object sender, RoutedEventArgs e)
+		{
+			UpdateNews(sender);
 		}
 	}
 }

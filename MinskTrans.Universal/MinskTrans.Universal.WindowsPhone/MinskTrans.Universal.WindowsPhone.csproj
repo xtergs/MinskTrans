@@ -199,6 +199,7 @@
     <Compile Include="MyTextBox.xaml.cs">
       <DependentUpon>MyTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NewsManager.cs" />
     <Compile Include="NoFilesToRestoreDataException.cs" />
     <Compile Include="NotDataToDeserialize.cs" />
     <Compile Include="Properties\Annotations.cs" />

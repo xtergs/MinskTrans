@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 #if WINDOWS_PHONE_APP
 using Windows.Devices.Geolocation;
-using Windows.UI.Core
+using Windows.UI.Core;
 #endif
 using GalaSoft.MvvmLight.Command;
 using MapControl;

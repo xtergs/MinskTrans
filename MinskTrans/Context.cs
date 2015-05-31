@@ -754,9 +754,11 @@ namespace MinskTrans.DesctopClient
 			{
 				return new RelayCommand(async () =>
 				{
+#if WINDOWS_PHONE_APP
 					InternetHelper.UpdateNetworkInformation();
 					if (!InternetHelper.Is_Connected)
 						return;
+#endif
 					updating = true;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 					await UpdateAsync();

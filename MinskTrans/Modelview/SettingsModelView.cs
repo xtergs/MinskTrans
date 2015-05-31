@@ -33,14 +33,18 @@ using MinskTrans.DesctopClient.Properties;
 			return propertyName;
 		}
 
+#if WINDOWS_PHONE_APP
 		public bool HaveConnection()
 		{
+			
 			return InternetHelper.Is_Connected && (InternetHelper.Is_InternetAvailable ||
 			                                       InternetHelper.Is_Wifi_Connected == UpdateOnWiFi);
 		}
+#endif
 
 		public string LastUnhandeledException
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -56,10 +60,14 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public bool ShowTopStopsByCoordinats
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -75,6 +83,9 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public int TimeInPast
@@ -107,6 +118,7 @@ using MinskTrans.DesctopClient.Properties;
 
 		public bool UseGPS
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -122,6 +134,9 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public TimeSpan ReconnectPushServerTimeSpan
@@ -131,6 +146,7 @@ using MinskTrans.DesctopClient.Properties;
 
 		public bool KeepTracking
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -146,7 +162,11 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
+
 		public string PrivatyPolicity
 		{
 			get
@@ -157,6 +177,7 @@ using MinskTrans.DesctopClient.Properties;
 		}
 		public TimeSpan InvervalAutoUpdateTimeSpan
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -172,10 +193,14 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public Error TypeError
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -191,10 +216,14 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public int VariantConnect
 		{
+#if WINDOWS_PHONE_APP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -211,6 +240,9 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
+#endif
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public double IntervalAutoUpdate

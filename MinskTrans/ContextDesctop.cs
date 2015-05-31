@@ -47,6 +47,7 @@ namespace MinskTrans.DesctopClient
 		protected override Task SaveFavourite()
 		{
 			File.WriteAllText(NameFileCounter, counterViewStops.ToString());
+			return new Task(null);
 		}
 
 		public async override Task Save()
@@ -321,7 +322,7 @@ namespace MinskTrans.DesctopClient
 				return;
 			}
 
-			await Connect(Routs, Stops, Times);
+			Connect(Routs, Stops, Times, VariantLoad);
 
 			OnLoadEnded();
 			AllPropertiesChanged();

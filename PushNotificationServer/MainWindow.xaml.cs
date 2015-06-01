@@ -24,6 +24,7 @@ using Microsoft.WindowsAzure.Messaging;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
 using PushNotificationServer.Properties;
+using Microsoft.Azure.NotificationHubs;
 
 namespace PushNotificationServer
 {
@@ -108,10 +109,50 @@ namespace PushNotificationServer
 		}
 
 		private Timer updateTimer;
+		private static async void SendNotificationAsync()
+		{
+			// Define the notification hub.
+			NotificationHubClient hub =
+				NotificationHubClient.CreateClientFromConnectionString(
+					"Endpoint=sb://minsktransbetapushnotificationhub-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=9w3Mok3fk9gSUT5Ib1avqBRvPykzz0baiUD8YNNcDRI=", "MinskTransNotificationBeta", true);
+			
+			// Create an array of breaking news categories.
+			var categories = new string[] { "World", "Politics", "Business", 
+        "Technology", "Science", "Sports"};
 
+			foreach (var category in categories)
+			{
+				try
+				{
+					// Define a Windows Store toast.
+					//var wnsToast = "<toast><visual><binding template=\"ToastText01\">"
+					//	+ "<text id=\"1\">Breaking " + category + " News!"
+					//	+ "</text></binding></visual></toast>";
+					//await hub.SendWindowsNativeNotificationAsync(wnsToast, category);
+
+					// Define a Windows Phone toast.
+					var mpnsToast =
+						"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+						"<wp:Notification xmlns:wp=\"WPNotification\">" +
+							"<wp:Toast>" + 
+								"<wp:Text1>Breaking " + category + " News!</wp:Text1>" +
+							"</wp:Toast> " +
+						"</wp:Notification>";
+					await hub.SendMpnsNativeNotificationAsync(mpnsToast, category);
+
+					
+				}
+				catch (ArgumentException)
+				{
+					// An exception is raised when the notification hub hasn't been 
+					// registered for the iOS, Windows Store, or Windows Phone platform. 
+				}
+			}
+		}
 
 		private async void SendRawPushNotification(object sender, RoutedEventArgs e)
 		{
+			SendNotificationAsync();
 			//PushNotificationChannel channel = null;
 
 			//try
@@ -129,7 +170,7 @@ namespace PushNotificationServer
 			//sendNotificationRequest.ContentType = "text/xml";
 			//sendNotificationRequest.Headers.Add("X-NotificationClass", "[batching interval]");
 			//var responce = sendNotificationRequest.GetResponse();
-			
+
 		}
 
 		public ServerEngine Engine

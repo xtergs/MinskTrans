@@ -206,6 +206,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushpinLocation.cs" />
     <Compile Include="RoutsComparer.cs" />
+    <Compile Include="Services\MobileServices\MinskTransBetaPushNotification\push.register.cs">
+      <ConnectedServiceReference>MinskTransBetaPushNotification</ConnectedServiceReference>
+    </Compile>
     <Compile Include="Services\MobileServices\MinskTransWindowsPhoneNotificationBeta\push.register.cs">
       <ConnectedServiceReference>MinskTransWindowsPhoneNotificationBeta</ConnectedServiceReference>
     </Compile>

@@ -60,9 +60,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public bool ShowTopStopsByCoordinats
@@ -83,9 +84,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public int TimeInPast
@@ -134,9 +136,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public TimeSpan ReconnectPushServerTimeSpan
@@ -162,9 +165,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public string PrivatyPolicity
@@ -193,9 +197,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public Error TypeError
@@ -216,9 +221,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public int VariantConnect
@@ -240,9 +246,10 @@ using MinskTrans.DesctopClient.Properties;
 					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#endif
+#else
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+#endif
 		}
 
 		public double IntervalAutoUpdate

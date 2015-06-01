@@ -118,7 +118,7 @@
 
         <section>
             <h2>Step 1: Create new Custom Controller</h2>
-            <p><strong>Create</strong> a new Custom Controller called "NotifyAllUsersController" in the Mobile Service project containing code for MinskTransWindowsPhoneNotificationBeta. In your Mobile Service project right-click on the Controllers folder, then click Add -> Controller. In the resulting dialog select "Windows Azure Mobile Services Custom Controller," then click Add.</p>
+            <p><strong>Create</strong> a new Custom Controller called "NotifyAllUsersController" in the Mobile Service project containing code for MinskTransBetaPushNotification. In your Mobile Service project right-click on the Controllers folder, then click Add -> Controller. In the resulting dialog select "Windows Azure Mobile Services Custom Controller," then click Add.</p>
         </section>
         <section>
             <h2>Step 2: Insert snippet into Controller</h2>
@@ -169,11 +169,11 @@ End Function</span>
         <section>
             <h2>Step 3: Modify Web Config</h2>
             <p><strong>Add</strong> the following connection string in the &lt;connectionStrings&gt; section in web.config:</p>
-            <code><pre><span class="keyword-token">&lt;</span><span class="string-token">add</span> <span class="key-token">name</span><span class="keyword-token">="MS_NotificationHubconnectionString"</span> <span class="key-token">connectionString</span><span class="keyword-token">="Endpoint=sb://minsktranswindowsphonenotificationbetahub-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=WOhRy6HuvE1tEC/C4BU/xg44ZQGI6lTz7hWqOXa2pd0=" /&gt;</span></pre>
+            <code><pre><span class="keyword-token">&lt;</span><span class="string-token">add</span> <span class="key-token">name</span><span class="keyword-token">="MS_NotificationHubconnectionString"</span> <span class="key-token">connectionString</span><span class="keyword-token">="Endpoint=sb://minsktransbetapushnotificationhub-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=9w3Mok3fk9gSUT5Ib1avqBRvPykzz0baiUD8YNNcDRI=" /&gt;</span></pre>
             </code>
 
             <p><strong>Replace</strong> the "MS_NotificationHubName" key in the &lt;appSettings&gt; section in web.config with the following:</p>
-<code><pre><span class="keyword-token">&lt;<span class="string-token">add</span> <span class="key-token">key</span><span class="keyword-token">="MS_NotificationHubName"</span> <span class="key-token">value</span><span class="keyword-token">="MinskTransWindowsPhoneNotificationBetaHub" /&gt;</span></pre></code>
+<code><pre><span class="keyword-token">&lt;<span class="string-token">add</span> <span class="key-token">key</span><span class="keyword-token">="MS_NotificationHubName"</span> <span class="key-token">value</span><span class="keyword-token">="MinskTransBetaPushNotificationHub" /&gt;</span></pre></code>
         </section>
         <section>
             <h2>Step 4: Modify Client Project</h2>
@@ -185,31 +185,31 @@ End Function</span>
 <h3>C#</h3>
             <code>
 <pre><span class="comment-token">// http://go.microsoft.com/fwlink/?LinkID=290993&clcid=0x409 </span>
-<span class="keyword-token">public static</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span> MinskTransWindowsPhoneNotificationBetaClient = <span class="keyword-token">new</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span>(<span class="string-token">"http://localhost:17470"</span>);
+<span class="keyword-token">public static</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span> MinskTransBetaPushNotificationClient = <span class="keyword-token">new</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span>(<span class="string-token">"http://localhost:17470"</span>);
 
-<span class="comment-token">//<span class="keyword-token">public static</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span> MinskTransWindowsPhoneNotificationBetaClient = <span class="keyword-token">new</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span>(
-//                            <span class="string-token">"https://minsktranswindowsphonenotificationbeta.azure-mobile.net/"</span>,
-//                            <span class="string-token">"XTLYBPYAsXukijaYBTfCalpEXsoRFV75"</span>);</span></pre>
+<span class="comment-token">//<span class="keyword-token">public static</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span> MinskTransBetaPushNotificationClient = <span class="keyword-token">new</span> Microsoft.WindowsAzure.MobileServices.<span class="definition-token">MobileServiceClient</span>(
+//                            <span class="string-token">"https://minsktransbetapushnotification.azure-mobile.net/"</span>,
+//                            <span class="string-token">"dPNJPdiweIXPGxivUSDghhEgEpWLXH93"</span>);</span></pre>
             </code>
 <h3>VB</h3>
             <code>
 <pre><span class="comment-token">' http://go.microsoft.com/fwlink/?LinkID=290990&clcid=0x409 </span>
-<span class="keyword-token">Public Shared</span> MinskTransWindowsPhoneNotificationBetaClient <span class="keyword-token">As</span> New Microsoft.WindowsAzure.MobileServices.MobileServiceClient(
+<span class="keyword-token">Public Shared</span> MinskTransBetaPushNotificationClient <span class="keyword-token">As</span> New Microsoft.WindowsAzure.MobileServices.MobileServiceClient(
             <span class="string-token">"http://localhost:17470"</span>)
 
-<span class="comment-token">' Public Shared MinskTransWindowsPhoneNotificationBetaClient As New Microsoft.WindowsAzure.MobileServices.MobileServiceClient(
-'             "https://minsktranswindowsphonenotificationbeta.azure-mobile.net/",
-'             "XTLYBPYAsXukijaYBTfCalpEXsoRFV75")</span></pre>
+<span class="comment-token">' Public Shared MinskTransBetaPushNotificationClient As New Microsoft.WindowsAzure.MobileServices.MobileServiceClient(
+'             "https://minsktransbetapushnotification.azure-mobile.net/",
+'             "dPNJPdiweIXPGxivUSDghhEgEpWLXH93")</span></pre>
             </code>
 <h3>JavaScript</h3>
             <code>
 <pre><span class="comment-token">// http://go.microsoft.com/fwlink/?LinkID=290993&clcid=0x409 </span>
-<span class="keyword-token">var</span> MinskTransWindowsPhoneNotificationBetaClient = <span class="keyword-token">new</span> WindowsAzure.MobileServiceClient(
+<span class="keyword-token">var</span> MinskTransBetaPushNotificationClient = <span class="keyword-token">new</span> WindowsAzure.MobileServiceClient(
             <span class="string-token">"http://localhost:17470"</span>);
 
-<span class="comment-token">// var MinskTransWindowsPhoneNotificationBetaClient = new WindowsAzure.MobileServiceClient(
-//                 "https://minsktranswindowsphonenotificationbeta.azure-mobile.net/",
-//                 "XTLYBPYAsXukijaYBTfCalpEXsoRFV75");</span></pre>
+<span class="comment-token">// var MinskTransBetaPushNotificationClient = new WindowsAzure.MobileServiceClient(
+//                 "https://minsktransbetapushnotification.azure-mobile.net/",
+//                 "dPNJPdiweIXPGxivUSDghhEgEpWLXH93");</span></pre>
             </code>
         </section>
         <section>
@@ -219,8 +219,8 @@ End Function</span>
            <code>
 <pre><span class="keyword-token">try</span>
 {
-    <span class="keyword-token">await</span> App.MinskTransWindowsPhoneNotificationBetaClient.GetPush().RegisterNativeAsync(channel.Uri);     
-    <span class="keyword-token">await</span> App.MinskTransWindowsPhoneNotificationBetaClient.InvokeApiAsync(<span class="string-token">"notifyAllUsers"</span>,
+    <span class="keyword-token">await</span> App.MinskTransBetaPushNotificationClient.GetPush().RegisterNativeAsync(channel.Uri);     
+    <span class="keyword-token">await</span> App.MinskTransBetaPushNotificationClient.InvokeApiAsync(<span class="string-token">"notifyAllUsers"</span>,
         <span class="keyword-token">new</span> JObject(<span class="keyword-token">new</span> JProperty(<span class="string-token">"toast"</span>, <span class="string-token">"Sample Toast"</span>)));
 }</pre>
           </code>
@@ -228,8 +228,8 @@ End Function</span>
           <code>
 <pre><span class="keyword-token">Dim</span> channel = <span class="keyword-token">Await</span> Windows.Networking.PushNotifications.PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync()
 <span class="keyword-token">Try
-    Await</span> App.MinskTransWindowsPhoneNotificationBetaClient.GetPush().RegisterNativeAsync(channel.Uri)
-    <span class="keyword-token">Await</span> App.MinskTransWindowsPhoneNotificationBetaClient.InvokeApiAsync(<span class="string-token">"notifyAllUsers"</span>, <span class="keyword-token">New</span> JObject(<span class="keyword-token">New</span> JProperty(<span class="string-token">"toast"</span>, <span class="string-token">"Sample Toast"</span>)))
+    Await</span> App.MinskTransBetaPushNotificationClient.GetPush().RegisterNativeAsync(channel.Uri)
+    <span class="keyword-token">Await</span> App.MinskTransBetaPushNotificationClient.InvokeApiAsync(<span class="string-token">"notifyAllUsers"</span>, <span class="keyword-token">New</span> JObject(<span class="keyword-token">New</span> JProperty(<span class="string-token">"toast"</span>, <span class="string-token">"Sample Toast"</span>)))
 <span class="keyword-token">Catch</span> exception <span class="keyword-token">As</span> Exception
 </pre>
           </code>

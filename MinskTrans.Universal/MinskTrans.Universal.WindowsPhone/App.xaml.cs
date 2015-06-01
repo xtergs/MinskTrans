@@ -42,6 +42,11 @@ namespace MinskTrans.Universal
 	/// </summary>
 	public sealed partial class App : Application
 	{
+		// http://go.microsoft.com/fwlink/?LinkId=290986&clcid=0x409
+		public static Microsoft.WindowsAzure.MobileServices.MobileServiceClient MinskTransBetaPushNotificationClient = new Microsoft.WindowsAzure.MobileServices.MobileServiceClient(
+		"https://minsktransbetapushnotification.azure-mobile.net/",
+		"dPNJPdiweIXPGxivUSDghhEgEpWLXH93");
+
 
 		readonly TimeSpan maxDifTime = new TimeSpan(0,1,0,0);
 		private System.Threading.Timer reconnectPushServerTimer;
@@ -58,6 +63,8 @@ namespace MinskTrans.Universal
 		private async Task InitNotificationsAsync()
 		{
 
+			MinskTransBetaPushNotificationPush.UploadChannel();
+			MinskTransBetaPushNotificationPush.channel.PushNotificationReceived += ChannelOnPushNotificationReceived;
 			
 			//var channel = HttpNotificationChannel.Find("MyPushChannel");
 			//if (channel == null)
@@ -185,6 +192,8 @@ namespace MinskTrans.Universal
 			this.Suspending += this.OnSuspending;
 
 			this.UnhandledException += OnUnhandledException;
+
+
 
 			MainModelView.Create(new UniversalContext());
 #if BETA
@@ -370,6 +379,8 @@ namespace MinskTrans.Universal
 			// Ensure the current window is active
 			Window.Current.Activate();
 			Debug.WriteLine("App.OnLaunched ended");
+			// http://go.microsoft.com/fwlink/?LinkId=290986&clcid=0x409
+			MinskTrans.Universal.MinskTransBetaPushNotificationPush.UploadChannel();
 		}
 
 #if WINDOWS_PHONE_APP

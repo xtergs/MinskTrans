@@ -44,8 +44,31 @@ namespace PushNotificationServer
 
 			ServerEngine.Engine.Inicialize();
 			NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
+			HotNewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			AutoUpdateNewsCheckBox.DataContext = ServerEngine.Engine;
 			this.DataContext = ServerEngine.Engine;
+			MainGrid.DataContext = ServerEngine.Engine;
+
+			ServerEngine.Engine.StartCheckNews += (sender, args) =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					if (sender is UIElement)
+						((UIElement)sender).IsEnabled = false;
+					Progress.Visibility = Visibility.Visible;
+					Progress.IsIndeterminate = true;
+				});
+			};
+
+			ServerEngine.Engine.StopChecknews += (sender, args) =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					Progress.Visibility = Visibility.Collapsed;
+					if (sender is UIElement)
+						((UIElement) sender).IsEnabled = true;
+				});
+			};
 
 			SetAutoUpdateTimer(NewsAutoUpdate);
 		}
@@ -152,29 +175,15 @@ namespace PushNotificationServer
 
 		async void UpdateNews(object sender)
 		{
-			Dispatcher.Invoke(() =>
-			{
-				if (sender is UIElement)
-					((UIElement) sender).IsEnabled = false;
-				Progress.Visibility = Visibility.Visible;
-				Progress.IsIndeterminate = true;
-			});
-
 			try
 			{
 				await ServerEngine.Engine.CheckNews();
 			}
 			catch (TaskCanceledException e)
 			{
-				
+
 			}
 
-			Dispatcher.Invoke(() =>
-			{
-				Progress.Visibility = Visibility.Collapsed;
-				if (sender is UIElement)
-					((UIElement) sender).IsEnabled = true;
-			});
 		}
 
 		async private void CheckNewsButtonClick(object sender, RoutedEventArgs e)

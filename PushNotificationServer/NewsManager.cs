@@ -25,25 +25,25 @@ namespace PushNotificationServer
 		private string pathToSaveHotData = "";
 
 		private Dictionary<DateTime, string> newDictionary;
-		private Dictionary<DateTime, string> hotNewsDictionary;
+		private List<KeyValuePair<DateTime, string>> hotNewsDictionary;
 
 		private Dictionary<DateTime, string> allNews;
-		private Dictionary<DateTime, string> allHotNewsDictionary;
+		private List<KeyValuePair<DateTime, string>> allHotNewsDictionary;
 
-		public IEnumerable<KeyValuePair<DateTime, string>> NewNews
+		public List<KeyValuePair<DateTime, string>> NewNews
 		{
 			get
 			{
-				return allNews.Reverse();
+				return allNews.OrderByDescending(key=> key.Key).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
 
-		public Dictionary<DateTime, string> AllHotNews
+		public List<KeyValuePair<DateTime, string>> AllHotNews
 		{
 			get
 			{
-				return allHotNewsDictionary.Reverse().ToDictionary(key=> key.Key, key=> key.Value);
+				return allHotNewsDictionary.OrderByDescending(key=> key.Key).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
@@ -52,8 +52,8 @@ namespace PushNotificationServer
 		{
 			LastNewsTime = new DateTime();
 			newDictionary = new Dictionary<DateTime, string>();
-			hotNewsDictionary = new Dictionary<DateTime, string>();
-			allHotNewsDictionary = new Dictionary<DateTime, string>();
+			hotNewsDictionary = new List<KeyValuePair<DateTime, string>>();
+			allHotNewsDictionary = new List<KeyValuePair<DateTime, string>>(new Dictionary<DateTime, string>());
 			allNews = new Dictionary<DateTime, string>();
 		}
 
@@ -74,7 +74,12 @@ namespace PushNotificationServer
 					DateTime dateTimeNews = DateTime.Parse(dateNews);
 					//if (dateTimeNews > LastDateTime)
 					{
-						string decodedString = HttpUtility.HtmlDecode(nodesNew.SelectSingleNode(XpathSelectInfo).InnerText);
+						string decodedString =
+							HttpUtility.HtmlDecode(nodesNew.SelectSingleNode(XpathSelectInfo).InnerText)
+								.Trim(' ', '\n', '\t')
+								.Replace('\n', ' ')
+								.Replace('\t', ' ')
+								.Replace('\r', ' ');
 						returnDictionary.Add(dateTimeNews, decodedString);
 						//allNews.Add(dateTimeNews, decodedString);
 					}
@@ -94,8 +99,9 @@ namespace PushNotificationServer
 			if (newDictionary.Count <= 0)
 				return;
 			LastNewsTime = newDictionary.OrderByDescending(key => key.Key).Select(key=> key.Key).First();
-			foreach (var source in newDictionary.OrderBy(x=>x.Key))
+			foreach (var source in newDictionary.Where(key=> !allNews.ContainsKey(key.Key)))
 			{
+				
 				allNews.Add(source.Key, source.Value);
 			}
 			NewNews = null;
@@ -103,7 +109,7 @@ namespace PushNotificationServer
 
 		public async Task CheckHotNewsAsync()
 		{
-			Dictionary<DateTime, string> returnDictionary = new Dictionary<DateTime, string>();
+			List<KeyValuePair<DateTime, string>> returnDictionary = new List<KeyValuePair<DateTime, string>>();
 			string text = await Download(uriHotNews);
 			HtmlAgilityPack.HtmlDocument document = new HtmlDocument();
 			document.LoadHtml(text);
@@ -114,14 +120,22 @@ namespace PushNotificationServer
 				try
 				{
 					string dateNews = nodesNew.SelectSingleNode("div/p/strong").InnerText;
-					dateNews = dateNews.Split('\n')[1].Trim();
+					dateNews = dateNews.Trim('.').Split('\n')[0].Trim();
 					DateTime dateTimeNews = DateTime.Parse(dateNews);
 					//if (dateTimeNews > LastDateTime)
 					{
+						var firstLine = nodesNew.SelectSingleNode("div/p[2]");
+						var secondLine = nodesNew.SelectSingleNode("div/p[3]");
+						string allText = "";
+						if (firstLine != null)
+							allText += firstLine.InnerText;
+						if (secondLine != null)
+							allText += " " + secondLine.InnerText;
 						string decodedString =
-							HttpUtility.HtmlDecode(nodesNew.SelectSingleNode("div/p[2]").InnerText + " " +
-							                       nodesNew.SelectSingleNode("div/p[3]").InnerText);
-						returnDictionary.Add(dateTimeNews, decodedString);
+							HttpUtility.HtmlDecode(allText).Trim(' ', '\n', '\t').Replace('\n', ' ')
+																				 .Replace('\t', ' ')
+																				 .Replace('\r', ' ');
+						returnDictionary.Add(new KeyValuePair<DateTime, string>(dateTimeNews, decodedString));
 						//allNews.Add(dateTimeNews, decodedString);
 					}
 
@@ -130,22 +144,25 @@ namespace PushNotificationServer
 				{
 
 				}
+				catch (Exception e)
+				{
+					throw;
+				}
 			}
 			hotNewsDictionary = returnDictionary;
 			foreach (var item in hotNewsDictionary)
 			{
-				if (allHotNewsDictionary.ContainsKey(item.Key) && allHotNewsDictionary[item.Key].Length <= item.Value.Length)
-					allHotNewsDictionary[item.Key] = item.Value;
-				else
-					allHotNewsDictionary.Add(item.Key, item.Value);
+				if (allHotNewsDictionary.Any(key => key.Key == item.Key && item.Value.Contains(key.Value)) )
+					allHotNewsDictionary.Remove(allHotNewsDictionary.Single(key => key.Key == item.Key && item.Value.Contains(key.Value)));
+
+				allHotNewsDictionary.Add(new KeyValuePair<DateTime, string>(item.Key, item.Value));
 
 			}
 			if (hotNewsDictionary.Count <= 0)
 				return;
-			allHotNewsDictionary = allHotNewsDictionary.OrderByDescending(key => key.Key)
-				.ToDictionary(key => key.Key, key => key.Value);
+			allHotNewsDictionary = new List<KeyValuePair<DateTime, string>>(allHotNewsDictionary.OrderByDescending(key => key.Key));
 			LastHotNewstime = allHotNewsDictionary.Select(key => key.Key).First();
-			allHotNewsDictionary.Clear();
+			hotNewsDictionary.Clear();
 			AllHotNews = null;
 		}
 
@@ -177,7 +194,7 @@ namespace PushNotificationServer
 
 			AllHotNews.Clear();
 			path = "";
-			for (int i = 0; i < 31; i++)
+			for (int i = 0; i < 32; i++)
 			{
 				path = Path.Combine(pathToSaveHotData, i.ToString() + "_.txt");
 				if (!File.Exists(path))
@@ -187,17 +204,18 @@ namespace PushNotificationServer
 				{
 					try
 					{
-						AllHotNews.Add(DateTime.Parse(allLines[j]), allLines[j + 1]);
+						var keyValuePair = new KeyValuePair<DateTime, string>(DateTime.Parse(allLines[j]), allLines[j + 1]);
+						allHotNewsDictionary.Add(keyValuePair);
 					}
 					catch (FormatException e)
 					{
 						j++;
-						AllHotNews.Add(DateTime.Parse(allLines[j]), allLines[j + 1]);
+						allHotNewsDictionary.Add(new KeyValuePair<DateTime, string>(DateTime.Parse(allLines[j]), allLines[j + 1]));
 					}
 				}
 			}
 			hotNewsDictionary = null;
-
+			AllHotNews = null;
 		}
 
 		public void SaveToFile()
@@ -231,7 +249,9 @@ namespace PushNotificationServer
 		{
 			if (allHotNewsDictionary.Count <= 0)
 				return;
-			var days = newDictionary.GroupBy(key => key.Key.Day);
+			DateTime curDay = DateTime.Now;
+
+			var days = allHotNewsDictionary.Where(key=> key.Key.Day == curDay.Day || (key.Key.Day == (curDay.Subtract(new TimeSpan(1,0,0,0))).Day) ).GroupBy(key => key.Key.Day);
 			string path;
 			foreach (var day in days)
 			{

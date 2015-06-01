@@ -3,7 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
 
-    <Grid DataContext="{Binding ElementName=window}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions> 
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            
+            <Menu >
+                <MenuItem Header="Reset last update time" Command="{Binding ResetLastUpdatetime}"></MenuItem>
+            </Menu>
+        </ToolBarPanel>
+    <Grid Grid.Row="1" DataContext="{Binding ElementName=window}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -30,7 +41,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-        <ListBox Name="NewsTextBlock" ItemsSource="{Binding NewNews, UpdateSourceTrigger=PropertyChanged}"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+            <ListBox Name="NewsTextBlock" ItemsSource="{Binding NewNews, UpdateSourceTrigger=PropertyChanged}"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
             <ListBox.ItemTemplate>
                 <ItemContainerTemplate>
                     <TextBlock Width="{Binding Width, ElementName=NewsTextBlock}" TextWrapping="Wrap" Text="{Binding}"/>
@@ -49,8 +60,10 @@
         </Grid>
         <Button x:Name="UpdateNewsButton" Grid.Row="3" Content="CheckNews" Click="CheckNewsButtonClick"/>
         <ProgressBar x:Name="Progress" Grid.Row="4" Visibility="Collapsed"></ProgressBar>
-    </Grid>
+        
 
+    </Grid>
+    </Grid>
 
 
 

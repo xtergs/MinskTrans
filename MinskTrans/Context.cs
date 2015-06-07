@@ -361,9 +361,10 @@ namespace MinskTrans.DesctopClient
 		}
 
 		protected abstract Task SaveFavourite();
-		public abstract Task Save();
+		public abstract Task Save(bool saveAllDB = true);
 
-		public abstract Task Load();
+
+		public abstract Task Load(LoadType type=LoadType.LoadAll);
 
 		public abstract Task Recover();
 

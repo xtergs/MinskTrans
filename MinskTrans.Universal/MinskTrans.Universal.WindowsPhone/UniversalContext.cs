@@ -273,11 +273,11 @@ namespace MinskTrans.Universal
 			string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
 			var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
 			await FileIO.WriteTextAsync(counterFile, counter);
-			counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
+			await counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
 
 		}
 		
-		public override async Task Save()
+		public override async Task Save(bool saveAllDb = true)
 		{
 
 			//await IsolatedStorageOperations.Save(this, "data.dat");
@@ -291,31 +291,31 @@ namespace MinskTrans.Universal
 				await SaveFavourite(storage);
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
-				SaveStatistics(jsonSettings, storage);
-				
-				await Task.WhenAll(Task.Run(async () =>
-				{
-					string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
-					var routsFile = await storage.CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
-					await FileIO.WriteTextAsync(routsFile, routs);
-					routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
-
-				}),
-					Task.Run(async () =>
+				await SaveStatistics(jsonSettings, storage);
+				if (saveAllDb)
+					await Task.WhenAll(Task.Run(async () =>
 					{
-						string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
-						var stopsFile = await storage.CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
-						await FileIO.WriteTextAsync(stopsFile, routs);
-						stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
+						string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
+						var routsFile = await storage.CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
+						await FileIO.WriteTextAsync(routsFile, routs);
+						routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
 
-					}), Task.Run(async () =>
-					{
-						string routs = JsonConvert.SerializeObject(Times, jsonSettings);
-						var timesFile = await storage.CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
-						await FileIO.WriteTextAsync(timesFile, routs);
-						timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
+					}),
+						Task.Run(async () =>
+						{
+							string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
+							var stopsFile = await storage.CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
+							await FileIO.WriteTextAsync(stopsFile, routs);
+							stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
 
-					}));
+						}), Task.Run(async () =>
+						{
+							string routs = JsonConvert.SerializeObject(Times, jsonSettings);
+							var timesFile = await storage.CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
+							await FileIO.WriteTextAsync(timesFile, routs);
+							timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
+
+						}));
 			}
 			catch (Exception e)
 			{
@@ -328,9 +328,8 @@ namespace MinskTrans.Universal
 		}
 
 		private Timer saveTimer;
-		
 
-		public override async Task Load()
+		public override async Task Load(LoadType type=LoadType.LoadAll)
 		{
 			Debug.WriteLine("UniversalContext.Load started");
 			Debug.WriteLine("UniversalContext LoadSourceData started");
@@ -339,12 +338,12 @@ namespace MinskTrans.Universal
 #endif
 			OnLoadStarted();
 
-			saveTimer = new Timer((x) =>
-			{
-				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
-				var storagee = ApplicationData.Current.RoamingFolder;
-				//SaveStatistics( jsonSettings, storagee);
-			},null, new TimeSpan(0,0, 10,0,0), new TimeSpan(0,0,0, 30,0) );
+			//saveTimer = new Timer((x) =>
+			//{
+			//	var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
+			//	var storagee = ApplicationData.Current.RoamingFolder;
+			//	//SaveStatistics( jsonSettings, storagee);
+			//},null, new TimeSpan(0,0, 10,0,0), new TimeSpan(0,0,0, 30,0) );
 
 			var storage = ApplicationData.Current.RoamingFolder;
 			ObservableCollection<Rout> tpRouts = null;
@@ -356,58 +355,66 @@ namespace MinskTrans.Universal
 
 			try
 			{
-				try
+				if (type.HasFlag(LoadType.LoadFavourite))
+					try
+					{
+						var routsFile = await storage.GetFileAsync(NameFileCounter);
+						var routs = await FileIO.ReadTextAsync(routsFile);
+						counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
+					}
+
+					catch (FileNotFoundException e)
+					{
+						counterViewStops = new Dictionary<int, uint>();
+					}
+				if (type.HasFlag(LoadType.LoadDB))
+					await Task.WhenAll(
+						Task.Run(async () =>
+						{
+							try
+							{
+								var routsFile = await storage.GetFileAsync(NameFileRouts);
+								var routs = await FileIO.ReadTextAsync(routsFile);
+								tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
+							}
+
+							catch (FileNotFoundException e)
+							{
+								throw new TaskCanceledException(e.Message, e);
+							}
+						}), Task.Run(async () =>
+						{
+							try
+							{
+								var stopsFile = await storage.GetFileAsync(NameFileStops);
+								var stops = await FileIO.ReadTextAsync(stopsFile);
+								tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
+							}
+							catch (FileNotFoundException e)
+							{
+								throw new TaskCanceledException(e.Message, e);
+							}
+						}), Task.Run(async () =>
+						{
+							try
+							{
+
+								var timesFile = await storage.GetFileAsync(NameFileTimes);
+								var times = await FileIO.ReadTextAsync(timesFile);
+
+								tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
+							}
+							catch (FileNotFoundException e)
+							{
+								throw new TaskCanceledException(e.Message, e);
+							}
+						}));
+				else
 				{
-					var routsFile = await storage.GetFileAsync(NameFileCounter);
-					var routs = await FileIO.ReadTextAsync(routsFile);
-					counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
+					tpRouts = Routs;
+					tpStops = Stops;
+					tpTimes = Times;
 				}
-
-				catch (FileNotFoundException e)
-				{
-					counterViewStops = new Dictionary<int, uint>();
-				}
-				await Task.WhenAll(
-					Task.Run(async () =>
-					{
-						try
-						{
-							var routsFile = await storage.GetFileAsync(NameFileRouts);
-							var routs = await FileIO.ReadTextAsync(routsFile);
-							tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
-						}
-
-						catch (FileNotFoundException e)
-						{
-							throw new TaskCanceledException(e.Message, e);
-						}
-					}), Task.Run(async () =>
-					{
-						try
-						{
-							var stopsFile = await storage.GetFileAsync(NameFileStops);
-							var stops = await FileIO.ReadTextAsync(stopsFile);
-							tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
-						}
-						catch (FileNotFoundException e)
-						{
-							throw new TaskCanceledException(e.Message, e);
-						}
-					}), Task.Run(async () =>
-					{
-						try
-						{
-
-							var timesFile = await storage.GetFileAsync(NameFileTimes);
-							var times = await FileIO.ReadTextAsync(timesFile);
-
-							tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
-						}
-						catch (FileNotFoundException e)
-						{
-							throw new TaskCanceledException(e.Message, e);
-						}
-					}));
 
 
 
@@ -534,16 +541,20 @@ namespace MinskTrans.Universal
 				return;
 			}
 
-			Debug.WriteLine("UniversalContext LoadSourceData ended");
-			Connect(tpRouts, tpStops, tpTimes, VariantLoad);
 
-			//lock (o)
-			//{
-			Routs = tpRouts;
-			Stops = tpStops;
-			Times = tpTimes;
+			Debug.WriteLine("UniversalContext LoadSourceData ended");
+			if (type.HasFlag(LoadType.LoadDB))
+			{
+				Connect(tpRouts, tpStops, tpTimes, VariantLoad);
+
+				//lock (o)
+				//{
+				Routs = tpRouts;
+				Stops = tpStops;
+				Times = tpTimes;
+			}
 			Debug.WriteLine("UniversalContext loadfavourite started");
-			if (await FileExistss(NameFileFavourite))
+			if (type.HasFlag(LoadType.LoadFavourite) && await FileExistss(NameFileFavourite))
 			{
 				try
 				{

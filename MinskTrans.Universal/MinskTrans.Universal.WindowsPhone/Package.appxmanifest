@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="16444ArtemShaban.beta" Publisher="CN=1A51811B-286B-4548-A66F-E4361E191A0F" Version="1.7.10.18" />
-  <mp:PhoneIdentity PhoneProductId="6fc80119-39bf-4a9e-ac29-e107ded1550a" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="16444ArtemShaban.10196180472FB" Publisher="CN=1A51811B-286B-4548-A66F-E4361E191A0F" Version="1.5.0.0" />
+  <mp:PhoneIdentity PhoneProductId="d029dcc2-0a10-4915-bfde-5db9f6e6bdb7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Минский общественный транспорт beta</DisplayName>
+    <DisplayName>Минский Общественный Транспорт</DisplayName>
     <PublisherDisplayName>Artem Shaban</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -16,7 +16,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="MinskTrans.Universal.WindowsPhone.App">
-      <m3:VisualElements DisplayName="Минский общественный транспорт beta" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="MinskTrans.Universal.WindowsPhone" ForegroundText="light" BackgroundColor="transparent" ToastCapable="true">
+      <m3:VisualElements DisplayName="Минский Общественный Транспорт" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="MinskTrans.Universal.WindowsPhone" ForegroundText="light" BackgroundColor="transparent" ToastCapable="true">
         <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png">
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" />
@@ -26,6 +26,13 @@
           <m3:Rotation Preference="landscapeFlipped" />
         </m3:InitialRotationPreference>
       </m3:VisualElements>
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="BackgroundUpdateTask.UpdateBackgroundTask">
+          <BackgroundTasks>
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

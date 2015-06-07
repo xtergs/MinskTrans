@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Email;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -53,7 +54,7 @@ namespace MinskTrans.Universal
 
 		void CallBackReconnectPushServerTimer(object state)
 		{
-			InitNotificationsAsync();
+			//InitNotificationsAsync();
 		}
 
 		private PushNotificationChannel channel = null;
@@ -155,6 +156,60 @@ namespace MinskTrans.Universal
 			}
 		}
 
+		//
+		// Register a background task with the specified taskEntryPoint, name, trigger,
+		// and condition (optional).
+		//
+		// taskEntryPoint: Task entry point for the background task.
+		// taskName: A name for the background task.
+		// trigger: The trigger for the background task.
+		// condition: Optional parameter. A conditional event that must be true for the task to fire.
+		//
+		public static BackgroundTaskRegistration RegisterBackgroundTask(string taskEntryPoint,
+																		string taskName,
+																		IBackgroundTrigger trigger,
+																		IBackgroundCondition condition)
+		{
+			//
+			// Check for existing registrations of this background task.
+			//
+
+			foreach (var cur in BackgroundTaskRegistration.AllTasks)
+			{
+
+				if (cur.Value.Name == taskName)
+				{
+					// 
+					// The task is already registered.
+					// 
+
+					return (BackgroundTaskRegistration)(cur.Value);
+				}
+			}
+
+
+			//
+			// Register the background task.
+			//
+
+			var builder = new BackgroundTaskBuilder();
+
+			
+			builder.Name = taskName;
+			builder.TaskEntryPoint = taskEntryPoint;
+			builder.SetTrigger(trigger);
+
+			if (condition != null)
+			{
+
+				builder.AddCondition(condition);
+			}
+
+			BackgroundTaskRegistration task = builder.Register();
+
+			return task;
+		}
+
 		private Timer autoUpdateAfterFailurTimer;
 		private bool stillNeddUpdate = false;
 
@@ -185,6 +240,7 @@ namespace MinskTrans.Universal
 		/// </summary>
 		public App()
 		{
+			
 #if BETA
 			Logger.Log().WriteLine(Environment.NewLine+Environment.NewLine + Environment.NewLine).WriteLineTime("App");
 #endif
@@ -255,7 +311,8 @@ namespace MinskTrans.Universal
 		/// <param name="e">Details about the launch request and process.</param>
 		async protected override void OnLaunched(LaunchActivatedEventArgs e)
 		{
-			InitNotificationsAsync();
+			//InitNotificationsAsync();
+
 #if BETA
 			Logger.Log("App.OnLaunched started");
 #endif
@@ -266,7 +323,37 @@ namespace MinskTrans.Universal
 				this.DebugSettings.EnableFrameRateCounter = true;
 			}
 #endif
-			
+
+			var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+			switch (backgroundAccessStatus)
+			{
+				case BackgroundAccessStatus.Denied:
+					// Windows: Background activity and updates for this app are disabled by the user.
+					//
+					// Windows Phone: The maximum number of background apps allowed across the system has been reached or
+					// background activity and updates for this app are disabled by the user.
+					break;
+
+				case BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity:
+					// Windows: Added to list of background apps; set up background tasks; 
+					// can use the network connectivity broker.
+					//
+					// Windows Phone: This value is never used on Windows Phone.
+					break;
+
+				case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
+				case BackgroundAccessStatus.Unspecified:
+					// The user didn't explicitly disable or enable access and updates. 
+					var updateTaskRegistration = RegisterBackgroundTask("BackgroundUpdateTask.UpdateBackgroundTask",
+						"UpdateBackgroundTasks", new TimeTrigger(60, false),
+						null);
+					
+					updateTaskRegistration.Completed += (sender, args) => MainModelView.MainModelViewGet.Context.Load(LoadType.LoadDB);
+					break;
+			}
+
+
+
 			var model = MainModelView.MainModelViewGet;
 
 			Frame rootFrame = Window.Current.Content as Frame;
@@ -404,7 +491,7 @@ namespace MinskTrans.Universal
 		/// </summary>
 		/// <param name="sender">The source of the suspend request.</param>
 		/// <param name="e">Details about the suspend request.</param>
-		private void OnSuspending(object sender, SuspendingEventArgs e)
+		private async void OnSuspending(object sender, SuspendingEventArgs e)
 		{
 #if BETA
 			Logger.Log("Onsuspending");
@@ -412,7 +499,7 @@ namespace MinskTrans.Universal
 #endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
-			model.Context.Save();
+			await model.Context.Save(saveAllDB:false);
 			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();

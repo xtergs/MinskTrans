@@ -289,6 +289,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
 				tempPushPin.Pushpin.Tag = st;
+				tempPushPin.Pushpin.Content = st.Name;
 			}
 #else
 					tempPushPin.Pushpin.ContextMenu = new ContextMenu();

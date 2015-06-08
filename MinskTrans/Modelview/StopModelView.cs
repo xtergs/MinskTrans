@@ -386,21 +386,28 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get { return new RelayCommand<Stop>(stop =>
 			{
+				OnViewStopOn();
 				FilteredSelectedStop = stop;
+				RefreshTimeSchedule.Execute(null);
 			});}
 		}
 
+		public event EventHandler ViewStopOn;
 
 
-		
 
-		
+
 
 		//public ActionCommand ShowRouteMap
 		//{
 		//	get { return new ActionCommand(x => OnShowRoute(new ShowArgs()), p => RouteSelectedValue != null); }
 		//}
 
-		
+
+		protected virtual void OnViewStopOn()
+		{
+			var handler = ViewStopOn;
+			if (handler != null) handler(this, EventArgs.Empty);
+		}
 	}
 }

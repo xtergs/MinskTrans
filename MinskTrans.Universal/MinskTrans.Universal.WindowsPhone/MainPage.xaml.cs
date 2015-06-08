@@ -89,7 +89,7 @@ namespace MinskTrans.Universal
 			model = MainModelView.MainModelViewGet;
 
 			var builder = new PushPinBuilder();
-			builder.Style = (Style)App.Current.Resources["PushpinItemStyle"];
+			builder.Style = (Style)mainPage.Resources["PushpinStyle1"];
 			builder.Tapped += (sender, args) =>
 			{
 				PopupMenu menu = new PopupMenu();
@@ -97,8 +97,9 @@ namespace MinskTrans.Universal
 				Stop stop = (Stop) push.Tag;
 				menu.Commands.Add(new UICommand("Показать расписание", command =>
 				{
-					model.StopMovelView.ViewStop.Execute(stop);
+					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
+				menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
@@ -106,7 +107,11 @@ namespace MinskTrans.Universal
 			model.Context.ShowRoute += OnShowRoute;
 			model.Context.ShowStop += OnShowStop;
 
-			
+			model.FindModelView.StopModelView.ViewStopOn += (sender, args) =>
+			{
+				Pivot.SelectedItem = SearchPivotItem;
+				VisualStateManager.GoToState(mainPage, "ShowStopVisualState", true);
+			};
 
 			VisualStateGroup.CurrentStateChanged += (sender, args) =>
 			{

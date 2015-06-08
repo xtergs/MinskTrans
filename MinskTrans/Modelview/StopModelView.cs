@@ -382,7 +382,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return new RelayCommand<int>(x=>settingsModelView.TimeInPast = x);}
 		}
 
-		
+		public RelayCommand<Stop> ViewStop
+		{
+			get { return new RelayCommand<Stop>(stop =>
+			{
+				FilteredSelectedStop = stop;
+			});}
+		}
 
 
 

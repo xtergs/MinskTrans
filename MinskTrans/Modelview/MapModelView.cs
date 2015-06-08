@@ -5,6 +5,9 @@
 
 
 
+using MyLibrary;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using System.Text;
 using System.ComponentModel;
 using System;
@@ -44,9 +47,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Stop currentStop;
 		private Rout currentRout;
 		private Location location;
-		private bool pushpinsAll = true;
+		private bool showAllPushpins = true;
 		private readonly Map map;
-		private List<PushpinLocation> pushpins;
+		private List<PushpinLocation> allPushpins;
 		private Pushpin ipushpin;
 		private ObservableCollection<Pushpin> pushpins1;
 		private Pushpin startStopPushpin;
@@ -70,18 +73,21 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public static Style StylePushpin { get; set; }
 
-		public MapModelView(Context context, Map map, SettingsModelView newSettigns = null)
+		private PushPinBuilder pushBuilder;
+
+		public MapModelView(Context context, Map map, SettingsModelView newSettigns = null, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;
+			pushBuilder = pushPinBuilder;
 			Settings = newSettigns;
 			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
 			geolocator = new Geolocator();
 
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
-			map.Center = new Location(53.55, 27.33);
-			
+			map.Center = new Location(53.898532, 27.562501);
+			allPushpins = new List<PushpinLocation>();
 			SetGPS();
 		}
 
@@ -245,7 +251,9 @@ namespace MinskTrans.DesctopClient.Modelview
 					map.Children.Add(pushpin);
 				}
 				catch (System.Exception ex)
-				{ }
+				{
+					throw;
+				}
 			}
 		}
 
@@ -267,79 +275,21 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public int MaxZoomLevel { get; set; }
 
-		public async void RefreshPushPinsAsync()
+		PushpinLocation CreatePushpin(Stop st)
 		{
-
-			if (pushpins == null)
-				InicializeMap();
-			if (pushpinsAll && map != null && pushpins != null)
+			var tempPushPin = new PushpinLocation
 			{
-#if WINDOWS_PHONE_APP
-				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
-#else
-				var northWest = map.ViewportPointToLocation(new Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
+				Location = new Location(st.Lat, st.Lng),
+				Stop = st,
 				
-#endif
-				double zoomLevel = map.ZoomLevel;
-				Pushpins.Clear();
-
-				//await Task.Run(() =>
-				//{
-				foreach (var child in pushpins.AsParallel())
-				{
-					if (zoomLevel <= MaxZoomLevel)
-					{
-						ShowOnMap();
-						return;
-						//map.Children.Remove(child);
-						//child.Visibility = Visibility.Collapsed;
-					}
-					else
-					{
-						//var x = MapPanel.GetLocation(child);
-						if (child.Location.Latitude <= northWest.Latitude && child.Location.Longitude >= northWest.Longitude &&
-							child.Location.Latitude >= southEast.Latitude && child.Location.Longitude <= southEast.Longitude)
-						{
-							Pushpins.Add(child.Pushpin);
-						}
-					}
-				}
-				if (Ipushpin != null)
-					Pushpins.Add(Ipushpin);
-				//});
-				ShowOnMap();
-			}
-
-
-		}
-
-
-
-		public void InicializeMap()
-		{
-			if (Context != null && Context.ActualStops != null)
-			{
-				pushpins = new List<PushpinLocation>(Context.ActualStops.Count);
-				foreach (var st in Context.ActualStops)
-				{
-					var tempPushPin = new PushpinLocation() { Location = new Location(st.Lat, st.Lng) };
-					//var pushpin = new Pushpin { Tag = st, Content = st.Name };
-					tempPushPin.Style = StylePushpin;
-					tempPushPin.Stop = st;
+			};
+			//var pushpin = new Pushpin { Tag = st, Content = st.Name };
 #if WINDOWS_PHONE_APP
-					//pushpin.Tapped += (sender, argss) =>
-					//{
-					//	((Pushpin)sender).BringToFront();
-					//};
-					//pushpin.Tapped += (o, argss) =>
-					//{
-					//	Pushpin tempPushpin = (Pushpin)o;
-					//	Stop tmStop = (Stop)tempPushpin.Tag;
-					//	//model.StopMovelView.FilteredSelectedStop = tmStop;
-					//	//MapPivotItem.Focus(FocusState.Programmatic);
-					//};
+			if (pushBuilder != null)
+			{
+				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
+				tempPushPin.Pushpin.Tag = st;
+			}
 #else
 					tempPushPin.Pushpin.ContextMenu = new ContextMenu();
 					var menuItem = new MenuItem();
@@ -359,27 +309,72 @@ namespace MinskTrans.DesctopClient.Modelview
 						((Pushpin)senderr).BringToFront();
 					};
 #endif
-					//tempPushPin.Pushpin.MouseLeftButtonDown += (o, argsr) =>
-					//{
-					//	Pushpin tempPushpin = (Pushpin)o;
-					//	Stop tmStop = (Stop)tempPushpin.Tag;
-					//	ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
-					//	stopTabItem.Focus();
-					//};
-					//tempPushPin.Pushpin.MouseRightButtonDown += (o, eventArgs) =>
-					//{
-					//	Pushpin tempPushpin = (Pushpin)o;
-					//	tempPushpin.ContextMenu.IsOpen = true;
-					//	currentPushpin = (Pushpin)o;
-					//};
-					//MapPanel.SetLocation(tempPushPin.Pushpin, tempPushPin.Location);
-					pushpins.Add(tempPushPin);
+			//tempPushPin.Pushpin.MouseLeftButtonDown += (o, argsr) =>
+			//{
+			//	Pushpin tempPushpin = (Pushpin)o;
+			//	Stop tmStop = (Stop)tempPushpin.Tag;
+			//	ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
+			//	stopTabItem.Focus();
+			//};
+			//tempPushPin.Pushpin.MouseRightButtonDown += (o, eventArgs) =>
+			//{
+			//	Pushpin tempPushpin = (Pushpin)o;
+			//	tempPushpin.ContextMenu.IsOpen = true;
+			//	currentPushpin = (Pushpin)o;
+			//};
+			//MapPanel.SetLocation(tempPushPin.Pushpin, tempPushPin.Location);
+			return tempPushPin;
+		}
+
+		void PreperPushpinsForView(IEnumerable<Stop> needStops)
+		{
+			foreach (var needShowStop in needStops)
+			{
+				var tempPushpin = allPushpins.FirstOrDefault(push => push.Stop.ID == needShowStop.ID);
+				if (tempPushpin == null)
+				{
+					tempPushpin = CreatePushpin(needShowStop);
+					allPushpins.Add(tempPushpin);
 				}
-				
-				map.Center = new Location(Context.ActualStops.First().Lat, Context.ActualStops.First().Lng);
-				OnMapInicialized();
+				Pushpins.Add(tempPushpin.Pushpin);
 			}
 		}
+
+		public async void RefreshPushPinsAsync()
+		{
+
+			if (showAllPushpins && map != null && Context.ActualStops != null)
+			{
+				double zoomLevel = map.ZoomLevel;
+				Pushpins.Clear();
+				if (zoomLevel <= MaxZoomLevel)
+				{
+					ShowOnMap();
+					return;
+				}
+#if WINDOWS_PHONE_APP
+				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
+#else
+				var northWest = map.ViewportPointToLocation(new Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
+				
+#endif
+
+				var needShowStops =
+					Context.ActualStops.Where(child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
+					                                   child.Lat >= southEast.Latitude && child.Lng <= southEast.Longitude).ToList();
+
+				PreperPushpinsForView(needShowStops);
+				if (Ipushpin != null)
+					Pushpins.Add(Ipushpin);
+				ShowOnMap();
+			}
+		}
+
+
+
+
 		public Pushpin Ipushpin
 		{
 			get
@@ -438,7 +433,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				return new RelayCommand(() =>
 				{
-					pushpinsAll = true;
+					showAllPushpins = true;
 				});
 			}
 		}
@@ -453,10 +448,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					showICommand = new RelayCommand(() =>
 					{
 						ShowPushpin(Ipushpin);
-					}, () =>
-					{
-						return Ipushpin != null;
-					});
+					}, () => Ipushpin != null);
 				return showICommand;
 			}
 		}
@@ -478,14 +470,10 @@ namespace MinskTrans.DesctopClient.Modelview
 				return new RelayCommand<Rout>(rout =>
 				{
 
-					pushpinsAll = false;
-					if (pushpins == null)
-						InicializeMap();
+					showAllPushpins = false;
+					
 					Pushpins.Clear();
-					foreach (var child in pushpins.Where(d => rout.Stops.Any(p => p.ID == ((Stop)d.Pushpin.Tag).ID)).Select(d => d.Pushpin))
-					{
-						Pushpins.Add(child);
-					}
+					PreperPushpinsForView(rout.Stops);
 					ShowOnMap();
 					map.Center = new Location(rout.StartStop.Lat, rout.StartStop.Lng);
 				});
@@ -498,7 +486,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				return new RelayCommand<Stop>(stop =>
 				{
-					pushpinsAll = true;
+					showAllPushpins = true;
 					map.Center = new Location(stop.Lat, stop.Lng);
 					map.ZoomLevel = 19;
 				});

@@ -32,7 +32,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
 using MinskTrans.Universal.Model;
 using MinskTrans.Universal.ModelView;
-
+using MyLibrary;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -87,8 +87,21 @@ namespace MinskTrans.Universal
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
+
+			var builder = new PushPinBuilder();
+			builder.Style = (Style)App.Current.Resources["PushpinItemStyle"];
+			builder.Tapped += (sender, args) =>
+			{
+				PopupMenu menu = new PopupMenu();
+				var push = ((Pushpin) sender);
+				Stop stop = (Stop) push.Tag;
+				menu.Commands.Add(new UICommand("Показать расписание", command =>
+				{
+					model.StopMovelView.ViewStop.Execute(stop);
+				}));
+			};
 			
-			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView);
+			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.Context.ShowRoute += OnShowRoute;
 			model.Context.ShowStop += OnShowStop;
@@ -201,36 +214,7 @@ namespace MinskTrans.Universal
 
 
 
-		public void InicializeMap()
-		{
-			if (model != null && model.Context.ActualStops != null)
-			{
-				pushpins = new List<PushpinLocation>(model.Context.ActualStops.Count);
-				foreach (var st in model.Context.ActualStops)
-				{
-					var tempPushPin = new PushpinLocation(){Location = new Location(st.Lat, st.Lng)};
-					//var pushpin = new Pushpin { Tag = st, Content = st.Name };
-					tempPushPin.Style = (Style)mainPage.Resources["PushpinStyle1"];
-					tempPushPin.Stop = st;
-#if WINDOWS_PHONE_APP
-					//pushpin.Tapped += (sender, argss) =>
-					//{
-					//	((Pushpin)sender).BringToFront();
-					//};
-					//pushpin.Tapped += (o, argss) =>
-					//{
-					//	Pushpin tempPushpin = (Pushpin)o;
-					//	Stop tmStop = (Stop)tempPushpin.Tag;
-					//	//model.StopMovelView.FilteredSelectedStop = tmStop;
-					//	//MapPivotItem.Focus(FocusState.Programmatic);
-					//};
-#endif
-					//MapPanel.SetLocation(tempPushPin.Pushpin, tempPushPin.Location);
-					pushpins.Add(tempPushPin);					
-				}
-				map.Center = new Location(model.Context.ActualStops.First().Lat, model.Context.ActualStops.First().Lng);
-			}
-		}
+		
 
 		/// <summary>
 		/// Invoked when this page is about to be displayed in a Frame.
@@ -239,23 +223,6 @@ namespace MinskTrans.Universal
 		/// This parameter is typically used to configure the page.</param>
 		
 		
-
-		async private void Button_Click(object sender, RoutedEventArgs e)
-		{
-			
-		}
-
-		async private void Button_Click_1(object sender, RoutedEventArgs e)
-		{
-			//DataContext = model;
-			
-			//testListview.ItemsSource = model.StopMovelView.TimeSchedule;
-		}
-
-		private void Grid_Loaded(object sender, RoutedEventArgs e)
-		{
-
-		}
 
 		private async void Page_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -335,131 +302,25 @@ namespace MinskTrans.Universal
 			
 		}
 
-	private bool pushpinsAll = true;
-		private bool isShowBusStops;
-		private bool isShowTrolStops;
-		private bool isShowTramStops;
-		private bool Is_Connected;
-		private bool Is_InternetAvailable;
-		private bool Is_Roaming;
-		private bool Is_LowOnData;
-		private bool Is_OverDataLimit;
-		private bool Is_Wifi_Connected;
+	
 
 		private void OnShowStop(object sender, ShowArgs args)
 		{
-			pushpinsAll = true;
 			Pivot.SelectedItem = MapPivotItem;
 			
 			//model.MapModelView.ShowStop.Execute(args.SelectedStop);
 
 			var temp = args.SelectedStop;
-			map.Center = new Location(temp.Lat, temp.Lng);
-			map.ZoomLevel = 19;
+			model.MapModelView.ShowStopCommand.Execute(temp);
 		}
 
 		private void OnShowRoute(object sender, ShowArgs args)
 		{
 			Pivot.SelectedItem = MapPivotItem;
 			var x = args.SelectedRoute;
-			pushpinsAll = false;
-			if (pushpins == null)
-				InicializeMap();
-			//foreach (var child in pushpins)
-			//{
-				
-			//	//map.Children.Remove(child);
-			//	//child.Visibility = Visibility.Collapsed;
-			//}
-			//var tempRoute = args.SelectedRoute;
-			Pushpins.Clear();
-			foreach (var child in pushpins.Where(d => x.Stops.Any(p => p.ID == ((Stop)d.Pushpin.Tag).ID)).Select(d=>d.Pushpin))
-			{
-				Pushpins.Add(child);
-				//map.Children.Add(child);
-				//child.Visibility = Visibility.Visible;
-			}
-			ShowOnMap();
-			map.Center = new Location(x.StartStop.Lat, x.StartStop.Lng);
+			model.MapModelView.ShowRoutCommand.Execute(x);
 			ShowAllPushPins.Visibility = Visibility.Visible;
 			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
-		}
-
-		void ShowOnMap()
-		{
-			for (int i = 1; i < map.Children.Count; i++)
-				if (!Pushpins.Contains(map.Children.ElementAt(i)))
-					map.Children.RemoveAt(i);
-			foreach (var pushpin in Pushpins.Where(x => !map.Children.Contains(x)))
-			{
-				try
-				{
-					map.Children.Add(pushpin);
-				}
-				catch (System.Exception ex)
-				{ }
-			}
-		}
-
-		public ObservableCollection<Pushpin> Pushpins
-		{
-			get
-			{
-				if (pushpins1 == null)
-					pushpins1 = new ObservableCollection<Pushpin>();
-				return pushpins1;
-			}
-			set
-			{
-				if (Equals(value, pushpins1)) return;
-				pushpins1 = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public async void RefreshPushPinsAsync()
-		{
-			
-			if (pushpins == null)
-				InicializeMap();
-			if (pushpinsAll && map!=null && pushpins!=null)
-			{
-				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
-				double zoomLevel = map.ZoomLevel;
-				Pushpins.Clear();
-
-				//await Task.Run(() =>
-				//{
-					foreach (var child in pushpins.AsParallel())
-					{
-						if (zoomLevel <= 14)
-						{
-							ShowOnMap();
-							return;
-							//map.Children.Remove(child);
-							//child.Visibility = Visibility.Collapsed;
-						}
-						else
-						{
-							//var x = MapPanel.GetLocation(child);
-							if (child.Location.Latitude <= northWest.Latitude && child.Location.Longitude >= northWest.Longitude &&
-							    child.Location.Latitude >= southEast.Latitude && child.Location.Longitude <= southEast.Longitude)
-							{
-								Pushpins.Add(child.Pushpin);
-							}
-						}
-					}
-				//});
-				ShowOnMap();
-			}
-
-			
-		}
-
-		private void map_ViewportChanged(object sender, EventArgs e)
-		{
-			if (map != null) RefreshPushPinsAsync();
 		}
 
 		private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -543,8 +404,7 @@ namespace MinskTrans.Universal
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
 		{
-			pushpinsAll = true;
-			RefreshPushPinsAsync();
+			model.MapModelView.ShowAllStops.Execute(null);
 			ShowAllPushPins.Visibility = Visibility.Collapsed;
 		}
 
@@ -555,17 +415,6 @@ namespace MinskTrans.Universal
 		{
 			var handler = PropertyChanged;
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		private void map_TileGridChanged(object sender, EventArgs e)
-		{
-			
-		}
-
-		private void ZoomIn(object sender, DoubleTappedRoutedEventArgs e)
-		{
-			
-			
 		}
 
 		private void StartEmailToDeveloper(object sender, RoutedEventArgs e)

@@ -18,7 +18,7 @@ namespace MinskTrans.Universal
 			Pushpin = pin;
 			Location = loc;
 		}
-
+		
 		public Stop Stop;
 		public Style Style;
 		private Pushpin pushpin;

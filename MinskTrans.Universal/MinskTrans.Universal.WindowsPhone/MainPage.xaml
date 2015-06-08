@@ -1231,7 +1231,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <mapControl1:Map DoubleTapped="ZoomIn" ViewportChanged="map_ViewportChanged" x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TileGridChanged="map_TileGridChanged">
+                        <mapControl1:Map  x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                           
                         </mapControl1:Map>
                         <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">

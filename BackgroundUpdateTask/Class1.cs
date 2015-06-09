@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 
 using Windows.ApplicationModel.Background;
+using MinskTrans.Universal;
 
 namespace BackgroundUpdateTask
 {
     public sealed class UpdateBackgroundTask : IBackgroundTask
     {
-        public void Run(IBackgroundTaskInstance taskInstance)
+        public async void Run(IBackgroundTaskInstance taskInstance)
         {
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 
-			//
-			// TODO: Insert code to start one or more asynchronous methods using the
-			//       await keyword, for example:
-			//
-			// await ExampleMethodAsync();
-			//
+	        string resultStr = await InternetHelper.Download("dkfjsd");
+	        var timeShtaps = resultStr.Split('\n');
+			UniversalContext context = new UniversalContext();
+	        await context.UpdateAsync();
+			
 
 			_deferral.Complete();
 			

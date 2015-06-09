@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsRuntimeBackgroundTas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundUpdateTask", "BackgroundUpdateTask\BackgroundUpdateTask.csproj", "{96102582-0ABB-46BB-8451-D43ADF63F594}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{A7577975-54ED-4521-997B-6FACD396DAD9}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems*{59beb27b-8c75-4e30-a0d1-5ed336038c3c}*SharedItemsImports = 13
@@ -301,6 +303,22 @@ Global
 		{96102582-0ABB-46BB-8451-D43ADF63F594}.Release|Win32.ActiveCfg = Release|Any CPU
 		{96102582-0ABB-46BB-8451-D43ADF63F594}.Release|x64.ActiveCfg = Release|Any CPU
 		{96102582-0ABB-46BB-8451-D43ADF63F594}.Release|x86.ActiveCfg = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|ARM.ActiveCfg = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|Win32.ActiveCfg = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|x64.ActiveCfg = Release|Any CPU
+		{A7577975-54ED-4521-997B-6FACD396DAD9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -315,5 +333,6 @@ Global
 		{DED400D9-CCFA-4883-AAA7-4F0D08C9D1FD} = {B33B7725-3735-4693-A3E1-77A0972BE758}
 		{CE5EA1DE-1629-4F11-99FD-8D4526BFE0E0} = {259E8A59-B554-414A-8C5C-1A9BE5AE4B45}
 		{96102582-0ABB-46BB-8451-D43ADF63F594} = {259E8A59-B554-414A-8C5C-1A9BE5AE4B45}
+		{A7577975-54ED-4521-997B-6FACD396DAD9} = {259E8A59-B554-414A-8C5C-1A9BE5AE4B45}
 	EndGlobalSection
 EndGlobal

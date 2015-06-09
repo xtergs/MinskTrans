@@ -5,7 +5,7 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{96102582-0abb-46bb-8451-d43adf63f594}</ProjectGuid>
+    <ProjectGuid>{96102582-0ABB-46BB-8451-D43ADF63F594}</ProjectGuid>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BackgroundUpdateTask</RootNamespace>
@@ -35,6 +35,14 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MyLibrary\MyLibrary.csproj">
+      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
+      <Name>MyLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
@@ -52,5 +60,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
 </Project>

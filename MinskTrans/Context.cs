@@ -280,7 +280,7 @@ namespace MinskTrans.DesctopClient
 		}
 
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		
 
 		public  abstract void Create(bool AutoUpdate = true);
 
@@ -455,7 +455,7 @@ namespace MinskTrans.DesctopClient
 			if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
 			{
 				await ApplyUpdate();
-				Save();
+				await Save();
 			}
 			FileDelete(list[0].Key + NewExt);
 			FileDelete(list[1].Key + NewExt);
@@ -936,6 +936,12 @@ namespace MinskTrans.DesctopClient
 		}
 
 		public string nameFileCounter { get; set; }
+
+		#region Implementation of INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
 	}
 
 	public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);

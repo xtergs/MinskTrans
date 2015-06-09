@@ -91,12 +91,6 @@
     <Compile Include="..\..\MinskTrans\CalculateRout.cs">
       <Link>CalculateRout.cs</Link>
     </Compile>
-    <Compile Include="..\..\MinskTrans\Comparer\StopComparer.cs">
-      <Link>StopComparer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Context.cs">
-      <Link>Context.cs</Link>
-    </Compile>
     <Compile Include="..\..\MinskTrans\FrameworkElementExt.cs">
       <Link>FrameworkElementExt.cs</Link>
     </Compile>
@@ -127,53 +121,8 @@
     <Compile Include="..\..\MinskTrans\Modelview\StopsModelView.cs">
       <Link>ModelView\StopsModelView.cs</Link>
     </Compile>
-    <Compile Include="..\..\MinskTrans\Model\BaseModel.cs">
-      <Link>Model\BaseModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\GroupStop.cs">
-      <Link>Model\GroupStop.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\GroupStopId.cs">
-      <Link>Model\GroupStopId.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\List2.cs">
-      <Link>Model\List2.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\Rout.cs">
-      <Link>Model\Rout.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\RoutBase.cs">
-      <Link>Model\RoutBase.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\RoutEx.cs">
-      <Link>Model\RoutEx.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\RoutWithDestinations.cs">
-      <Link>Model\RoutWithDestinations.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\Schedule.cs">
-      <Link>Model\Schedule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\Stop.cs">
-      <Link>Model\Stop.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\StopBase.cs">
-      <Link>Model\StopBase.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\StopEx.cs">
-      <Link>Model\StopEx.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Model\Time.cs">
-      <Link>Model\Time.cs</Link>
-    </Compile>
     <Compile Include="..\..\MinskTrans\NodeGraph.cs">
       <Link>NodeGraph.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\ShedulerParser.cs">
-      <Link>ShedulerParser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\ShowArgs.cs">
-      <Link>ShowArgs.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -182,7 +131,6 @@
     <Compile Include="Class2.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="InternetHelper.cs" />
     <Compile Include="LocationToVisibilityConverter.cs" />
     <Compile Include="LocationX.cs" />
     <Compile Include="Logger.cs" />
@@ -202,11 +150,9 @@
     <Compile Include="NewsManager.cs" />
     <Compile Include="NoFilesToRestoreDataException.cs" />
     <Compile Include="NotDataToDeserialize.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushPinBuilder.cs" />
     <Compile Include="PushpinLocation.cs" />
-    <Compile Include="RoutsComparer.cs" />
     <Compile Include="Services\MobileServices\MinskTransBetaPushNotification\push.register.cs">
       <ConnectedServiceReference>MinskTransBetaPushNotification</ConnectedServiceReference>
     </Compile>
@@ -220,7 +166,6 @@
     <Compile Include="Themes\EmptyToVisibility.cs" />
     <Compile Include="TransportToColor.cs" />
     <Compile Include="TransportToImageConverter.cs" />
-    <Compile Include="UniversalContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -315,6 +260,10 @@
     <ProjectReference Include="..\..\BackgroundUpdateTask\BackgroundUpdateTask.csproj">
       <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
       <Name>BackgroundUpdateTask</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
+      <Name>CommonLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
       <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>

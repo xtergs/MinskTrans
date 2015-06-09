@@ -209,7 +209,7 @@ namespace MinskTrans.DesctopClient
 			return true;
 		}
 
-		public async override Task Load()
+		public async override Task Load(LoadType type = LoadType.LoadAll)
 		{
 			OnLoadStarted();
 

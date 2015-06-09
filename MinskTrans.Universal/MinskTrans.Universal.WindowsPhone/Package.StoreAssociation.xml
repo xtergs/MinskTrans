@@ -184,37 +184,37 @@
     <Language Code="vi-vn" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>16444ArtemShaban.beta</MainPackageIdentityName>
+    <MainPackageIdentityName>16444ArtemShaban.10196180472FB</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>Минский общественный транспорт beta</ReservedName>
+      <ReservedName>Минский Общественный Транспорт</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>16444ArtemShaban.MinskPublickTransport</MainPackageIdentityName>
     <MainPackageIdentityName>16444ArtemShaban.580353B0D12F7</MainPackageIdentityName>
-    <MainPackageIdentityName>16444ArtemShaban.10196180472FB</MainPackageIdentityName>
+    <MainPackageIdentityName>16444ArtemShaban.beta</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=d6b66d53-963d-4039-9fd5-052016ac28c6">
+  <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=b6753e9e-e571-4c10-bb1e-4b1d05730f75">
     <BundleInfo>
       <PackageInfo>
         <OsMinVersion>6.3.0.0</OsMinVersion>
         <PackageArchitecture>neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>1.7.10.18</PackageMaxArchitectureVersion>
+        <PackageMaxArchitectureVersion>1.5.0.0</PackageMaxArchitectureVersion>
       </PackageInfo>
       <PackageInfo>
         <OsMinVersion>6.3.0.0</OsMinVersion>
         <PackageArchitecture></PackageArchitecture>
-        <PackageMaxArchitectureVersion>1.7.10.18</PackageMaxArchitectureVersion>
+        <PackageMaxArchitectureVersion>1.5.0.0</PackageMaxArchitectureVersion>
       </PackageInfo>
       <PackageInfo>
         <OsMinVersion>6.3.0.0</OsMinVersion>
         <PackageArchitecture></PackageArchitecture>
-        <PackageMaxArchitectureVersion>1.7.10.18</PackageMaxArchitectureVersion>
+        <PackageMaxArchitectureVersion>1.5.0.0</PackageMaxArchitectureVersion>
       </PackageInfo>
       <PackageInfo>
         <OsMinVersion>6.3.0.0</OsMinVersion>
         <PackageArchitecture></PackageArchitecture>
-        <PackageMaxArchitectureVersion>1.7.10.18</PackageMaxArchitectureVersion>
+        <PackageMaxArchitectureVersion>1.5.0.0</PackageMaxArchitectureVersion>
       </PackageInfo>
     </BundleInfo>
   </PackageInfoList>

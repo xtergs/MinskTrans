@@ -7,7 +7,7 @@ using MinskTrans.DesctopClient;
 
 namespace MinskTrans.Universal
 {
-	class RoutsComparer:IEqualityComparer<Rout>
+	public class RoutsComparer:IEqualityComparer<Rout>
 	{
 		#region Implementation of IEqualityComparer<in Rout>
 

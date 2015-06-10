@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinskTrans.DesctopClient.Comparer
 {
-	class StopComparer:IEqualityComparer<Stop>
+	public class StopComparer:IEqualityComparer<Stop>
 	{
 		public bool Equals(Stop x, Stop y)
 		{

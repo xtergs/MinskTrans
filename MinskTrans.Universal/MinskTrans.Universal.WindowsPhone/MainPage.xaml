@@ -1317,7 +1317,8 @@
                         <Button Content="Настройка сервисов местоположения" Click="OnOffLocationServises"></Button>
                         <Button Content="Политика безопасности" Click="ShowPolicity"/>
                         <Button Content="Отправить лог разработчику" Click="SendLog"/>
-                        
+                        <Button Content="testNotification" Click="testNotifications"/>
+
                     </ListView>
                 </Border>
             </PivotItem>

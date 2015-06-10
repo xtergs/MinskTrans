@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="Comparer\RoutsComparer.cs" />
     <Compile Include="InternetHelper.cs" />
+    <Compile Include="NewsManager.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniversalContext.cs" />

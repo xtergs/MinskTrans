@@ -17,6 +17,7 @@ using Windows.Phone.UI.Input;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -291,7 +292,7 @@ namespace MinskTrans.Universal
 				else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
 					VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
 				else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-				         !FavouriteRoutssHyperlinkButton.IsEnabled)
+						 !FavouriteRoutssHyperlinkButton.IsEnabled)
 					VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
 				else
 					e.Handled = false;
@@ -477,6 +478,18 @@ namespace MinskTrans.Universal
 		async void SendLog()
 		{
 			SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
+		}
+
+		private void testNotifications(object sender, RoutedEventArgs e)
+		{
+			var notifi = ToastNotificationManager.CreateToastNotifier();
+
+			var xaml = ToastNotificationManager.GetTemplateContent(Windows.UI.Notifications.ToastTemplateType.ToastText04);
+			var textNode = xaml.GetElementsByTagName("text");
+			textNode.Item(0).AppendChild(xaml.CreateTextNode("TEEST dsfjkd kjdafj jdka \n dfjkdjfkjdkfj fj"));
+				//value.appendChild(toastXml.createTextNode(text));
+			ToastNotification notification = new ToastNotification(xaml);
+			notifi.Show(notification);
 		}
 	}
 }

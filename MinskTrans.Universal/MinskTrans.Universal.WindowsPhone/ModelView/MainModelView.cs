@@ -33,7 +33,7 @@ namespace MinskTrans.Universal.ModelView
 		private MainModelView(Context newContext)
 		{
 			context = newContext;
-			settingsModelView = new SettingsModelView(context);
+			settingsModelView = new SettingsModelView();
 			routesModelview = new RoutsModelView(context);
 			stopMovelView = new StopModelView(context, settingsModelView, true);
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);

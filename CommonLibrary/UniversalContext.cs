@@ -57,13 +57,13 @@ namespace MinskTrans.Universal
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
 					LastUpdateDataDateTime = new DateTime();
-				return (DateTime)ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"];
+				return DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"].ToString());
 			}
 
 			set
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
-					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value);
+					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value.ToString());
 				else
 					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value;
 				OnPropertyChanged();

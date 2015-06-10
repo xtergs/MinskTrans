@@ -50,6 +50,30 @@ namespace MinskTrans.Universal
 			}
 		}
 
+		public override DateTime LastUpdateDataDateTime
+		{
+#if WINDOWS_PHONE_APP
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
+					LastUpdateDataDateTime = new DateTime();
+				return (DateTime)ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
+					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value);
+				else
+					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value;
+				OnPropertyChanged();
+			}
+#else
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+#endif
+		}
+
 		public override void Create(bool AutoUpdate = true)
 		{
 			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
@@ -218,7 +242,7 @@ namespace MinskTrans.Universal
 			//});
 
 		}
-
+		
 		
 
 		protected override async Task SaveFavourite()
@@ -261,6 +285,7 @@ namespace MinskTrans.Universal
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
 				await SaveStatistics(jsonSettings, storage);
+				string dateTime = JsonConvert.SerializeObject(Routs, jsonSettings);
 				if (saveAllDb)
 					await Task.WhenAll(Task.Run(async () =>
 					{

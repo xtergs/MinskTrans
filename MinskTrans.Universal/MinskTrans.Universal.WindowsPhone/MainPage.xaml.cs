@@ -99,6 +99,10 @@ namespace MinskTrans.Universal
 				{
 					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
+				menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop) +
+												model.Context.GetTrolToString(stop) + 
+												model.Context.GetTramToString(stop) + 
+												model.Context.GetMetroToString(stop)));
 				menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			

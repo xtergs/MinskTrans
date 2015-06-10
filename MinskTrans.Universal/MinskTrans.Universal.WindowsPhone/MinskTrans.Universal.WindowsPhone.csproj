@@ -109,9 +109,6 @@
     <Compile Include="..\..\MinskTrans\Modelview\RoutesModelview.cs">
       <Link>ModelView\RoutesModelview.cs</Link>
     </Compile>
-    <Compile Include="..\..\MinskTrans\Modelview\SettingsModelView.cs">
-      <Link>ModelView\SettingsModelView.cs</Link>
-    </Compile>
     <Compile Include="..\..\MinskTrans\Modelview\StopModelView.cs">
       <Link>ModelView\StopModelView.cs</Link>
     </Compile>

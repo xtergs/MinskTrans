@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
@@ -62,6 +63,51 @@ namespace MinskTrans.DesctopClient
 		public uint GetCounter(Stop stop)
 		{
 			return counterViewStops.Keys.Contains(stop.ID) ? counterViewStops[stop.ID] : 0;
+		}
+
+		public string GetBusToString(Stop stop)
+		{
+			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Bus).ToList();
+			if (temp.Count == 0)
+				return "";
+			StringBuilder builder = new StringBuilder("Авт: ");
+			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			builder.Remove(builder.Length - 2, 2);
+			builder.AppendLine();
+			return builder.ToString();
+		}
+		public string GetTrolToString(Stop stop)
+		{
+			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Trol).ToList();
+			if (temp.Count == 0)
+				return "";
+			StringBuilder builder = new StringBuilder("трол: ");
+			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			builder.Remove(builder.Length - 2, 2);
+			builder.AppendLine();
+			return builder.ToString();
+		}
+		public string GetMetroToString(Stop stop)
+		{
+			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Metro).ToList();
+			if (temp.Count == 0)
+				return "";
+			StringBuilder builder = new StringBuilder("Метро: ");
+			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			builder.Remove(builder.Length - 2, 2);
+			builder.AppendLine();
+			return builder.ToString();
+		}
+		public string GetTramToString(Stop stop)
+		{
+			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Tram).ToList();
+			if (temp.Count == 0)
+				return "";
+			StringBuilder builder = new StringBuilder("Трам: ");
+			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			builder.Remove(builder.Length - 2, 2);
+			builder.AppendLine();
+			return builder.ToString();
 		}
 
 		public string TempExt
@@ -146,7 +192,7 @@ namespace MinskTrans.DesctopClient
 			get { return variantLoad; }
 			set { variantLoad = value; }
 		}
-		public DateTime LastUpdateDataDateTime
+		public virtual DateTime LastUpdateDataDateTime
 		{
 			get { return lastUpdateDataDateTime; }
 			set
@@ -550,7 +596,7 @@ namespace MinskTrans.DesctopClient
 
 			//document.Root.Attribute("LastUpdateTime").Value;
 
-				LastUpdateDataDateTime = (DateTime) document.Attribute("LastUpdateTime");
+				//LastUpdateDataDateTime = (DateTime) document.Attribute("LastUpdateTime");
 
 				var temp1 = document.Elements("FavouriteStops").Elements("ID");
 				FavouriteStopsIds = new ObservableCollection<int>(temp1.Select(x => (int)(x)).ToList());
@@ -672,7 +718,7 @@ namespace MinskTrans.DesctopClient
 			XDocument document = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), element);
 			//document.Declaration = new XDeclaration("1.0", "UTF", "yes");
 
-			element.SetAttributeValue("LastUpdateTime", LastUpdateDataDateTime);
+			//element.SetAttributeValue("LastUpdateTime", LastUpdateDataDateTime);
 			element.SetAttributeValue("V", 1);
 
 

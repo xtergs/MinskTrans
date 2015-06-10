@@ -16,11 +16,17 @@ namespace BackgroundUpdateTask
 
 	        string resultStr = await InternetHelper.Download("dkfjsd");
 	        var timeShtaps = resultStr.Split('\n');
+	        DateTime time = new DateTime();
+	        if (timeShtaps.Length > 0)
+		        time = DateTime.Parse(timeShtaps[0]);
 			UniversalContext context = new UniversalContext();
-	        await context.UpdateAsync();
-			
+	        if (context.LastUpdateDataDateTime < time)
+	        {
+		        await context.UpdateAsync();
+		        await context.Save(false);
+	        }
 
-			_deferral.Complete();
+	        _deferral.Complete();
 			
         }        
     }

@@ -21,7 +21,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : StopModelViewBase
 	{
-		class LocationXX
+		struct LocationXX
 		{
 			private static Location loc;
 			static readonly object o = new object();
@@ -76,7 +76,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		void SetGPS()
 		{
-			#if WINDOWS_PHONE_APP && WINDOWS_AP
+#if WINDOWS_PHONE_APP && WINDOWS_AP
 			if (Settings.UseGPS)
 			{
 				try
@@ -109,7 +109,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
 				geolocator.StatusChanged -= GeolocatorOnStatusChanged;
-
+				
 				geolocator = null;
 			}
 #endif
@@ -134,12 +134,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			else if (args.Status == PositionStatus.Disabled ||
 					 args.Status == PositionStatus.NotAvailable)
 			{
-				//LocationXX.Get() = null;
+				LocationXX.Get().Latitude = defaultLocation.Latitude;
+				LocationXX.Get().Longitude = defaultLocation.Longitude;
 			}
 		}
 #endif
 
-		static Location defaultLocation = new Location(0,0);
+		static readonly Location defaultLocation = new Location(0,0);
 
 		public override IEnumerable<Stop> FilteredStops
 		{

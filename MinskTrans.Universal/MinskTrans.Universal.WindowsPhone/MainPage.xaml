@@ -13,7 +13,9 @@
 	xmlns:modelView="using:MinskTrans.Universal.ModelView"
       xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WinRT"
 	xmlns:desctopClient="using:MinskTrans.DesctopClient"
-	xmlns:mapControl1="using:MapControl" xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core" xmlns:ExpanderControl="using:ExpanderControl" x:Name="mainPage"
+	xmlns:mapControl1="using:MapControl" xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core" xmlns:ExpanderControl="using:ExpanderControl"
+    xmlns:popups="using:Windows.UI.Popups"
+    x:Name="mainPage"
 	x:Class="MinskTrans.Universal.MainPage"
 	mc:Ignorable="d"
 	d:DataContext="{d:DesignInstance modelView:MainModelView}"
@@ -1195,6 +1197,7 @@
 
 
                         </ListBox>
+                       
                         <!--<ListView DataContext="{Binding ElementName=GroupsListView, Path=SelectedItem}" DisplayMemberPath="Stops" Visibility="Collapsed"/>-->
                         <local:ShowStopView ShowStatusBar="Collapsed" x:Name="showStopView" DataContext="{Binding}" Visibility="Collapsed"></local:ShowStopView>
                         <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">

@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -43,6 +43,9 @@
     </Compile>
     <Compile Include="..\MinskTrans\Context.cs">
       <Link>Context.cs</Link>
+    </Compile>
+    <Compile Include="..\MinskTrans\Modelview\SettingsModelView.cs">
+      <Link>ModelView\SettingsModelView.cs</Link>
     </Compile>
     <Compile Include="..\minsktrans\model\BaseModel.cs">
       <Link>Model\BaseModel.cs</Link>

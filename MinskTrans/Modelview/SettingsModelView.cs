@@ -1,7 +1,9 @@
 ﻿
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using MinskTrans.Universal;
+using MinskTrans.Universal.Annotations;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -13,7 +15,7 @@ using MinskTrans.DesctopClient.Properties;
 
 #endif
 
-	public class SettingsModelView : BaseModelView, ISettingsModelView
+	public class SettingsModelView : ISettingsModelView
 	{
 		public enum Error
 		{
@@ -22,13 +24,13 @@ using MinskTrans.DesctopClient.Properties;
 			Repeated = 2
 		}
 
-		public SettingsModelView(Context newContext)
-			: base(newContext)
+		public SettingsModelView()
+			: base()
 		{
 
 		}
 
-		string SettingsToStr([CallerMemberName] string propertyName = null)
+		static string SettingsToStr([CallerMemberName] string propertyName = null)
 		{
 			return propertyName;
 		}
@@ -41,6 +43,30 @@ using MinskTrans.DesctopClient.Properties;
 			                                       InternetHelper.Is_Wifi_Connected == UpdateOnWiFi);
 		}
 #endif
+
+		public DateTime LastUpdateDBDatetime
+		{
+#if WINDOWS_PHONE_APP
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					LastUpdateDBDatetime = new DateTime();
+				return (DateTime)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				OnPropertyChanged();
+			}
+#else
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+#endif
+		}
 
 		public string LastUnhandeledException
 		{
@@ -326,6 +352,15 @@ using MinskTrans.DesctopClient.Properties;
 				OnPropertyChanged();
 				//OnPropertyChanged("UpdateOnWiFi");
 			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			var handler = PropertyChanged;
+			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

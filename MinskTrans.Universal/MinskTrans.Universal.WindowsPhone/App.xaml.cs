@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.WindowsAzure.Messaging;
+
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
@@ -43,10 +43,7 @@ namespace MinskTrans.Universal
 	/// </summary>
 	public sealed partial class App : Application
 	{
-		// http://go.microsoft.com/fwlink/?LinkId=290986&clcid=0x409
-		public static Microsoft.WindowsAzure.MobileServices.MobileServiceClient MinskTransBetaPushNotificationClient = new Microsoft.WindowsAzure.MobileServices.MobileServiceClient(
-		"https://minsktransbetapushnotification.azure-mobile.net/",
-		"dPNJPdiweIXPGxivUSDghhEgEpWLXH93");
+		
 
 
 		readonly TimeSpan maxDifTime = new TimeSpan(0,1,0,0);
@@ -57,105 +54,7 @@ namespace MinskTrans.Universal
 			//InitNotificationsAsync();
 		}
 
-		private PushNotificationChannel channel = null;
-		private NotificationHub hub = null;
-		Registration result = null;
-
-		private async Task InitNotificationsAsync()
-		{
-
-			MinskTransBetaPushNotificationPush.UploadChannel();
-			MinskTransBetaPushNotificationPush.channel.PushNotificationReceived += ChannelOnPushNotificationReceived;
-			
-			//var channel = HttpNotificationChannel.Find("MyPushChannel");
-			//if (channel == null)
-			//{
-			//	channel = new HttpNotificationChannel("MyPushChannel");
-			//	channel.Open();
-			//	channel.BindToShellToast();
-			//}
-
-			//channel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(async (o, args) =>
-			//{
-			//	var hub = new NotificationHub("<hub name>", "<connection string>");
-			//	await hub.RegisterNativeAsync(args.ChannelUri.ToString());
-			//});
-			if (channel == null && hub == null)
-			{
-				channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-				hub = new NotificationHub("MinskTransNotificationBeta",
-					"Endpoint=sb://minsktransnotificationbeta-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=GdFTAoJMnCEI3TFpI4g5Pn0jQy6lk0UEG4UatPHFX8A=");
-			}
-			
-			try
-			{
-				result = await hub.RegisterNativeAsync(channel.Uri);
-			}
-			catch (NotificationHubNotFoundException e)
-			{
-#if BETA
-				Logger.Log()
-					.WriteLineTime(e.Timestamp.ToString())
-					.WriteLineTime(e.Message)
-					.WriteLineTime(e.InnerException.ToString())
-					.WriteLineTime(e.StackTrace);
-#endif
-				if (reconnectPushServerTimer == null)
-					reconnectPushServerTimer = new Timer(CallBackReconnectPushServerTimer, null, MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan,
-				MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan);
-			}
-			catch (RegistrationAuthorizationException e)
-			{
-#if BETA
-				Logger.Log()
-					.WriteLineTime(e.Timestamp.ToString())
-					.WriteLineTime(e.Message)
-					.WriteLineTime(e.InnerException.ToString())
-					.WriteLineTime(e.StackTrace);
-#endif
-				if ((e.Timestamp - DateTime.Now) != maxDifTime)
-				{
-					if (reconnectPushServerTimer == null)
-					{
-						reconnectPushServerTimer = new Timer(CallBackReconnectPushServerTimer, null,
-							MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan,
-							MainModelView.MainModelViewGet.SettingsModelView.ReconnectPushServerTimeSpan);
-						MessageDialog dialog =
-							new MessageDialog("Возможно на вашем устройстве установленны неправильные настройки времени");
-						//dialog.Commands.Add(new UICommand("Настройки", command => Launcher.LaunchUriAsync(new Uri("ms-settings"))));
-						dialog.ShowAsync();
-					}
-					return;
-				}
-			}
-
-			// Displays the registration ID so you know it was successful
-			if (result != null && result.RegistrationId != null)
-			{
-#if BETA
-				Logger.Log().WriteLineTime("PushServer connection successful");
-#endif
-				if (reconnectPushServerTimer != null)
-				{
-					reconnectPushServerTimer.Dispose();
-					reconnectPushServerTimer = null;
-				}
-				channel.PushNotificationReceived += ChannelOnPushNotificationReceived;
-				var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
-				dialog.Commands.Add(new UICommand("OK"));
-				Popup popup = new Popup();
-				TextBlock text = new TextBlock();
-				
-				text.FontSize = 20;
-				text.Text = "Registration successful: " + result.RegistrationId;
-				popup.Child = text;
-				popup.IsLightDismissEnabled = true;
-				
-				//popup.IsOpen = true;
-				//await dialog.ShowAsync();
-			}
-		}
-
+		
 		//
 		// Register a background task with the specified taskEntryPoint, name, trigger,
 		// and condition (optional).
@@ -466,8 +365,6 @@ namespace MinskTrans.Universal
 			// Ensure the current window is active
 			Window.Current.Activate();
 			Debug.WriteLine("App.OnLaunched ended");
-			// http://go.microsoft.com/fwlink/?LinkId=290986&clcid=0x409
-			MinskTrans.Universal.MinskTransBetaPushNotificationPush.UploadChannel();
 		}
 
 #if WINDOWS_PHONE_APP

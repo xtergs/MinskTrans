@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 
@@ -9,6 +10,11 @@ namespace MinskTrans.Universal
 {
 	static class InternetHelper
 	{
+		static async public Task UpdateNetworkInformationAsync()
+		{
+			await Task.Run(() => UpdateNetworkInformation());
+		}
+
 		static public void UpdateNetworkInformation()
 		{
 #if BETA

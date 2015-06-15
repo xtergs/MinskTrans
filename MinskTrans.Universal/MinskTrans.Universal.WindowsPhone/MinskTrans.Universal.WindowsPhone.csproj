@@ -207,12 +207,6 @@
     <Compile Include="PushPinBuilder.cs" />
     <Compile Include="PushpinLocation.cs" />
     <Compile Include="RoutsComparer.cs" />
-    <Compile Include="Services\MobileServices\MinskTransBetaPushNotification\push.register.cs">
-      <ConnectedServiceReference>MinskTransBetaPushNotification</ConnectedServiceReference>
-    </Compile>
-    <Compile Include="Services\MobileServices\MinskTransWindowsPhoneNotificationBeta\push.register.cs">
-      <ConnectedServiceReference>MinskTransWindowsPhoneNotificationBeta</ConnectedServiceReference>
-    </Compile>
     <Compile Include="ShowStopView.xaml.cs">
       <DependentUpon>ShowStopView.xaml</DependentUpon>
     </Compile>
@@ -287,15 +281,6 @@
     <Reference Include="MapControl.WinRT, Version=2.4.11.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <HintPath>..\..\packages\XAML.MapControl.2.4.11\lib\wpa81\MapControl.WinRT.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Messaging.Managed">
-      <HintPath>..\..\packages\WindowsAzure.Messaging.Managed.0.1.7.9\lib\wpa81\Microsoft.WindowsAzure.Messaging.Managed.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Mobile">
-      <HintPath>..\..\packages\WindowsAzure.MobileServices.1.2.5\lib\wpa81\Microsoft.WindowsAzure.Mobile.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
-      <HintPath>..\..\packages\WindowsAzure.MobileServices.1.2.5\lib\wpa81\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

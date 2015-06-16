@@ -156,13 +156,16 @@ namespace MinskTrans.Universal
 
 			model.Context.ErrorDownloading += (sender, args) =>
 			{
-				ProgressBar.Visibility = Visibility.Collapsed;
-				//ProgressBar.IsIndeterminate = false;
+				ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ProgressBar.Visibility = Visibility.Collapsed);
 			};
 			model.Context.UpdateStarted += (sender, args) =>
 			{
-				ProgressBar.Visibility = Visibility.Visible;
-				ProgressBar.IsIndeterminate = true;
+				ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				{
+					ProgressBar.Visibility = Visibility.Visible;
+					ProgressBar.IsIndeterminate = true;
+
+				});
 			};
 			model.Context.UpdateEnded += async (senderr, args) =>
 			{

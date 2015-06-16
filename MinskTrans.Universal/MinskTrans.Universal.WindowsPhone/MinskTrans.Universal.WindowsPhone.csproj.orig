@@ -150,6 +150,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushPinBuilder.cs" />
     <Compile Include="PushpinLocation.cs" />
+<<<<<<< HEAD
+    <Compile Include="Services\MobileServices\MinskTransBetaPushNotification\push.register.cs">
+      <ConnectedServiceReference>MinskTransBetaPushNotification</ConnectedServiceReference>
+    </Compile>
+    <Compile Include="Services\MobileServices\MinskTransWindowsPhoneNotificationBeta\push.register.cs">
+      <ConnectedServiceReference>MinskTransWindowsPhoneNotificationBeta</ConnectedServiceReference>
+    </Compile>
+=======
+    <Compile Include="RoutsComparer.cs" />
+>>>>>>> Stable
     <Compile Include="ShowStopView.xaml.cs">
       <DependentUpon>ShowStopView.xaml</DependentUpon>
     </Compile>

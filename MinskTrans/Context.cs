@@ -478,12 +478,13 @@ namespace MinskTrans.DesctopClient
 		//		ApplyUpdate();
 		//}
 
-		async public virtual Task UpdateAsync()
+		public virtual async Task UpdateAsync()
 		{
 			//TODO
 			//throw new NotImplementedException();
 
 			OnUpdateStarted();
+
 			try
 			{
 				if (!await DownloadUpdate())
@@ -491,11 +492,10 @@ namespace MinskTrans.DesctopClient
 			}
 			catch (TaskCanceledException e)
 			{
-				FileDelete(list[0].Key + NewExt);
-				FileDelete(list[1].Key + NewExt);
-				FileDelete(list[2].Key + NewExt);
-
-				OnErrorDownloading();
+				Task.WhenAll(
+					FileDelete(list[0].Key + NewExt),
+					FileDelete(list[1].Key + NewExt),
+					FileDelete(list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
 				return;
 			}
 			if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
@@ -503,9 +503,12 @@ namespace MinskTrans.DesctopClient
 				await ApplyUpdate();
 				await Save();
 			}
-			FileDelete(list[0].Key + NewExt);
-			FileDelete(list[1].Key + NewExt);
-			FileDelete(list[2].Key + NewExt);
+			await Task.WhenAll(
+				FileDelete(list[0].Key + NewExt),
+				FileDelete(list[1].Key + NewExt),
+				FileDelete(list[2].Key + NewExt));
+
+
 			OnUpdateEnded();
 		}
 
@@ -808,6 +811,8 @@ namespace MinskTrans.DesctopClient
 #endif
 					updating = true;
 					UpdateDataCommand.RaiseCanExecuteChanged();
+					//InternetHelper.UpdateNetworkInformation();
+					
 					await UpdateAsync();
 					updating = false;
 					UpdateDataCommand.RaiseCanExecuteChanged();

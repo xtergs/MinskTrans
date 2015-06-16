@@ -2,8 +2,8 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.Universal;
-using MinskTrans.Universal.Annotations;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -11,6 +11,7 @@ namespace MinskTrans.DesctopClient.Modelview
 using MinskTrans.DesctopClient.Properties;
 
 #else
+using MinskTrans.Universal.Annotations;
 	using Windows.Storage;
 
 #endif

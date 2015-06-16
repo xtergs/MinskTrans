@@ -6,8 +6,6 @@
 
 
 using MyLibrary;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using System.Text;
 using System.ComponentModel;
 using System;
@@ -31,6 +29,7 @@ using GalaSoft.MvvmLight.Command;
 
 using Windows.Devices.Geolocation;
 #else
+
 using MinskTrans.DesctopClient.Properties;
 using System.Windows.Controls;
 using System.Windows.Controls;

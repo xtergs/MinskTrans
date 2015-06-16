@@ -50,7 +50,7 @@ namespace MinskTrans.DesctopClient
 			return new Task(null);
 		}
 
-		public async override Task Save()
+		public async override Task Save(bool saveAllDb = true)
 		{
 			try
 			{

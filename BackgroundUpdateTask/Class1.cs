@@ -14,6 +14,8 @@ namespace BackgroundUpdateTask
 	    private string urlUpdateDates = @"";
 	    private string urlUpdate = @"";
 
+		//Dictionary<int, string> DaysLinks 
+
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();

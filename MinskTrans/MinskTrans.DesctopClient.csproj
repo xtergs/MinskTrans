@@ -150,6 +150,7 @@
     <Compile Include="Model\Transport.cs" />
     <Compile Include="NodeGraph.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="PushPinBuilder.cs" />
     <Compile Include="ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>

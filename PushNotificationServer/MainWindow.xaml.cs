@@ -231,5 +231,10 @@ namespace PushNotificationServer
 		{
 			UpdateNews(sender);
 		}
+
+		private async void Button_Click(object sender, RoutedEventArgs e)
+		{
+			await ServerEngine.Engine.TestOndeDrive();
+		}
 	}
 }

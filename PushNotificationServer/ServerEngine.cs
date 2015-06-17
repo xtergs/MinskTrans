@@ -23,6 +23,7 @@ namespace PushNotificationServer
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
+		
 
 		private Timer timerNewsAutoUpdate;
 
@@ -125,7 +126,7 @@ namespace PushNotificationServer
 			}
 			Properties.Settings.Default.LastUpdatedNews = newsManager.LastNewsTime;
 			Properties.Settings.Default.LastUpdatedHotNews = newsManager.LastHotNewstime;
-			Properties.Settings.Default.Save();
+			Properties.Settings.Default.Save();			
 			Updating = false;
 			OnStopChecknews();
 		}

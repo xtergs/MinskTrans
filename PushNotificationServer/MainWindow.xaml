@@ -17,7 +17,7 @@
     <Grid Grid.Row="1" DataContext="{Binding ElementName=window}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
         <Grid.RowDefinitions>
-            <RowDefinition/>
+                <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -32,7 +32,7 @@
             <CheckBox x:Name="AutoUpdateNewsCheckBox" Grid.Column="1" Content="AutoUpdateNews" IsChecked="{Binding Engine.NewsAutoUpdate, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
 
         </StackPanel>
-        <TextBlock>
+        <TextBlock Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
 
         </TextBlock>
         <Button Grid.Row="1" Content="TestRawPushNotification" Click="SendRawPushNotification"></Button>

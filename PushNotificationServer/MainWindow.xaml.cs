@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -35,6 +36,12 @@ namespace PushNotificationServer
 	{
 
 		private ContextDesctop context;
+		private string fileNameLastNews = "LastNews.txt";
+		public ContextDesctop Context
+		{
+			get { return context; }
+		}
+
 		private Timer timerNewsAutoUpdate;
 		public MainWindow()
 		{
@@ -68,29 +75,41 @@ namespace PushNotificationServer
 					Progress.Visibility = Visibility.Collapsed;
 					if (sender is UIElement)
 						((UIElement) sender).IsEnabled = true;
+					SaveTime();
 				});
 			};
 
 			SetAutoUpdateTimer(NewsAutoUpdate);
 		}
 
+		void SaveTime()
+		{
+			File.WriteAllText(fileNameLastNews,
+				Properties.Settings.Default.LastUpdatedNews + Environment.NewLine + Properties.Settings.Default.LastUpdatedHotNews +
+				Environment.NewLine + Context.LastUpdateDataDateTime);
+		}
+
 		void InicializeSettings()
 		{
 			
-			updateTimer = new Timer((x)=> context.UpdateAsync(), null, new TimeSpan(0), new TimeSpan(0,CheckEveryMin,0) );
+			updateTimer = new Timer(async (x) =>
+			{
+				await context.UpdateAsync();
+				SaveTime();
+			}, null, new TimeSpan(0), new TimeSpan(0,CheckEveryMin,0) );
 		}
 
 		public bool Autorun
 		{
 			get
 			{
-				if (Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("") == null)
+				if (Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("") == null)
 					return false;
 				return true;
 			}
 			set
 			{
-				Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
+				Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
 					.SetValue("PushServerAutorun", System.Reflection.Assembly.GetExecutingAssembly().Location);
 				OnPropertyChanged();
 			}

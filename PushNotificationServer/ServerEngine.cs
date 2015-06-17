@@ -9,7 +9,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Build.Utilities;
 using MinskTrans.DesctopClient.Annotations;
@@ -164,30 +166,38 @@ namespace PushNotificationServer
 			if (handler != null) handler(this, EventArgs.Empty);
 		}
 
+		private Options options;
+
+		private WebBrowser browser;
+
+			// Initialize a new Client (without an Access/Refresh tokens
+			Client client;
 		public async Task TestOndeDrive()
 		{
-			var options = new Options
+			options = new Options
 			{
 				ClientId = "0000000040158EFF",
 				ClientSecret = "2QIsVS59PY9HZM--yq9W7PPeaya-q0lO",
-				AutoRefreshTokens = true,
-				PrettyJson = false,
-				ReadRequestsPerSecond = 2,
-				WriteRequestsPerSecond = 2
+				AutoRefreshTokens = true
 			};
 
-			// Initialize a new Client (without an Access/Refresh tokens
-			var client = new Client(options);
+			client = new Client(options);
 
 			// Get the OAuth Request Url
-			var authRequestUrl = client.GetAuthorizationRequestUrl(new[] { Scope.Basic, Scope.Signin, Scope.SkyDrive, Scope.SkyDriveUpdate });
+			var authRequestUrl = client.GetAuthorizationRequestUrl(new[] { Scope.Basic, Scope.Signin, Scope.SkyDrive});
 
-			// TODO: Navigate to authRequestUrl using the browser, and retrieve the Authorization Code from the response
-			HttpClient clientHttp = new HttpClient();
-			HttpContent content = new StringContent("");
-			var response = await clientHttp.PostAsync(authRequestUrl, content );
 			
-			var authCode = @"M90d6371c-7207-5225-b4bc-2a2c4f89c82d";
+			HttpClient clientHttp = new HttpClient();
+			browser = new WebBrowser();
+			browser.Navigate(authRequestUrl);
+			browser.Navigated += Navigated;
+		}
+		async void  Navigated(Object sender, NavigationEventArgs AddingNewEventArgs)
+		{
+			browser.Navigated -= Navigated;
+			var resultString = browser.Source;
+
+			var authCode = new string(resultString.Query.Skip(6).ToArray());
 
 			// Exchange the Authorization Code with Access/Refresh tokens
 			var token = await client.GetAccessTokenAsync(authCode);
@@ -235,6 +245,7 @@ namespace PushNotificationServer
 				await client2.UploadAsync(rootFolder.Id, fileStream, "Copy Of " + file.Name);
 			}
 		}
+
 	}
 
 	public delegate void StartCheckNewsDelegate(object sender, EventArgs args);

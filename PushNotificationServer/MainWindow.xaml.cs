@@ -21,7 +21,7 @@ using System.Windows.Shapes;
 
 using Microsoft.VisualBasic.Logging;
 using Microsoft.Win32;
-using Microsoft.WindowsAzure.Messaging;
+
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
 using PushNotificationServer.Properties;

@@ -1250,6 +1250,18 @@
                     </Grid>
                 </Border>
             </PivotItem>
+            
+            <PivotItem Header="Новости">
+                <Grid>
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <ListView ItemsSource="{Binding }"></ListView>
+                    </Grid>
+                </Grid>
+            </PivotItem>
 
 
             <PivotItem Header="Настройки" 

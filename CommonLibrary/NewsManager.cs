@@ -8,20 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using MinskTrans.Universal.Annotations;
+using Newtonsoft.Json;
+using PushNotificationServer;
 
 namespace BackgroundUpdateTask
 {
 	public class NewsManager :INotifyPropertyChanged
 	{
 
-		private Dictionary<DateTime, string> newDictionary;
-		private List<KeyValuePair<DateTime, string>> hotNewsDictionary;
+		private List<NewsEntry> newDictionary;
+		private List<NewsEntry> hotNewsDictionary;
 
-		private Dictionary<DateTime, string> allNews;
-		private List<KeyValuePair<DateTime, string>> allHotNewsDictionary;
+		private List<NewsEntry> allNews;
+		private List<NewsEntry> allHotNewsDictionary;
 
-		private string pathToSaveData = "";
-		private string pathToSaveHotData = "";
+		public string pathToSaveData = "";
+		public string pathToSaveHotData = "";
+
+		
 
 		public DateTime LastUpdateDataDateTime
 		{
@@ -47,20 +51,44 @@ namespace BackgroundUpdateTask
 #endif
 		}
 
-		public List<KeyValuePair<DateTime, string>> NewNews
+		public DateTime LastUpdateHotDataDateTime
+		{
+#if WINDOWS_PHONE_APP
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateHotDataDateTime"))
+					LastUpdateHotDataDateTime = new DateTime();
+				return DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateHotDataDateTime"].ToString());
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateHotDataDateTime"))
+					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateHotDataDateTime", value.ToString());
+				else
+					ApplicationData.Current.LocalSettings.Values["LastUpdateHotDataDateTime"] = value;
+				OnPropertyChanged();
+			}
+#else
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+#endif
+		}
+
+		public List<NewsEntry> NewNews
 		{
 			get
 			{
-				return allNews.OrderByDescending(key => key.Key).ToList();
+				return allNews.OrderByDescending(key => key.Posted).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
 
-		public List<KeyValuePair<DateTime, string>> AllHotNews
+		public List<NewsEntry> AllHotNews
 		{
 			get
 			{
-				return allHotNewsDictionary.OrderByDescending(key => key.Key).ToList();
+				return allHotNewsDictionary.OrderByDescending(key => key.Posted).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
@@ -69,65 +97,37 @@ namespace BackgroundUpdateTask
 		{
 			allNews.Clear();
 			string path = "";
-			for (int i = 0; i < 12; i++)
+			path = Path.Combine(pathToSaveData, pathToSaveData);
+			StorageFile file = null;
+			try
 			{
-				path = Path.Combine(pathToSaveData, i.ToString() + ".txt");
-				StorageFile file = null;
-				try
-				{
-					file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
-				}
-				catch (FileNotFoundException e)
-				{
-					continue;
-				}
-				var allLines =(await FileIO.ReadLinesAsync(file)).Where(str => str.Length > 0).ToArray();
-				for (int j = 0; j < allLines.Length; j += 2)
-				{
-					try
-					{
-						allNews.Add(DateTime.Parse(allLines[j]), allLines[j + 1]);
-					}
-					catch (FormatException e)
-					{
-						j++;
-						allNews.Add(DateTime.Parse(allLines[j]), allLines[j + 1]);
-					}
-				}
+				file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+				var allLines = await FileIO.ReadTextAsync(file);
+				allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines));
+			}
+			catch (FileNotFoundException e)
+			{
+
 			}
 			NewNews = null;
 
 			AllHotNews.Clear();
 			path = "";
-			for (int i = 0; i < 32; i++)
-			{
-				path = Path.Combine(pathToSaveHotData, i.ToString() + "_.txt");
+			path = Path.Combine(pathToSaveHotData, i.ToString() + "_.txt");
 
-				StorageFile file = null;
-				try
-				{
-					file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
-				}
-				catch (FileNotFoundException e)
-				{
-					continue;
-				}
-				var allLines = (await FileIO.ReadLinesAsync(file)).Where(str => str.Length > 0).ToArray();
-				for (int j = 0; j < allLines.Length; j += 2)
-				{
-					try
-					{
-						var keyValuePair = new KeyValuePair<DateTime, string>(DateTime.Parse(allLines[j]), allLines[j + 1]);
-						allHotNewsDictionary.Add(keyValuePair);
-					}
-					catch (FormatException e)
-					{
-						j++;
-						allHotNewsDictionary.Add(new KeyValuePair<DateTime, string>(DateTime.Parse(allLines[j]), allLines[j + 1]));
-					}
-				}
+			file = null;
+			try
+			{
+				file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+				var allLines = await FileIO.ReadTextAsync(file);
+				allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines));
 			}
-			hotNewsDictionary = null;
+			catch (FileNotFoundException e)
+			{
+
+			}
+
+
 			AllHotNews = null;
 		}
 

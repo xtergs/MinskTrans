@@ -2,17 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Appointments;
 using Windows.ApplicationModel.Email;
 using Windows.Devices.Geolocation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Networking.Connectivity;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
 using Windows.System;
@@ -22,19 +14,13 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
-using MinskTrans.Universal.Model;
 using MinskTrans.Universal.ModelView;
 using MyLibrary;
-
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -244,7 +230,7 @@ namespace MinskTrans.Universal
 #endif
 
 #if WINDOWS_PHONE_APP
-			Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+			HardwareButtons.BackPressed += HardwareButtons_BackPressed;
 #else
 				// Keyboard and mouse navigation only apply when occupying the entire window
 				if (this.Page.ActualHeight == Window.Current.Bounds.Height &&
@@ -339,7 +325,7 @@ namespace MinskTrans.Universal
 		private void Page_Unloaded(object sender, RoutedEventArgs e)
 		{
 #if WINDOWS_PHONE_APP
-			Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
+			HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
 #else
 				Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
 					CoreDispatcher_AcceleratorKeyActivated;
@@ -487,7 +473,7 @@ namespace MinskTrans.Universal
 		{
 			var notifi = ToastNotificationManager.CreateToastNotifier();
 
-			var xaml = ToastNotificationManager.GetTemplateContent(Windows.UI.Notifications.ToastTemplateType.ToastText04);
+			var xaml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText04);
 			var textNode = xaml.GetElementsByTagName("text");
 			textNode.Item(0).AppendChild(xaml.CreateTextNode("TEEST dsfjkd kjdafj jdka \n dfjkdjfkjdkfj fj"));
 				//value.appendChild(toastXml.createTextNode(text));

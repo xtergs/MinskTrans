@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using BackgroundUpdateTask;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
@@ -17,6 +18,7 @@ namespace MinskTrans.Universal.ModelView
 		private readonly FavouriteModelView favouriteModelView;
 		private readonly FindModelView findModelView;
 		private MapModelView mapMOdelView;
+		private readonly NewsManager newsManager;
 
 		public static MainModelView Create(Context newContext)
 		{
@@ -39,11 +41,17 @@ namespace MinskTrans.Universal.ModelView
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context, settingsModelView);
 			findModelView = new FindModelView(context, settingsModelView);
-			Context.VariantLoad = SettingsModelView.VariantConnect;
+			newsManager = new NewsManager();
+			//Context.VariantLoad = SettingsModelView.VariantConnect;
 			if (IsInDesignMode)
 			{
 				StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));
 			}
+		}
+
+		public NewsManager NewsManager
+		{
+			get { return newsManager;}
 		}
 
 		public MapModelView MapModelView

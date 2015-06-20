@@ -1250,6 +1250,10 @@
                     </Grid>
                 </Border>
             </PivotItem>
+            
+            <PivotItem Header="Новости">
+                <ListView ItemsSource="{Binding }"></ListView>
+            </PivotItem>
 
 
             <PivotItem Header="Настройки" 

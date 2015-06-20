@@ -37,6 +37,7 @@
     <Compile Include="IContext.cs" />
     <Compile Include="ISettingsModelView.cs" />
     <Compile Include="LogDelegateArgs.cs" />
+    <Compile Include="NewsEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools.cs" />
   </ItemGroup>

@@ -377,10 +377,10 @@ namespace MinskTrans.DesctopClient
 
 
 
-				 Connect(newRoutes, newStops, newSchedule, VariantLoad);
+				 //Connect(newRoutes, newStops, newSchedule, VariantLoad);
 
-				Stops = new ObservableCollection<Stop>(newStops.Where(stop=> stop.Routs.Any()));
-				Routs = new ObservableCollection<Rout>(newRoutes.Where(rout=> rout.Stops.Any()));
+				Stops = newStops;
+				Routs = newRoutes;
 				Times = newSchedule;
 
 				LastUpdateDataDateTime = DateTime.UtcNow;
@@ -484,31 +484,36 @@ namespace MinskTrans.DesctopClient
 			//throw new NotImplementedException();
 
 			OnUpdateStarted();
-
 			try
 			{
-				if (!await DownloadUpdate())
+				try
+				{
+					if (!await DownloadUpdate())
+						return;
+				}
+				catch (TaskCanceledException e)
+				{
+					Task.WhenAll(
+						FileDelete(list[0].Key + NewExt),
+						FileDelete(list[1].Key + NewExt),
+						FileDelete(list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
 					return;
-			}
-			catch (TaskCanceledException e)
-			{
-				Task.WhenAll(
+				}
+				if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
+				{
+					await ApplyUpdate();
+					await Save();
+				}
+				await Task.WhenAll(
 					FileDelete(list[0].Key + NewExt),
 					FileDelete(list[1].Key + NewExt),
-					FileDelete(list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
-				return;
+					FileDelete(list[2].Key + NewExt));
+
 			}
-			if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
+			catch (Exception)
 			{
-				await ApplyUpdate();
-				await Save();
+				throw;
 			}
-			await Task.WhenAll(
-				FileDelete(list[0].Key + NewExt),
-				FileDelete(list[1].Key + NewExt),
-				FileDelete(list[2].Key + NewExt));
-
-
 			OnUpdateEnded();
 		}
 

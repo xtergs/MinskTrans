@@ -1251,7 +1251,7 @@
                 </Border>
             </PivotItem>
             
-            <PivotItem Header="Новости">
+            <PivotItem Header="Новости" Loaded="PivotItem_Loaded">
                 <ListView ItemsSource="{Binding }"></ListView>
             </PivotItem>
 

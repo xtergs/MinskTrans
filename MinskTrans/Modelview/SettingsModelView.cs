@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using MinskTrans.DesctopClient.Annotations;
+//using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.Universal;
 
 namespace MinskTrans.DesctopClient.Modelview

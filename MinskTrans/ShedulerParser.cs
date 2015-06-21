@@ -157,16 +157,7 @@ namespace MinskTrans.DesctopClient
 
 			try
 			{
-				Parallel.For(1, listStr.Length, i => { 
-			//for (int i = 1; i < listStr.Length; i++)
-			//{
-				//if (i % 50 == 0)
-				//	OnLogMessage(i + "times parsed");
-				if (!String.IsNullOrWhiteSpace(listStr[i]))
-					resultList.Add(new Schedule(listStr[i], true));
-			//}
-				});
-
+				resultList.AddRange(from t in listStr.AsParallel().Skip(1) where !String.IsNullOrWhiteSpace(t) select new Schedule(t, true));
 			}
 			catch (Exception e )
 			{

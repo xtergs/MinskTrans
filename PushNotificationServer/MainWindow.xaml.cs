@@ -1,31 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-
-using Microsoft.VisualBasic.Logging;
 using Microsoft.Win32;
-
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
 using PushNotificationServer.Properties;
-using Microsoft.Azure.NotificationHubs;
 
 namespace PushNotificationServer
 {
@@ -35,22 +17,20 @@ namespace PushNotificationServer
 	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
 
-		private ContextDesctop context;
-		private string fileNameLastNews = "LastNews.txt";
+		//private ContextDesctop context;
+		
 		public ContextDesctop Context
 		{
-			get { return context; }
+			get { return ServerEngine.Engine.Context1; }
 		}
 
 		private Timer timerNewsAutoUpdate;
 		public MainWindow()
 		{
 			InitializeComponent();
-			context = new ContextDesctop();
-			context.UpdateEnded += (sender, args) => { };
-			InicializeSettings();
 
-			ServerEngine.Engine.Inicialize();
+			Browser.Navigate(@"https://login.live.com/oauth20_authorize.srf?pretty=false&client_id=0000000040158EFF&scope=wl.basic+wl.signin+wl.skydrive&response_type=code&redirect_uri=");
+			ServerEngine.Engine.Context1.UpdateEnded += (sender, args) => { };
 			NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			HotNewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			AutoUpdateNewsCheckBox.DataContext = ServerEngine.Engine;
@@ -75,29 +55,17 @@ namespace PushNotificationServer
 					Progress.Visibility = Visibility.Collapsed;
 					if (sender is UIElement)
 						((UIElement) sender).IsEnabled = true;
-					SaveTime();
+					
+					
 				});
 			};
 
 			SetAutoUpdateTimer(NewsAutoUpdate);
 		}
 
-		void SaveTime()
-		{
-			File.WriteAllText(fileNameLastNews,
-				Properties.Settings.Default.LastUpdatedNews + Environment.NewLine + Properties.Settings.Default.LastUpdatedHotNews +
-				Environment.NewLine + Context.LastUpdateDataDateTime);
-		}
+		
 
-		void InicializeSettings()
-		{
-			
-			updateTimer = new Timer(async (x) =>
-			{
-				await context.UpdateAsync();
-				SaveTime();
-			}, null, new TimeSpan(0), new TimeSpan(0,CheckEveryMin,0) );
-		}
+		
 
 		public bool Autorun
 		{
@@ -110,7 +78,7 @@ namespace PushNotificationServer
 			set
 			{
 				Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
-					.SetValue("PushServerAutorun", System.Reflection.Assembly.GetExecutingAssembly().Location);
+					.SetValue("PushServerAutorun", Assembly.GetExecutingAssembly().Location);
 				OnPropertyChanged();
 			}
 		}
@@ -128,69 +96,10 @@ namespace PushNotificationServer
 		}
 
 		private Timer updateTimer;
-		private static async void SendNotificationAsync()
-		{
-			// Define the notification hub.
-			NotificationHubClient hub =
-				NotificationHubClient.CreateClientFromConnectionString(
-					"Endpoint=sb://minsktransbetapushnotificationhub-ns.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=9w3Mok3fk9gSUT5Ib1avqBRvPykzz0baiUD8YNNcDRI=", "MinskTransNotificationBeta", true);
-			
-			// Create an array of breaking news categories.
-			var categories = new string[] { "World", "Politics", "Business", 
-        "Technology", "Science", "Sports"};
-
-			foreach (var category in categories)
-			{
-				try
-				{
-					// Define a Windows Store toast.
-					//var wnsToast = "<toast><visual><binding template=\"ToastText01\">"
-					//	+ "<text id=\"1\">Breaking " + category + " News!"
-					//	+ "</text></binding></visual></toast>";
-					//await hub.SendWindowsNativeNotificationAsync(wnsToast, category);
-
-					// Define a Windows Phone toast.
-					var mpnsToast =
-						"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-						"<wp:Notification xmlns:wp=\"WPNotification\">" +
-							"<wp:Toast>" + 
-								"<wp:Text1>Breaking " + category + " News!</wp:Text1>" +
-							"</wp:Toast> " +
-						"</wp:Notification>";
-					await hub.SendMpnsNativeNotificationAsync(mpnsToast, category);
-
-					
-				}
-				catch (ArgumentException)
-				{
-					// An exception is raised when the notification hub hasn't been 
-					// registered for the iOS, Windows Store, or Windows Phone platform. 
-				}
-			}
-		}
-
+		
 		private async void SendRawPushNotification(object sender, RoutedEventArgs e)
 		{
-			SendNotificationAsync();
-			//PushNotificationChannel channel = null;
-
-			//try
-			//{
-			//	channel = await  PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-			//}
-
-			//catch (Exception ex)
-			//{
-			//	// Could not create a channel. 
-			//}
-
-			//HttpWebRequest sendNotificationRequest = HttpWebRequest.CreateHttp(channel.Uri);
-			//sendNotificationRequest.Method = "POST";
-			//sendNotificationRequest.ContentType = "text/xml";
-			//sendNotificationRequest.Headers.Add("X-NotificationClass", "[batching interval]");
-			//var responce = sendNotificationRequest.GetResponse();
-
-		}
+			}
 
 		public ServerEngine Engine
 		{
@@ -198,11 +107,11 @@ namespace PushNotificationServer
 		}
 		public bool NewsAutoUpdate
 		{
-			get { return Properties.Settings.Default.NewsAutoUpdate; }
+			get { return Settings.Default.NewsAutoUpdate; }
 			set
 			{
-				Properties.Settings.Default.NewsAutoUpdate = value;
-				Properties.Settings.Default.Save();
+				Settings.Default.NewsAutoUpdate = value;
+				Settings.Default.Save();
 				SetAutoUpdateTimer(NewsAutoUpdate);
 				OnPropertyChanged();
 			}
@@ -210,18 +119,18 @@ namespace PushNotificationServer
 
 		public void SetAutoUpdateTimer(bool turnOn)
 		{
-			if (turnOn)
-			{
-				if (timerNewsAutoUpdate == null)
-					timerNewsAutoUpdate = new Timer(UpdateNews, UpdateNewsButton, new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
-				else
-					timerNewsAutoUpdate.Change(new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
-			}
-			else
-			{
-				timerNewsAutoUpdate.Dispose();
-				timerNewsAutoUpdate = null;
-			}
+			//if (turnOn)
+			//{
+			//	if (timerNewsAutoUpdate == null)
+			//		timerNewsAutoUpdate = new Timer(UpdateNews, UpdateNewsButton, new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
+			//	else
+			//		timerNewsAutoUpdate.Change(new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
+			//}
+			//else
+			//{
+			//	timerNewsAutoUpdate.Dispose();
+			//	timerNewsAutoUpdate = null;
+			//}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -253,7 +162,7 @@ namespace PushNotificationServer
 
 		private async void Button_Click(object sender, RoutedEventArgs e)
 		{
-			await ServerEngine.Engine.TestOndeDrive();
+			//await ServerEngine.Engine.TestOndeDrive();
 		}
 	}
 }

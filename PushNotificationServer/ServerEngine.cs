@@ -1,31 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Dynamic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
 using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Build.Utilities;
+using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
-using OneDriveRestAPI;
-using OneDriveRestAPI.Model;
-using File = OneDriveRestAPI.Model.File;
-using Task = System.Threading.Tasks.Task;
+using PushNotificationServer.Properties;
 
 namespace PushNotificationServer
 {
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
-		
+		private ContextDesctop context;
+		private string fileNameLastNews = "LastNews.txt";
 
 		private Timer timerNewsAutoUpdate;
 
@@ -39,10 +30,31 @@ namespace PushNotificationServer
 			}
 		}
 
-		public void Inicialize()
+		private OneDriveController ondeDriveController;
+
+		async public Task InicializeAsync()
 		{
-			NewsManager.LastNewsTime = Properties.Settings.Default.LastUpdatedNews;
+			NewsManager.LastNewsTime = Settings.Default.LastUpdatedNews;
+			NewsManager.LastHotNewstime = Settings.Default.LastUpdatedHotNews;
 			NewsManager.Load();
+			await Context1.Load(LoadType.LoadDB);
+			Context1.LastUpdateDataDateTime = Settings.Default.DBUpdateTime;
+			OndeDriveController.Inicialize();
+			this.StopChecknews += (sender, args) => UploadAllToOneDrive();
+		}
+
+		void UploadAllToOneDrive()
+		{
+			OndeDriveController.UploadFileAsync(NewsManager.FileNameDays, NewsManager.FileNameDays);
+			OndeDriveController.UploadFileAsync(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
+			OndeDriveController.UploadFileAsync(fileNameLastNews, fileNameLastNews);
+		}
+
+		void SaveTime()
+		{
+			File.WriteAllText(fileNameLastNews,
+				NewsManager.LastNewsTime + Environment.NewLine + NewsManager.LastHotNewstime +
+				Environment.NewLine + Context1.LastUpdateDataDateTime);
 		}
 
 		private NewsManager newsManager;
@@ -53,15 +65,17 @@ namespace PushNotificationServer
 		{
 			newsManager = new NewsManager();
 			SetAutoUpdateTimer(NewsAutoUpdate);
+			ondeDriveController = new OneDriveController();
+			context = new ContextDesctop();
 		}
 
 		public bool NewsAutoUpdate
 		{
-			get { return Properties.Settings.Default.NewsAutoUpdate; }
+			get { return Settings.Default.NewsAutoUpdate; }
 			set
 			{
-				Properties.Settings.Default.NewsAutoUpdate = value;
-				Properties.Settings.Default.Save();
+				Settings.Default.NewsAutoUpdate = value;
+				Settings.Default.Save();
 				SetAutoUpdateTimer(NewsAutoUpdate);
 				OnPropertyChanged();
 			}
@@ -97,6 +111,7 @@ namespace PushNotificationServer
 		{
 			if (Updating)
 				return;
+			Debug.WriteLine("Check news started");
 			Updating = true;
 			OnStartCheckNews();
 			try
@@ -107,17 +122,27 @@ namespace PushNotificationServer
 					{
 						await newsManager.CheckMainNewsAsync();
 						newsManager.SaveToFile();
+						//OndeDriveController.UploadFile(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
 					}
 					catch (Exception e)
 					{
-						
+
 						throw;
 					}
 				}), Task.Run(async () =>
 				{
-					await newsManager.CheckHotNewsAsync();
-					newsManager.SaveToFileHotNews();
-				}));
+					try
+					{
+						await newsManager.CheckHotNewsAsync();
+						newsManager.SaveToFileHotNews();
+					}
+					catch
+					{
+						throw;
+					}
+					//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
+				}),
+					Context1.UpdateAsync());
 
 			}
 			catch (TaskCanceledException e)
@@ -126,11 +151,18 @@ namespace PushNotificationServer
 				OnStopChecknews();
 				throw;
 			}
-			Properties.Settings.Default.LastUpdatedNews = newsManager.LastNewsTime;
-			Properties.Settings.Default.LastUpdatedHotNews = newsManager.LastHotNewstime;
-			Properties.Settings.Default.Save();			
+			catch (Exception)
+			{
+				throw;
+			}
+			Settings.Default.LastUpdatedNews = newsManager.LastNewsTime;
+			Settings.Default.LastUpdatedHotNews = newsManager.LastHotNewstime;
+			Settings.Default.DBUpdateTime = context.LastUpdateDataDateTime;
+			Settings.Default.Save();		
+			SaveTime();
 			Updating = false;
 			OnStopChecknews();
+			Debug.WriteLine("Check news ended");
 		}
 
 		public RelayCommand ResetLastUpdatetime
@@ -139,10 +171,20 @@ namespace PushNotificationServer
 			{
 				NewsManager.LastHotNewstime = new DateTime();
 				NewsManager.LastHotNewstime = new DateTime();
-				Properties.Settings.Default.LastUpdatedHotNews = new DateTime();
-				Properties.Settings.Default.LastUpdatedNews = new DateTime();
-				Properties.Settings.Default.Save();
+				Settings.Default.LastUpdatedHotNews = new DateTime();
+				Settings.Default.LastUpdatedNews = new DateTime();
+				Settings.Default.Save();
 			});}
+		}
+
+		public OneDriveController OndeDriveController
+		{
+			get { return ondeDriveController; }
+		}
+
+		public ContextDesctop Context1
+		{
+			get { return context; }
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

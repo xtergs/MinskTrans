@@ -13,17 +13,17 @@ namespace BackgroundUpdateTask
 {
     public sealed class UpdateBackgroundTask : IBackgroundTask
     {
-	    private string urlUpdateDates = @"";
-	    private string urlUpdate = @"";
-	    private string urlUpdateNews = @"";
-	    private string urlUpdateHotNews = @"";
+		private string urlUpdateDates = @"https://onedrive.live.com/redir?resid=27EDF63E3C801B19!11529&authkey=!ADs9KNHO9TDPE3Q&ithint=file%2ctxt";
+		//private string urlUpdate = @"https://onedrive.live.com/redir?resid=27EDF63E3C801B19!11529&authkey=!ADs9KNHO9TDPE3Q&ithint=file%2ctxt";
+		private string urlUpdateNews = @"https://onedrive.live.com/redir?resid=27EDF63E3C801B19!11532&authkey=!AAQED1sY1RWFib8&ithint=file%2ctxt";
+		private string urlUpdateHotNews = @"https://onedrive.live.com/redir?resid=27EDF63E3C801B19!11531&authkey=!AIJo-8Q4661GpiI&ithint=file%2ctxt";
 
 		static string SettingsToStr([CallerMemberName] string propertyName = null)
 		{
 			return propertyName;
 		}
 
-	    public DateTime LastUpdateDBDatetime
+	    private DateTime LastUpdateDBDatetime
 	    {
 
 		    get
@@ -73,9 +73,9 @@ namespace BackgroundUpdateTask
 		        if (time > manager.LastUpdateDataDateTime)
 		        {
 					resultStr = await InternetHelper.Download(urlUpdateNews);
-			        foreach (var source in manager.NewNews.Where(key => key.Key > manager.LastUpdateDataDateTime))
+			        foreach (var source in manager.NewNews.Where(key => key.Posted > manager.LastUpdateDataDateTime))
 			        {
-				        ShowNotification(source.Value);
+				        ShowNotification(source.Message);
 			        }
 			        manager.LastUpdateDataDateTime = time;
 		        }
@@ -83,9 +83,9 @@ namespace BackgroundUpdateTask
 		        if (time > manager.LastUpdateHotDataDateTime)
 		        {
 					resultStr = await InternetHelper.Download(urlUpdateHotNews);
-			        foreach (var source in manager.AllHotNews.Where(key => key.Key > manager.LastUpdateHotDataDateTime))
+			        foreach (var source in manager.AllHotNews.Where(key => key.Collected > manager.LastUpdateHotDataDateTime))
 			        {
-				        ShowNotification(source.Value);
+				        ShowNotification(source.Message);
 			        }
 			        manager.LastUpdateHotDataDateTime = time;
 		        }

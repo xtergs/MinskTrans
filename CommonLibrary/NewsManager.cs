@@ -25,6 +25,9 @@ namespace BackgroundUpdateTask
 		public string pathToSaveData = "";
 		public string pathToSaveHotData = "";
 
+		public string fileNameNews = "months.txt";
+		public string fileNameHotNews = "days.txt";
+
 		
 
 		public DateTime LastUpdateDataDateTime
@@ -97,7 +100,7 @@ namespace BackgroundUpdateTask
 		{
 			allNews.Clear();
 			string path = "";
-			path = Path.Combine(pathToSaveData, pathToSaveData);
+			path = Path.Combine(pathToSaveData, fileNameNews);
 			StorageFile file = null;
 			try
 			{
@@ -113,7 +116,7 @@ namespace BackgroundUpdateTask
 
 			AllHotNews.Clear();
 			path = "";
-			path = Path.Combine(pathToSaveHotData, i.ToString() + "_.txt");
+			path = Path.Combine(pathToSaveHotData, fileNameHotNews);
 
 			file = null;
 			try

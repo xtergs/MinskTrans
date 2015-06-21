@@ -50,6 +50,13 @@ namespace MinskTrans.DesctopClient
 			return new Task(null);
 		}
 
+		void SafeMoveFile(string fileName, string newFile)
+		{
+			File.Delete(newFile + OldExt);
+			File.Move(newFile, newFile + OldExt);
+			File.Move(fileName, newFile);
+		}
+
 		public async override Task Save(bool saveAllDb = true)
 		{
 			try
@@ -61,7 +68,8 @@ namespace MinskTrans.DesctopClient
 						WriteXml(writer);
 					}
 				}
-				File.Move(NameFileFavourite + TempExt, NameFileFavourite);
+				
+				SafeMoveFile(NameFileFavourite + TempExt, NameFileFavourite);
 
 				var jsonSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
@@ -69,19 +77,19 @@ namespace MinskTrans.DesctopClient
 				{
 					string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
 					File.WriteAllText(NameFileRouts + TempExt, routs);
-					File.Move(NameFileRouts + TempExt, NameFileRouts);
+					SafeMoveFile(NameFileRouts + TempExt, NameFileRouts);
 				}),
 					Task.Run(async () =>
 					{
 						string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
 						File.WriteAllText(NameFileStops + TempExt, routs);
-						File.Move(NameFileStops + TempExt, NameFileStops);
+						SafeMoveFile(NameFileStops + TempExt, NameFileStops);
 
 					}), Task.Run(async () =>
 					{
 						string routs = JsonConvert.SerializeObject(Times, jsonSettings);
 						File.WriteAllText(NameFileTimes + TempExt, routs);
-						File.Move(NameFileTimes + TempExt, NameFileTimes);
+						SafeMoveFile(NameFileTimes + TempExt, NameFileTimes);
 					}));
 			}
 			catch (Exception e)
@@ -97,7 +105,7 @@ namespace MinskTrans.DesctopClient
 
 		protected async override Task FileDelete(string file)
 		{
-			if (File.Exists(file))
+			//if (File.Exists(file))
 				File.Delete(file);
 		}
 		async public override void Create(bool AutoUpdate = true)
@@ -153,11 +161,19 @@ namespace MinskTrans.DesctopClient
 				OnLogMessage(e.Message);
 				return false;
 			}
+
+			Connect(newRoutes, newStops, newSchedule, VariantLoad);
+
+			newStops = new ObservableCollection<Stop>(newStops.Where(stop => stop.Routs.Any()));
+			newRoutes = new ObservableCollection<Rout>(newRoutes.Where(rout => rout.Stops.Any()));
+
 			if (checkUpdate)
 			{
 				if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
 					return true;
-
+#if DEBUG
+				var xx = newSchedule.Except(Times).ToList();
+#endif
 				if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
 					return true;
 
@@ -209,7 +225,7 @@ namespace MinskTrans.DesctopClient
 			return true;
 		}
 
-		public async override Task Load(LoadType type = LoadType.LoadAll)
+		public override async Task Load(LoadType type = LoadType.LoadAll)
 		{
 			OnLoadStarted();
 
@@ -270,11 +286,16 @@ namespace MinskTrans.DesctopClient
 								ReadXml(reader);
 							}
 
-							FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
-								new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
+							if (FavouriteRoutsIds != null)
+								FavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
+									new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
+							else 
+								FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
 							FavouriteRoutsIds = null;
 
-							FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
+							if (FavouriteStopsIds != null)
+								FavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
+							FavouriteStops = new ObservableCollection<Stop>();
 							FavouriteStopsIds = null;
 
 							Groups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
@@ -291,7 +312,7 @@ namespace MinskTrans.DesctopClient
 						catch (Exception e)
 						{
 							Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-							throw new Exception(e.Message, e);
+							throw;
 						}
 					}
 					else
@@ -306,19 +327,19 @@ namespace MinskTrans.DesctopClient
 				Routs = null;
 				Stops = null;
 				Times = null;
-				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles });
+				OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
 				return;
 			}
 			catch (Exception e)
 			{
 				Debug.WriteLine("Context.Load: " + e.Message);
-				throw new Exception(e.Message, e);
+				throw;
 			}
 
 			if (Routs == null || Stops == null)
 			{
 
-				OnErrorLoading(new ErrorLoadingDelegateArgs() { Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize });
+				OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoFileToDeserialize});
 				return;
 			}
 

@@ -250,6 +250,9 @@ namespace MinskTrans.Universal
 				ShowPopup("Произошла ошибка, отправьте лог разработчику");
 				SendLog();
 			}
+
+			model.NewsManager.Load();
+			
 #if BETA
 			Logger.Log("Page_Loaded ended").SaveToFile();
 #endif
@@ -479,6 +482,11 @@ namespace MinskTrans.Universal
 				//value.appendChild(toastXml.createTextNode(text));
 			ToastNotification notification = new ToastNotification(xaml);
 			notifi.Show(notification);
+		}
+
+		private void PivotItem_Loaded(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }

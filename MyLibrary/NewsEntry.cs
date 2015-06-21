@@ -12,7 +12,7 @@ namespace PushNotificationServer
 		{
 			Posted = dateTimeNews;
 			Message = decodedString;
-			Collected = DateTime.Now;
+			Collected = DateTime.UtcNow;
 		}
 
 		public NewsEntry(DateTime dateTimeNews, string decodedString, DateTime possibleDateTime) : this(dateTimeNews, decodedString)

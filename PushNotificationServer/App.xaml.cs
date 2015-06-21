@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Navigation;
 
 namespace PushNotificationServer
 {
@@ -13,5 +8,15 @@ namespace PushNotificationServer
 	/// </summary>
 	public partial class App : Application
 	{
+		private void Application_LoadCompleted(object sender, NavigationEventArgs e)
+		{
+			ServerEngine.Engine.InicializeAsync();
+		}
+
+		async private void Application_Startup(object sender, StartupEventArgs e)
+		{
+			await ServerEngine.Engine.InicializeAsync();
+		}
+
 	}
 }

@@ -15,7 +15,13 @@ namespace BackgroundUpdateTask
 {
 	public class NewsManager :INotifyPropertyChanged
 	{
-
+		[Flags]
+		public enum TypeLoad
+		{
+			LoadAll = LoadHotNews | LoadHotNews,
+			LoadNews = 0x000001,
+			LoadHotNews = 0x000002
+		}
 		private List<NewsEntry> newDictionary;
 		private List<NewsEntry> hotNewsDictionary;
 
@@ -27,6 +33,14 @@ namespace BackgroundUpdateTask
 
 		public string fileNameNews = "months.txt";
 		public string fileNameHotNews = "days.txt";
+
+		public NewsManager()
+		{
+			allHotNewsDictionary = new List<NewsEntry>();
+			allNews = new List<NewsEntry>();
+			newDictionary = new List<NewsEntry>();
+			hotNewsDictionary = new List<NewsEntry>();
+		}
 
 		
 
@@ -96,42 +110,51 @@ namespace BackgroundUpdateTask
 			set { OnPropertyChanged(); }
 		}
 
-		public async Task Load()
+		public async Task LoadNews(string jsonData)
 		{
 			allNews.Clear();
-			string path = "";
-			path = Path.Combine(pathToSaveData, fileNameNews);
-			StorageFile file = null;
-			try
-			{
-				file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
-				var allLines = await FileIO.ReadTextAsync(file);
-				allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines));
-			}
-			catch (FileNotFoundException e)
-			{
-
-			}
+			allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(jsonData));
 			NewNews = null;
+		}
 
-			AllHotNews.Clear();
-			path = "";
-			path = Path.Combine(pathToSaveHotData, fileNameHotNews);
-
-			file = null;
-			try
+		public async Task Load(TypeLoad type = TypeLoad.LoadAll)
+		{
+			//allNews.Clear();
+			if (type.HasFlag(TypeLoad.LoadNews))
 			{
-				file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
-				var allLines = await FileIO.ReadTextAsync(file);
-				allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines));
+				var path = Path.Combine(pathToSaveData, fileNameNews);
+				try
+				{
+					var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+					var allLines = await FileIO.ReadTextAsync(file);
+					await LoadNews(allLines);
+				}
+				catch (FileNotFoundException e)
+				{
+
+				}
 			}
-			catch (FileNotFoundException e)
+			//NewNews = null;
+
+			if (type.HasFlag(TypeLoad.LoadHotNews))
 			{
+				allHotNewsDictionary.Clear();
+				var path = Path.Combine(pathToSaveHotData, fileNameHotNews);
 
+				try
+				{
+					var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+					var allLines = await FileIO.ReadTextAsync(file);
+					allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines));
+				}
+				catch (FileNotFoundException e)
+				{
+
+				}
+
+
+				AllHotNews = null;
 			}
-
-
-			AllHotNews = null;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

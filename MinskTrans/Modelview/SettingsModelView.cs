@@ -2,12 +2,15 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+
+//using MinskTrans.DesctopClient.Annotations;
 //using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.Universal;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
+using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Properties;
 
 #else

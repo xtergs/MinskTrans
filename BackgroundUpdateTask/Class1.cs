@@ -8,6 +8,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using MinskTrans.Universal;
+using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
 namespace BackgroundUpdateTask
 {
@@ -85,11 +86,24 @@ namespace BackgroundUpdateTask
 				time = DateTime.Parse(timeShtaps[1]);
 		        if (time > manager.LastUpdateHotDataDateTime)
 		        {
-					resultStr = await InternetHelper.Download(urlUpdateHotNews);
-			        await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
-				        resultStr);
+					await InternetHelper.Download(urlUpdateHotNews, manager.fileNameHotNews, ApplicationData.Current.LocalFolder);
+					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
+					//	resultStr);
 			        await manager.Load(NewsManager.TypeLoad.LoadHotNews);
-			        foreach (var source in manager.AllHotNews.Where(key => key.Collected > manager.LastUpdateHotDataDateTime))
+			        DateTime nowDateTime = DateTime.UtcNow;
+					int todayDay = nowDateTime.Day;
+					int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
+			        foreach (var source in manager.AllHotNews.Where(key =>
+			        {
+						if (key.RepairedLIne != default(DateTime))
+						{
+							double totalminutes = (nowDateTime.TimeOfDay - key.RepairedLIne.TimeOfDay).TotalMinutes;
+							if ( totalminutes <= 30)
+								return true;
+						}
+				        return (key.Collected > manager.LastUpdateHotDataDateTime) &&
+				               (key.Collected.Day == todayDay || key.Collected.Day == prevday);
+			        }))
 			        {
 				        ShowNotification(source.Message);
 			        }

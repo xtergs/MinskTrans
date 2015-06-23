@@ -198,15 +198,16 @@ namespace PushNotificationServer
 					var match = Regex.Match(possibleRepairTime.Substring(possibleRepairTime.Length/2), @"[0-2]?[0-9][-:][0-6][0-9]",
 					RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 					DateTime possibleDateTime;
-					if (DateTime.TryParse(match.Value, out possibleDateTime)) ;
+					string decodedString = allText.Trim();
+					if (DateTime.TryParse(match.Value, out possibleDateTime))
+						returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString, dateTimeNews.Add(possibleDateTime.ToUniversalTime().TimeOfDay)));
 						//dateTimeNews = dateTimeNews.Add(possibleDateTime.TimeOfDay);
 					else
 					{
-						possibleDateTime = default (DateTime);
+						
+						returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString));
 					}
 					
-					string decodedString = allText.Trim();
-					returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString, dateTimeNews.Add(possibleDateTime.TimeOfDay)));
 				}
 				catch (NullReferenceException e)
 				{

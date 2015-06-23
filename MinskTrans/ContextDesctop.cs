@@ -53,7 +53,8 @@ namespace MinskTrans.DesctopClient
 		void SafeMoveFile(string fileName, string newFile)
 		{
 			File.Delete(newFile + OldExt);
-			File.Move(newFile, newFile + OldExt);
+			if (File.Exists(newFile))
+				File.Move(newFile, newFile + OldExt);
 			File.Move(fileName, newFile);
 		}
 
@@ -66,6 +67,7 @@ namespace MinskTrans.DesctopClient
 					using (var writer = XmlWriter.Create(stream))
 					{
 						WriteXml(writer);
+						writer.Close();
 					}
 				}
 				
@@ -94,7 +96,7 @@ namespace MinskTrans.DesctopClient
 			}
 			catch (Exception e)
 			{
-				throw new Exception(e.Message, e);
+				throw;
 			}
 		}
 

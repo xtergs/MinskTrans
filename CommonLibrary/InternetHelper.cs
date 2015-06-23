@@ -83,7 +83,7 @@ namespace MinskTrans.Universal
 			}
 		}
 
-		public static async Task Download(string uri, string file)
+		public static async Task Download(string uri, string file, StorageFolder folder)
 		{
 			try
 			{
@@ -98,7 +98,7 @@ namespace MinskTrans.Universal
 
 				//string str= response.StatusCode + " " + response.ReasonPhrase + Environment.NewLine;
 				var fileGet =
-					await ApplicationData.Current.RoamingFolder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
+					await folder.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting);
 				using (var writeStream = await fileGet.OpenAsync(FileAccessMode.ReadWrite))
 				{
 					using (var outputStream = writeStream.GetOutputStreamAt(0))
@@ -114,6 +114,10 @@ namespace MinskTrans.Universal
 #endif
 				throw new TaskCanceledException(e.Message, e);
 			}
+		}
+		public static async Task Download(string uri, string file)
+		{
+			await Download(uri, file, ApplicationData.Current.RoamingFolder);
 		}
 	}
 }

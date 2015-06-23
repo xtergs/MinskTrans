@@ -59,7 +59,7 @@ namespace BackgroundUpdateTask
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
 					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value.ToString());
 				else
-					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value;
+					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value.ToString();
 				OnPropertyChanged();
 			}
 #else
@@ -83,7 +83,7 @@ namespace BackgroundUpdateTask
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateHotDataDateTime"))
 					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateHotDataDateTime", value.ToString());
 				else
-					ApplicationData.Current.LocalSettings.Values["LastUpdateHotDataDateTime"] = value;
+					ApplicationData.Current.LocalSettings.Values["LastUpdateHotDataDateTime"] = value.ToString();
 				OnPropertyChanged();
 			}
 #else

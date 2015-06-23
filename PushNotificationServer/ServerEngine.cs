@@ -107,6 +107,9 @@ namespace PushNotificationServer
 		public event StartCheckNewsDelegate StartCheckNews;
 		public event StartCheckNewsDelegate StopChecknews;
 
+		private static object o = new object();
+		private static object a = new object();
+
 		public async Task CheckNews()
 		{
 			if (Updating)
@@ -121,7 +124,10 @@ namespace PushNotificationServer
 					try
 					{
 						await newsManager.CheckMainNewsAsync();
-						newsManager.SaveToFile();
+						lock (a)
+						{
+							newsManager.SaveToFile();
+						}
 						//OndeDriveController.UploadFile(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
 					}
 					catch (Exception e)
@@ -134,7 +140,11 @@ namespace PushNotificationServer
 					try
 					{
 						await newsManager.CheckHotNewsAsync();
-						newsManager.SaveToFileHotNews();
+
+						lock (o)
+						{
+							newsManager.SaveToFileHotNews();
+						}
 					}
 					catch
 					{

@@ -78,7 +78,6 @@ namespace MinskTrans.DesctopClient
 			}
 			//builder.Append(temp.Select(x => x.RouteNum + ", ").ToList());
 			builder.Remove(builder.Length - 2, 2);
-			builder.AppendLine();
 			return builder.ToString();
 		}
 		public string GetTrolToString(Stop stop)
@@ -93,7 +92,6 @@ namespace MinskTrans.DesctopClient
 			}
 			//builder.Append(temp.Select(x => x.RouteNum + ", "));
 			builder.Remove(builder.Length - 2, 2);
-			builder.AppendLine();
 			return builder.ToString();
 		}
 		public string GetMetroToString(Stop stop)
@@ -108,7 +106,6 @@ namespace MinskTrans.DesctopClient
 			}
 			//builder.Append(temp.Select(x => x.RouteNum + ", "));
 			builder.Remove(builder.Length - 2, 2);
-			builder.AppendLine();
 			return builder.ToString();
 		}
 		public string GetTramToString(Stop stop)
@@ -123,7 +120,7 @@ namespace MinskTrans.DesctopClient
 			}
 			//builder.Append(temp.Select(x => x.RouteNum + ", "));
 			builder.Remove(builder.Length - 2, 2);
-			builder.AppendLine();
+
 			return builder.ToString();
 		}
 

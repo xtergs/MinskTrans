@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.Email;
 using Windows.Devices.Geolocation;
@@ -82,14 +83,19 @@ namespace MinskTrans.Universal
 				PopupMenu menu = new PopupMenu();
 				var push = ((Pushpin) sender);
 				Stop stop = (Stop) push.Tag;
+				
 				menu.Commands.Add(new UICommand("Показать расписание", command =>
 				{
 					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
-				menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop)));
-				menu.Commands.Add(new UICommand(model.Context.GetTrolToString(stop)));
-				menu.Commands.Add(new UICommand(model.Context.GetTramToString(stop)));
-				menu.Commands.Add(new UICommand(model.Context.GetMetroToString(stop)));
+				if (stop.Routs.Any(tr=> tr.Transport == TransportType.Bus))
+					menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop)));
+				if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
+					menu.Commands.Add(new UICommand(model.Context.GetTrolToString(stop)));
+				if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
+					menu.Commands.Add(new UICommand(model.Context.GetTramToString(stop)));
+				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
+					menu.Commands.Add(new UICommand(model.Context.GetMetroToString(stop)));
 				menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			

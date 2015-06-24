@@ -86,10 +86,10 @@ namespace MinskTrans.Universal
 				{
 					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
-				menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop) +
-												model.Context.GetTrolToString(stop) + 
-												model.Context.GetTramToString(stop) + 
-												model.Context.GetMetroToString(stop)));
+				menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop)));
+				menu.Commands.Add(new UICommand(model.Context.GetTrolToString(stop)));
+				menu.Commands.Add(new UICommand(model.Context.GetTramToString(stop)));
+				menu.Commands.Add(new UICommand(model.Context.GetMetroToString(stop)));
 				menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			
@@ -251,7 +251,8 @@ namespace MinskTrans.Universal
 				SendLog();
 			}
 
-			model.NewsManager.Load();
+			await model.NewsManager.Load();
+			MainModelView.MainModelViewGet.AllNews = null;
 			
 #if BETA
 			Logger.Log("Page_Loaded ended").SaveToFile();
@@ -486,7 +487,7 @@ namespace MinskTrans.Universal
 
 		private void PivotItem_Loaded(object sender, RoutedEventArgs e)
 		{
-
+			MainModelView.MainModelViewGet.AllNews = null;
 		}
 	}
 }

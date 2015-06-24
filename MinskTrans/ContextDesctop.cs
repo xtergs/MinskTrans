@@ -171,25 +171,16 @@ namespace MinskTrans.DesctopClient
 
 			if (checkUpdate)
 			{
-				if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
-					return true;
-#if DEBUG
-				var xx = newSchedule.Except(Times).ToList();
-#endif
-				if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
-					return true;
-
-				foreach (var newRoute in newRoutes)
-				{
-					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart != newRoute.Datestart))
-						return true;
-				}
+				return NeedUpdate();
 			}
 
 
 			OnLogMessage("don't have update true");
 			return false;
 		}
+
+		
+
 		protected async override Task FileMove(string oldFile, string newFile)
 		{
 			if (File.Exists(oldFile) && !File.Exists(newFile))

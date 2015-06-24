@@ -18,7 +18,7 @@ namespace BackgroundUpdateTask
 		[Flags]
 		public enum TypeLoad
 		{
-			LoadAll = LoadHotNews | LoadHotNews,
+			LoadAll = LoadHotNews | LoadNews,
 			LoadNews = 0x000001,
 			LoadHotNews = 0x000002
 		}

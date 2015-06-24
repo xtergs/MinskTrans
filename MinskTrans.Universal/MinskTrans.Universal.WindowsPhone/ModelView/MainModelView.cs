@@ -1,13 +1,18 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using Windows.UI.Xaml;
 using BackgroundUpdateTask;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
+using PushNotificationServer;
 
 namespace MinskTrans.Universal.ModelView
 {
-	public class MainModelView : ViewModelBase
+
+	public class MainModelView : ViewModelBase, INotifyPropertyChanged
 	{
 		private static MainModelView mainModelView;
 		private readonly Context context;
@@ -96,7 +101,27 @@ namespace MinskTrans.Universal.ModelView
 		public Context Context { get { return context; } }
 
 
-		
-		
+		public List<NewsEntry> AllNews
+		{
+			get
+			{
+				if (NewsManager != null)
+				{
+#if DEBUG
+					var xxx = NewsManager.AllHotNews.Concat(newsManager.NewNews).ToList();
+#endif
+					return NewsManager.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.Posted).ThenByDescending(key=> key.RepairedLIne).ToList();
+				}
+				return null;
+			}
+			set
+			{
+				
+				var handle = PropertyChangedHandler;
+				if (handle != null)
+					PropertyChangedHandler.Invoke(this, new PropertyChangedEventArgs("AllNews"));
+			}
+		}
+
 	}
 }

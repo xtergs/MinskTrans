@@ -1252,7 +1252,13 @@
             </PivotItem>
             
             <PivotItem Header="Новости" Loaded="PivotItem_Loaded">
-                <ListView ItemsSource="{Binding }"></ListView>
+                <ListView ItemsSource="{Binding AllNews }">
+                    <ListView.ItemTemplate>
+                      <DataTemplate>
+                          <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="5,5"></TextBlock>
+                      </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
 
 
@@ -1264,7 +1270,7 @@
                 <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
                     <ListView Margin="5,0,5,0" MinHeight="0" IsItemClickEnabled="False" ItemContainerStyle="{StaticResource FullListViewItem}">
                         
-                        <Button Content="Обновить расписание" Command="{Binding Context.UpdateDataCommand}"/>
+                        <Button Content="Обновить расписание" DataContext="{Binding DataContext, ElementName=mainPage}" Command="{Binding Context.UpdateDataCommand}"/>
                         <ToggleSwitch OnContent="Использовать WiFi"
 							OffContent="Не использовать WiFi"
 							IsOn="{Binding UpdateOnWiFi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

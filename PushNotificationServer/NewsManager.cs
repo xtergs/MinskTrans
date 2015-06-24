@@ -133,7 +133,7 @@ namespace PushNotificationServer
 					{
 						builder.Append(selectNode.InnerText.DecodeHtml().Trim());
 					}
-					var decodedString = builder.ToString().Trim();
+					var decodedString = builder.Replace("  ", " ").ToString().Trim();
 
 					returnDictionary.Add(new NewsEntry()
 					{
@@ -193,7 +193,7 @@ namespace PushNotificationServer
 					{
 						builder.Append(htmlNode.InnerText.DecodeHtml());
 					}
-					var allText = builder.ToString();
+					var allText = builder.Replace("  ", " ").ToString();
 					var possibleRepairTime = firstLine.Last().InnerText.DecodeHtml().Replace('.', ' ').Trim();
 					var match = Regex.Match(possibleRepairTime.Substring(possibleRepairTime.Length/2), @"[0-2]?[0-9][-:][0-6][0-9]",
 					RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);

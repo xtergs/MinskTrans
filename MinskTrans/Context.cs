@@ -67,44 +67,61 @@ namespace MinskTrans.DesctopClient
 
 		public string GetBusToString(Stop stop)
 		{
-			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Bus).ToList();
+			
+			var temp = stop.Routs.Where(rout=> rout.Transport == TransportType.Bus).Select(rout=> rout.RouteNum).Distinct().ToList();
 			if (temp.Count == 0)
 				return "";
 			StringBuilder builder = new StringBuilder("Авт: ");
-			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			foreach (var rout in temp)
+			{
+				builder.Append(rout).Append(", ");
+			}
+			//builder.Append(temp.Select(x => x.RouteNum + ", ").ToList());
 			builder.Remove(builder.Length - 2, 2);
 			builder.AppendLine();
 			return builder.ToString();
 		}
 		public string GetTrolToString(Stop stop)
 		{
-			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Trol).ToList();
+			var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Trol).Select(rout => rout.RouteNum).Distinct().ToList();
 			if (temp.Count == 0)
 				return "";
 			StringBuilder builder = new StringBuilder("трол: ");
-			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			foreach (var rout in temp)
+			{
+				builder.Append(rout).Append(", ");
+			}
+			//builder.Append(temp.Select(x => x.RouteNum + ", "));
 			builder.Remove(builder.Length - 2, 2);
 			builder.AppendLine();
 			return builder.ToString();
 		}
 		public string GetMetroToString(Stop stop)
 		{
-			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Metro).ToList();
+			var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Metro).Select(rout => rout.RouteNum).Distinct().ToList();
 			if (temp.Count == 0)
 				return "";
 			StringBuilder builder = new StringBuilder("Метро: ");
-			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			foreach (var rout in temp)
+			{
+				builder.Append(rout).Append(", ");
+			}
+			//builder.Append(temp.Select(x => x.RouteNum + ", "));
 			builder.Remove(builder.Length - 2, 2);
 			builder.AppendLine();
 			return builder.ToString();
 		}
 		public string GetTramToString(Stop stop)
 		{
-			var temp = Routs.Where(rout => rout.Stops.Contains(stop) && rout.Transport == TransportType.Tram).ToList();
+			var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Tram).Select(rout => rout.RouteNum).Distinct().ToList();
 			if (temp.Count == 0)
 				return "";
 			StringBuilder builder = new StringBuilder("Трам: ");
-			builder.Append(temp.Select(x => x.RouteNum + ", "));
+			foreach (var rout in temp)
+			{
+				builder.Append(rout).Append(", ");
+			}
+			//builder.Append(temp.Select(x => x.RouteNum + ", "));
 			builder.Remove(builder.Length - 2, 2);
 			builder.AppendLine();
 			return builder.ToString();
@@ -515,6 +532,24 @@ namespace MinskTrans.DesctopClient
 				throw;
 			}
 			OnUpdateEnded();
+		}
+
+		protected bool NeedUpdate()
+		{
+			if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
+				return true;
+#if DEBUG
+			var xx = newSchedule.Except(Times).ToList();
+#endif
+			if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+				return true;
+
+			foreach (var newRoute in newRoutes)
+			{
+				if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart != newRoute.Datestart))
+					return true;
+			}
+			return false;
 		}
 
 		[NotifyPropertyChangedInvocator]

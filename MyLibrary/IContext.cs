@@ -8,7 +8,7 @@ namespace MinskTrans.DesctopClient
 	public enum LoadType
 	{
 		LoadDB = 0x00000001,
-		LoadFavourite = 0x00000001,
+		LoadFavourite = 0x00000002,
 		LoadAll = LoadDB | LoadFavourite
 	}
 	public interface IContext

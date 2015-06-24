@@ -188,13 +188,13 @@ namespace MinskTrans.Universal
 
 		#region Overrides of Application
 
-		protected override void OnActivated(IActivatedEventArgs args)
+		protected override async void OnActivated(IActivatedEventArgs args)
 		{
 #if BETA
 			Logger.Log("App OnActivated");
 #endif
 			base.OnActivated(args);
-			MainModelView.MainModelViewGet.Context.Load();
+			await MainModelView.MainModelViewGet.Context.Load();
 #if BETA
 			Logger.Log("App OnActivated, context loaded");
 #endif
@@ -244,10 +244,15 @@ namespace MinskTrans.Universal
 				case BackgroundAccessStatus.Unspecified:
 					// The user didn't explicitly disable or enable access and updates. 
 					var updateTaskRegistration = RegisterBackgroundTask("BackgroundUpdateTask.UpdateBackgroundTask",
-						"UpdateBackgroundTasks", new TimeTrigger(60, false),
+						"UpdateBackgroundTasks", new TimeTrigger(15, false),
 						null);
 					
-					updateTaskRegistration.Completed += (sender, args) => MainModelView.MainModelViewGet.Context.Load(LoadType.LoadDB);
+					updateTaskRegistration.Completed += async (sender, args) =>
+					{
+						MainModelView.MainModelViewGet.Context.Load(LoadType.LoadDB);
+						await MainModelView.MainModelViewGet.NewsManager.Load();
+						MainModelView.MainModelViewGet.AllNews = null;
+					};
 					break;
 			}
 

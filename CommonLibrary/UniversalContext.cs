@@ -65,7 +65,7 @@ namespace MinskTrans.Universal
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
 					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value.ToString());
 				else
-					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value;
+					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value.ToString();
 				OnPropertyChanged();
 			}
 #else
@@ -221,19 +221,13 @@ namespace MinskTrans.Universal
 #endif
 				return false;
 			}
+			Connect(newRoutes, newStops, newSchedule, VariantLoad);
+
+			newStops = new ObservableCollection<Stop>(newStops.Where(stop => stop.Routs.Any()));
+			newRoutes = new ObservableCollection<Rout>(newRoutes.Where(rout => rout.Stops.Any()));
 			if (checkUpdate)
 			{
-				if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
-					return true;
-
-				if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
-					return true;
-
-				foreach (var newRoute in newRoutes)
-				{
-					if (Routs.AsParallel().All(x => x.RoutId == newRoute.RoutId && x.Datestart != newRoute.Datestart))
-						return true;
-				}
+				return NeedUpdate();
 			}
 
 

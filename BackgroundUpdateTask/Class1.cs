@@ -39,16 +39,20 @@ namespace BackgroundUpdateTask
 			    if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
 				    ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
 			    else
-				    ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				    ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value.ToString();
 		    }
 	    }
+
+		int MaxDaysAgo { get; set; }
+		int MaxMinsAgo { get; set; }
 
 	    //Dictionary<int, string> DaysLinks 
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
-
+	        MaxDaysAgo = 30;
+	        MaxMinsAgo = 20;
 			string resultStr = await InternetHelper.Download(urlUpdateDates);
 	        var timeShtaps = resultStr.Split('\n');
 	        DateTime time = new DateTime();
@@ -73,11 +77,10 @@ namespace BackgroundUpdateTask
 		        NewsManager manager = new NewsManager();
 				if (time > manager.LastUpdateDataDateTime)
 		        {
-					resultStr = await InternetHelper.Download(urlUpdateNews);
-					await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameNews, CreationCollisionOption.ReplaceExisting),
-				        resultStr);
-			        await manager.Load(NewsManager.TypeLoad.LoadNews);
-			        foreach (var source in manager.NewNews.Where(key => key.Posted > manager.LastUpdateDataDateTime))
+					await InternetHelper.Download(urlUpdateNews, manager.fileNameNews, ApplicationData.Current.LocalFolder);
+					await manager.Load(NewsManager.TypeLoad.LoadNews);
+			        DateTime nowTime = DateTime.UtcNow;
+					foreach (var source in manager.NewNews.Where(key => key.Posted > manager.LastUpdateDataDateTime && ((nowTime - key.Posted).TotalDays < MaxDaysAgo)))
 			        {
 				        ShowNotification(source.Message);
 			        }
@@ -91,8 +94,8 @@ namespace BackgroundUpdateTask
 					//	resultStr);
 			        await manager.Load(NewsManager.TypeLoad.LoadHotNews);
 			        DateTime nowDateTime = DateTime.UtcNow;
-					int todayDay = nowDateTime.Day;
-					int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
+					//int todayDay = nowDateTime.Day;
+					//int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
 			        foreach (var source in manager.AllHotNews.Where(key =>
 			        {
 						if (key.RepairedLIne != default(DateTime))
@@ -102,7 +105,7 @@ namespace BackgroundUpdateTask
 								return true;
 						}
 				        return (key.Collected > manager.LastUpdateHotDataDateTime) &&
-				               (key.Collected.Day == todayDay || key.Collected.Day == prevday);
+				               ((nowDateTime- key.Collected).TotalMinutes < MaxMinsAgo);
 			        }))
 			        {
 				        ShowNotification(source.Message);

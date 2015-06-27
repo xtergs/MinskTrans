@@ -1,4 +1,5 @@
-﻿using MyLibrary;
+﻿using MinskTrans.DesctopClient.Model;
+using MyLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;

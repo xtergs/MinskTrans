@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
+using CommonLibrary;
 using MinskTrans.Universal;
 
 namespace WindowsRuntimeBackgroundTask

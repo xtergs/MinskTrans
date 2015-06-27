@@ -6,76 +6,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
+using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
 using MyLibrary;
 using Newtonsoft.Json;
 
 namespace CommonLibrary
 {
-	class ApplicationSettingsHelper
-	{
-
-		public ApplicationSettingsHelper([CallerMemberName] string member = null)
-		{
-			SettingsMember = member;
-		}
-
-		private string SettingsMember;
-		private DateTime backField;
-		public DateTime DateTimeSettings
-		{
-			get
-			{
-				if (backField == default(DateTime) && !ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
-				{
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, backField.ToString());
-					return backField;
-				}
-				if (backField != default(DateTime))
-					return backField;
-				else
-				{
-					backField = DateTime.Parse(ApplicationData.Current.LocalSettings.Values[SettingsMember].ToString());
-					return backField;
-				}
-			}
-
-			set
-			{
-				if (backField == value)
-					return;
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, value.ToString());
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsMember] = value.ToString();
-				backField = value;
-			}
-
-		}
-
-		#region Overrides of Object
-
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			return SettingsMember + " : " + DateTimeSettings;
-		}
-
-		#endregion
-
-		static public void SimpleSet(object value, [CallerMemberName]string key = null)
-		{
-			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-				ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
-			else
-				ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
-		}
-	}
+	
 	public class NewsManager :INotifyPropertyChanged
 	{
 		[Flags]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MyLibrary
 {
@@ -27,7 +28,10 @@ namespace MyLibrary
 		/// </returns>
 		public override string ToString()
 		{
-			return Posted + "\n" + Message;
+			return
+				(new StringBuilder()).AppendLine(Posted.ToLocalTime().ToString())
+					.AppendLine(Message)
+					.ToString();
 		}
 
 		#endregion
@@ -36,8 +40,33 @@ namespace MyLibrary
 
 		public DateTime Posted { get; set; }
 
+		public DateTime POstedLocal
+		{
+			get
+			{
+				return Posted.ToLocalTime();
+			}
+		}
+
 		public DateTime Collected { get; set; }
+
+		public DateTime CollectedLocal
+		{
+			get
+			{
+				return Collected.ToLocalTime();
+			}
+		}
+
 		public DateTime RepairedLIne { get; set; }
+
+		public DateTime RepairedLIneLocal
+		{
+			get
+			{
+				return RepairedLIne.ToLocalTime();
+			}
+		}
 	}
 
 	public class NewsEntryEqualityComparer: IEqualityComparer<NewsEntry>

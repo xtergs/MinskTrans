@@ -162,39 +162,46 @@ namespace MinskTrans.Universal
 			};
 			model.Context.UpdateEnded += async (senderr, args) =>
 			{
-				//FlyoutBase.GetAttachedFlyout(GgGrid).Hide();
-				
-				//listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
-				
-				
-				//DataContext = model;
+				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				{
+					//FlyoutBase.GetAttachedFlyout(GgGrid).Hide();
+
+					//listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
+
+
+					//DataContext = model;
 #if _DEBUG
 				model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x => x.SearchName.Contains("шепичи")));
 				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), model.Context));
 				model.Context.AllPropertiesChanged();
 				string str = "s";
 #endif
-				ProgressBar.Visibility = Visibility.Collapsed;
-				//ProgressBar.IsIndeterminate = false;
-				pushpins = null;
-				//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
-				//model.MapModelView.Inicialize();
-				//Flyout.Show();
-				//ProgressRing.Visibility = Visibility.Collapsed;
+					ProgressBar.Visibility = Visibility.Collapsed;
+					//ProgressBar.IsIndeterminate = false;
+					pushpins = null;
+					//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
+					//model.MapModelView.Inicialize();
+					//Flyout.Show();
+					//ProgressRing.Visibility = Visibility.Collapsed;
+				});
 
 			};
 			//model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
 			model.Context.LoadStarted += (sender, args) =>
 			{
-				ProgressBar.IsIndeterminate = true;
-				ProgressBar.Visibility = Visibility.Visible;
+				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				{
+					ProgressBar.IsIndeterminate = true;
+					ProgressBar.Visibility = Visibility.Visible;
+				});
 			};
 			model.Context.LoadEnded += (sender, args) =>
 			{
-				//ProgressBar.IsIndeterminate = false;
-				ProgressBar.Visibility = Visibility.Collapsed;
-				//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
-				//model.MapModelView.Inicialize();
+				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				{
+					model.Context.AllPropertiesChanged();
+					ProgressBar.Visibility = Visibility.Collapsed;
+				});
 			};
 			
 			ShowFavouriteStop.AddGroup += ShowAddGroup;
@@ -483,6 +490,11 @@ namespace MinskTrans.Universal
 		
 
 		private void PivotItem_Loaded(object sender, RoutedEventArgs e)
+		{
+			MainModelView.MainModelViewGet.AllNews = null;
+		}
+
+		private void PivotItem_GotFocus(object sender, RoutedEventArgs e)
 		{
 			MainModelView.MainModelViewGet.AllNews = null;
 		}

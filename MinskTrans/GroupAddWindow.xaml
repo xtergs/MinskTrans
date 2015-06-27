@@ -12,7 +12,7 @@
     Title="GroupAddWindow" Height="409" Width="766" WindowStyle="ToolWindow">
     <Window.Resources>
         <Converters:ListToStr x:Key="ListToStr" />
-        <Converters:ListIntToStrConverter x:Key="listConverter" />
+        <local:ListIntToStrConverter x:Key="listConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

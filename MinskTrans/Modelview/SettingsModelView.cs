@@ -2,12 +2,9 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using CommonLibrary;
 
 //using MinskTrans.DesctopClient.Annotations;
 //using MinskTrans.DesctopClient.Annotations;
-using MinskTrans.Universal;
-using MinskTrans.Universal.Annotations;
 using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -17,17 +14,95 @@ using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Properties;
 
 #else
+using CommonLibrary;
+using MinskTrans.Universal;
+using MinskTrans.Universal.Annotations;
 	using Windows.Storage;
 
 #endif
 
+	class ApplicationSettingsHelper
+	{
+
+		public ApplicationSettingsHelper([CallerMemberName] string member = null)
+		{
+			SettingsMember = member;
+		}
+
+		private string SettingsMember;
+		private DateTime backField;
+		public DateTime DateTimeSettings
+		{
+			get
+			{
+				if (backField == default(DateTime) && !ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
+				{
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, backField.ToString());
+					return backField;
+				}
+				if (backField != default(DateTime))
+					return backField;
+				else
+				{
+					backField = DateTime.Parse(ApplicationData.Current.LocalSettings.Values[SettingsMember].ToString());
+					return backField;
+				}
+			}
+
+			set
+			{
+				if (backField == value)
+					return;
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, value.ToString());
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsMember] = value.ToString();
+				backField = value;
+			}
+
+		}
+
+		#region Overrides of Object
+
+		/// <summary>
+		/// Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		/// A string that represents the current object.
+		/// </returns>
+		public override string ToString()
+		{
+			return SettingsMember + " : " + DateTimeSettings;
+		}
+
+		#endregion
+
+		static public void SimpleSet(object value, [CallerMemberName]string key = null)
+		{
+			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+				ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
+			else
+				ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
+		}
+	}
+
 	public class SettingsModelView : ISettingsModelView
 	{
+
+
 		public enum Error
 		{
 			None = 0,
 			Critical = 1,
 			Repeated = 2
+		}
+
+		[Flags]
+		public enum TypeOfUpdate
+		{
+			None = 0,
+			Db = 0x00000001,
+			News = 0x00000002
 		}
 
 		public SettingsModelView()
@@ -49,6 +124,25 @@ using MinskTrans.DesctopClient.Properties;
 			                                       InternetHelper.Is_Wifi_Connected == UpdateOnWiFi);
 		}
 #endif
+
+		public TypeOfUpdate LastUpdatedDataInBackground
+		{
+			get
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					LastUpdatedDataInBackground = TypeOfUpdate.None;
+				return (TypeOfUpdate)Enum.Parse(typeof(TypeOfUpdate),ApplicationData.Current.LocalSettings.Values[SettingsToStr()].ToString());
+			}
+
+			set
+			{
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
+				OnPropertyChanged();
+			}
+		}
 
 		public DateTime LastUpdateDBDatetime
 		{

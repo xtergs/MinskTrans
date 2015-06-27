@@ -35,6 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{A7577975-54ED-4521-997B-6FACD396DAD9}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MyLibrary\MyLibrary.csproj">
       <Project>{7684D5C4-C88A-47A2-8525-5EC7B319018A}</Project>
       <Name>MyLibrary</Name>

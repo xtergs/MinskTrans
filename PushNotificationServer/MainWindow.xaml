@@ -30,9 +30,10 @@
         <StackPanel Grid.Column="1">
             <CheckBox Grid.Column="1" Content="Autorun" IsChecked="{Binding Autorun, ElementName=window}"></CheckBox>
             <CheckBox x:Name="AutoUpdateNewsCheckBox" Grid.Column="1" Content="AutoUpdateNews" IsChecked="{Binding Engine.NewsAutoUpdate, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
-
+            <TextBlock Text="UpdateInterval"/>
+                <TextBox HorizontalAlignment="Stretch" InputScope="Number" Text="{Binding Engine.DbUpdateMins, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
-        <TextBlock Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
+        <TextBlock Grid.Row="0" Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
 
         </TextBlock>
         <Button Grid.Row="1" Content="TestRawPushNotification" Click="SendRawPushNotification"></Button>
@@ -52,7 +53,11 @@
             <ListBox Grid.Column="1" Name="HotNewsTextBlock" ItemsSource="{Binding AllHotNews, UpdateSourceTrigger=PropertyChanged}"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
                 <ListBox.ItemTemplate>
                     <ItemContainerTemplate>
-                        <TextBlock Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding}"/>
+                        <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding CollectedLocal}"/>
+                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding}"/>
+                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding RepairedLIneLocal}"/>
+                            </DockPanel>
                     </ItemContainerTemplate>
 
                 </ListBox.ItemTemplate>

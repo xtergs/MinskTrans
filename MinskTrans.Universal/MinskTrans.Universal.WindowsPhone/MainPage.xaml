@@ -1252,7 +1252,7 @@
                 </Border>
             </PivotItem>
             
-            <PivotItem Header="Новости" Loaded="PivotItem_Loaded">
+            <PivotItem Header="Новости" Loaded="PivotItem_Loaded" GotFocus="PivotItem_GotFocus">
                 <ListView ItemsSource="{Binding AllNews }">
                     <ListView.ItemTemplate>
                       <DataTemplate>

@@ -82,14 +82,26 @@ namespace PushNotificationServer
 			}
 		}
 
+		public int DbUpdateMins
+		{
+			get { return Properties.Settings.Default.DbUpdateInterval; }
+			set
+			{
+				if (value <= 0)
+					return;
+				Properties.Settings.Default.DbUpdateInterval = value;
+				OnPropertyChanged();
+			}
+		}
+
 		public void SetAutoUpdateTimer(bool turnOn)
 		{
 			if (turnOn)
 			{
 				if (timerNewsAutoUpdate == null)
-					timerNewsAutoUpdate = new Timer(ChuckNews, null, new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
+					timerNewsAutoUpdate = new Timer(ChuckNews, null, new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 0, DbUpdateMins, 0));
 				else
-					timerNewsAutoUpdate.Change(new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
+					timerNewsAutoUpdate.Change(new TimeSpan(0, 0, 0, 30), new TimeSpan(0,0,DbUpdateMins,0));
 			}
 			else
 			{

@@ -15,7 +15,6 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using CommonLibrary;
 using MinskTrans.DesctopClient.Comparer;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
 using MinskTrans.DesctopClient.Annotations;
@@ -24,6 +23,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 #else
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Universal.Annotations;
+using CommonLibrary;
 
 #endif
 using MinskTrans.DesctopClient.Model;
@@ -38,7 +38,7 @@ namespace MinskTrans.DesctopClient
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]
 #endif
-	public abstract class Context : INotifyPropertyChanged , IXmlSerializable, IContext
+	public abstract class Context : INotifyPropertyChanged , IContext
 	{
 		protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
 		{
@@ -230,7 +230,7 @@ namespace MinskTrans.DesctopClient
 			set
 			{
 				favouriteRouts = value;
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 
@@ -245,7 +245,7 @@ namespace MinskTrans.DesctopClient
 			set
 			{
 				favouriteStops = value;
-				OnPropertyChanged();
+				//OnPropertyChanged();
 			}
 		}
 		public ObservableCollection<GroupStop> Groups
@@ -264,7 +264,7 @@ namespace MinskTrans.DesctopClient
 					OnPropertyChanged("Groups.Count");
 					var s = Groups.Count;
 				};
-				OnPropertyChanged();
+				//OnPropertyChanged();
 
 			}
 		}
@@ -629,12 +629,12 @@ namespace MinskTrans.DesctopClient
 		/// Generates an object from its XML representation.
 		/// </summary>
 		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
-		public void ReadXml(XmlReader reader)
+		public void ReadXml(string reader)
 		{
 			try
 			{
 
-			var node = XDocument.Load(reader);
+			var node = XDocument.Parse(reader);
 			var document = (XElement)node.Root;
 
 			//document.Root.Attribute("LastUpdateTime").Value;
@@ -749,6 +749,50 @@ namespace MinskTrans.DesctopClient
 
 			//}
 			//reader.ReadEndElement();
+		}
+
+		public void ReadXml(XmlReader reader)
+		{
+			try
+			{
+
+				var node = XDocument.Load(reader);
+				var document = (XElement)node.Root;
+
+				//document.Root.Attribute("LastUpdateTime").Value;
+
+				//LastUpdateDataDateTime = (DateTime) document.Attribute("LastUpdateTime");
+
+				var temp1 = document.Elements("FavouriteStops").Elements("ID");
+				FavouriteStopsIds = new ObservableCollection<int>(temp1.Select(x => (int)(x)).ToList());
+
+				var temp = document.Elements("FavouritRouts").Elements("ID").ToList();
+				if (temp.Count() <= 0)
+					;
+				else
+					FavouriteRoutsIds = new ObservableCollection<int>(temp.Select(x =>
+					{
+
+						return (int)x;
+					}));
+
+				var xGroups = document.Element("Groups");
+				if (xGroups != null)
+					GroupsStopIds = new ObservableCollection<GroupStopId>(xGroups.Elements("Group").Select(XGroup =>
+					{
+						var groupid = new GroupStopId();
+						groupid.Name = (string)XGroup.Attribute("Name");
+						groupid.StopID = XGroup.Elements("ID").Select(id => (int)id).ToList();
+						return groupid;
+					}));
+				else
+					GroupsStopIds = new ObservableCollection<GroupStopId>();
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Context.ReadXml: " + e.Message);
+				return;
+			}
 		}
 
 		/// <summary>

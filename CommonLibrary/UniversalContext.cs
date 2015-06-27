@@ -263,6 +263,12 @@ namespace CommonLibrary
 		{
 			StorageFile stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
 
+			//using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
+			//{
+			//	WriteXml(writer);
+			//}
+			//await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
+
 			var favouriteString = JsonConvert.SerializeObject(new
 			{
 				Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
@@ -467,44 +473,79 @@ namespace CommonLibrary
 					var stream = await folders[TypeSaveData.Favourite].GetFileAsync(NameFileFavourite);
 
 					var textFavourite = await FileIO.ReadTextAsync(stream);
-					var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
+					try
 					{
-						Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
-						Stops = FavouriteStops.Select(x => x.ID).ToList(),
-						Groups = Groups.Select(x => new
+						var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
 						{
-							Name = x.Name,
-							IDs = x.Stops.Select(stop => stop.ID)
-						})
-					});
+							Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
+							Stops = FavouriteStops.Select(x => x.ID).ToList(),
+							Groups = Groups.Select(x => new
+							{
+								Name = x.Name,
+								IDs = x.Stops.Select(stop => stop.ID)
+							})
+						});
 
-					
 
-					//using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
-					//{
-					//	ReadXml(reader);
-					//}
 
-					if (desFavourite.Routs != null)
-					{
-						var temp1 = desFavourite.Routs.Select(x =>
-							new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
-						tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
-						//desFavourite.Routs = null;
-					}
 
-					if (desFavourite.Stops != null)
-					{
-						tpFavouriteStops = new ObservableCollection<Stop>(desFavourite.Stops.Select(x => tpStops.First(d => d.ID == x)));
-						//FavouriteStopsIds = null;
-					}
-					if (desFavourite.Groups != null)
-					{
-						tpGroups = new ObservableCollection<GroupStop>(desFavourite.Groups.Select(x => new GroupStop()
+						//using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+						//{
+						//	ReadXml(reader);
+						//}
+
+						if (desFavourite.Routs != null)
 						{
-							Name = x.Name,
-							Stops = new ObservableCollection<Stop>(tpStops.Join(x.IDs, stop => stop.ID, i => i, (stop, i) => stop))
-						}));
+							var temp1 = desFavourite.Routs.Select(x =>
+								new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
+							tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
+							//desFavourite.Routs = null;
+						}
+
+						if (desFavourite.Stops != null)
+						{
+							tpFavouriteStops = new ObservableCollection<Stop>(desFavourite.Stops.Select(x => tpStops.First(d => d.ID == x)));
+							//FavouriteStopsIds = null;
+						}
+						if (desFavourite.Groups != null)
+						{
+							tpGroups = new ObservableCollection<GroupStop>(desFavourite.Groups.Select(x => new GroupStop()
+							{
+								Name = x.Name,
+								Stops = new ObservableCollection<Stop>(tpStops.Join(x.IDs, stop => stop.ID, i => i, (stop, i) => stop))
+							}));
+						}
+					}
+					catch (JsonReaderException ex)
+					{
+
+							ReadXml(textFavourite);
+						//using (var reader = XmlReader.Create(textFavourite, new XmlReaderSettings()))
+						//{
+						//}
+
+						if (FavouriteRoutsIds != null)
+						{
+							var temp1 = FavouriteRoutsIds.Select(x =>
+								new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
+							tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
+							FavouriteRoutsIds = null;
+						}
+
+						if (FavouriteStopsIds != null)
+						{
+							tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => tpStops.First(d => d.ID == x)));
+							FavouriteStopsIds = null;
+						}
+						if (GroupsStopIds != null)
+						{
+							tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+							{
+								Name = x.Name,
+								Stops = new ObservableCollection<Stop>(tpStops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+							}));
+							GroupsStopIds = null;
+						}
 					}
 				}
 				catch (FileNotFoundException e)
@@ -533,14 +574,25 @@ namespace CommonLibrary
 			}
 				
 			//}
-			FavouriteRouts = tpFavouriteRouts;
-			FavouriteStops = tpFavouriteStops;
-			Groups = tpGroups;
-			Debug.WriteLine("UniversalContext loadfavourite ended");
+			try
+			{
+				FavouriteRouts = tpFavouriteRouts;
+				FavouriteStops = tpFavouriteStops;
+				Groups = tpGroups;
+				Debug.WriteLine("UniversalContext loadfavourite ended");
 
-			//CleanTp();
-			AllPropertiesChanged();
-			OnLoadEnded();
+				//CleanTp();
+				//AllPropertiesChanged();
+				OnLoadEnded();
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Load exception, set favourite " + e.ToString() );
+#if BETA
+			Logger.Log().WriteLineTime("Load exception");
+#endif
+				throw;
+			}
 			Debug.WriteLine("UniversalContext.Load ended");
 #if BETA
 			Logger.Log().WriteLineTime("Load ended");

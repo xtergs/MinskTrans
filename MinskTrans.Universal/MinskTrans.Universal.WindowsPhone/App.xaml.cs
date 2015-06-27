@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -48,7 +47,6 @@ namespace MinskTrans.Universal
 
 
 		readonly TimeSpan maxDifTime = new TimeSpan(0,1,0,0);
-		private System.Threading.Timer reconnectPushServerTimer;
 
 		void CallBackReconnectPushServerTimer(object state)
 		{
@@ -110,26 +108,7 @@ namespace MinskTrans.Universal
 			return task;
 		}
 
-		private Timer autoUpdateAfterFailurTimer;
-		private bool stillNeddUpdate = false;
 
-		private void ChannelOnPushNotificationReceived(PushNotificationChannel sender, PushNotificationReceivedEventArgs args)
-		{
-			if (args.NotificationType == PushNotificationType.Raw)
-			{
-				if (MainModelView.MainModelViewGet.SettingsModelView.HaveConnection())
-				{
-					MainModelView.MainModelViewGet.Context.UpdateDataCommand.Execute(null);
-				}
-				else
-				{
-					stillNeddUpdate = true;
-					throw new NotImplementedException();
-				}
-			}
-		}
-
-		private Timer timer;
 #if WINDOWS_PHONE_APP
 		private TransitionCollection transitions;
 #endif
@@ -252,8 +231,18 @@ namespace MinskTrans.Universal
 					{
 						try
 						{
-							MainModelView.MainModelViewGet.Context.Load(LoadType.LoadDB);
-							await MainModelView.MainModelViewGet.NewsManager.Load();
+							if (
+								MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
+									SettingsModelView.TypeOfUpdate.Db))
+							{
+								await MainModelView.MainModelViewGet.Context.Save(false);
+								await MainModelView.MainModelViewGet.Context.Load(LoadType.LoadAll);
+							}
+							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
+								SettingsModelView.TypeOfUpdate.News))
+							{
+								await MainModelView.MainModelViewGet.NewsManager.Load();
+							}
 							//MainModelView.MainModelViewGet.AllNews = null;
 						}
 						catch (Exception ex)
@@ -266,7 +255,7 @@ namespace MinskTrans.Universal
 							Debug.WriteLine(message);
 #if BETA
 							Logger.Log(message);
-#endif 
+#endif
 							throw;
 						}
 					};

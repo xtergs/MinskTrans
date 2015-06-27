@@ -6,7 +6,6 @@
 
 
 using MyLibrary;
-using Windows.UI.Xaml.Input;
 using System.Text;
 using System.ComponentModel;
 using System;
@@ -17,11 +16,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using MapControl;
-using MinskTrans.Universal;
 
 
 
 #if (WINDOWS_PHONE_APP )
+using Windows.UI.Xaml.Input;
+using MinskTrans.Universal;
 using Windows.UI.Popups;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Animation;
@@ -116,17 +116,23 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (registr)
 			{
+#if WINDOWS_PHONE_APP
 				map.DoubleTapped += MapOnDoubleTapped;
 				map.PointerWheelChanged += MapOnPointerWheelChanged;
+#endif
 				SetGPS();
 			}
 			else
 			{
 				StopGPS();
+#if WINDOWS_PHONE_APP
+
 				map.DoubleTapped -= MapOnDoubleTapped;
 				map.PointerWheelChanged -= MapOnPointerWheelChanged;
+#endif
 			}
 		}
+#if WINDOWS_PHONE_APP
 
 		private void MapOnPointerWheelChanged(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
 		{
@@ -137,7 +143,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			map.TargetZoomLevel += 1;
 		}
-
+#endif
 		public SettingsModelView Settings
 		{
 			get { return settings; }

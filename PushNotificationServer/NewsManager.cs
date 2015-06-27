@@ -56,7 +56,7 @@ namespace PushNotificationServer
 		{
 			get
 			{
-				return allHotNewsDictionary.OrderByDescending(key=> key.Posted).ThenByDescending(key=> key.Collected).ToList();
+				return allHotNewsDictionary.OrderByDescending(key=> key.Posted).ThenByDescending(key=> key.RepairedLIne).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
@@ -134,7 +134,7 @@ namespace PushNotificationServer
 					{
 						builder.Append(selectNode.InnerText.DecodeHtml().Trim());
 					}
-					var decodedString = builder.Replace("  ", " ").ToString().Trim();
+					var decodedString = builder.Replace("  ", " ").Replace("  ", " ").ToString().Trim();
 
 					returnDictionary.Add(new NewsEntry()
 					{
@@ -184,7 +184,7 @@ namespace PushNotificationServer
 						continue;
 					string dateNews = node.InnerText.DecodeHtml();
 					dateNews = dateNews.Trim('.').Split('\n')[0].Trim();
-					DateTime dateTimeNews = DateTime.Parse(dateNews);
+					DateTime dateTimeNews = DateTime.Parse(dateNews).ToUniversalTime();
 					var firstLine = nodesNew.SelectNodes("div/p").Skip(1).ToList();
 					if (firstLine == null)
 						continue;
@@ -194,14 +194,19 @@ namespace PushNotificationServer
 					{
 						builder.Append(htmlNode.InnerText.DecodeHtml());
 					}
-					var allText = builder.Replace("  ", " ").ToString();
-					var possibleRepairTime = firstLine.Last().InnerText.DecodeHtml().Replace('.', ' ').Trim();
+					var allText = builder.Replace("  ", " ").Replace("  ", " ").ToString().Trim();
+					string possibleRepairTime =
+						firstLine.Select(x => x.InnerText.DecodeHtml().Trim())
+							.Last(x => !String.IsNullOrWhiteSpace(x))
+							.Replace('.', ' ')
+							.Replace(" ", "")
+							.Trim();
 					var match = Regex.Match(possibleRepairTime.Substring(possibleRepairTime.Length/2), @"[0-2]?[0-9][-:][0-6][0-9]",
 					RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 					DateTime possibleDateTime;
 					string decodedString = allText.Trim();
-					if (DateTime.TryParse(match.Value, out possibleDateTime))
-						returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString, dateTimeNews.Add(possibleDateTime.ToUniversalTime().TimeOfDay)));
+					if (DateTime.TryParse(match.Value.Replace('-', ':'), out possibleDateTime))
+						returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString, dateTimeNews.Add(possibleDateTime.TimeOfDay)));
 						//dateTimeNews = dateTimeNews.Add(possibleDateTime.TimeOfDay);
 					else
 					{

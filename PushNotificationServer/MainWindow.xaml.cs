@@ -71,14 +71,19 @@ namespace PushNotificationServer
 		{
 			get
 			{
-				if (Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("") == null)
+				if (Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("PushServerAutorun") == null)
 					return false;
 				return true;
 			}
 			set
 			{
-				Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
+				if (value)
+					Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
 					.SetValue("PushServerAutorun", Assembly.GetExecutingAssembly().Location);
+				else
+				{
+					Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true).DeleteValue("PushServerAutorun");
+				}
 				OnPropertyChanged();
 			}
 		}

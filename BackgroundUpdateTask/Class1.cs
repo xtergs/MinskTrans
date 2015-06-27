@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using CommonLibrary;
+using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
@@ -54,6 +55,11 @@ namespace BackgroundUpdateTask
         {
 			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
+			SettingsModelView settings = new SettingsModelView();
+			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
+			InternetHelper.UpdateNetworkInformation();
+			if (!settings.HaveConnection())
+				_deferral.Complete();
 	        MaxDaysAgo = 30;
 	        MaxMinsAgo = 20;
 			string resultStr = await InternetHelper.Download(urlUpdateDates);
@@ -66,6 +72,7 @@ namespace BackgroundUpdateTask
 	        {
 		        await context.UpdateAsync();
 		        context.LastUpdateDataDateTime = time;
+				settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
 		        //await context.Save(false);
 	        }
 
@@ -83,6 +90,7 @@ namespace BackgroundUpdateTask
 		        {
 					await InternetHelper.Download(urlUpdateNews, manager.fileNameNews, ApplicationData.Current.LocalFolder);
 			        manager.LastUpdateDataDateTime = time;
+					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					await manager.Load(NewsManager.TypeLoad.LoadNews);
 			        DateTime nowTime = DateTime.UtcNow;
 					foreach (var source in manager.NewNews.Where(key => key.Posted > manager.LastUpdateDataDateTime && ((nowTime - key.Posted).TotalDays < MaxDaysAgo)))
@@ -99,6 +107,7 @@ namespace BackgroundUpdateTask
 					//	resultStr);
 			        await manager.Load(NewsManager.TypeLoad.LoadHotNews);
 			        DateTime nowDateTime = DateTime.UtcNow;
+					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					//int todayDay = nowDateTime.Day;
 					//int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
 			        foreach (var source in manager.AllHotNews.Where(key =>

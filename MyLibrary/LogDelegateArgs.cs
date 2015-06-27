@@ -1,6 +1,6 @@
 using System;
 
-namespace MinskTrans.DesctopClient
+namespace MyLibrary
 {
 	public class LogDelegateArgs:EventArgs
 	{

@@ -3,11 +3,12 @@ using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using BackgroundUpdateTask;
+using CommonLibrary;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
-using PushNotificationServer;
+using MyLibrary;
 
 namespace MinskTrans.Universal.ModelView
 {

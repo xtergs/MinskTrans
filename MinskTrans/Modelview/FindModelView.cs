@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Modelview;
-
-namespace MinskTrans.DesctopClient.ModelView
+﻿namespace MinskTrans.DesctopClient.Modelview
 {
 	public class FindModelView : BaseModelView
 	{

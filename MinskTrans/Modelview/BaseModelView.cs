@@ -1,5 +1,7 @@
 ﻿
 
+using MinskTrans.Universal.Annotations;
+
 namespace MinskTrans.DesctopClient.Modelview
 {
 using System.ComponentModel;
@@ -7,7 +9,7 @@ using System.Runtime.CompilerServices;
 #if !WINDOWS_PHONE_APP
 using MinskTrans.DesctopClient.Annotations;
 #else
-using MinskTrans.Universal.Annotations;
+
 #endif
 	public class BaseModelView : INotifyPropertyChanged
 	{

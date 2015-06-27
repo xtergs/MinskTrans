@@ -1,4 +1,4 @@
-﻿namespace MinskTrans.DesctopClient
+﻿namespace MyLibrary
 {
 	public class Tools
 	{

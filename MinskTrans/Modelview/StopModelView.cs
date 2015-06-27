@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +16,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using MinskTrans.Universal;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.DesctopClient.Model;
 #endif
 
 namespace MinskTrans.DesctopClient.Modelview

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Data;
 using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal.Converters
 {
@@ -13,7 +14,7 @@ namespace MinskTrans.Universal.Converters
 		public object Convert(object value, Type targetType, object parameter, string language)
 		{
 			
-			TransportType strValue = (MinskTrans.DesctopClient.TransportType)value;
+			TransportType strValue = (TransportType)value;
 			switch (strValue)
 			{
 				case TransportType.Trol:

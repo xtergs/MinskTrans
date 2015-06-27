@@ -1,8 +1,7 @@
 using System;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 
-namespace MinskTrans.DesctopClient
+namespace MyLibrary
 {
 	[Flags]
 	public enum LoadType

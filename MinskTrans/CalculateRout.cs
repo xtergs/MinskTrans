@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MinskTrans.DesctopClient.Comparer;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient
 {

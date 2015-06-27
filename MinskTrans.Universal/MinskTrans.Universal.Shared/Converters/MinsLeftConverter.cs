@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Data;
 using MinskTrans.DesctopClient;
+using MyLibrary;
 
 namespace MinskTrans.Universal
 {

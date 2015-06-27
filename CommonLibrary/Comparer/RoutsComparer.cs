@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Model;
 
-namespace MinskTrans.Universal
+namespace CommonLibrary.Comparer
 {
 	public class RoutsComparer:IEqualityComparer<Rout>
 	{

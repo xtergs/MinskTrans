@@ -6,6 +6,7 @@
 
 
 using MyLibrary;
+using Windows.UI.Xaml.Input;
 using System.Text;
 using System.ComponentModel;
 using System;
@@ -81,13 +82,60 @@ namespace MinskTrans.DesctopClient.Modelview
 			pushBuilder = pushPinBuilder;
 			Settings = newSettigns;
 			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
-			geolocator = new Geolocator();
+			
 
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.898532, 27.562501);
 			allPushpins = new List<PushpinLocation>();
-			SetGPS();
+			RegistrMap(true);
+			
+		}
+
+		private bool isActive = true;
+
+		public void Disable()
+		{
+			if (isActive)
+			{
+				isActive = false;
+				RegistrMap(isActive);
+			}
+		}
+
+		public void Activate()
+		{
+			if (!isActive)
+			{
+				isActive = true;
+				RegistrMap(isActive);
+			}
+		}
+
+		private void RegistrMap(bool registr)
+		{
+			if (registr)
+			{
+				map.DoubleTapped += MapOnDoubleTapped;
+				map.PointerWheelChanged += MapOnPointerWheelChanged;
+				SetGPS();
+			}
+			else
+			{
+				StopGPS();
+				map.DoubleTapped -= MapOnDoubleTapped;
+				map.PointerWheelChanged -= MapOnPointerWheelChanged;
+			}
+		}
+
+		private void MapOnPointerWheelChanged(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
+		{
+			
+		}
+
+		private void MapOnDoubleTapped(object sender, DoubleTappedRoutedEventArgs doubleTappedRoutedEventArgs)
+		{
+			map.TargetZoomLevel += 1;
 		}
 
 		public SettingsModelView Settings
@@ -116,31 +164,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (settings.UseGPS)
 			{
-				try
-				{
-					if (geolocator == null)
-						geolocator = new Geolocator();
-					geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
-
-					geolocator.ReportInterval = Settings.GPSInterval;
-#if WINDOWS_PHONE_APP
-					geolocator.StatusChanged += GeolocatorOnStatusChanged;
-					geolocator.PositionChanged += GeolocatorOnPositionChanged;
-#endif
-				}
-				catch (Exception ex)
-				{
-					if (unchecked ((uint)ex.HResult == 0x80004004))
-					{
-						// the application does not have the right capability or the location master switch is off
-						//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
-						//box.ShowAsync();
-					}
-					//else
-					{
-						// something else happened acquring the location
-					}
-				}
+				StartGPS();
 
 			}
 			else
@@ -148,6 +172,35 @@ namespace MinskTrans.DesctopClient.Modelview
 				StopGPS();
 			}
 			ShowICommand.RaiseCanExecuteChanged();
+		}
+
+		public void StartGPS()
+		{
+			try
+			{
+				if (geolocator == null)
+					geolocator = new Geolocator();
+				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+
+				geolocator.ReportInterval = Settings.GPSInterval;
+#if WINDOWS_PHONE_APP
+				geolocator.StatusChanged += GeolocatorOnStatusChanged;
+				geolocator.PositionChanged += GeolocatorOnPositionChanged;
+#endif
+			}
+			catch (Exception ex)
+			{
+				if (unchecked((uint)ex.HResult == 0x80004004))
+				{
+					// the application does not have the right capability or the location master switch is off
+					//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+					//box.ShowAsync();
+				}
+				//else
+				{
+					// something else happened acquring the location
+				}
+			}
 		}
 
 		public void StopGPS()
@@ -566,6 +619,18 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+		public bool IsActive
+		{
+			get { return isActive; }
+			set
+			{
+				if (isActive == value)
+					return;
+				isActive = value;
+				RegistrMap(isActive);
+				OnPropertyChanged();
+			}
+		}
 
 		#region events
 

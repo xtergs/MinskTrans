@@ -4,15 +4,78 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using MinskTrans.Universal.Annotations;
+using MyLibrary;
 using Newtonsoft.Json;
-using PushNotificationServer;
 
-namespace BackgroundUpdateTask
+namespace CommonLibrary
 {
+	class ApplicationSettingsHelper
+	{
+
+		public ApplicationSettingsHelper([CallerMemberName] string member = null)
+		{
+			SettingsMember = member;
+		}
+
+		private string SettingsMember;
+		private DateTime backField;
+		public DateTime DateTimeSettings
+		{
+			get
+			{
+				if (backField == default(DateTime) && !ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
+				{
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, backField.ToString());
+					return backField;
+				}
+				if (backField != default(DateTime))
+					return backField;
+				else
+				{
+					backField = DateTime.Parse(ApplicationData.Current.LocalSettings.Values[SettingsMember].ToString());
+					return backField;
+				}
+			}
+
+			set
+			{
+				if (backField == value)
+					return;
+				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
+					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, value.ToString());
+				else
+					ApplicationData.Current.LocalSettings.Values[SettingsMember] = value.ToString();
+				backField = value;
+			}
+
+		}
+
+		#region Overrides of Object
+
+		/// <summary>
+		/// Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		/// A string that represents the current object.
+		/// </returns>
+		public override string ToString()
+		{
+			return SettingsMember + " : " + DateTimeSettings;
+		}
+
+		#endregion
+
+		static public void SimpleSet(object value, [CallerMemberName]string key = null)
+		{
+			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+				ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
+			else
+				ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
+		}
+	}
 	public class NewsManager :INotifyPropertyChanged
 	{
 		[Flags]
@@ -42,24 +105,23 @@ namespace BackgroundUpdateTask
 			hotNewsDictionary = new List<NewsEntry>();
 		}
 
-		
 
+		private ApplicationSettingsHelper lastUpdateDataDateTimeBack;
 		public DateTime LastUpdateDataDateTime
 		{
 #if WINDOWS_PHONE_APP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
-					LastUpdateDataDateTime = new DateTime();
-				return DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"].ToString());
+				if (lastUpdateDataDateTimeBack == null)
+					lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
+				return lastUpdateDataDateTimeBack.DateTimeSettings;
 			}
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
-					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value.ToString());
-				else
-					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value.ToString();
+				if (lastUpdateDataDateTimeBack == null)
+					lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
+				lastUpdateDataDateTimeBack.DateTimeSettings = value;
 				OnPropertyChanged();
 			}
 #else
@@ -68,22 +130,22 @@ namespace BackgroundUpdateTask
 #endif
 		}
 
+		private ApplicationSettingsHelper lastUpdateHotDataDateTimeBack;
 		public DateTime LastUpdateHotDataDateTime
 		{
 #if WINDOWS_PHONE_APP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateHotDataDateTime"))
-					LastUpdateHotDataDateTime = new DateTime();
-				return DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateHotDataDateTime"].ToString());
+				if (lastUpdateHotDataDateTimeBack == null)
+					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
+				return lastUpdateHotDataDateTimeBack.DateTimeSettings;
 			}
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateHotDataDateTime"))
-					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateHotDataDateTime", value.ToString());
-				else
-					ApplicationData.Current.LocalSettings.Values["LastUpdateHotDataDateTime"] = value.ToString();
+				if (lastUpdateHotDataDateTimeBack == null)
+					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
+				lastUpdateHotDataDateTimeBack.DateTimeSettings = value;
 				OnPropertyChanged();
 			}
 #else

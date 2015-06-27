@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MapControl;
 #if WINDOWS_PHONE_APP
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 #else
 using Style = System.Windows.Style;
 #endif
-using MapControl;
 
-namespace MyLibrary
+namespace MinskTrans.DesctopClient
 {
 	public class PushPinBuilder
 	{

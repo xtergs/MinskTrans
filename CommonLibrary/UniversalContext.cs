@@ -3,40 +3,44 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.System.Threading;
-using MinskTrans.DesctopClient;
-using Windows.Web.Http;
-using System.IO.Compression;
-using System.Linq;
 using System.Xml;
-using System.Xml.Serialization;
+using Windows.Storage;
+using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
-using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.Universal.Model;
+
+using MyLibrary;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-using Buffer = Windows.Storage.Streams.Buffer;
-using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
+using Newtonsoft.Json.Bson;
 
 
-namespace MinskTrans.Universal
+namespace CommonLibrary
 {
 	public class UniversalContext : Context
 	{
+		enum TypeSaveData
+		{
+			DB,
+			Favourite,
+			Statisticks
+		}
+		Dictionary<TypeSaveData, IStorageFolder> folders = new Dictionary<TypeSaveData, IStorageFolder>()
+		 {{TypeSaveData.DB, ApplicationData.Current.LocalFolder},
+			 {TypeSaveData.Favourite, ApplicationData.Current.RoamingFolder},
+			 {TypeSaveData.Statisticks, ApplicationData.Current.RoamingFolder}
+			
+		}; 
+
 		#region Overrides of Context
 
-		protected async Task<bool> FileExistss(string file)
+		async Task<bool> FileExistss(IStorageFolder folder, string file)
 		{
 			try
 			{
-				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
+				var fl = await folder.GetFileAsync(file);
 				OnLogMessage("file " + file + " exist");
 				return true;
 			}
@@ -50,6 +54,12 @@ namespace MinskTrans.Universal
 			}
 		}
 
+		protected async Task<bool> FileExistss(string file)
+		{
+			return await FileExistss(ApplicationData.Current.RoamingFolder, file);
+		}
+
+		private DateTime lastUpdateDataDateTimeBack;
 		public override DateTime LastUpdateDataDateTime
 		{
 #if WINDOWS_PHONE_APP
@@ -57,15 +67,21 @@ namespace MinskTrans.Universal
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
 					LastUpdateDataDateTime = new DateTime();
-				return DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"].ToString());
+				if (lastUpdateDataDateTimeBack == default(DateTime))
+					lastUpdateDataDateTimeBack =
+						DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"].ToString());
+				return lastUpdateDataDateTimeBack;
 			}
 
 			set
 			{
+				if (lastUpdateDataDateTimeBack == value)
+					return;
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
 					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value.ToString());
 				else
 					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value.ToString();
+				lastUpdateDataDateTimeBack = value;
 				OnPropertyChanged();
 			}
 #else
@@ -243,19 +259,25 @@ namespace MinskTrans.Universal
 		{
 			await SaveFavourite(ApplicationData.Current.RoamingFolder);
 		}
-		async  Task SaveFavourite(StorageFolder storage)
+		async  Task SaveFavourite(IStorageFolder storage)
 		{
 			StorageFile stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
 
-			using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
+			var favouriteString = JsonConvert.SerializeObject(new
 			{
-				WriteXml(writer);
-			}
-
-			await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
+				Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
+				Stops = FavouriteStops.Select(x => x.ID).ToList(),
+				Groups = Groups.Select(x => new
+				{
+					Name = x.Name,
+					IDs = x.Stops.Select(stop => stop.ID)
+				})
+			});
+			await FileIO.WriteTextAsync(stream, favouriteString);
+			stream.MoveAsync(storage, NameFileFavourite, NameCollisionOption.ReplaceExisting);
 		}
 
-		async Task SaveStatistics(JsonSerializerSettings jsonSettings, StorageFolder storage)
+		async Task SaveStatistics(JsonSerializerSettings jsonSettings, IStorageFolder storage)
 		{
 			string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
 			var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
@@ -269,37 +291,37 @@ namespace MinskTrans.Universal
 
 			//await IsolatedStorageOperations.Save(this, "data.dat");
 
-			var storage = ApplicationData.Current.RoamingFolder;
-			StorageFile stream = null;
+			//var storage = ApplicationData.Current.RoamingFolder;
+			//StorageFile stream = null;
 
 			try
 			{
-				
-				await SaveFavourite(storage);
+
+				await SaveFavourite(folders[TypeSaveData.Favourite]);
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
-				await SaveStatistics(jsonSettings, storage);
-				string dateTime = JsonConvert.SerializeObject(Routs, jsonSettings);
+				
+				await SaveStatistics(jsonSettings, folders[TypeSaveData.Statisticks]);
 				if (saveAllDb)
 					await Task.WhenAll(Task.Run(async () =>
 					{
 						string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
-						var routsFile = await storage.CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
+						var routsFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
 						await FileIO.WriteTextAsync(routsFile, routs);
-						routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
+						var x = routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
 
 					}),
 						Task.Run(async () =>
 						{
 							string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
-							var stopsFile = await storage.CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
+							var stopsFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
 							await FileIO.WriteTextAsync(stopsFile, routs);
-							stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
+							var x = stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
 
 						}), Task.Run(async () =>
 						{
 							string routs = JsonConvert.SerializeObject(Times, jsonSettings);
-							var timesFile = await storage.CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
+							var timesFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
 							await FileIO.WriteTextAsync(timesFile, routs);
 							timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
 
@@ -307,6 +329,7 @@ namespace MinskTrans.Universal
 			}
 			catch (Exception e)
 			{
+				Debug.WriteLine("Exception in UniversalContext.Save");
 #if BETA
 				Logger.Log("Save exception").WriteLineTime(e.Message).WriteLine(e.StackTrace);
 				Logger.Log().SaveToFile();
@@ -326,14 +349,6 @@ namespace MinskTrans.Universal
 #endif
 			OnLoadStarted();
 
-			//saveTimer = new Timer((x) =>
-			//{
-			//	var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
-			//	var storagee = ApplicationData.Current.RoamingFolder;
-			//	//SaveStatistics( jsonSettings, storagee);
-			//},null, new TimeSpan(0,0, 10,0,0), new TimeSpan(0,0,0, 30,0) );
-
-			var storage = ApplicationData.Current.RoamingFolder;
 			ObservableCollection<Rout> tpRouts = null;
 			ObservableCollection<Stop> tpStops = null;
 			ObservableCollection<Schedule> tpTimes = null;
@@ -346,7 +361,7 @@ namespace MinskTrans.Universal
 				if (type.HasFlag(LoadType.LoadFavourite))
 					try
 					{
-						var routsFile = await storage.GetFileAsync(NameFileCounter);
+						var routsFile = await folders[TypeSaveData.Statisticks].GetFileAsync(NameFileCounter);
 						var routs = await FileIO.ReadTextAsync(routsFile);
 						counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
 					}
@@ -361,7 +376,7 @@ namespace MinskTrans.Universal
 						{
 							try
 							{
-								var routsFile = await storage.GetFileAsync(NameFileRouts);
+								var routsFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileRouts);
 								var routs = await FileIO.ReadTextAsync(routsFile);
 								tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
 							}
@@ -374,7 +389,7 @@ namespace MinskTrans.Universal
 						{
 							try
 							{
-								var stopsFile = await storage.GetFileAsync(NameFileStops);
+								var stopsFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileStops);
 								var stops = await FileIO.ReadTextAsync(stopsFile);
 								tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
 							}
@@ -387,7 +402,7 @@ namespace MinskTrans.Universal
 							try
 							{
 
-								var timesFile = await storage.GetFileAsync(NameFileTimes);
+								var timesFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileTimes);
 								var times = await FileIO.ReadTextAsync(timesFile);
 
 								tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
@@ -403,104 +418,6 @@ namespace MinskTrans.Universal
 					tpStops = Stops;
 					tpTimes = Times;
 				}
-
-
-
-				//await Task.WhenAll(
-				//   Task.Run(async () =>
-				//   {
-				//	   try
-				//	   {
-				//		   var routsFile = await storage.GetFileAsync(NameFileRouts);
-				//		   var routs = await FileIO.ReadTextAsync(routsFile);
-				//		   Routs = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
-				//	   }
-				//	   catch (FileNotFoundException e)
-				//	   {
-				//		   throw new TaskCanceledException(e.Message, e);
-				//	   }
-				//   }),
-				//	Task.Run(async () =>
-				//   {
-				//	   try
-				//	   {
-				//		   var stopsFile = await storage.GetFileAsync(NameFileStops);
-				//		   var stops = await FileIO.ReadTextAsync(stopsFile);
-				//		   Stops =  JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
-				//	   }
-				//	   catch (FileNotFoundException e)
-				//	   {
-				//		   throw new TaskCanceledException(e.Message, e);
-				//	   }
-				//   }),
-				//   Task.Run(async () =>
-				//   {
-				//	   try
-				//	   {
-
-				//		   var timesFile = await storage.GetFileAsync(NameFileTimes);
-				//		   var times = await FileIO.ReadTextAsync(timesFile);
-
-				//		   Times =  JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
-				//	   }
-				//	   catch (FileNotFoundException e)
-				//	   {
-				//		   throw new TaskCanceledException(e.Message, e);
-				//	   }
-				//   })
-				//   );
-				//await Task.Run(async () =>
-				//{
-				//	if (await FileExistss(NameFileFavourite))
-				//	{
-				//		try
-				//		{
-
-				//			var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
-
-				//			using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
-				//			{
-				//				ReadXml(reader);
-				//			}
-
-				//			if (FavouriteRoutsIds != null)
-				//			{
-				//				tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(FavouriteRoutsIds.Select(x =>
-				//					new RoutWithDestinations(Routs.First(d => d.RoutId == x), this)).ToList());
-				//				FavouriteRoutsIds = null;
-				//			}
-
-				//			if (FavouriteStopsIds != null)
-				//			{
-				//				tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => Stops.First(d => d.ID == x)));
-				//				FavouriteStopsIds = null;
-				//			}
-				//			if (GroupsStopIds != null)
-				//			{
-				//				tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
-				//				{
-				//					Name = x.Name,
-				//					Stops = new ObservableCollection<Stop>(Stops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
-				//				}));
-				//			}
-				//		}
-				//		catch (FileNotFoundException e)
-				//		{
-				//			Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-				//			return;
-				//		}
-				//		catch (Exception e)
-				//		{
-				//			Debug.WriteLine("Context.Load.LoadFavourite: " + e.Message);
-				//			throw new Exception(e.Message, e);
-				//		}
-				//	}
-				//	else
-				//	{
-				//		FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-				//		FavouriteStops = new ObservableCollection<Stop>();
-				//	}
-				//});
 			}
 			catch (TaskCanceledException e)
 			{
@@ -542,37 +459,51 @@ namespace MinskTrans.Universal
 				Times = tpTimes;
 			}
 			Debug.WriteLine("UniversalContext loadfavourite started");
-			if (type.HasFlag(LoadType.LoadFavourite) && await FileExistss(NameFileFavourite))
+			if (type.HasFlag(LoadType.LoadFavourite) && await FileExistss(folders[TypeSaveData.Favourite], NameFileFavourite))
 			{
 				try
 				{
 
-					var stream = await storage.OpenStreamForReadAsync(NameFileFavourite);
+					var stream = await folders[TypeSaveData.Favourite].GetFileAsync(NameFileFavourite);
 
-					using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+					var textFavourite = await FileIO.ReadTextAsync(stream);
+					var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
 					{
-						ReadXml(reader);
-					}
-
-					if (FavouriteRoutsIds != null)
-					{
-						var temp1 = FavouriteRoutsIds.Select(x =>
-							new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
-						tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
-						FavouriteRoutsIds = null;
-					}
-
-					if (FavouriteStopsIds != null)
-					{
-						tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => tpStops.First(d => d.ID == x)));
-						FavouriteStopsIds = null;
-					}
-					if (GroupsStopIds != null)
-					{
-						tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
+						Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
+						Stops = FavouriteStops.Select(x => x.ID).ToList(),
+						Groups = Groups.Select(x => new
 						{
 							Name = x.Name,
-							Stops = new ObservableCollection<Stop>(tpStops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+							IDs = x.Stops.Select(stop => stop.ID)
+						})
+					});
+
+					
+
+					//using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
+					//{
+					//	ReadXml(reader);
+					//}
+
+					if (desFavourite.Routs != null)
+					{
+						var temp1 = desFavourite.Routs.Select(x =>
+							new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
+						tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
+						//desFavourite.Routs = null;
+					}
+
+					if (desFavourite.Stops != null)
+					{
+						tpFavouriteStops = new ObservableCollection<Stop>(desFavourite.Stops.Select(x => tpStops.First(d => d.ID == x)));
+						//FavouriteStopsIds = null;
+					}
+					if (desFavourite.Groups != null)
+					{
+						tpGroups = new ObservableCollection<GroupStop>(desFavourite.Groups.Select(x => new GroupStop()
+						{
+							Name = x.Name,
+							Stops = new ObservableCollection<Stop>(tpStops.Join(x.IDs, stop => stop.ID, i => i, (stop, i) => stop))
 						}));
 					}
 				}

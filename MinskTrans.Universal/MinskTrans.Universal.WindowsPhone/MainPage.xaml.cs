@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
 using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
 using MinskTrans.Universal.ModelView;
@@ -479,17 +480,7 @@ namespace MinskTrans.Universal
 			SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
 		}
 
-		private void testNotifications(object sender, RoutedEventArgs e)
-		{
-			var notifi = ToastNotificationManager.CreateToastNotifier();
-
-			var xaml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText04);
-			var textNode = xaml.GetElementsByTagName("text");
-			textNode.Item(0).AppendChild(xaml.CreateTextNode("TEEST dsfjkd kjdafj jdka \n dfjkdjfkjdkfj fj"));
-				//value.appendChild(toastXml.createTextNode(text));
-			ToastNotification notification = new ToastNotification(xaml);
-			notifi.Show(notification);
-		}
+		
 
 		private void PivotItem_Loaded(object sender, RoutedEventArgs e)
 		{

@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-using MinskTrans.DesctopClient.Model;
-
-
-namespace MinskTrans.DesctopClient
+namespace MinskTrans.DesctopClient.Model
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_APP
 	[Serializable]

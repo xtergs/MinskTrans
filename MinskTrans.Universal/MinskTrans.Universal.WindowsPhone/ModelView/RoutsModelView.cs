@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.Universal.Model;
+
 
 namespace MinskTrans.Universal.ModelView
 {

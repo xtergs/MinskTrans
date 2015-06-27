@@ -1234,7 +1234,8 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <mapControl1:Map  x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                        <mapControl1:Map x:Name="map" ZoomLevel="19" Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                            
                           
                         </mapControl1:Map>
                         <Border Grid.Row="1" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
@@ -1288,7 +1289,7 @@
                             </Grid.RowDefinitions>
                       
                         <TextBlock Text="Дата обновления расписания"/>
-                        <TextBlock Grid.Row="1" Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="1" DataContext="{Binding DataContext, ElementName=mainPage}" Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -1310,7 +1311,7 @@
                         </Grid>
                         <Slider Grid.Row="1" Value="{Binding TimeInPast, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
                         </Grid>
-                        <Grid>
+                        <!--<Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1321,13 +1322,13 @@
                             <TextBlock Grid.Column="1" Text="{Binding  InvervalAutoUpdateTimeSpan, Mode=OneWay, UpdateSourceTrigger=Default}"></TextBlock>
 
                         </Grid>
-                        <Slider Minimum="1" Maximum="1000" Value="{Binding IntervalAutoUpdate, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>
+                        <Slider Minimum="1" Maximum="1000" Value="{Binding IntervalAutoUpdate, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>-->
                         <Button Content="Оставить отзыв" Click="ShowInStore" ></Button>
                         <Button Name="ChatWithDeveloper" Content="Связь с разработчиком" Click="StartEmailToDeveloper"/>
                         <Button Content="Настройка сервисов местоположения" Click="OnOffLocationServises"></Button>
                         <Button Content="Политика безопасности" Click="ShowPolicity"/>
                         <Button Content="Отправить лог разработчику" Click="SendLog"/>
-                        <Button Content="testNotification" Click="testNotifications"/>
+                       
 
                     </ListView>
                 </Border>

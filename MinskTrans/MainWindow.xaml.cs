@@ -16,6 +16,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MapControl;
 using MapControl.Caching;
 using MinskTrans.DesctopClient.Annotations;
+using MinskTrans.DesctopClient.Model;
 
 
 namespace MinskTrans.DesctopClient

@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using MinskTrans.DesctopClient.Model;
-
-using MinskTrans.Universal.Model;
+using MyLibrary;
 using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient

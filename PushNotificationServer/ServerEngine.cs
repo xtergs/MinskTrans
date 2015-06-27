@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
+using MyLibrary;
 using PushNotificationServer.Properties;
 
 namespace PushNotificationServer

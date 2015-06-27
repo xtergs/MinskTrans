@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using MapControl;
 using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal
 {

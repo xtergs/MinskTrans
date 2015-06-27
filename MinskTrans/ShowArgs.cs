@@ -1,6 +1,7 @@
 ﻿using System;
+using MinskTrans.DesctopClient.Model;
 
-namespace MinskTrans.DesctopClient.Modelview
+namespace MinskTrans.DesctopClient
 {
 	public class ShowArgs: EventArgs
 	{

@@ -15,10 +15,11 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using CommonLibrary;
 using MinskTrans.DesctopClient.Comparer;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP
-using System.Runtime.Serialization.Formatters.Binary;
 using MinskTrans.DesctopClient.Annotations;
+using System.Runtime.Serialization.Formatters.Binary;
 using GalaSoft.MvvmLight.CommandWpf;
 #else
 using GalaSoft.MvvmLight.Command;
@@ -27,9 +28,9 @@ using MinskTrans.Universal.Annotations;
 #endif
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.Universal;
-using MinskTrans.Universal.Model;
+using MyLibrary;
 using Newtonsoft.Json;
+using TransportType = MinskTrans.DesctopClient.Model.TransportType;
 
 
 namespace MinskTrans.DesctopClient
@@ -46,7 +47,7 @@ namespace MinskTrans.DesctopClient
 			new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
 		};
 
-		protected Dictionary<int, uint> counterViewStops;
+		protected Dictionary<int, uint> counterViewStops =new Dictionary<int,uint>();
 
 		public void IncrementCounter(Stop stop)
 		{
@@ -62,7 +63,9 @@ namespace MinskTrans.DesctopClient
 
 		public uint GetCounter(Stop stop)
 		{
-			return counterViewStops.Keys.Contains(stop.ID) ? counterViewStops[stop.ID] : 0;
+			if (counterViewStops != null)
+				return counterViewStops.Keys.Contains(stop.ID) ? counterViewStops[stop.ID] : 0;
+			return 0;
 		}
 
 		public string GetBusToString(Stop stop)
@@ -492,7 +495,7 @@ namespace MinskTrans.DesctopClient
 		//		ApplyUpdate();
 		//}
 
-		public virtual async Task UpdateAsync()
+		public virtual async Task UpdateAsync(bool SaveAllDB = true)
 		{
 			//TODO
 			//throw new NotImplementedException();
@@ -516,7 +519,7 @@ namespace MinskTrans.DesctopClient
 				if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
 				{
 					await ApplyUpdate();
-					await Save();
+					await Save(SaveAllDB);
 				}
 				await Task.WhenAll(
 					FileDelete(list[0].Key + NewExt),
@@ -759,6 +762,9 @@ namespace MinskTrans.DesctopClient
 			//document.Declaration = new XDeclaration("1.0", "UTF", "yes");
 
 			//element.SetAttributeValue("LastUpdateTime", LastUpdateDataDateTime);
+
+			
+
 			element.SetAttributeValue("V", 1);
 
 

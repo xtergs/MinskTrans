@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Text;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
+using CommonLibrary;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
@@ -50,6 +52,7 @@ namespace BackgroundUpdateTask
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
+			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 	        MaxDaysAgo = 30;
 	        MaxMinsAgo = 20;
@@ -62,7 +65,8 @@ namespace BackgroundUpdateTask
 	        if (context.LastUpdateDataDateTime < time)
 	        {
 		        await context.UpdateAsync();
-		        await context.Save(false);
+		        context.LastUpdateDataDateTime = time;
+		        //await context.Save(false);
 	        }
 
 	        if (timeShtaps.Length < 1)
@@ -78,18 +82,19 @@ namespace BackgroundUpdateTask
 				if (time > manager.LastUpdateDataDateTime)
 		        {
 					await InternetHelper.Download(urlUpdateNews, manager.fileNameNews, ApplicationData.Current.LocalFolder);
+			        manager.LastUpdateDataDateTime = time;
 					await manager.Load(NewsManager.TypeLoad.LoadNews);
 			        DateTime nowTime = DateTime.UtcNow;
 					foreach (var source in manager.NewNews.Where(key => key.Posted > manager.LastUpdateDataDateTime && ((nowTime - key.Posted).TotalDays < MaxDaysAgo)))
 			        {
 				        ShowNotification(source.Message);
 			        }
-			        manager.LastUpdateDataDateTime = time;
 		        }
 				time = DateTime.Parse(timeShtaps[1]);
 		        if (time > manager.LastUpdateHotDataDateTime)
 		        {
 					await InternetHelper.Download(urlUpdateHotNews, manager.fileNameHotNews, ApplicationData.Current.LocalFolder);
+			        manager.LastUpdateHotDataDateTime = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
 					//	resultStr);
 			        await manager.Load(NewsManager.TypeLoad.LoadHotNews);
@@ -110,15 +115,21 @@ namespace BackgroundUpdateTask
 			        {
 				        ShowNotification(source.Message);
 			        }
-			        manager.LastUpdateHotDataDateTime = time;
 		        }
 	        }
 	        catch (Exception e)
 	        {
+		        string message =
+			        new StringBuilder("Background task exception").AppendLine(e.ToString())
+				        .AppendLine(e.Message)
+				        .AppendLine(e.StackTrace)
+				        .ToString();
+		        Debug.WriteLine(message);
+
 		        throw;
 	        }
 
-
+			Debug.WriteLine("Background task ended");
 	        _deferral.Complete();
 			
         }

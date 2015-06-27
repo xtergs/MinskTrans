@@ -28,10 +28,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-
+using CommonLibrary;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
+using MyLibrary;
 
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
@@ -249,9 +250,25 @@ namespace MinskTrans.Universal
 					
 					updateTaskRegistration.Completed += async (sender, args) =>
 					{
-						MainModelView.MainModelViewGet.Context.Load(LoadType.LoadDB);
-						await MainModelView.MainModelViewGet.NewsManager.Load();
-						MainModelView.MainModelViewGet.AllNews = null;
+						try
+						{
+							MainModelView.MainModelViewGet.Context.Load(LoadType.LoadDB);
+							await MainModelView.MainModelViewGet.NewsManager.Load();
+							//MainModelView.MainModelViewGet.AllNews = null;
+						}
+						catch (Exception ex)
+						{
+							string message =
+								(new StringBuilder("BackgroundTask complited")).AppendLine()
+									.AppendLine(ex.ToString())
+									.AppendLine(ex.Message)
+									.AppendLine(ex.StackTrace).ToString();
+							Debug.WriteLine(message);
+#if BETA
+							Logger.Log(message);
+#endif 
+							throw;
+						}
 					};
 					break;
 			}
@@ -322,16 +339,16 @@ namespace MinskTrans.Universal
 					model.Context.Load();
 
 
-					timer = new Timer(state =>
-					{
-#if BETA
-						Logger.Log("autoupdate timer elapsed");
-#endif
-						InternetHelper.UpdateNetworkInformation();
-						if ( model.SettingsModelView.HaveConnection())
-							if (model.Context.UpdateDataCommand.CanExecute(null))
-								model.Context.UpdateAsync();
-					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
+//					timer = new Timer(state =>
+//					{
+//#if BETA
+//						Logger.Log("autoupdate timer elapsed");
+//#endif
+//						InternetHelper.UpdateNetworkInformation();
+//						if ( model.SettingsModelView.HaveConnection())
+//							if (model.Context.UpdateDataCommand.CanExecute(null))
+//								model.Context.UpdateAsync();
+//					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
 
 				}
 			}

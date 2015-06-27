@@ -5,7 +5,6 @@
 using System.Linq;
 using GalaSoft.MvvmLight;
 using MapControl;
-using MinskTrans.DesctopClient.ModelView;
 
 
 namespace MinskTrans.DesctopClient.Modelview

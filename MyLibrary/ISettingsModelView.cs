@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace MinskTrans.DesctopClient.Modelview
+namespace MyLibrary
 {
 	public interface ISettingsModelView:INotifyPropertyChanged
 	{

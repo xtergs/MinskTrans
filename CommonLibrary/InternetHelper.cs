@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.Web.Http;
+using MinskTrans.Universal;
 
 namespace CommonLibrary
 {

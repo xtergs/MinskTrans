@@ -9,9 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Windows.Storage;
+using Windows.System.Threading;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
-
+using MinskTrans.Universal;
 using MyLibrary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
@@ -355,6 +356,8 @@ namespace CommonLibrary
 #endif
 			OnLoadStarted();
 
+			await Task.Delay(new TimeSpan(0, 0, 0, 10));
+
 			ObservableCollection<Rout> tpRouts = null;
 			ObservableCollection<Stop> tpStops = null;
 			ObservableCollection<Schedule> tpTimes = null;
@@ -367,6 +370,8 @@ namespace CommonLibrary
 				if (type.HasFlag(LoadType.LoadFavourite))
 					try
 					{
+						await Task.Delay(new TimeSpan(0, 0, 0, 10));
+
 						var routsFile = await folders[TypeSaveData.Statisticks].GetFileAsync(NameFileCounter);
 						var routs = await FileIO.ReadTextAsync(routsFile);
 						counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
@@ -376,6 +381,7 @@ namespace CommonLibrary
 					{
 						counterViewStops = new Dictionary<int, uint>();
 					}
+				await Task.Delay(new TimeSpan(0, 0, 0, 10));
 				if (type.HasFlag(LoadType.LoadDB))
 					await Task.WhenAll(
 						Task.Run(async () =>
@@ -452,7 +458,7 @@ namespace CommonLibrary
 				return;
 			}
 
-
+			await Task.Delay(new TimeSpan(0, 0, 0, 10));
 			Debug.WriteLine("UniversalContext LoadSourceData ended");
 			if (type.HasFlag(LoadType.LoadDB))
 			{
@@ -464,6 +470,7 @@ namespace CommonLibrary
 				Stops = tpStops;
 				Times = tpTimes;
 			}
+			await Task.Delay(new TimeSpan(0, 0, 0, 10));
 			Debug.WriteLine("UniversalContext loadfavourite started");
 			if (type.HasFlag(LoadType.LoadFavourite) && await FileExistss(folders[TypeSaveData.Favourite], NameFileFavourite))
 			{
@@ -583,6 +590,7 @@ namespace CommonLibrary
 
 				//CleanTp();
 				//AllPropertiesChanged();
+				await Task.Delay(new TimeSpan(0, 0, 0, 10));
 				OnLoadEnded();
 			}
 			catch (Exception e)

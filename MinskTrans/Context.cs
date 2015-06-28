@@ -28,6 +28,7 @@ using CommonLibrary;
 #endif
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.Universal;
 using MyLibrary;
 using Newtonsoft.Json;
 using TransportType = MinskTrans.DesctopClient.Model.TransportType;
@@ -448,6 +449,8 @@ namespace MinskTrans.DesctopClient
 		{
 #if BETA
 			Logger.Log("Connect started");
+			Stopwatch watch = new Stopwatch();
+			watch.Start();
 #endif
 			Debug.WriteLine("Connect Started" + DateTime.Now);
 			
@@ -457,18 +460,13 @@ namespace MinskTrans.DesctopClient
 			
 			foreach (var rout in routsl)
 				{
-					Schedule first = null;
 					var rout1 = rout;
-					foreach (var schedule in timesl.Where(x =>
+					Schedule first = timesl.Where(x =>
 					{
 						if (x == null)
 							return false;
 						return x.RoutId == rout1.RoutId;
-					}))
-					{
-						first = schedule;
-						break;
-					}
+					}).FirstOrDefault();
 					rout.Time = first;
 					if (rout.Time != null)
 						rout.Time.Rout = rout;
@@ -482,9 +480,12 @@ namespace MinskTrans.DesctopClient
 						return stop;
 					}).ToList();
 				}
-			Debug.WriteLine("Connect Ended");
 #if BETA
-			Logger.Log("Connect Ended");
+			watch.Stop();
+			var xx = watch.ElapsedMilliseconds;
+			string message = "Connect Ended, " + "Milliseconds: " + xx.ToString();
+			Debug.WriteLine(message);
+			Logger.Log(message);
 #endif
 		}
 

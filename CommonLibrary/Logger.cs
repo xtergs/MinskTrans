@@ -10,7 +10,7 @@ using Microsoft.VisualBasic;
 namespace MinskTrans.Universal
 {
 #if BETA
-	partial class  Logger
+	public class  Logger
 	{
 		private static Logger log;
 		private StringBuilder builder = new StringBuilder();
@@ -39,7 +39,7 @@ namespace MinskTrans.Universal
 
 		public Logger WriteLineTime(string str)
 		{
-			builder.Append(DateTime.UtcNow);
+			builder.Append(DateTime.UtcNow.ToString("yyyy.MM.dd HH:mm:ss.fff"));
 			builder.Append(": ");
 			builder.Append(str);
 			builder.Append(Environment.NewLine);

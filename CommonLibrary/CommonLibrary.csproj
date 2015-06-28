@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS_PHONE_APP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS_PHONE_APP; BETA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -95,6 +95,7 @@
     <Compile Include="Comparer\RoutsComparer.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="InternetHelper.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="NewsManager.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

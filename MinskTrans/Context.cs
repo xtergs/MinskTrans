@@ -24,11 +24,11 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Universal.Annotations;
 using CommonLibrary;
+using MinskTrans.Universal;
 
 #endif
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.Universal;
 using MyLibrary;
 using Newtonsoft.Json;
 using TransportType = MinskTrans.DesctopClient.Model.TransportType;
@@ -443,46 +443,55 @@ namespace MinskTrans.DesctopClient
 			OnPropertyChanged("Groups");
 		}
 
-		
-		static protected async void Connect([NotNull] IEnumerable<Rout> routsl, [NotNull] IEnumerable<Stop> stopsl,
-			[NotNull] IEnumerable<Schedule> timesl, int variantLoad)
+
+		static protected async void Connect([NotNull] IList<Rout> routsl, [NotNull] IList<Stop> stopsl,
+			[NotNull] IList<Schedule> timesl, int variantLoad)
 		{
+			
 #if BETA
 			Logger.Log("Connect started");
+			Debug.WriteLine("Connect Started");
+#endif
 			Stopwatch watch = new Stopwatch();
 			watch.Start();
-#endif
-			Debug.WriteLine("Connect Started" + DateTime.Now);
 			
 			if (routsl == null) throw new ArgumentNullException("routsl");
 			if (stopsl == null) throw new ArgumentNullException("stopsl");
 			if (timesl == null) throw new ArgumentNullException("timesl");
-			
-			foreach (var rout in routsl)
+
+			//Parallel.ForEach(routsl, (rout) =>
+
+			//foreach (var stop in stopsl)
+			//{
+			//	stop.Routs = new List<Rout>(5);
+			//}
+
+			Parallel.ForEach(routsl, (rout) =>
+				//foreach (var rout in routsl)
+			{
+				var rout1 = rout;
+				Schedule first = timesl.Where(x =>
 				{
-					var rout1 = rout;
-					Schedule first = timesl.Where(x =>
-					{
-						if (x == null)
-							return false;
-						return x.RoutId == rout1.RoutId;
-					}).FirstOrDefault();
-					rout.Time = first;
-					if (rout.Time != null)
-						rout.Time.Rout = rout;
+					if (x == null)
+						return false;
+					return x.RoutId == rout1.RoutId;
+				}).FirstOrDefault();
+				rout.Time = first;
+				if (rout.Time != null)
+					rout.Time.Rout = rout;
 
 
-					rout.Stops = rout.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
-					{
-						if (stop.Routs == null)
-							stop.Routs = new List<Rout>();
-						stop.Routs.Add(rout);
-						return stop;
-					}).ToList();
-				}
-#if BETA
+				rout1.Stops = rout1.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
+				{
+					if (stop.Routs == null)
+						stop.Routs = new List<Rout>();
+					stop.Routs.Add(rout1);
+					return stop;
+				}).ToList();
+			});
 			watch.Stop();
 			var xx = watch.ElapsedMilliseconds;
+#if BETA
 			string message = "Connect Ended, " + "Milliseconds: " + xx.ToString();
 			Debug.WriteLine(message);
 			Logger.Log(message);

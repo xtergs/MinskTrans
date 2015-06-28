@@ -23,6 +23,7 @@ using MinskTrans.Universal.Annotations;
 
 	class ApplicationSettingsHelper
 	{
+#if WINDOWS_PHONE_APP
 
 		public ApplicationSettingsHelper([CallerMemberName] string member = null)
 		{
@@ -84,6 +85,7 @@ using MinskTrans.Universal.Annotations;
 			else
 				ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
 		}
+#endif
 	}
 
 	public class SettingsModelView : ISettingsModelView
@@ -125,6 +127,7 @@ using MinskTrans.Universal.Annotations;
 		}
 #endif
 
+#if WINDOWS_PHONE_APP
 		public TypeOfUpdate LastUpdatedDataInBackground
 		{
 			get
@@ -143,6 +146,7 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 		}
+#endif
 
 		public DateTime LastUpdateDBDatetime
 		{

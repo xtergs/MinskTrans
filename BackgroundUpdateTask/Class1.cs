@@ -114,8 +114,8 @@ namespace BackgroundUpdateTask
 			        {
 						if (key.RepairedLIne != default(DateTime))
 						{
-							double totalminutes = (nowDateTime.TimeOfDay - key.RepairedLIne.TimeOfDay).TotalMinutes;
-							if ( totalminutes <= 30)
+							double totalminutes = (nowDateTime.ToLocalTime() - key.RepairedLIneLocal).TotalMinutes;
+							if ( totalminutes <= MaxMinsAgo)
 								return true;
 						}
 				        return (key.Collected > manager.LastUpdateHotDataDateTime) &&

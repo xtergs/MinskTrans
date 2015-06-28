@@ -466,8 +466,8 @@ namespace MinskTrans.DesctopClient
 			//	stop.Routs = new List<Rout>(5);
 			//}
 
-			Parallel.ForEach(routsl, (rout) =>
-				//foreach (var rout in routsl)
+			//Parallel.ForEach(routsl, (rout) =>
+				foreach (var rout in routsl)
 			{
 				var rout1 = rout;
 				Schedule first = timesl.Where(x =>
@@ -488,7 +488,7 @@ namespace MinskTrans.DesctopClient
 					stop.Routs.Add(rout1);
 					return stop;
 				}).ToList();
-			});
+			}
 			watch.Stop();
 			var xx = watch.ElapsedMilliseconds;
 #if BETA

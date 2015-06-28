@@ -462,7 +462,7 @@ namespace CommonLibrary
 			Debug.WriteLine("UniversalContext LoadSourceData ended");
 			if (type.HasFlag(LoadType.LoadDB))
 			{
-				await Task.Delay(new TimeSpan(0, 0, 0, 10));
+				//await Task.Delay(new TimeSpan(0, 0, 0, 10));
 				Connect(tpRouts, tpStops, tpTimes, VariantLoad);
 
 				//lock (o)

@@ -17,8 +17,8 @@ namespace BackgroundUpdateTask
 {
     public sealed class UpdateBackgroundTask : IBackgroundTask
     {
+
 		private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
-		//private string urlUpdate = @"https://onedrive.live.com/redir?resid=27EDF63E3C801B19!11529&authkey=!ADs9KNHO9TDPE3Q&ithint=file%2ctxt";
 		private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
 		private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
 
@@ -53,6 +53,14 @@ namespace BackgroundUpdateTask
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
+#if DEBUG
+	        urlUpdateDates =
+		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111667&authkey=%21AKygfncKSi8je9M&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
+	        urlUpdateNews =
+		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111668&authkey=%21ANMtQUGlZfobwFk&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D3";
+	        urlUpdateHotNews =
+		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111666&authkey=%21AEsBwSeL-AGmwg0&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
+#endif
 			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 			SettingsModelView settings = new SettingsModelView();
@@ -86,40 +94,43 @@ namespace BackgroundUpdateTask
 	        {
 		        time = DateTime.Parse(timeShtaps[0]);
 		        NewsManager manager = new NewsManager();
-				if (time > manager.LastUpdateDataDateTime)
+				if (time > manager.LastUpdateMainNewsDateTime)
 		        {
 					await InternetHelper.Download(urlUpdateNews, manager.fileNameNews, ApplicationData.Current.LocalFolder);
-			        manager.LastUpdateDataDateTime = time;
+			        DateTime oldTime = manager.LastUpdateMainNewsDateTime;
+			        manager.LastUpdateMainNewsDateTime = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					await manager.Load(NewsManager.TypeLoad.LoadNews);
-			        DateTime nowTime = DateTime.UtcNow;
-					foreach (var source in manager.NewNews.Where(key => key.Posted > manager.LastUpdateDataDateTime && ((nowTime - key.Posted).TotalDays < MaxDaysAgo)))
+			        DateTime nowTimeUtc = DateTime.UtcNow;
+					foreach (var source in manager.NewNews.Where(key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)))
 			        {
 				        ShowNotification(source.Message);
 			        }
 		        }
 				time = DateTime.Parse(timeShtaps[1]);
-		        if (time > manager.LastUpdateHotDataDateTime)
+		        if (time > manager.LastUpdateHotNewsDateTime)
 		        {
 					await InternetHelper.Download(urlUpdateHotNews, manager.fileNameHotNews, ApplicationData.Current.LocalFolder);
-			        manager.LastUpdateHotDataDateTime = time;
+			        DateTime oldTime = manager.LastUpdateHotNewsDateTime;
+			        manager.LastUpdateHotNewsDateTime = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
 					//	resultStr);
 			        await manager.Load(NewsManager.TypeLoad.LoadHotNews);
-			        DateTime nowDateTime = DateTime.UtcNow;
+			        DateTime nowDateTimeUtc = DateTime.UtcNow;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					//int todayDay = nowDateTime.Day;
 					//int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
 			        foreach (var source in manager.AllHotNews.Where(key =>
 			        {
-						if (key.RepairedLIne != default(DateTime))
+						if (key.RepairedLineUtc != default(DateTime))
 						{
-							double totalminutes = (nowDateTime.ToLocalTime() - key.RepairedLIneLocal).TotalMinutes;
+							double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLIneLocal).TotalMinutes;
 							if ( totalminutes <= MaxMinsAgo)
 								return true;
+							return false;
 						}
-				        return (key.Collected > manager.LastUpdateHotDataDateTime) &&
-				               ((nowDateTime- key.Collected).TotalMinutes < MaxMinsAgo);
+						return (key.CollectedUtc > oldTime) &&
+				               ((nowDateTimeUtc- key.CollectedUtc).TotalDays < 1);
 			        }))
 			        {
 				        ShowNotification(source.Message);

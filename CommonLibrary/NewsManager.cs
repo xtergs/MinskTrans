@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -10,10 +11,46 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
 using MyLibrary;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CommonLibrary
 {
-	
+	public class ShouldSerializeContractResolver : DefaultContractResolver
+	{
+		public new static readonly ShouldSerializeContractResolver Instance = new ShouldSerializeContractResolver();
+
+		protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+		{
+			JsonProperty property = base.CreateProperty(member, memberSerialization);
+
+			if (property.DeclaringType == typeof(NewsEntry) && property.PropertyName == "Message")
+			{
+				property.ShouldSerialize = (x) => true;
+				property.PropertyName = "Message";
+			}
+			else if (property.DeclaringType == typeof(NewsEntry) && property.PropertyName == "PostedUtc")
+			{
+				property.ShouldSerialize = (x) => true;
+				property.PropertyName = "Posted";
+			}
+			else if (property.DeclaringType == typeof(NewsEntry) && property.PropertyName == "CollectedUtc")
+			{
+				property.ShouldSerialize = (x) => true;
+				property.PropertyName = "Collected";
+			}
+			else if (property.DeclaringType == typeof(NewsEntry) && property.PropertyName == "RepairedLineUtc")
+			{
+				property.ShouldSerialize = (x) => true;
+				property.PropertyName = "RepairedLIne";
+			}
+			else
+			{
+				property.Ignored = true;
+				property.ShouldSerialize = (x) => false;
+			}
+			return property;
+		}
+	}
 	public class NewsManager :INotifyPropertyChanged
 	{
 		[Flags]
@@ -45,7 +82,7 @@ namespace CommonLibrary
 
 
 		private ApplicationSettingsHelper lastUpdateDataDateTimeBack;
-		public DateTime LastUpdateDataDateTime
+		public DateTime LastUpdateMainNewsDateTime
 		{
 #if WINDOWS_PHONE_APP
 			get
@@ -69,7 +106,7 @@ namespace CommonLibrary
 		}
 
 		private ApplicationSettingsHelper lastUpdateHotDataDateTimeBack;
-		public DateTime LastUpdateHotDataDateTime
+		public DateTime LastUpdateHotNewsDateTime
 		{
 #if WINDOWS_PHONE_APP
 			get
@@ -96,7 +133,7 @@ namespace CommonLibrary
 		{
 			get
 			{
-				return allNews.OrderByDescending(key => key.Posted).ToList();
+				return allNews.OrderByDescending(key => key.PostedUtc).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
@@ -105,7 +142,7 @@ namespace CommonLibrary
 		{
 			get
 			{
-				return allHotNewsDictionary.OrderByDescending(key => key.Posted).ToList();
+				return allHotNewsDictionary.OrderByDescending(key => key.PostedUtc).ToList();
 			}
 			set { OnPropertyChanged(); }
 		}
@@ -113,7 +150,7 @@ namespace CommonLibrary
 		public async Task LoadNews(string jsonData)
 		{
 			allNews.Clear();
-			allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(jsonData));
+			allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(jsonData, new JsonSerializerSettings(){ContractResolver = new ShouldSerializeContractResolver()}));
 			NewNews = null;
 		}
 
@@ -145,7 +182,7 @@ namespace CommonLibrary
 				{
 					var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
 					var allLines = await FileIO.ReadTextAsync(file);
-					allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines));
+					allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings(){ContractResolver = new ShouldSerializeContractResolver()}));
 				}
 				catch (FileNotFoundException e)
 				{

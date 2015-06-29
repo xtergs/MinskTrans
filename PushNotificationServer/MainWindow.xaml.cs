@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -46,6 +47,7 @@ namespace PushNotificationServer
 					Progress.Visibility = Visibility.Visible;
 					Progress.IsIndeterminate = true;
 				});
+				timerNewsAutoUpdate.Change(uint.MaxValue, uint.MaxValue);
 			};
 
 			ServerEngine.Engine.StopChecknews += (sender, args) =>
@@ -58,6 +60,8 @@ namespace PushNotificationServer
 					
 					
 				});
+				Time = new TimeSpan();
+				timerNewsAutoUpdate.Change(new TimeSpan(), addingTime);
 			};
 
 			SetAutoUpdateTimer(NewsAutoUpdate);
@@ -122,20 +126,25 @@ namespace PushNotificationServer
 			}
 		}
 
+		public TimeSpan Time
+		{
+			get { return time; }
+			private set
+			{
+				time = value;
+				OnPropertyChanged();
+			}
+		}
+
+		TimeSpan time = new TimeSpan();
+		private readonly static TimeSpan addingTime = new TimeSpan(0, 0, 0, 1);
+
 		public void SetAutoUpdateTimer(bool turnOn)
 		{
-			//if (turnOn)
-			//{
-			//	if (timerNewsAutoUpdate == null)
-			//		timerNewsAutoUpdate = new Timer(UpdateNews, UpdateNewsButton, new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
-			//	else
-			//		timerNewsAutoUpdate.Change(new TimeSpan(0, 0, 0, 30), new TimeSpan(0, 1, 0, 0));
-			//}
-			//else
-			//{
-			//	timerNewsAutoUpdate.Dispose();
-			//	timerNewsAutoUpdate = null;
-			//}
+			timerNewsAutoUpdate = new Timer((key) =>
+			{
+				Time = time.Add(addingTime);
+			}, null, new TimeSpan(), addingTime);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

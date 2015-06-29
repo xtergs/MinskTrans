@@ -111,7 +111,7 @@ namespace MinskTrans.Universal.ModelView
 #if DEBUG
 					var xxx = NewsManager.AllHotNews.Concat(newsManager.NewNews).ToList();
 #endif
-					return NewsManager.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.Posted).ThenByDescending(key=> key.RepairedLIne).ToList();
+					return NewsManager.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.PostedUtc).ThenByDescending(key=> key.RepairedLineUtc).ToList();
 				}
 				return null;
 			}

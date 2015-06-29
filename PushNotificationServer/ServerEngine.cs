@@ -6,10 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Build.Utilities;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
 using MyLibrary;
 using PushNotificationServer.Properties;
+using Task = System.Threading.Tasks.Task;
 
 namespace PushNotificationServer
 {
@@ -42,6 +44,9 @@ namespace PushNotificationServer
 			Context1.LastUpdateDataDateTime = Settings.Default.DBUpdateTime;
 			OndeDriveController.Inicialize();
 			this.StopChecknews += (sender, args) => UploadAllToOneDrive();
+#if DEBUG
+			fileNameLastNews = "LastNewsDebug.txt";
+#endif
 		}
 
 		void UploadAllToOneDrive()

@@ -22,7 +22,10 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+
+            </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -32,6 +35,7 @@
             <CheckBox x:Name="AutoUpdateNewsCheckBox" Grid.Column="1" Content="AutoUpdateNews" IsChecked="{Binding Engine.NewsAutoUpdate, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
             <TextBlock Text="UpdateInterval"/>
                 <TextBox HorizontalAlignment="Stretch" InputScope="Number" Text="{Binding Engine.DbUpdateMins, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock x:Name="Counter" Text="{Binding Time}"></TextBlock>
         </StackPanel>
         <TextBlock Grid.Row="0" Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
 
@@ -56,7 +60,7 @@
                         <DockPanel>
                                 <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding CollectedLocal}"/>
                                 <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding}"/>
-                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding RepairedLIneLocal}"/>
+                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding RepairedLineLocal}"/>
                             </DockPanel>
                     </ItemContainerTemplate>
 
@@ -64,7 +68,8 @@
             </ListBox>
         </Grid>
         <Button x:Name="UpdateNewsButton" Grid.Row="3" Content="CheckNews" Click="CheckNewsButtonClick"/>
-        <ProgressBar x:Name="Progress" Grid.Row="4" Visibility="Collapsed"></ProgressBar>
+        
+            <ProgressBar x:Name="Progress" Grid.Row="4" Visibility="Collapsed"></ProgressBar>
             <WebBrowser Grid.RowSpan="5" x:Name="Browser" Grid.Column="1" HorizontalAlignment="Stretch"  Grid.Row="2" VerticalAlignment="Stretch" Width="Auto"/>
 
 

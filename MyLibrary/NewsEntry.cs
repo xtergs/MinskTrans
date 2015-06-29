@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace MyLibrary
@@ -8,14 +9,14 @@ namespace MyLibrary
 	{
 		public NewsEntry(DateTime dateTimeNews, string decodedString) : this()
 		{
-			Posted = dateTimeNews;
-			Message = decodedString;
-			Collected = DateTime.UtcNow;
+			PostedUtc = dateTimeNews;
+			Message = decodedString.Replace("  ", " ").Trim();
+			CollectedUtc = DateTime.UtcNow;
 		}
 
 		public NewsEntry(DateTime dateTimeNews, string decodedString, DateTime possibleDateTime) : this(dateTimeNews, decodedString)
 		{
-			RepairedLIne = possibleDateTime;
+			RepairedLineUtc = possibleDateTime;
 		}
 
 		#region Overrides of ValueType
@@ -29,7 +30,7 @@ namespace MyLibrary
 		public override string ToString()
 		{
 			return
-				(new StringBuilder()).AppendLine(Posted.ToLocalTime().ToString())
+				(new StringBuilder()).AppendLine(PostedUtc.ToLocalTime().ToString())
 					.AppendLine(Message)
 					.ToString();
 		}
@@ -38,33 +39,38 @@ namespace MyLibrary
 
 		public string Message { get; set; }
 
-		public DateTime Posted { get; set; }
+		public DateTime PostedUtc { get; set; }
 
-		public DateTime POstedLocal
+		public DateTime PostedLocal
 		{
 			get
 			{
-				return Posted.ToLocalTime();
+				return PostedUtc.ToLocalTime();
 			}
 		}
 
-		public DateTime Collected { get; set; }
+		public DateTime CollectedUtc { get; set; }
 
 		public DateTime CollectedLocal
 		{
 			get
 			{
-				return Collected.ToLocalTime();
+				return CollectedUtc.ToLocalTime();
 			}
 		}
 
-		public DateTime RepairedLIne { get; set; }
+		public bool IsEmpty
+		{
+			get { return CollectedUtc == default(DateTime); }
+		}
+
+		public DateTime RepairedLineUtc { get; set; }
 
 		public DateTime RepairedLIneLocal
 		{
 			get
 			{
-				return RepairedLIne.ToLocalTime();
+				return RepairedLineUtc.ToLocalTime();
 			}
 		}
 	}
@@ -82,7 +88,7 @@ namespace MyLibrary
 		/// <param name="x">The first object of type <paramref name="T"/> to compare.</param><param name="y">The second object of type <paramref name="T"/> to compare.</param>
 		public bool Equals(NewsEntry x, NewsEntry y)
 		{
-			if (x.Posted == y.Posted && x.RepairedLIne == y.RepairedLIne && x.Message == y.Message)
+			if (x.PostedUtc == y.PostedUtc && x.RepairedLineUtc == y.RepairedLineUtc && x.Message == y.Message)
 				return true;
 			return false;
 		}

@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 
 using MapControl;
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
 using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Properties;
 
 #else
+using GalaSoft.MvvmLight.Command;
 using Windows.Devices.Geolocation;
 using Windows.System.Threading;
 using Windows.Storage;
@@ -49,7 +50,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private bool trol;
 		private string destinationStop;
 		//private LocationXX lastLocation;
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 		private Geolocator geolocator;
 #endif
 
@@ -69,7 +70,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				switch (args.PropertyName)
 				{
 					case "TimeInPast":Refresh();break;
-					case "UseGPS":SetGPS();break;
+					case "UseGPS":SetGPS(); OnStatusGPSChanged(); break;
 					default: break;
 				}
 			};
@@ -77,71 +78,87 @@ namespace MinskTrans.DesctopClient.Modelview
 				SetGPS();
 		}
 
-		void SetGPS()
+		async void SetGPS()
 		{
-#if WINDOWS_PHONE_APP && WINDOWS_AP
+#if WINDOWS_PHONE_APP && WINDOWS_AP || WINDOWS_UAP
+				var geolocationStatus = await Geolocator.RequestAccessAsync();
+				if (geolocationStatus == GeolocationAccessStatus.Denied)
+					return;
+			try
+			{
+				if (geolocator == null)
+				{
+					geolocator = new Geolocator();
+					geolocator.StatusChanged += GeolocatorOnStatusChanged;
+				}
+			}
+			catch (Exception ex)
+			{
+				if (unchecked((uint)ex.HResult == 0x80004004))
+				{
+					// the application does not have the right capability or the location master switch is off
+					//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+					//box.ShowAsync();
+				}
+				//else
+				{
+					// something else happened acquring the location
+				}
+			}
 			if (Settings.UseGPS)
 			{
-				try
-				{
-					if (geolocator == null)
-						geolocator = new Geolocator();
 					geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
 
 					geolocator.ReportInterval = Settings.GPSInterval;
-					geolocator.StatusChanged += GeolocatorOnStatusChanged;
 					geolocator.PositionChanged += OnGeolocatorOnPositionChanged;
-				}
-				catch (Exception ex)
-				{
-					if (unchecked ((uint) ex.HResult == 0x80004004))
-					{
-						// the application does not have the right capability or the location master switch is off
-						//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
-						//box.ShowAsync();
-					}
-					//else
-					{
-						// something else happened acquring the location
-					}
-				}
-
-
+				
 			}
 			else
 			{
+				if (geolocator == null)
+					return;
 				geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
-				geolocator.StatusChanged -= GeolocatorOnStatusChanged;
-				
+				//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+
 				geolocator = null;
 			}
 #endif
 		}
 
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 		private void OnGeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
 		{
 			LocationXX.Get().Latitude = args.Position.Coordinate.Latitude;
 			LocationXX.Get().Longitude = args.Position.Coordinate.Longitude;
-			
-			OnPropertyChanged("StopNameFilter");
-			OnPropertyChanged("FilteredStops");
+
+			OnStatusGPSChanged();
 		}
 
 		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
 		{
 			if (args.Status == PositionStatus.Ready)
 			{
-
+				OnStatusGPSChanged();
 			}
 			else if (args.Status == PositionStatus.Disabled ||
 					 args.Status == PositionStatus.NotAvailable)
 			{
 				LocationXX.Get().Latitude = defaultLocation.Latitude;
 				LocationXX.Get().Longitude = defaultLocation.Longitude;
+
+				OnStatusGPSChanged();
 			}
 		}
 #endif
+
+		public event EventHandler<EventArgs> StatusGPSChanged;
+
+		public void OnStatusGPSChanged()
+		{
+			var handler = StatusGPSChanged;
+			if (handler != null)
+				handler(this, new EventArgs());
+		}
 
 		static readonly Location defaultLocation = new Location(0,0);
 

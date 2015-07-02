@@ -4,10 +4,10 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 using System.Collections.Generic;
 using System.Linq;
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 using GalaSoft.MvvmLight.Command;
 #else
-using GalaSoft.MvvmLight.CommandWpf;
+	using GalaSoft.MvvmLight.CommandWpf;
 #endif
 using MinskTrans.DesctopClient.Model;
 	public class GroupEditModelView : StopModelViewBase

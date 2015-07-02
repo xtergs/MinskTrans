@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace MinskTrans.DesctopClient.Model
 		
 		protected List<Rout> routs;
 
+		[JsonConstructor]
 		private Stop()
 		{ }
 		public Stop(string str, Stop stop)

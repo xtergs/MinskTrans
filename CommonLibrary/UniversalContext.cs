@@ -16,7 +16,7 @@ using MinskTrans.Universal;
 using MyLibrary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
-
+using MinskTrans.DesctopClient.Modelview;
 
 namespace CommonLibrary
 {
@@ -60,29 +60,23 @@ namespace CommonLibrary
 			return await FileExistss(ApplicationData.Current.RoamingFolder, file);
 		}
 
-		private DateTime lastUpdateDataDateTimeBack;
-		public override DateTime LastUpdateDataDateTime
+		
+		ApplicationSettingsHelper lastUpdateDataDateTime;
+        public override DateTime LastUpdateDataDateTime
 		{
 #if WINDOWS_PHONE_APP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
-					LastUpdateDataDateTime = new DateTime();
-				if (lastUpdateDataDateTimeBack == default(DateTime))
-					lastUpdateDataDateTimeBack =
-						DateTime.Parse(ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"].ToString());
-				return lastUpdateDataDateTimeBack;
-			}
+				if (lastUpdateDataDateTime == null)
+					lastUpdateDataDateTime = new ApplicationSettingsHelper();
+				return lastUpdateDataDateTime.DateTimeSettings;
+            }
 
 			set
 			{
-				if (lastUpdateDataDateTimeBack == value)
-					return;
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LastUpdateDataDateTime"))
-					ApplicationData.Current.LocalSettings.Values.Add("LastUpdateDataDateTime", value.ToString());
-				else
-					ApplicationData.Current.LocalSettings.Values["LastUpdateDataDateTime"] = value.ToString();
-				lastUpdateDataDateTimeBack = value;
+				if (lastUpdateDataDateTime == null)
+					lastUpdateDataDateTime = new ApplicationSettingsHelper();
+				lastUpdateDataDateTime.DateTimeSettings = value;
 				OnPropertyChanged();
 			}
 #else
@@ -281,7 +275,7 @@ namespace CommonLibrary
 				})
 			});
 			await FileIO.WriteTextAsync(stream, favouriteString);
-			stream.MoveAsync(storage, NameFileFavourite, NameCollisionOption.ReplaceExisting);
+			await stream.MoveAsync(storage, NameFileFavourite, NameCollisionOption.ReplaceExisting);
 		}
 
 		async Task SaveStatistics(JsonSerializerSettings jsonSettings, IStorageFolder storage)
@@ -315,22 +309,22 @@ namespace CommonLibrary
 						string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
 						var routsFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
 						await FileIO.WriteTextAsync(routsFile, routs);
-						var x = routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
+						await routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
 
 					}),
 						Task.Run(async () =>
 						{
-							string routs = JsonConvert.SerializeObject(ActualStops, jsonSettings);
+							string stopsString = JsonConvert.SerializeObject(ActualStops, jsonSettings);
 							var stopsFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
-							await FileIO.WriteTextAsync(stopsFile, routs);
-							var x = stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
+							await FileIO.WriteTextAsync(stopsFile, stopsString);
+							await stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
 
 						}), Task.Run(async () =>
 						{
 							string routs = JsonConvert.SerializeObject(Times, jsonSettings);
 							var timesFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
 							await FileIO.WriteTextAsync(timesFile, routs);
-							timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
+							await timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
 
 						}));
 			}
@@ -401,8 +395,8 @@ namespace CommonLibrary
 						{
 							try
 							{
-								var stopsFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileStops);
-								var stops = await FileIO.ReadTextAsync(stopsFile);
+								StorageFile stopsFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileStops);
+								string stops = await FileIO.ReadTextAsync(stopsFile);
 								tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
 							}
 							catch (FileNotFoundException e)

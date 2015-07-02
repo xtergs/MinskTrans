@@ -22,30 +22,6 @@ namespace BackgroundUpdateTask
 		private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
 		private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
 
-		static string SettingsToStr([CallerMemberName] string propertyName = null)
-		{
-			return propertyName;
-		}
-
-	    private DateTime LastUpdateDBDatetime
-	    {
-
-		    get
-		    {
-			    if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-				    LastUpdateDBDatetime = new DateTime();
-			    return (DateTime) ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
-		    }
-
-		    set
-		    {
-			    if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-				    ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-			    else
-				    ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value.ToString();
-		    }
-	    }
-
 		int MaxDaysAgo { get; set; }
 		int MaxMinsAgo { get; set; }
 

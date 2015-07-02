@@ -5,10 +5,10 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-#if !WINDOWS_PHONE_APP
-using MinskTrans.DesctopClient.Annotations;
+#if !WINDOWS_PHONE_APP && !WINDOWS_UAP
+	using MinskTrans.DesctopClient.Annotations;
 #else
-using MinskTrans.Universal.Annotations;
+	using MinskTrans.Universal.Annotations;
 
 #endif
 	public class BaseModelView : INotifyPropertyChanged
@@ -54,7 +54,10 @@ using MinskTrans.Universal.Annotations;
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+			if (handler == null)
+				return;
+			if (handler != null)
+				handler(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 using System.Windows.Controls;
 #else
 using Windows.UI.Xaml;
@@ -19,7 +19,7 @@ namespace MinskTrans.DesctopClient
 		{
 			if (element == null) return;
 
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 			Panel parent = element.Parent as Panel;
 			if (parent == null) return;
 

@@ -19,7 +19,7 @@ using MapControl;
 
 
 
-#if (WINDOWS_PHONE_APP )
+#if (WINDOWS_PHONE_APP || WINDOWS_UAP)
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
 using Windows.UI.Popups;
@@ -116,7 +116,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (registr)
 			{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 				map.DoubleTapped += MapOnDoubleTapped;
 				map.PointerWheelChanged += MapOnPointerWheelChanged;
 #endif
@@ -125,14 +125,14 @@ namespace MinskTrans.DesctopClient.Modelview
 			else
 			{
 				StopGPS();
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 
 				map.DoubleTapped -= MapOnDoubleTapped;
 				map.PointerWheelChanged -= MapOnPointerWheelChanged;
 #endif
 			}
 		}
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 
 		private void MapOnPointerWheelChanged(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
 		{
@@ -166,17 +166,22 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		private void SetGPS()
+		private async void SetGPS()
 		{
-			if (settings.UseGPS)
-			{
-				StartGPS();
+#if WINDOWS_UAP
+			var statusAccess = await Geolocator.RequestAccessAsync();
+			if (statusAccess == GeolocationAccessStatus.Denied)
+				return;
+#endif
+				if (settings.UseGPS)
+				{
+					StartGPS();
 
-			}
-			else
-			{
-				StopGPS();
-			}
+				}
+				else
+				{
+					StopGPS();
+				}
 			ShowICommand.RaiseCanExecuteChanged();
 		}
 
@@ -185,11 +190,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			try
 			{
 				if (geolocator == null)
+				{
 					geolocator = new Geolocator();
+				}
 				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
 
 				geolocator.ReportInterval = Settings.GPSInterval;
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 				geolocator.StatusChanged += GeolocatorOnStatusChanged;
 				geolocator.PositionChanged += GeolocatorOnPositionChanged;
 #endif
@@ -211,21 +218,23 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public void StopGPS()
 		{
-#if WINDOWS_PHONE_APP
-			geolocator.PositionChanged -= GeolocatorOnPositionChanged;
-			geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			Ipushpin = null;
 			ShowICommand.RaiseCanExecuteChanged();
+			if (geolocator == null)
+				return;
+			geolocator.PositionChanged -= GeolocatorOnPositionChanged;
+			geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 			geolocator = null;
 #endif
 		}
 
-#if WINDOWS_PHONE_APP
-		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
+		private async void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
 		{
 			if (args.Status == PositionStatus.Ready)
 			{
-				map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 				{
 					ipushpin = new Pushpin();
 					ipushpin.Content = "Я";
@@ -233,17 +242,19 @@ namespace MinskTrans.DesctopClient.Modelview
 				ShowICommand.RaiseCanExecuteChanged();
 			}
 			else if (args.Status == PositionStatus.Disabled ||
-			         args.Status == PositionStatus.NotAvailable)
+					 args.Status == PositionStatus.NotAvailable)
 			{
 				Ipushpin = null;
 				ShowICommand.RaiseCanExecuteChanged();
 			}
 		}
 
-		private void GeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		private async void GeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
 		{
-			map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+			await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 			{
+				if (Ipushpin == null)
+					return;
 				MapPanel.SetLocation(Ipushpin,
 					new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude));
 				RefreshPushPinsAsync();
@@ -342,7 +353,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				
 			};
 			//var pushpin = new Pushpin { Tag = st, Content = st.Name };
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			if (pushBuilder != null)
 			{
 				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
@@ -411,7 +422,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					ShowOnMap();
 					return;
 				}
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
 				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
 #else
@@ -512,10 +523,10 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		void ShowPushpin(Pushpin push)
+		async void ShowPushpin(Pushpin push)
 		{
-#if WINDOWS_PHONE_APP
-			map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
+			await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 			{
 				map.TargetCenter = MapPanel.GetLocation(push);
 			});
@@ -638,13 +649,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		#region events
+#region events
 
 		public event Context.EmptyDelegate MapInicialized;
 		public event Context.EmptyDelegate StartStopSeted;
 		public event Context.EmptyDelegate EndStopSeted;
 
-		#endregion
+#endregion
 
 		protected virtual void OnMapInicialized()
 		{

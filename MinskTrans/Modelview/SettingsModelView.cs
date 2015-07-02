@@ -21,7 +21,7 @@ using MinskTrans.Universal.Annotations;
 
 #endif
 
-	class ApplicationSettingsHelper
+	public class ApplicationSettingsHelper
 	{
 #if WINDOWS_PHONE_APP
 
@@ -148,22 +148,22 @@ using MinskTrans.Universal.Annotations;
 		}
 #endif
 
+		ApplicationSettingsHelper lastUpdateDBDateTimeback;
 		public DateTime LastUpdateDBDatetime
 		{
 #if WINDOWS_PHONE_APP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					LastUpdateDBDatetime = new DateTime();
-				return (DateTime)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
-			}
+				if (lastUpdateDBDateTimeback == null)
+					lastUpdateDBDateTimeback = new ApplicationSettingsHelper();
+				return lastUpdateDBDateTimeback.DateTimeSettings;
+            }
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				if (lastUpdateDBDateTimeback == null)
+					lastUpdateDBDateTimeback = new ApplicationSettingsHelper();
+				lastUpdateDBDateTimeback.DateTimeSettings = value;
 				OnPropertyChanged();
 			}
 #else

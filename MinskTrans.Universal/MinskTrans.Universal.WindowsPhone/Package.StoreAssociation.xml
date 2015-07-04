@@ -194,28 +194,26 @@
     <MainPackageIdentityName>16444ArtemShaban.580353B0D12F7</MainPackageIdentityName>
     <MainPackageIdentityName>16444ArtemShaban.beta</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=b6753e9e-e571-4c10-bb1e-4b1d05730f75">
-    <BundleInfo>
-      <PackageInfo>
-        <OsMinVersion>6.3.0.0</OsMinVersion>
-        <PackageArchitecture></PackageArchitecture>
-        <PackageMaxArchitectureVersion>2.1.1.1</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>6.3.0.0</OsMinVersion>
-        <PackageArchitecture></PackageArchitecture>
-        <PackageMaxArchitectureVersion>2.1.1.1</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>6.3.0.0</OsMinVersion>
-        <PackageArchitecture></PackageArchitecture>
-        <PackageMaxArchitectureVersion>2.1.1.1</PackageMaxArchitectureVersion>
-      </PackageInfo>
-      <PackageInfo>
-        <OsMinVersion>6.3.0.0</OsMinVersion>
-        <PackageArchitecture>neutral</PackageArchitecture>
-        <PackageMaxArchitectureVersion>2.1.1.1</PackageMaxArchitectureVersion>
-      </PackageInfo>
-    </BundleInfo>
+  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH0C910">
+    <PackageInfo>
+      <OsMinVersion>6.3.0.0</OsMinVersion>
+      <PackageArchitecture>Unknown</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.629.1940.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.0.0</OsMinVersion>
+      <PackageArchitecture>Neutral</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.629.1940.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.0.0</OsMinVersion>
+      <PackageArchitecture>Unknown</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.629.1940.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.0.0</OsMinVersion>
+      <PackageArchitecture>Unknown</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.629.1940.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
   </PackageInfoList>
 </StoreAssociation>

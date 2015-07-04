@@ -93,7 +93,7 @@
       <Link>ShowArgs.cs</Link>
     </Compile>
     <Compile Include="Comparer\RoutsComparer.cs" />
-    <Compile Include="FileHelper.cs" />
+    <Compile Include="IO\FileHelper.cs" />
     <Compile Include="InternetHelper.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="NewsManager.cs" />

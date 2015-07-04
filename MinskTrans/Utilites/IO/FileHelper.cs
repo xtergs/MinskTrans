@@ -1,81 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Windows.Foundation;
+using MyLibrary;
 
-//#if WINDOWS_PHONE_APP || WINDOWS_UAPWINDOWS_UAP
-using Windows.Storage;
 //#endif
 
-namespace MinskTrans.Utilites.IO
+namespace MinskTrans.DesctopClient.Utilites.IO
 {
-	public sealed class FileHelper
+	public sealed class FileHelper: FileHelperBase
 	{
-		public static string TempExt
-		{
-			get { return ".temp"; }
-		}
-
-		public static string OldExt { get { return ".old"; } }
-		public static string NewExt { get { return ".new"; } }
-
+		
 //#if WINDOWS_PHONE_APP || WINDOWS_UAP
-		public static IAsyncOperation<bool> FileExistOperationAsync(IStorageFolder folder, string file)
-		{
-			return FileExistAsync(folder, file).AsAsyncOperation();
-		}
+		
+		
 
-		internal async static Task<bool> FileExistAsync(IStorageFolder folder, string file)
-		{
-			try
-			{
-				await folder.GetFileAsync(file);
-				return true;
-			}
-			catch (FileNotFoundException)
-			{
-				return false;
-			}
-		}
-
-		public static IAsyncOperation<bool> FileExistLocalOperationAsync(string file)
-		{
-			return FileExistLocalAsync(file).AsAsyncOperation();
-		}
-
-		internal async static Task<bool> FileExistLocalAsync(string file)
-		{
-			return await FileExistAsync(ApplicationData.Current.LocalFolder, file);
-		}
-
-		public static IAsyncAction SafeMoveActionAsync(IStorageFolder folder, string from, string to)
-		{
-			return SafeMoveAsync(folder, @from, to).AsAsyncAction();
-		}
-
-		internal static async Task SafeMoveAsync(IStorageFolder folder, string from, string to)
-		{
-			try
-			{
-				var file = await folder.GetFileAsync(to);
-				file.RenameAsync(to + OldExt, NameCollisionOption.ReplaceExisting);
-			}
-			catch (FileNotFoundException)
-			{
-				
-			}
-			try
-			{
-				await (await folder.GetFileAsync(from)).RenameAsync(to, NameCollisionOption.ReplaceExisting);
-			}
-			catch (FileNotFoundException)
-			{
-				Debug.WriteLine("SafeMoveSync: moving file " + from + " not found");
-			}
-		}
-//#else
-//		public static bool FileExist(string file)
+	
+		//		public static bool FileExist(string file)
 //		{
 //			return File.Exists(file);
 //		}
@@ -99,5 +41,77 @@ namespace MinskTrans.Utilites.IO
 //			await Task.Run(()=>SafeMove(from, to));
 //		}
 //#endif
+
+		private Dictionary<TypeFolder, string> Folders = new Dictionary<TypeFolder, string>()
+		{
+			{TypeFolder.Local, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)},
+			{TypeFolder.Roaming, Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)},
+			{TypeFolder.Temp, Environment.GetFolderPath(Environment.SpecialFolder.InternetCache)}
+		};
+
+		#region Overrides of FileHelperBase
+
+		public override async Task<bool> FileExistAsync(TypeFolder folder, string file)
+		{
+			return await Task.Run(() => { return File.Exists(Path.Combine(Folders[folder], file)); });
+		}
+
+		#endregion
+
+		#region Overrides of FileHelperBase
+
+		public override async Task SafeMoveAsync(TypeFolder folder, string from, string to)
+		{
+				string file = Path.Combine(Folders[folder], to);
+					string toT = Path.Combine(Folders[folder], to + OldExt);
+			try
+			{
+				if (File.Exists(file))
+				{
+					File.Delete(toT);
+					File.Move(file, toT);
+				}
+			}
+			catch (FileNotFoundException)
+			{
+				throw;
+			}
+			try
+			{
+				File.Move(Path.Combine(Folders[folder], from), file);
+			}
+			catch (FileNotFoundException)
+			{
+				Debug.WriteLine("SafeMoveSync: moving file " + from + " not found");
+				throw;
+			}
+		}
+
+		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file)
+		{
+			return File.ReadAllText(Path.Combine(Folders[folder], file));
+		}
+
+		#endregion
+
+		
+
+		#region Overrides of FileHelperBase
+
+		public override async Task WriteTextAsync(TypeFolder folder, string file, string text)
+		{
+			File.WriteAllText(Path.Combine(Folders[folder], file), text);
+		}
+
+		#endregion
+
+		#region Overrides of FileHelperBase
+
+		public override async Task DeleteFile(TypeFolder folder, string file)
+		{
+			File.Delete(Path.Combine(Folders[folder], file));
+		}
+
+		#endregion
 	}
 }

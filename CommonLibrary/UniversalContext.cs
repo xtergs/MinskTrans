@@ -28,37 +28,37 @@ namespace CommonLibrary
 			Favourite,
 			Statisticks
 		}
-		Dictionary<TypeSaveData, IStorageFolder> folders = new Dictionary<TypeSaveData, IStorageFolder>()
-		 {{TypeSaveData.DB, ApplicationData.Current.LocalFolder},
-			 {TypeSaveData.Favourite, ApplicationData.Current.RoamingFolder},
-			 {TypeSaveData.Statisticks, ApplicationData.Current.RoamingFolder}
+		Dictionary<TypeSaveData, TypeFolder> folders = new Dictionary<TypeSaveData, TypeFolder>()
+		 {{TypeSaveData.DB, TypeFolder.Local},
+			 {TypeSaveData.Favourite, TypeFolder.Roaming},
+			 {TypeSaveData.Statisticks, TypeFolder.Roaming}
 			
 		}; 
 
 		#region Overrides of Context
 
-		async Task<bool> FileExistss(IStorageFolder folder, string file)
-		{
-			try
-			{
-				var fl = await folder.GetFileAsync(file);
-				OnLogMessage("file " + file + " exist");
-				return true;
-			}
-			catch (FileNotFoundException ex)
-			{
-				OnLogMessage("file " + file + "not exist");
-#if BETA
-				Logger.Log("FileExistss").WriteLine(ex.Message).WriteLine(ex.FileName);
-#endif
-				return false;
-			}
-		}
+//		async Task<bool> FileExistss(IStorageFolder folder, string file)
+//		{
+//			try
+//			{
+//				var fl = await folder.GetFileAsync(file);
+//				OnLogMessage("file " + file + " exist");
+//				return true;
+//			}
+//			catch (FileNotFoundException ex)
+//			{
+//				OnLogMessage("file " + file + "not exist");
+//#if BETA
+//				Logger.Log("FileExistss").WriteLine(ex.Message).WriteLine(ex.FileName);
+//#endif
+//				return false;
+//			}
+//		}
 
-		protected async Task<bool> FileExistss(string file)
-		{
-			return await FileExistss(ApplicationData.Current.RoamingFolder, file);
-		}
+		//protected async Task<bool> FileExistss(string file)
+		//{
+		//	return await FileExistss(ApplicationData.Current.RoamingFolder, file);
+		//}
 
 		
 		ApplicationSettingsHelper lastUpdateDataDateTime;
@@ -94,70 +94,70 @@ namespace CommonLibrary
 
 
 
-		protected override async Task<bool> FileExists(string file)
-		{
-			return await FileExistss(file);
-		}
+		//protected override async Task<bool> FileExists(string file)
+		//{
+		//	return await FileExistss(file);
+		//}
 
-		protected override async Task FileDelete(string file)
-		{
-			try
-			{
-				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
-				await fl.DeleteAsync();
-			}
-			catch (FileNotFoundException fileNotFound)
-			{
-				return;
-			}
+		//protected override async Task FileDelete(string file)
+		//{
+		//	try
+		//	{
+		//		var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
+		//		await fl.DeleteAsync();
+		//	}
+		//	catch (FileNotFoundException fileNotFound)
+		//	{
+		//		return;
+		//	}
 
-		}
+		//}
 
-		protected override async Task FileMove(string oldFile, string newFile)
-		{
-			try
-			{
-				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(oldFile);
-				await fl.RenameAsync(newFile, NameCollisionOption.ReplaceExisting);
-			}
-			catch (FileNotFoundException fileNOtFound)
-			{
-			}
-		}
+		//protected override async Task FileMove(string oldFile, string newFile)
+		//{
+		//	try
+		//	{
+		//		var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(oldFile);
+		//		await fl.RenameAsync(newFile, NameCollisionOption.ReplaceExisting);
+		//	}
+		//	catch (FileNotFoundException fileNOtFound)
+		//	{
+		//	}
+		//}
 
-		async Task FileMove(IStorageFolder folder, string oldFile, string newFile)
-		{
-			try
-			{
-				var fl = await folder.GetFileAsync(oldFile);
-				await fl.RenameAsync(newFile, NameCollisionOption.ReplaceExisting);
-			}
-			catch (FileNotFoundException fileNOtFound)
-			{
-			}
-		}
+		//async Task FileMove(IStorageFolder folder, string oldFile, string newFile)
+		//{
+		//	try
+		//	{
+		//		var fl = await folder.GetFileAsync(oldFile);
+		//		await fl.RenameAsync(newFile, NameCollisionOption.ReplaceExisting);
+		//	}
+		//	catch (FileNotFoundException fileNOtFound)
+		//	{
+		//	}
+		//}
 
-		protected Task<string> FileReadAllTextt(string file)
-		{
-			return Task.Run(async () =>
-			{
-				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
-				//var xx = (await FileIO.ReadBufferAsync(fl));
-				//var tt =await FileIO.ReadLinesAsync(fl);
-				var resultText = await FileIO.ReadTextAsync(fl);
-				return resultText;
-			});
-		}
+		//protected Task<string> FileReadAllTextt(string file)
+		//{
+		//	return Task.Run(async () =>
+		//	{
+		//		var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
+		//		//var xx = (await FileIO.ReadBufferAsync(fl));
+		//		//var tt =await FileIO.ReadLinesAsync(fl);
+		//		var resultText = await FileIO.ReadTextAsync(fl);
+		//		return resultText;
+		//	});
+		//}
 
-		protected override async Task<string> FileReadAllText(string file)
-		{
-			var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
-			//var xx = (await FileIO.ReadBufferAsync(fl));
-			//var tt =await FileIO.ReadLinesAsync(fl);
-			var resultText = await FileIO.ReadTextAsync(fl);
-			return resultText;
+		//protected override async Task<string> FileReadAllText(string file)
+		//{
+		//	var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(file);
+		//	//var xx = (await FileIO.ReadBufferAsync(fl));
+		//	//var tt =await FileIO.ReadLinesAsync(fl);
+		//	var resultText = await FileIO.ReadTextAsync(fl);
+		//	return resultText;
 
-		}
+		//}
 
 		public override async Task<bool> DownloadUpdate()
 		{
@@ -191,17 +191,17 @@ namespace CommonLibrary
 		}
 
 
-		private async Task<string> ReadAllFile(StorageFile file)
-		{
-			StringBuilder builder = new StringBuilder();
-			using (var stream = await file.OpenStreamForReadAsync())
-			{
-				TextReader reader = new StreamReader(stream);
+		//private async Task<string> ReadAllFile(StorageFile file)
+		//{
+		//	StringBuilder builder = new StringBuilder();
+		//	using (var stream = await file.OpenStreamForReadAsync())
+		//	{
+		//		TextReader reader = new StreamReader(stream);
 
-				builder.Append(reader.ReadToEnd());
-			}
-			return builder.ToString();
-		}
+		//		builder.Append(reader.ReadToEnd());
+		//	}
+		//	return builder.ToString();
+		//}
 
 		public override async Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate)
 		{
@@ -214,19 +214,19 @@ namespace CommonLibrary
 
 				await Task.WhenAll(Task.Run(async () =>
 				{
-					StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileStops);
-					newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await ReadAllFile(file)));
+					//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileStops);
+					newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await FileHelper.ReadAllTextAsync(TypeFolder.Roaming, fileStops)));
 				}),
 					Task.Run(async () =>
 					{
-						StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileRouts);
-						newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await ReadAllFile(file)));
+						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileRouts);
+						newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await FileHelper.ReadAllTextAsync(TypeFolder.Roaming, fileRouts)));
 
 					}),
 					Task.Run(async () =>
 					{
-						StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileTimes);
-						newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await ReadAllFile(file)));
+						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileTimes);
+						newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await FileHelper.ReadAllTextAsync(TypeFolder.Roaming, fileTimes)));
 
 					}));
 				Debug.WriteLine("All threads ended");
@@ -262,13 +262,10 @@ namespace CommonLibrary
 		
 		
 
-		protected override async Task SaveFavourite()
+		
+		protected override async  Task SaveFavourite(TypeFolder storage)
 		{
-			await SaveFavourite(ApplicationData.Current.RoamingFolder);
-		}
-		async  Task SaveFavourite(IStorageFolder storage)
-		{
-			StorageFile stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
+			//StorageFile stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
 
 			//using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
 			//{
@@ -286,17 +283,22 @@ namespace CommonLibrary
 					IDs = x.Stops.Select(stop => stop.ID)
 				})
 			});
-			await FileIO.WriteTextAsync(stream, favouriteString);
-			await stream.MoveAsync(storage, NameFileFavourite, NameCollisionOption.ReplaceExisting);
+			//await FileIO.WriteTextAsync(stream, favouriteString);
+			//await stream.MoveAsync(storage, NameFileFavourite, NameCollisionOption.ReplaceExisting);
+
+			await FileHelper.WriteTextAsync(storage, NameFileFavourite + TempExt, favouriteString);
+			await FileHelper.SafeMoveAsync(storage, NameFileFavourite + TempExt, NameFileFavourite);
 		}
 
-		async Task SaveStatistics(JsonSerializerSettings jsonSettings, IStorageFolder storage)
+		async Task SaveStatistics(JsonSerializerSettings jsonSettings, TypeFolder storage)
 		{
 			string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
-			var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
-			await FileIO.WriteTextAsync(counterFile, counter);
-			await counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
+			//var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
+			//await FileIO.WriteTextAsync(counterFile, counter);
+			//await counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
 
+			await FileHelper.WriteTextAsync(storage, NameFileCounter + TempExt, counter);
+			await FileHelper.SafeMoveAsync(storage, NameFileCounter + TempExt, NameFileCounter);
 		}
 		
 		public override async Task Save(bool saveAllDb = true)
@@ -319,24 +321,23 @@ namespace CommonLibrary
 					await Task.WhenAll(Task.Run(async () =>
 					{
 						string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
-						var routsFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileRouts + TempExt, CreationCollisionOption.ReplaceExisting);
-						await FileIO.WriteTextAsync(routsFile, routs);
-						await routsFile.RenameAsync(NameFileRouts, NameCollisionOption.ReplaceExisting);
+						await FileHelper.WriteTextAsync(folders[TypeSaveData.DB], NameFileRouts + TempExt, routs);
+						await FileHelper.SafeMoveAsync(folders[TypeSaveData.DB], NameFileRouts + TempExt, NameFileRouts);
 
 					}),
 						Task.Run(async () =>
 						{
 							string stopsString = JsonConvert.SerializeObject(ActualStops, jsonSettings);
-							var stopsFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileStops + TempExt, CreationCollisionOption.ReplaceExisting);
-							await FileIO.WriteTextAsync(stopsFile, stopsString);
-							await stopsFile.RenameAsync(NameFileStops, NameCollisionOption.ReplaceExisting);
+
+							await FileHelper.WriteTextAsync(folders[TypeSaveData.DB], NameFileStops + TempExt, stopsString);
+							await FileHelper.SafeMoveAsync(folders[TypeSaveData.DB], NameFileStops + TempExt, NameFileStops);
 
 						}), Task.Run(async () =>
 						{
 							string routs = JsonConvert.SerializeObject(Times, jsonSettings);
-							var timesFile = await folders[TypeSaveData.DB].CreateFileAsync(NameFileTimes + TempExt, CreationCollisionOption.ReplaceExisting);
-							await FileIO.WriteTextAsync(timesFile, routs);
-							await timesFile.RenameAsync(NameFileTimes, NameCollisionOption.ReplaceExisting);
+							
+							await FileHelper.WriteTextAsync(folders[TypeSaveData.DB], NameFileTimes + TempExt, routs);
+							await FileHelper.SafeMoveAsync(folders[TypeSaveData.DB], NameFileTimes + TempExt, NameFileTimes);
 
 						}));
 			}
@@ -378,8 +379,9 @@ namespace CommonLibrary
 					{
 						//await Task.Delay(new TimeSpan(0, 0, 0, 10));
 
-						var routsFile = await folders[TypeSaveData.Statisticks].GetFileAsync(NameFileCounter);
-						var routs = await FileIO.ReadTextAsync(routsFile);
+						//var routsFile = await folders[TypeSaveData.Statisticks].GetFileAsync(NameFileCounter);
+						//var routs = await FileIO.ReadTextAsync(routsFile);
+						string routs = await FileHelper.ReadAllTextAsync(folders[TypeSaveData.Statisticks], NameFileCounter);
 						counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
 					}
 
@@ -394,8 +396,7 @@ namespace CommonLibrary
 						{
 							try
 							{
-								var routsFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileRouts);
-								var routs = await FileIO.ReadTextAsync(routsFile);
+								var routs = await FileHelper.ReadAllTextAsync(folders[TypeSaveData.DB], NameFileRouts);
 								tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
 							}
 
@@ -407,8 +408,7 @@ namespace CommonLibrary
 						{
 							try
 							{
-								StorageFile stopsFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileStops);
-								string stops = await FileIO.ReadTextAsync(stopsFile);
+								string stops = await FileHelper.ReadAllTextAsync(folders[TypeSaveData.DB], NameFileStops);
 								tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
 							}
 							catch (FileNotFoundException e)
@@ -419,9 +419,7 @@ namespace CommonLibrary
 						{
 							try
 							{
-
-								var timesFile = await folders[TypeSaveData.DB].GetFileAsync(NameFileTimes);
-								var times = await FileIO.ReadTextAsync(timesFile);
+								string times = await FileHelper.ReadAllTextAsync(folders[TypeSaveData.DB], NameFileTimes);
 
 								tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
 							}
@@ -479,14 +477,11 @@ namespace CommonLibrary
 			}
 			//await Task.Delay(new TimeSpan(0, 0, 0, 10));
 			Debug.WriteLine("UniversalContext loadfavourite started");
-			if (type.HasFlag(LoadType.LoadFavourite) && await FileExistss(folders[TypeSaveData.Favourite], NameFileFavourite))
+			if (type.HasFlag(LoadType.LoadFavourite) && await FileHelper.FileExistAsync(folders[TypeSaveData.Favourite], NameFileFavourite))
 			{
 				try
 				{
-
-					var stream = await folders[TypeSaveData.Favourite].GetFileAsync(NameFileFavourite);
-
-					var textFavourite = await FileIO.ReadTextAsync(stream);
+					var textFavourite = await FileHelper.ReadAllTextAsync(folders[TypeSaveData.Favourite], NameFileFavourite);
 					try
 					{
 						var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
@@ -619,9 +614,9 @@ namespace CommonLibrary
 #if BETA
 			Logger.Log().WriteLineTime("Recover started");
 #endif
-			await FileDelete(NameFileRouts);
-			await FileDelete(NameFileStops);
-			await FileDelete(NameFileTimes);
+			await FileHelper.DeleteFile(TypeFolder.Roaming, NameFileRouts);
+			await FileHelper.DeleteFile(TypeFolder.Roaming, NameFileStops);
+			await FileHelper.DeleteFile(TypeFolder.Roaming, NameFileTimes);
 #if BETA
 			Logger.Log().WriteLineTime("Recover ended");
 #endif
@@ -630,5 +625,9 @@ namespace CommonLibrary
 		private static object o = new Object();
 
 		#endregion
+
+		public UniversalContext(FileHelperBase helper) : base(helper)
+		{
+		}
 	}
 }

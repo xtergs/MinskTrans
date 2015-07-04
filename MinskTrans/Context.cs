@@ -127,11 +127,11 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public string TempExt
 		{
-			get { return ".temp"; }
+			get { return FileHelperBase.TempExt; }
 		}
 
-		public string OldExt { get { return ".old"; } }
-		public string NewExt { get { return ".new"; } }
+		public string OldExt { get { return FileHelperBase.OldExt; } }
+		public string NewExt { get { return FileHelperBase.NewExt; } }
 
 		public string GetTempFileName(string filename)
 		{
@@ -267,9 +267,11 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			}
 		}
 
-
-		public Context()
+	private readonly FileHelperBase fileHelper;
+		
+		public Context(FileHelperBase helper)
 		{
+			fileHelper = helper;
 			Create();
 		}
 
@@ -345,19 +347,8 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public  abstract void Create(bool AutoUpdate = true);
 
-		
-		protected abstract Task<bool> FileExists(string file);
-
-		protected abstract Task FileDelete(string file);
-
-		protected abstract Task FileMove(string oldFile, string newFile);
-
-		protected abstract Task<string> FileReadAllText(string file);
-
 		public abstract Task<bool> DownloadUpdate();
-
-		
-
+	
 		protected ObservableCollection<Rout> newRoutes;
 		protected ObservableCollection<Stop> newStops;
 		protected ObservableCollection<Schedule> newSchedule;
@@ -371,13 +362,14 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			{
 
 				//Parallel.ForEach(list, async keyValuePair =>
-				if (await FileExists(list[0].Key + NewExt) && 
-					await FileExists(list[1].Key + NewExt) && 
-					await FileExists(list[2].Key + NewExt))
+				
+				if (await FileHelper.FileExistAsync(TypeFolder.Roaming, list[0].Key + NewExt) && 
+					await FileHelper.FileExistAsync(TypeFolder.Roaming, list[1].Key + NewExt) && 
+					await FileHelper.FileExistAsync(TypeFolder.Roaming, list[2].Key + NewExt) )
 					foreach (var keyValuePair in list)
 					{
-						await FileMove(keyValuePair.Key, keyValuePair.Key + OldExt);
-						await FileMove(keyValuePair.Key + NewExt, keyValuePair.Key);
+						await FileHelper.SafeMoveAsync(TypeFolder.Roaming, keyValuePair.Key + NewExt, keyValuePair.Key);
+						
 					}
 
 				//Stops.Clear();
@@ -413,12 +405,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 			//ActualStops = ;
 
-			AllPropertiesChanged();
+			//AllPropertiesChanged();
 
 			OnApplyUpdateEnded();
 		}
 
-		protected abstract Task SaveFavourite();
+		protected abstract Task SaveFavourite(TypeFolder folder);
 		public abstract Task Save(bool saveAllDB = true);
 
 
@@ -514,10 +506,10 @@ public abstract class Context : INotifyPropertyChanged , IContext
 				}
 				catch (TaskCanceledException e)
 				{
-					Task.WhenAll(
-						FileDelete(list[0].Key + NewExt),
-						FileDelete(list[1].Key + NewExt),
-						FileDelete(list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
+					Task.WhenAll(FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
+						
+						FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
+						FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
 					return;
 				}
 				if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
@@ -526,9 +518,9 @@ public abstract class Context : INotifyPropertyChanged , IContext
 					await Save(SaveAllDB);
 				}
 				await Task.WhenAll(
-					FileDelete(list[0].Key + NewExt),
-					FileDelete(list[1].Key + NewExt),
-					FileDelete(list[2].Key + NewExt));
+					FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
+					FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
+					FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt));
 
 			}
 			catch (Exception)
@@ -921,7 +913,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			get { return new RelayCommand<RoutWithDestinations>(x => 
 				{
 				FavouriteRouts.Add(x);
-					SaveFavourite();
+					SaveFavourite(TypeFolder.Roaming);
 				}, p => p != null && !FavouriteRouts.Contains(p)); }
 		}
 
@@ -929,8 +921,8 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		{
 			get { return new RelayCommand<Stop>(x =>
 			{
-				FavouriteStops.Add(x); 
-				SaveFavourite();
+				FavouriteStops.Add(x);
+				SaveFavourite(TypeFolder.Roaming);
 			}
 
 				, p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p)); }
@@ -940,7 +932,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			get { return new RelayCommand<RoutWithDestinations>(x =>
 			{
 				FavouriteRouts.Remove(x);
-				SaveFavourite();
+				SaveFavourite(TypeFolder.Roaming);
 			}, p => p != null && FavouriteRouts.Contains(p)); }
 		}
 
@@ -949,7 +941,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			get { return new RelayCommand<Stop>(x =>
 			{
 				FavouriteStops.Remove(x);
-				SaveFavourite();
+				SaveFavourite(TypeFolder.Roaming);
 			}, p => p != null && FavouriteStops.Contains(p)); }
 		}
 		#endregion
@@ -1012,7 +1004,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 				return new RelayCommand<string>(x =>
 				{
 					Groups.Add(new GroupStop() {Name = x});
-					SaveFavourite();
+					SaveFavourite(TypeFolder.Roaming);
 				}, p=>!string.IsNullOrWhiteSpace(p));
 			}
 		}
@@ -1026,7 +1018,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 					if (x != null)
 					{
 						Groups.Remove(x);
-						SaveFavourite();
+						SaveFavourite(TypeFolder.Roaming);
 						OnPropertyChanged("Groups");
 					}
 				});
@@ -1079,7 +1071,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public string nameFileCounter { get; set; }
 
-		#region Implementation of INotifyPropertyChanged
+	public FileHelperBase FileHelper
+	{
+		get { return fileHelper; }
+	}
+
+	#region Implementation of INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

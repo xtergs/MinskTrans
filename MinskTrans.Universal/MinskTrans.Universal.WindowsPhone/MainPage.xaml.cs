@@ -176,6 +176,7 @@ namespace MinskTrans.Universal
 				model.Context.AllPropertiesChanged();
 				string str = "s";
 #endif
+					model.Context.AllPropertiesChanged();
 					ProgressBar.Visibility = Visibility.Collapsed;
 					//ProgressBar.IsIndeterminate = false;
 					pushpins = null;

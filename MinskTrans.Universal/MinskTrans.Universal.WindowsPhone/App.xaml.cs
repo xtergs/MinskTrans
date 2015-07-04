@@ -28,6 +28,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using CommonLibrary;
+using CommonLibrary.IO;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
@@ -130,7 +131,7 @@ namespace MinskTrans.Universal
 
 
 
-			MainModelView.Create(new UniversalContext());
+			MainModelView.Create(new UniversalContext(new FileHelper()));
 #if BETA
 			Logger.Log("App ended");
 #endif

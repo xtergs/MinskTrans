@@ -99,16 +99,7 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		protected override Task<bool> FileExists(string file)
-		{
-			return Task<bool>.Run(()=>File.Exists(file));
-		}
-
-		protected async override Task FileDelete(string file)
-		{
-			//if (File.Exists(file))
-				File.Delete(file);
-		}
+		
 		async public override void Create(bool AutoUpdate = true)
 		{
 			//TODO
@@ -179,18 +170,6 @@ namespace MinskTrans.DesctopClient
 		}
 
 		
-
-		protected async override Task FileMove(string oldFile, string newFile)
-		{
-			if (File.Exists(oldFile) && !File.Exists(newFile))
-				File.Move(oldFile, newFile);
-		}
-
-		async protected override Task<string> FileReadAllText(string file)
-		{
-			return await Task.Run(() => File.ReadAllText(file));
-		}
-
 		public override async Task<bool> DownloadUpdate()
 		{
 			//TODO

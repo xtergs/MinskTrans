@@ -122,9 +122,6 @@
     <Compile Include="..\..\MinskTrans\NodeGraph.cs">
       <Link>NodeGraph.cs</Link>
     </Compile>
-    <Compile Include="..\..\MinskTrans\Utilites\IO\FileHelper.cs">
-      <Link>Utilites\IO\FileHelper.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

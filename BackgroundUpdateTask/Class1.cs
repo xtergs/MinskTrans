@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using CommonLibrary;
+using CommonLibrary.IO;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
@@ -53,7 +54,7 @@ namespace MinskTrans.BackgroundUpdateTask
 	        DateTime time = new DateTime();
 	        if (timeShtaps.Length > 2)
 		        time = DateTime.Parse(timeShtaps[2]);
-		        UniversalContext context = new UniversalContext();
+		        UniversalContext context = new UniversalContext(new FileHelper());
 	        if (context.LastUpdateDataDateTime < time)
 	        {
 		        try

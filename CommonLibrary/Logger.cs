@@ -9,7 +9,7 @@ using Microsoft.VisualBasic;
 
 namespace MinskTrans.Universal
 {
-#if BETA
+#if BETA || WINDOWS_UAP
 	public class  Logger
 	{
 		private static Logger log;

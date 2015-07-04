@@ -22,7 +22,7 @@ namespace MinskTrans.Universal.ModelView
 		private readonly SettingsModelView settingsModelView;
 		private readonly StopModelView stopMovelView;
 		private readonly FavouriteModelView favouriteModelView;
-		private readonly FindModelView findModelView;
+		private FindModelView findModelView;
 		private MapModelView mapMOdelView;
 		private readonly NewsManager newsManager;
 
@@ -46,7 +46,7 @@ namespace MinskTrans.Universal.ModelView
 			//stopMovelView = new StopModelView(context, settingsModelView, true);
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context, settingsModelView);
-			findModelView = new FindModelView(context, settingsModelView, true);
+			
 			newsManager = new NewsManager();
 			//Context.VariantLoad = SettingsModelView.VariantConnect;
 			if (IsInDesignMode)
@@ -73,7 +73,12 @@ namespace MinskTrans.Universal.ModelView
 
 		public FindModelView FindModelView
 		{
-			get { return findModelView;}
+			get
+			{
+				if (findModelView == null)
+					findModelView = new FindModelView(context, settingsModelView, true);
+				return findModelView;
+			}
 		}
 
 		public StopModelView StopMovelView

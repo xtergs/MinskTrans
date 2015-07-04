@@ -439,9 +439,9 @@ namespace MinskTrans.Universal
 			SendEmailToDeveloper("");
 		}
 
-		void SendEmailToDeveloper(string str)
+		async void SendEmailToDeveloper(string str)
 		{
-			EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
+			await EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
 			{
 				Subject = "Минский общественный транспорт",
 				To =
@@ -484,7 +484,8 @@ namespace MinskTrans.Universal
 
 		async void SendLog()
 		{
-			SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
+			string message = await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException;
+            SendEmailToDeveloper(message);
 		}
 
 		

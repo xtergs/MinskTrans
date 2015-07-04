@@ -3,9 +3,6 @@
 
 namespace MinskTrans.DesctopClient.Model
 {
-#if !WINDOWS_PHONE_APP && !WINDOWS_APP
-	[Serializable]
-#endif
 	public class BaseModel
 	{
 		protected string Sym = "";

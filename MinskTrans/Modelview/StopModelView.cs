@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using MapControl;
+using System.Threading.Tasks;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
 using GalaSoft.MvvmLight.CommandWpf;
@@ -65,12 +66,12 @@ namespace MinskTrans.DesctopClient.Modelview
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
 			settingsModelView = settings;
 			
-			settingsModelView.PropertyChanged += (sender, args) =>
+			settingsModelView.PropertyChanged += async (sender, args) =>
 			{
 				switch (args.PropertyName)
 				{
-					case "TimeInPast":Refresh();break;
-					case "UseGPS":SetGPS(); OnStatusGPSChanged(); break;
+					case "TimeInPast": Refresh(); break;
+					case "UseGPS": await SetGPS(); OnStatusGPSChanged(); break;
 					default: break;
 				}
 			};
@@ -78,7 +79,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				SetGPS();
 		}
 
-		async void SetGPS()
+		async Task SetGPS()
 		{
 #if WINDOWS_PHONE_APP && WINDOWS_AP || WINDOWS_UAP
 				var geolocationStatus = await Geolocator.RequestAccessAsync();
@@ -120,7 +121,10 @@ namespace MinskTrans.DesctopClient.Modelview
 				geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
 				//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 
-				geolocator = null;
+				//geolocator = null;
+
+				LocationXX.Get().Latitude = defaultLocation.Latitude;
+				LocationXX.Get().Longitude = defaultLocation.Longitude;
 			}
 #endif
 		}
@@ -169,7 +173,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (StopNameFilter != null && Context.ActualStops != null)
 				{
 					var tempSt = StopNameFilter.ToLower();
-					var temp = Context.ActualStops.AsParallel().Where(
+					var temp = Context.ActualStops.Where(
 							x => x.SearchName.Contains(tempSt));
 					if (!Equals(LocationXX.Get(), defaultLocation))
 						return temp.OrderBy(Distance).ThenByDescending(Context.GetCounter);

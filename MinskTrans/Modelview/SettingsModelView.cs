@@ -9,12 +9,12 @@ using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Properties;
 
 #else
-using CommonLibrary;
+	using CommonLibrary;
 using MinskTrans.Universal;
 using MinskTrans.Universal.Annotations;
 	using Windows.Storage;
@@ -23,7 +23,7 @@ using MinskTrans.Universal.Annotations;
 
 	public class ApplicationSettingsHelper
 	{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 
 		public ApplicationSettingsHelper([CallerMemberName] string member = null)
 		{
@@ -78,12 +78,52 @@ using MinskTrans.Universal.Annotations;
 
 		#endregion
 
-		static public void SimpleSet(object value, [CallerMemberName]string key = null)
+		static public void SimpleSet(string value, [CallerMemberName]string key = null)
 		{
 			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-				ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
+				ApplicationData.Current.LocalSettings.Values.Add(key, value);
 			else
-				ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
+				ApplicationData.Current.LocalSettings.Values[key] = value;
+		}
+
+		static public void SimpleSet(bool value, [CallerMemberName]string key = null)
+		{
+			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+				ApplicationData.Current.LocalSettings.Values.Add(key, value);
+			else
+				ApplicationData.Current.LocalSettings.Values[key] = value;
+		}
+
+		static public void SimpleSet(int value, [CallerMemberName]string key = null)
+		{
+			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+				ApplicationData.Current.LocalSettings.Values.Add(key, value);
+			else
+				ApplicationData.Current.LocalSettings.Values[key] = value;
+		}
+
+		static public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
+		{
+
+			return (string)SimleGet((object)defValue, key);
+		}
+
+		static public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
+		{
+			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+				ApplicationData.Current.LocalSettings.Values.Add(key, defValue);
+			return ApplicationData.Current.LocalSettings.Values[key];
+		}
+
+		static public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
+		{
+
+			return (bool)SimleGet((object)defValue, key);
+		}
+
+		static public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
+		{
+			return (int)SimleGet((object)defValue, key);
 		}
 #endif
 	}
@@ -118,7 +158,7 @@ using MinskTrans.Universal.Annotations;
 			return propertyName;
 		}
 
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 		public bool HaveConnection()
 		{
 			
@@ -127,7 +167,7 @@ using MinskTrans.Universal.Annotations;
 		}
 #endif
 
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 		public TypeOfUpdate LastUpdatedDataInBackground
 		{
 			get
@@ -151,7 +191,7 @@ using MinskTrans.Universal.Annotations;
 		ApplicationSettingsHelper lastUpdateDBDateTimeback;
 		public DateTime LastUpdateDBDatetime
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (lastUpdateDBDateTimeback == null)
@@ -174,20 +214,15 @@ using MinskTrans.Universal.Annotations;
 
 		public string LastUnhandeledException
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					LastUnhandeledException = "";
-				return (string)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+				return ApplicationSettingsHelper.SimleGet("");
 			}
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 #else
@@ -198,20 +233,15 @@ using MinskTrans.Universal.Annotations;
 
 		public bool ShowTopStopsByCoordinats
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ShowTopStopsByCoordinats = true;
-				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+				return ApplicationSettingsHelper.SimleGet(true);
 			}
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 #else
@@ -224,25 +254,12 @@ using MinskTrans.Universal.Annotations;
 		{
 			get
 			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-				return Settings.Default.TimeInPast;
-#else
-				if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey("TimeInPast"))
-					TimeInPast = 15;
-				return (int) ApplicationData.Current.RoamingSettings.Values["TimeInPast"];
-#endif
+				return ApplicationSettingsHelper.SimleGet(15);
 			}
+
 			set
 			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-		
-				Settings.Default.TimeInPast = value;
-#else
-				if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey("TimeInPast"))
-					ApplicationData.Current.RoamingSettings.Values.Add("TimeInPast", value);
-				else
-					ApplicationData.Current.RoamingSettings.Values["TimeInPast"] = value;
-#endif
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
@@ -250,20 +267,15 @@ using MinskTrans.Universal.Annotations;
 
 		public bool UseGPS
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					UseGPS = true;
-				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+				return ApplicationSettingsHelper.SimleGet(true);
 			}
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 #else
@@ -279,20 +291,15 @@ using MinskTrans.Universal.Annotations;
 
 		public bool KeepTracking
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					KeepTracking = true;
-				return (bool)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
+				return ApplicationSettingsHelper.SimleGet(true);
 			}
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 #else
@@ -311,7 +318,7 @@ using MinskTrans.Universal.Annotations;
 		}
 		public TimeSpan InvervalAutoUpdateTimeSpan
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -335,7 +342,7 @@ using MinskTrans.Universal.Annotations;
 
 		public Error TypeError
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -359,7 +366,7 @@ using MinskTrans.Universal.Annotations;
 
 		public int VariantConnect
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
@@ -406,27 +413,13 @@ using MinskTrans.Universal.Annotations;
 		{
 			get
 			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-				return Settings.Default.UpdateOnWiFi;
-#else
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnWiFi"))
-					UpdateOnWiFi = true;
-				return (bool)ApplicationData.Current.LocalSettings.Values["UpdateOnWiFi"];
-#endif
+				return ApplicationSettingsHelper.SimleGet(true);
 			}
+
 			set
 			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-		
-				Settings.Default.UpdateOnWiFi = value;
-#else
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnWiFi"))
-					ApplicationData.Current.LocalSettings.Values.Add("UpdateOnWiFi", value);
-				else
-					ApplicationData.Current.LocalSettings.Values["UpdateOnWiFi"] = value;
-#endif
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
-				//OnPropertyChanged("UpdateOnWiFi");
 			}
 		}
 
@@ -434,27 +427,13 @@ using MinskTrans.Universal.Annotations;
 		{
 			get
 			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-				return Settings.Default.UpdateOnMobileData;
-#else
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnMobileData"))
-					UpdateOnMobileData = true;
-				return (bool)ApplicationData.Current.LocalSettings.Values["UpdateOnMobileData"];
-#endif
+				return ApplicationSettingsHelper.SimleGet(true);
 			}
+
 			set
 			{
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
-
-				Settings.Default.UpdateOnMobileData = value;
-#else
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("UpdateOnMobileData"))
-					ApplicationData.Current.LocalSettings.Values.Add("UpdateOnMobileData", value);
-				else
-					ApplicationData.Current.LocalSettings.Values["UpdateOnMobileData"] = value;
-#endif
+				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
-				//OnPropertyChanged("UpdateOnWiFi");
 			}
 		}
 

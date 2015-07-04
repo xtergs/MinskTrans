@@ -8,9 +8,6 @@ using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient.Model
 {
-#if !WINDOWS_PHONE_APP && !WINDOWS_APP
-	[Serializable]
-#endif
 	[JsonObject(MemberSerialization.OptIn)]
 	public class Time : BaseModel, IXmlSerializable
 	{

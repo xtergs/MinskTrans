@@ -64,7 +64,7 @@ namespace CommonLibrary
 		ApplicationSettingsHelper lastUpdateDataDateTime;
         public override DateTime LastUpdateDataDateTime
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (lastUpdateDataDateTime == null)

@@ -73,7 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UAP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UAP;CODE_ANALYSIS;BETA</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -84,7 +84,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UAP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UAP;CODE_ANALYSIS;BETA</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -277,13 +277,9 @@
       <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
       <Name>BackgroundUpdateTask</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
-      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
-      <Name>CommonLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
-      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
-      <Name>MyLibrary</Name>
+    <ProjectReference Include="..\UniversalCommonLibrary\UniversalCommonLibrary.csproj">
+      <Project>{5fb8ca85-7d29-42ee-8f32-cbbdf4845f82}</Project>
+      <Name>UniversalCommonLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

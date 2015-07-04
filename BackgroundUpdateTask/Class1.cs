@@ -29,7 +29,7 @@ namespace BackgroundUpdateTask
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
-#if DEBUG
+#if _DEBUG
 	        urlUpdateDates =
 		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111667&authkey=%21AKygfncKSi8je9M&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
 	        urlUpdateNews =

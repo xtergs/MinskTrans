@@ -9,10 +9,7 @@ using System.Xml.Serialization;
 
 namespace MinskTrans.DesctopClient.Model
 {
-#if !WINDOWS_PHONE_APP && !WINDOWS_APP
-	[Serializable]
-#endif
-	public class Stop : StopBase, IXmlSerializable
+public class Stop : StopBase, IXmlSerializable
 	{
 		
 		protected List<Rout> routs;

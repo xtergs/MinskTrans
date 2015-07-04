@@ -16,7 +16,7 @@ using System.Xml.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using MinskTrans.DesctopClient.Comparer;
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP
+#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 using MinskTrans.DesctopClient.Annotations;
 using System.Runtime.Serialization.Formatters.Binary;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -36,10 +36,7 @@ using TransportType = MinskTrans.DesctopClient.Model.TransportType;
 
 namespace MinskTrans.DesctopClient
 {
-#if !WINDOWS_PHONE_APP && !WINDOWS_APP
-	[Serializable]
-#endif
-	public abstract class Context : INotifyPropertyChanged , IContext
+public abstract class Context : INotifyPropertyChanged , IContext
 	{
 		protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
 		{
@@ -444,7 +441,7 @@ namespace MinskTrans.DesctopClient
 		}
 
 
-		static protected async void Connect([NotNull] IList<Rout> routsl, [NotNull] IList<Stop> stopsl,
+		static protected async void Connect(/*[NotNull]*/ IList<Rout> routsl,/* [NotNull]*/ IList<Stop> stopsl,
 			[NotNull] IList<Schedule> timesl, int variantLoad)
 		{
 			

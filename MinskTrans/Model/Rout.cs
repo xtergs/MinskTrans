@@ -7,10 +7,7 @@ using System.Xml.Serialization;
 
 namespace MinskTrans.DesctopClient.Model
 {
-#if !WINDOWS_PHONE_APP && !WINDOWS_APP
-	[Serializable]
-#endif
-	public class Rout : RoutBase, IXmlSerializable
+	public class Rout : RoutBase
 	{
 		
 		
@@ -190,102 +187,8 @@ namespace MinskTrans.DesctopClient.Model
 			get { return Stops.FirstOrDefault(); }
 		}
 
-		#region Implementation of IXmlSerializable
+		
 
-		/// <summary>
-		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
-		/// </summary>
-		/// <returns>
-		/// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
-		/// </returns>
-		public XmlSchema GetSchema()
-		{
-			return null;
-		}
-
-		/// <summary>
-		/// Generates an object from its XML representation.
-		/// </summary>
-		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
-		public void ReadXml(XmlReader reader)
-		{
-			RouteNum = reader.GetAttribute("Num");
-			Authority = reader.GetAttribute("Aut");
-			City = reader.GetAttribute("C");
-			TransportType transportType;
-			TransportType.TryParse(reader.GetAttribute("Tr"), true, out transportType);
-			Transport = transportType;
-			Operator = reader.GetAttribute("Op");
-			ValidityPeriods = reader.GetAttribute("Valid");
-			SpecialDates = reader.GetAttribute("Special");
-			RoutTag = reader.GetAttribute("Tag");
-			RoutType = reader.GetAttribute("Type");
-			Commercial = reader.GetAttribute("Com");
-			RouteName = reader.GetAttribute("Name");
-			Weekdays = reader.GetAttribute("Week");
-			RoutId = Convert.ToInt32(reader.GetAttribute("Id"));
-			Datestart = reader.GetAttribute("Start");
-			reader.ReadStartElement("Rout");
-			int count = Convert.ToInt32(reader.GetAttribute("Count"));
-			RouteStops = new List<int>(count);
-				reader.ReadStartElement();
-			for (int i = 0; i < count; i ++) 
-			{
-				reader.ReadStartElement();
-				RouteStops.Add(reader.ReadContentAsInt());
-				if (!reader.IsEmptyElement)
-					reader.ReadEndElement();
-				else
-				{
-					
-				}
-
-
-			}
-			if (count > 0)
-				reader.ReadEndElement();
-			else
-			{
-
-			}
-			//reader.ReadEndElement();
-		}
-
-		/// <summary>
-		/// Converts an object into its XML representation.
-		/// </summary>
-		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
-		public void WriteXml(XmlWriter writer)
-		{
-			writer.WriteAttributeString("Num", RouteNum);
-			writer.WriteAttributeString("Aut", Authority);
-			writer.WriteAttributeString("C", City);
-			writer.WriteAttributeString("Tr", Transport.ToString());
-			writer.WriteAttributeString("Op", Operator);
-			writer.WriteAttributeString("Valid", ValidityPeriods);
-			writer.WriteAttributeString("Special", SpecialDates);
-			writer.WriteAttributeString("Tag", RoutTag);
-			writer.WriteAttributeString("Type", RoutType);
-			writer.WriteAttributeString("Com", Commercial);
-			writer.WriteAttributeString("Name", RouteName);
-			writer.WriteAttributeString("Week", Weekdays);
-			writer.WriteAttributeString("Id", RoutId.ToString());
-			writer.WriteAttributeString("Start", Datestart);
-			writer.WriteStartElement("StList");
-			writer.WriteAttributeString("Count", RouteStops.Count.ToString());
-			foreach (var routeStop in RouteStops)
-			{
-				writer.WriteStartElement("I");
-				writer.WriteValue(routeStop);
-				writer.WriteEndElement();
-
-			}
-			writer.WriteEndElement();
-
-
-			
-		}
-
-		#endregion
+		
 	}
 }

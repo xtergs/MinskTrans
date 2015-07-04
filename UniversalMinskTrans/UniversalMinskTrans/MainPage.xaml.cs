@@ -553,7 +553,8 @@ namespace MinskTrans.Universal
 
 		async void SendLog()
 		{
-			SendEmailToDeveloper(await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException);
+			string message = await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException;
+            SendEmailToDeveloper(message);
 		}
 
 		

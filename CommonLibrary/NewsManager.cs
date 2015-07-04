@@ -154,12 +154,14 @@ namespace CommonLibrary
 			NewNews = null;
 		}
 
-		public async Task Load(TypeLoad type = TypeLoad.LoadAll)
+		public async Task Load(TypeLoad type = TypeLoad.LoadAll, string fileMain = null, string fileHot = null)
 		{
 			//allNews.Clear();
 			if (type.HasFlag(TypeLoad.LoadNews))
 			{
-				var path = Path.Combine(pathToSaveData, fileNameNews);
+				if (String.IsNullOrWhiteSpace(fileMain))
+					fileMain = fileNameNews;
+				var path = Path.Combine(pathToSaveData, fileMain);
 				try
 				{
 					var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
@@ -176,7 +178,9 @@ namespace CommonLibrary
 			if (type.HasFlag(TypeLoad.LoadHotNews))
 			{
 				allHotNewsDictionary.Clear();
-				var path = Path.Combine(pathToSaveHotData, fileNameHotNews);
+				if (string.IsNullOrWhiteSpace(fileHot))
+					fileHot = fileNameHotNews;
+				var path = Path.Combine(pathToSaveHotData, fileHot);
 
 				try
 				{

@@ -223,9 +223,9 @@ namespace MinskTrans.Universal
 				case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
 				case BackgroundAccessStatus.Unspecified:
 					// The user didn't explicitly disable or enable access and updates. 
-					var updateTaskRegistration = RegisterBackgroundTask("BackgroundUpdateTask.UpdateBackgroundTask",
+					var updateTaskRegistration = RegisterBackgroundTask("MinskTrans.BackgroundUpdateTask.UpdateBackgroundTask",
 						"UpdateBackgroundTasks", new TimeTrigger(15, false),
-						null);
+				      new SystemCondition(SystemConditionType.InternetAvailable));
 					
 					updateTaskRegistration.Completed += async (sender, args) =>
 					{

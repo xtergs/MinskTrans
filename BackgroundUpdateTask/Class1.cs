@@ -13,7 +13,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
-namespace BackgroundUpdateTask
+namespace MinskTrans.BackgroundUpdateTask
 {
     public sealed class UpdateBackgroundTask : IBackgroundTask
     {
@@ -21,7 +21,7 @@ namespace BackgroundUpdateTask
 		private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
 		private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
 		private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
-
+	    private string fileNews = "datesNews.dat";
 		int MaxDaysAgo { get; set; }
 		int MaxMinsAgo { get; set; }
 
@@ -46,18 +46,27 @@ namespace BackgroundUpdateTask
 				_deferral.Complete();
 	        MaxDaysAgo = 30;
 	        MaxMinsAgo = 20;
-			string resultStr = await InternetHelper.Download(urlUpdateDates);
+
+	        await InternetHelper.Download(urlUpdateDates, fileNews, ApplicationData.Current.TemporaryFolder);
+			string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
 	        var timeShtaps = resultStr.Split('\n');
 	        DateTime time = new DateTime();
-	        if (timeShtaps.Length > 0)
+	        if (timeShtaps.Length > 2)
 		        time = DateTime.Parse(timeShtaps[2]);
-			UniversalContext context = new UniversalContext();
+		        UniversalContext context = new UniversalContext();
 	        if (context.LastUpdateDataDateTime < time)
 	        {
-		        await context.UpdateAsync();
-		        context.LastUpdateDataDateTime = time;
-				settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
-		        //await context.Save(false);
+		        try
+		        {
+			        await context.UpdateAsync();
+			        context.LastUpdateDataDateTime = time;
+			        settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
+			        //await context.Save(false);
+		        }
+		        catch (Exception e)
+		        {
+			        Logger.Log("BackgroundUpdate, updateDb Exception");
+		        }
 	        }
 
 	        if (timeShtaps.Length < 1)
@@ -76,7 +85,6 @@ namespace BackgroundUpdateTask
 			        DateTime oldTime = manager.LastUpdateMainNewsDateTime;
 			        manager.LastUpdateMainNewsDateTime = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-					await manager.Load(NewsManager.TypeLoad.LoadNews);
 			        DateTime nowTimeUtc = DateTime.UtcNow;
 					foreach (var source in manager.NewNews.Where(key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)))
 			        {
@@ -91,7 +99,6 @@ namespace BackgroundUpdateTask
 			        manager.LastUpdateHotNewsDateTime = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
 					//	resultStr);
-			        await manager.Load(NewsManager.TypeLoad.LoadHotNews);
 			        DateTime nowDateTimeUtc = DateTime.UtcNow;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					//int todayDay = nowDateTime.Day;

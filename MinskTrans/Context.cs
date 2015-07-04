@@ -376,11 +376,8 @@ public abstract class Context : INotifyPropertyChanged , IContext
 					await FileExists(list[2].Key + NewExt))
 					foreach (var keyValuePair in list)
 					{
-
-						await FileDelete(keyValuePair.Key + OldExt);
 						await FileMove(keyValuePair.Key, keyValuePair.Key + OldExt);
 						await FileMove(keyValuePair.Key + NewExt, keyValuePair.Key);
-
 					}
 
 				//Stops.Clear();

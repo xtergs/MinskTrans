@@ -157,6 +157,7 @@
     <Compile Include="SearchRout.cs" />
     <Compile Include="ShedulerParser.cs" />
     <Compile Include="ShowArgs.cs" />
+    <Compile Include="Utilites\IO\FileHelper.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Dictionary1.xaml">

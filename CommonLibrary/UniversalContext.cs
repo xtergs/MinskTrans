@@ -118,7 +118,19 @@ namespace CommonLibrary
 			try
 			{
 				var fl = await ApplicationData.Current.RoamingFolder.GetFileAsync(oldFile);
-				await fl.RenameAsync(newFile);
+				await fl.RenameAsync(newFile, NameCollisionOption.ReplaceExisting);
+			}
+			catch (FileNotFoundException fileNOtFound)
+			{
+			}
+		}
+
+		async Task FileMove(IStorageFolder folder, string oldFile, string newFile)
+		{
+			try
+			{
+				var fl = await folder.GetFileAsync(oldFile);
+				await fl.RenameAsync(newFile, NameCollisionOption.ReplaceExisting);
 			}
 			catch (FileNotFoundException fileNOtFound)
 			{

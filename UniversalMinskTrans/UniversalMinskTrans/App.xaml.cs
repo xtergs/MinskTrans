@@ -27,6 +27,7 @@ using Windows.UI.Core;
 using System.Diagnostics;
 using Windows.UI.Popups;
 using MyLibrary;
+using CommonLibrary.IO;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -264,7 +265,7 @@ namespace UniversalMinskTrans
 #endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
-			await model.Context.Save(saveAllDB: false);
+			await model.Context.Save(saveAllDb: false);
 			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
@@ -359,7 +360,7 @@ namespace UniversalMinskTrans
 
 
 
-			MainModelView.Create(new UniversalContext());
+			MainModelView.Create(new UniversalContext(new FileHelper()));
 #if BETA
 			Logger.Log("App ended");
 #endif

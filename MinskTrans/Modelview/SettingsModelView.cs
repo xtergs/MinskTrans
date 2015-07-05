@@ -252,6 +252,7 @@ using MinskTrans.Universal.Annotations;
 
 		public int TimeInPast
 		{
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(15);
@@ -263,6 +264,14 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
+#else
+			get { return Properties.Settings.Default.TimeInPast; }
+			set
+			{
+				Settings.Default.TimeInPast = value;
+				Settings.Default.Save();
+			}
+#endif
 		}
 
 		public bool UseGPS
@@ -411,6 +420,7 @@ using MinskTrans.Universal.Annotations;
 
 		public bool UpdateOnWiFi
 		{
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -421,10 +431,19 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
+#else
+			get { return Settings.Default.UpdateOnWiFi; }
+			set
+			{
+				Settings.Default.UpdateOnWiFi = value;
+				Settings.Default.Save();
+			}
+#endif
 		}
 
 		public bool UpdateOnMobileData
 		{
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -435,6 +454,14 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
+#else
+			get { return Settings.Default.UpdateOnMobileData; }
+			set
+			{
+				Settings.Default.UpdateOnMobileData = value;
+				Settings.Default.Save();
+			}
+#endif
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

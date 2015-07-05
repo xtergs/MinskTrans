@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Build.Utilities;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
+using MinskTrans.DesctopClient.Utilites.IO;
 using MyLibrary;
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
@@ -72,7 +73,7 @@ namespace PushNotificationServer
 			newsManager = new NewsManager();
 			SetAutoUpdateTimer(NewsAutoUpdate);
 			ondeDriveController = new OneDriveController();
-			context = new ContextDesctop();
+			context = new ContextDesctop(new FileHelper());
 		}
 
 		public bool NewsAutoUpdate

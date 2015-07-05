@@ -408,7 +408,7 @@ namespace MinskTrans.Universal
 #endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
-			await model.Context.Save(saveAllDB:false);
+			await model.Context.Save(saveAllDb: false);
 			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();

@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace MinskTrans.DesctopClient.Model
 {
-public class Stop : StopBase, IXmlSerializable
+public class Stop : StopBase
 	{
 		
 		protected List<Rout> routs;
@@ -207,57 +207,5 @@ public class Stop : StopBase, IXmlSerializable
 
 		#endregion
 
-		#region Implementation of IXmlSerializable
-
-		/// <summary>
-		/// Этот метод является зарезервированным, и его не следует использовать. При реализации интерфейса IXmlSerializable этот метод должен возвращать значение null (Nothing в Visual Basic), а если необходимо указать пользовательскую схему, то вместо использования метода следует применить <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> к классу.
-		/// </summary>
-		/// <returns>
-		/// <see cref="T:System.Xml.Schema.XmlSchema"/>, описывающая представление XML объекта, полученного из метода <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> и включенного в метод <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/>.
-		/// </returns>
-		public XmlSchema GetSchema()
-		{
-			return null;
-		}
-
-		/// <summary>
-		/// Создает объект из представления XML.
-		/// </summary>
-		/// <param name="reader">Поток <see cref="T:System.Xml.XmlReader"/>, из которого выполняется десериализация объекта.</param>
-		public void ReadXml(XmlReader reader)
-		{
-			ID = Convert.ToInt32(reader.GetAttribute("ID"));
-			City = reader.GetAttribute("City");
-			Area = reader.GetAttribute("Area");
-			Streat = reader.GetAttribute("Streat");
-			Name = reader.GetAttribute("Name");
-			Info = reader.GetAttribute("Info");
-			Lng = Convert.ToDouble(reader.GetAttribute("Lng"));
-			Lat = Convert.ToDouble(reader.GetAttribute("Lat"));
-			StopsStr = reader.GetAttribute("StopsStr");
-			StopNum = reader.GetAttribute("StopNum");
-			Info = reader.GetAttribute("Info");
-		}
-
-		/// <summary>
-		/// Преобразует объект в представление XML.
-		/// </summary>
-		/// <param name="writer">Поток <see cref="T:System.Xml.XmlWriter"/>, в который выполняется сериализация объекта.</param>
-		public void WriteXml(XmlWriter writer)
-		{
-			writer.WriteAttributeString("ID", ID.ToString());
-			writer.WriteAttributeString("City", City);
-			writer.WriteAttributeString("Area", Area);
-			writer.WriteAttributeString("Streat", Streat);
-			writer.WriteAttributeString("Name", Name);
-			writer.WriteAttributeString("Info", Info);
-			writer.WriteAttributeString("Lng", Lng.ToString());
-			writer.WriteAttributeString("Lat", Lat.ToString());
-			writer.WriteAttributeString("StopsStr", StopsStr);
-			writer.WriteAttributeString("StopNum", StopNum);
-			writer.WriteAttributeString("Info", Info);
-		}
-
-		#endregion
 	}
 }

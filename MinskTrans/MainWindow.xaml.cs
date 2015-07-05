@@ -17,6 +17,7 @@ using MapControl;
 using MapControl.Caching;
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.DesctopClient.Utilites.IO;
 
 
 namespace MinskTrans.DesctopClient
@@ -72,7 +73,7 @@ namespace MinskTrans.DesctopClient
 			InitializeComponent();
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
 			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
-			ShedulerModelView = new MainModelView(new ContextDesctop(), map);
+			ShedulerModelView = new MainModelView(new ContextDesctop(new FileHelper()), map);
 			ShedulerModelView.Context.Load();
 
 			//Map model view events

@@ -162,8 +162,8 @@ using MinskTrans.Universal.Annotations;
 		public bool HaveConnection()
 		{
 			
-			return InternetHelper.Is_Connected && (InternetHelper.Is_InternetAvailable ||
-			                                       InternetHelper.Is_Wifi_Connected == UpdateOnWiFi);
+			return InternetHelperBase.Is_Connected && (InternetHelperBase.Is_InternetAvailable ||
+												   InternetHelperBase.Is_Wifi_Connected == UpdateOnWiFi);
 		}
 #endif
 

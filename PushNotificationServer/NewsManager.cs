@@ -136,9 +136,17 @@ namespace PushNotificationServer
 			get { return pathToSaveHotData; }
 			set { pathToSaveHotData = value; }
 		}
+		readonly FileHelperBase fileHelper;
+		readonly InternetHelperBase internetHelper;
 
-		public NewsManager()
+		FileHelperBase FileHelper { get { return fileHelper; } }
+
+		public NewsManager(FileHelperBase helper)
 		{
+			if (helper == null)
+				throw new ArgumentNullException("helper");
+			fileHelper = helper;
+			internetHelper = new InternetHelperBase(FileHelper);
 			LastNewsTime = new DateTime();
 			newDictionary = new List<NewsEntry>();
 			hotNewsDictionary = new List<NewsEntry>();
@@ -150,10 +158,10 @@ namespace PushNotificationServer
 #endif
 		}
 
-		public static async Task<List<NewsEntry>>  CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
+		public async Task<List<NewsEntry>>  CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
 		{
 			List<NewsEntry> returnDictionary = new List<NewsEntry>();
-			string text = await Download(uri);
+			string text = await internetHelper.Download(uri);
 			HtmlDocument document = new HtmlDocument();
 			document.LoadHtml(text);
 
@@ -212,7 +220,7 @@ namespace PushNotificationServer
 		public async Task CheckHotNewsAsync()
 		{
 			List<NewsEntry> returnDictionary = new List<NewsEntry>();
-			string text = await Download(UriHotNews);
+			string text = await internetHelper.Download(UriHotNews);
 			HtmlDocument document = new HtmlDocument();
 			document.LoadHtml(text);
 
@@ -303,80 +311,76 @@ namespace PushNotificationServer
 		}
 
 
-		public void Load()
+		public async Task Load()
 		{
 			allNews.Clear();
-			string path = Path.Combine(PathToSaveData, FileNameMonths);
 			string allLines = "";
-			if (File.Exists(path))
-			{
-				allLines = File.ReadAllText(path);
-				allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings(){ContractResolver = new ShouldSerializeContractResolver()}));
-			}
 
+			if (await FileHelper.FileExistAsync(TypeFolder.Local, FileNameMonths))
+			{
+				allLines = await FileHelper.ReadAllTextAsync(TypeFolder.Local, FileNameMonths);
+				allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() }));
+			}
 			NewNews = null;
 
 			AllHotNews.Clear();
-			path = Path.Combine(PathToSaveHotData, FileNameDays);
-			if (File.Exists(path))
+			if (await FileHelper.FileExistAsync(TypeFolder.Local, FileNameDays))
 			{
-				allLines = File.ReadAllText(path);
-				allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings(){ ContractResolver = new ShouldSerializeContractResolver()}));
+				allLines = await FileHelper.ReadAllTextAsync(TypeFolder.Local, FileNameDays);
+				allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() }));
 			}
 
 			hotNewsDictionary = null;
 			AllHotNews = null;
 		}
 
-		void SaveToFile(string filePath, IEnumerable<NewsEntry> listToWrite)
+		async Task SaveToFile(string filePath, IEnumerable<NewsEntry> listToWrite)
 		{
 			if (!listToWrite.Any())
 				return;
-			
-			
-			string jsonString = JsonConvert.SerializeObject(listToWrite, new JsonSerializerSettings(){ContractResolver = new ShouldSerializeContractResolver()});
-			File.WriteAllText(filePath, jsonString);
+
+			string jsonString = JsonConvert.SerializeObject(listToWrite, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() });
+			await FileHelper.WriteTextAsync(TypeFolder.Local, filePath, jsonString);
 		}
 
-		public void SaveToFile()
+		public async Task SaveToFile()
 		{
 			DateTime curDateTime = DateTime.UtcNow;
-			SaveToFile(Path.Combine(PathToSaveData, FileNameMonths), newDictionary.Where(x => x.PostedUtc.Month == curDateTime.Month || x.PostedUtc.Month == (curDateTime.Subtract(new TimeSpan(31, 0, 0, 0, 0)).Month)).ToList());
+			await SaveToFile(FileNameMonths, newDictionary.Where(x => x.PostedUtc.Month == curDateTime.Month || x.PostedUtc.Month == (curDateTime.Subtract(new TimeSpan(31, 0, 0, 0, 0)).Month)).ToList());
 		}
 
-		public void SaveToFileHotNews()
+		public async Task SaveToFileHotNews()
 		{
 			DateTime curDay = DateTime.UtcNow;
-			var days = allHotNewsDictionary.Where(key=> key.PostedUtc.Day == curDay.Day || (key.PostedUtc.Day == (curDay.Subtract(new TimeSpan(1,0,0,0))).Day) ).ToList();
-			var path = Path.Combine(PathToSaveHotData, FileNameDays);
-			SaveToFile(path, days);
+			var days = allHotNewsDictionary.Where(key => key.PostedUtc.Day == curDay.Day || (key.PostedUtc.Day == (curDay.Subtract(new TimeSpan(1, 0, 0, 0))).Day)).ToList();
+			await SaveToFile(FileNameDays, days);
 		}
 
-		static private async Task<string> Download(string uri)
-		{
-			try
-			{
-				var httpClient = new HttpClient();
-				// Increase the max buffer size for the response so we don't get an exception with so many web sites
+//		static private async Task<string> Download(string uri)
+//		{
+//			try
+//			{
+//				var httpClient = new HttpClient();
+//				// Increase the max buffer size for the response so we don't get an exception with so many web sites
 
-				httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
-				httpClient.MaxResponseContentBufferSize = 256000;
-				httpClient.DefaultRequestHeaders.Add("user-agent",
-					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+//				httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
+//				httpClient.MaxResponseContentBufferSize = 256000;
+//				httpClient.DefaultRequestHeaders.Add("user-agent",
+//					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
 
-				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
-				response.EnsureSuccessStatusCode();
+//				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
+//				response.EnsureSuccessStatusCode();
 
-				return await response.Content.ReadAsStringAsync();
-			}
-			catch (Exception e)
-			{
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
-				throw new TaskCanceledException(e.Message, e);
-			}
-		}
+//				return await response.Content.ReadAsStringAsync();
+//			}
+//			catch (Exception e)
+//			{
+//#if BETA
+//				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
+//#endif
+//				throw new TaskCanceledException(e.Message, e);
+//			}
+//		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

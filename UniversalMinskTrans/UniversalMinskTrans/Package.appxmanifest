@@ -40,7 +40,7 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="BackgroundUpdateTask.UpdateBackgroundTask">
+        <Extension Category="windows.backgroundTasks" EntryPoint="MinskTrans.BackgroundUpdateTask.UpdateBackgroundTask">
           <BackgroundTasks>
             <Task Type="timer" />
           </BackgroundTasks>

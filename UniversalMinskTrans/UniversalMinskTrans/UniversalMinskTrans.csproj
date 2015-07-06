@@ -277,9 +277,13 @@
       <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
       <Name>BackgroundUpdateTask</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UniversalCommonLibrary\UniversalCommonLibrary.csproj">
-      <Project>{5fb8ca85-7d29-42ee-8f32-cbbdf4845f82}</Project>
-      <Name>UniversalCommonLibrary</Name>
+    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
+      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
+      <Name>MyLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

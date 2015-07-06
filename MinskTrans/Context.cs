@@ -280,10 +280,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		}
 
 	private readonly FileHelperBase fileHelper;
+		protected readonly InternetHelperBase internetHelper;
 		
 		public Context(FileHelperBase helper)
 		{
 			fileHelper = helper;
+			internetHelper = new InternetHelperBase(fileHelper);
 			Create();
 		}
 
@@ -856,7 +858,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		}
 
 
-		static protected async void Connect(/*[NotNull]*/ IList<Rout> routsl,/* [NotNull]*/ IList<Stop> stopsl,
+		static protected void Connect(/*[NotNull]*/ IList<Rout> routsl,/* [NotNull]*/ IList<Stop> stopsl,
 			[NotNull] IList<Schedule> timesl, int variantLoad)
 		{
 			
@@ -930,12 +932,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 					if (!await DownloadUpdate())
 						return;
 				}
-				catch (TaskCanceledException e)
+				catch (TaskCanceledException)
 				{
-					Task.WhenAll(FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
-						
-						FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
-						FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
+					await Task.WhenAll(FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
+
+											FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
+											FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
 					return;
 				}
 				if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
@@ -1314,8 +1316,8 @@ public abstract class Context : INotifyPropertyChanged , IContext
 				return new RelayCommand(async () =>
 				{
 #if WINDOWS_PHONE_APP
-					InternetHelper.UpdateNetworkInformation();
-					if (!InternetHelper.Is_Connected)
+					InternetHelperBase.UpdateNetworkInformation();
+					if (!InternetHelperBase.Is_Connected)
 						return;
 #endif
 					updating = true;
@@ -1336,38 +1338,38 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public RelayCommand<RoutWithDestinations> AddFavouriteRoutCommand
 		{
-			get { return new RelayCommand<RoutWithDestinations>(x => 
+			get { return new RelayCommand<RoutWithDestinations>(async x =>
 				{
-				FavouriteRouts.Add(x);
-					SaveFavourite(TypeFolder.Roaming);
+					FavouriteRouts.Add(x);
+					await SaveFavourite(TypeFolder.Roaming);
 				}, p => p != null && !FavouriteRouts.Contains(p)); }
 		}
 
 		public RelayCommand<Stop> AddFavouriteSopCommand
 		{
-			get { return new RelayCommand<Stop>(x =>
+			get { return new RelayCommand<Stop>(async x =>
 			{
 				FavouriteStops.Add(x);
-				SaveFavourite(TypeFolder.Roaming);
+				await SaveFavourite(TypeFolder.Roaming);
 			}
 
 				, p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p)); }
 		}
 		public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
 		{
-			get { return new RelayCommand<RoutWithDestinations>(x =>
+			get { return new RelayCommand<RoutWithDestinations>(async x =>
 			{
 				FavouriteRouts.Remove(x);
-				SaveFavourite(TypeFolder.Roaming);
+				await SaveFavourite(TypeFolder.Roaming);
 			}, p => p != null && FavouriteRouts.Contains(p)); }
 		}
 
 		public RelayCommand<Stop> RemoveFavouriteSopCommand
 		{
-			get { return new RelayCommand<Stop>(x =>
+			get { return new RelayCommand<Stop>(async x =>
 			{
 				FavouriteStops.Remove(x);
-				SaveFavourite(TypeFolder.Roaming);
+				await SaveFavourite(TypeFolder.Roaming);
 			}, p => p != null && FavouriteStops.Contains(p)); }
 		}
 		#endregion
@@ -1427,10 +1429,10 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		{
 			get
 			{
-				return new RelayCommand<string>(x =>
+				return new RelayCommand<string>(async x =>
 				{
-					Groups.Add(new GroupStop() {Name = x});
-					SaveFavourite(TypeFolder.Roaming);
+					Groups.Add(new GroupStop() { Name = x });
+					await SaveFavourite(TypeFolder.Roaming);
 				}, p=>!string.IsNullOrWhiteSpace(p));
 			}
 		}
@@ -1439,12 +1441,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		{
 			get
 			{
-				return new RelayCommand<GroupStop>(x =>
+				return new RelayCommand<GroupStop>(async x =>
 				{
 					if (x != null)
 					{
 						Groups.Remove(x);
-						SaveFavourite(TypeFolder.Roaming);
+						await SaveFavourite(TypeFolder.Roaming);
 						OnPropertyChanged("Groups");
 					}
 				});

@@ -6,13 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Build.Utilities;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Annotations;
-using MinskTrans.DesctopClient.Utilites.IO;
 using MyLibrary;
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
+using MinskTrans.DesctopClient.Utilites.IO;
 
 namespace PushNotificationServer
 {
@@ -40,7 +39,7 @@ namespace PushNotificationServer
 		{
 			NewsManager.LastNewsTime = Settings.Default.LastUpdatedNews;
 			NewsManager.LastHotNewstime = Settings.Default.LastUpdatedHotNews;
-			NewsManager.Load();
+			await NewsManager.Load();
 			await Context1.Load(LoadType.LoadDB);
 			Context1.LastUpdateDataDateTime = Settings.Default.DBUpdateTime;
 			OndeDriveController.Inicialize();
@@ -70,7 +69,7 @@ namespace PushNotificationServer
 
 		ServerEngine()
 		{
-			newsManager = new NewsManager();
+			newsManager = new NewsManager(new FileHelper());
 			SetAutoUpdateTimer(NewsAutoUpdate);
 			ondeDriveController = new OneDriveController();
 			context = new ContextDesctop(new FileHelper());

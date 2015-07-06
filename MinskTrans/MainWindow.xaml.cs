@@ -2,23 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
 using System.Windows.Threading;
 using MinskTrans.DesctopClient.Modelview;
 
 using MapControl;
-using MapControl.Caching;
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Utilites.IO;
-
 
 namespace MinskTrans.DesctopClient
 {
@@ -220,7 +215,6 @@ namespace MinskTrans.DesctopClient
 					result.Text += a[i][j].ToString("D2") + " ";
 				result.Text += "\n";
 			}
-			int str = 23;
 		}
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -254,19 +248,19 @@ namespace MinskTrans.DesctopClient
 			return false;
 		}
 
-		private void Window_Closed(object sender, EventArgs e)
+		private async void Window_Closed(object sender, EventArgs e)
 		{
-			ShedulerModelView.Context.Save();
+			await ShedulerModelView.Context.Save();
 			timerr.Stop();
 			timerr.Dispose();
 		}
 
-		private void routeFilterTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+		private void routeFilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			routeNumsListView.SelectedIndex = 0;
 		}
 
-		private void routeNumsListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private void routeNumsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			routeNamesListView.SelectedIndex = 0;
 		}

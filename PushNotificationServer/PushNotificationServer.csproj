@@ -158,6 +158,10 @@
       <Project>{7684D5C4-C88A-47A2-8525-5EC7B319018A}</Project>
       <Name>MyLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UniversalMinskTrans\DesktopLibrary\DesktopLibrary.csproj">
+      <Project>{95dd1ab8-a7a5-416e-be5b-76c39b2fa298}</Project>
+      <Name>DesktopLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

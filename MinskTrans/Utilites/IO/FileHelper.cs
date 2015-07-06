@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using MyLibrary;
+using System.Reflection;
 
 //#endif
 
@@ -44,9 +45,9 @@ namespace MinskTrans.DesctopClient.Utilites.IO
 
 		private Dictionary<TypeFolder, string> Folders = new Dictionary<TypeFolder, string>()
 		{
-			{TypeFolder.Local, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)},
-			{TypeFolder.Roaming, Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)},
-			{TypeFolder.Temp, Environment.GetFolderPath(Environment.SpecialFolder.InternetCache)}
+			{TypeFolder.Local, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Assembly.GetEntryAssembly()},
+			{TypeFolder.Roaming, Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Assembly.GetEntryAssembly()},
+			{TypeFolder.Temp, Environment.GetFolderPath(Environment.SpecialFolder.InternetCache) + Assembly.GetEntryAssembly()}
 		};
 
 		#region Overrides of FileHelperBase

@@ -79,17 +79,17 @@ namespace MinskTrans.Universal
 
 			var builder = new PushPinBuilder();
 			builder.Style = (Style)mainPage.Resources["PushpinStyle1"];
-			builder.Tapped += (sender, args) =>
+			builder.Tapped += async (sender, args) =>
 			{
 				PopupMenu menu = new PopupMenu();
-				var push = ((Pushpin) sender);
-				Stop stop = (Stop) push.Tag;
-				
+				var push = ((Pushpin)sender);
+				Stop stop = (Stop)push.Tag;
+
 				menu.Commands.Add(new UICommand("Показать расписание", command =>
 				{
 					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
-				if (stop.Routs.Any(tr=> tr.Transport == TransportType.Bus))
+				if (stop.Routs.Any(tr => tr.Transport == TransportType.Bus))
 					menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
 					menu.Commands.Add(new UICommand(model.Context.GetTrolToString(stop)));
@@ -97,7 +97,7 @@ namespace MinskTrans.Universal
 					menu.Commands.Add(new UICommand(model.Context.GetTramToString(stop)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
 					menu.Commands.Add(new UICommand(model.Context.GetMetroToString(stop)));
-				menu.ShowAsync(push.RenderTransformOrigin);
+				await menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
@@ -147,23 +147,23 @@ namespace MinskTrans.Universal
 			//model.Context.Save();
 			//model.Context.Load();
 
-			model.Context.ErrorDownloading += (sender, args) =>
+			model.Context.ErrorDownloading += async (sender, args) =>
 			{
-				ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ProgressBar.Visibility = Visibility.Collapsed);
+				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ProgressBar.Visibility = Visibility.Collapsed);
 			};
-			model.Context.UpdateStarted += (sender, args) =>
+			model.Context.UpdateStarted += async (sender, args) =>
 			{
-				ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					ProgressBar.Visibility = Visibility.Visible;
-					ProgressBar.IsIndeterminate = true;
+				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				  {
+					  ProgressBar.Visibility = Visibility.Visible;
+					  ProgressBar.IsIndeterminate = true;
 
-				});
+				  });
 			};
 			model.Context.UpdateEnded += async (senderr, args) =>
 			{
-				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
+				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				  {
 					//FlyoutBase.GetAttachedFlyout(GgGrid).Hide();
 
 					//listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
@@ -177,7 +177,7 @@ namespace MinskTrans.Universal
 				string str = "s";
 #endif
 					model.Context.AllPropertiesChanged();
-					ProgressBar.Visibility = Visibility.Collapsed;
+					  ProgressBar.Visibility = Visibility.Collapsed;
 					//ProgressBar.IsIndeterminate = false;
 					pushpins = null;
 					//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
@@ -188,21 +188,21 @@ namespace MinskTrans.Universal
 
 			};
 			//model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
-			model.Context.LoadStarted += (sender, args) =>
+			model.Context.LoadStarted += async (sender, args) =>
 			{
-				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					ProgressBar.IsIndeterminate = true;
-					ProgressBar.Visibility = Visibility.Visible;
-				});
+				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				  {
+					  ProgressBar.IsIndeterminate = true;
+					  ProgressBar.Visibility = Visibility.Visible;
+				  });
 			};
-			model.Context.LoadEnded += (sender, args) =>
+			model.Context.LoadEnded += async (sender, args) =>
 			{
-				Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					model.Context.AllPropertiesChanged();
-					ProgressBar.Visibility = Visibility.Collapsed;
-				});
+				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+				  {
+					  model.Context.AllPropertiesChanged();
+					  ProgressBar.Visibility = Visibility.Collapsed;
+				  });
 			};
 			
 			ShowFavouriteStop.AddGroup += ShowAddGroup;
@@ -409,7 +409,7 @@ namespace MinskTrans.Universal
 				{
 					// the application does not have the right capability or the location master switch is off
 					MessageDialog dialog = new MessageDialog("location  is disabled in phone settings.");
-					dialog.ShowAsync();
+					await dialog.ShowAsync();
 					
 				}
 				//else
@@ -453,9 +453,9 @@ namespace MinskTrans.Universal
 			});
 		}
 
-		private void ShowInStore(object sender, RoutedEventArgs e)
+		private async void ShowInStore(object sender, RoutedEventArgs e)
 		{
-			Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
+			await Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
 		}
 
 		private async void Test(object sender, RoutedEventArgs e)
@@ -467,18 +467,18 @@ namespace MinskTrans.Universal
 			await model.Context.Load();
 		}
 
-		private void OnOffLocationServises(object sender, RoutedEventArgs e)
+		private async void OnOffLocationServises(object sender, RoutedEventArgs e)
 		{
-			Launcher.LaunchUriAsync(new Uri("ms-settings-location://"));
+			await Launcher.LaunchUriAsync(new Uri("ms-settings-location://"));
 		}
 
-		private void ShowPolicity(object sender, RoutedEventArgs e)
+		private async void ShowPolicity(object sender, RoutedEventArgs e)
 		{
 			MessageDialog dialog = new MessageDialog(model.SettingsModelView.PrivatyPolicity);
-			dialog.ShowAsync();
+			await dialog.ShowAsync();
 		}
 
-		private async void SendLog(object sender, RoutedEventArgs e)
+		private void SendLog(object sender, RoutedEventArgs e)
 		{
 			SendLog();
 		}

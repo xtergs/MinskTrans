@@ -13,6 +13,7 @@ using CommonLibrary.IO;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
+using MyLibrary;
 
 namespace MinskTrans.BackgroundUpdateTask
 {
@@ -41,14 +42,15 @@ namespace MinskTrans.BackgroundUpdateTask
 			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 			SettingsModelView settings = new SettingsModelView();
-			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
-			InternetHelper.UpdateNetworkInformation();
+			InternetHelperBase helper = new InternetHelperBase(new FileHelper());
+            settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
+			InternetHelperBase.UpdateNetworkInformation();
 			if (!settings.HaveConnection())
 				_deferral.Complete();
 	        MaxDaysAgo = 30;
 	        MaxMinsAgo = 20;
 
-	        await InternetHelper.Download(urlUpdateDates, fileNews, ApplicationData.Current.TemporaryFolder);
+	        await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
 			string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
 	        var timeShtaps = resultStr.Split('\n');
 	        DateTime time = new DateTime();
@@ -82,7 +84,7 @@ namespace MinskTrans.BackgroundUpdateTask
 		        NewsManager manager = new NewsManager();
 				if (time > manager.LastUpdateMainNewsDateTime)
 		        {
-					await InternetHelper.Download(urlUpdateNews, manager.fileNameNews, ApplicationData.Current.LocalFolder);
+					await helper.Download(urlUpdateNews, manager.fileNameNews, TypeFolder.Local);
 			        DateTime oldTime = manager.LastUpdateMainNewsDateTime;
 			        manager.LastUpdateMainNewsDateTime = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
@@ -95,7 +97,7 @@ namespace MinskTrans.BackgroundUpdateTask
 				time = DateTime.Parse(timeShtaps[1]);
 		        if (time > manager.LastUpdateHotNewsDateTime)
 		        {
-					await InternetHelper.Download(urlUpdateHotNews, manager.fileNameHotNews, ApplicationData.Current.LocalFolder);
+					await helper.Download(urlUpdateHotNews, manager.fileNameHotNews, TypeFolder.Local);
 			        DateTime oldTime = manager.LastUpdateHotNewsDateTime;
 			        manager.LastUpdateHotNewsDateTime = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),

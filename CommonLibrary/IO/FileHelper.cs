@@ -14,7 +14,7 @@ namespace CommonLibrary.IO
 	public sealed class FileHelper: FileHelperBase
 	{
 		
-		private readonly Dictionary<TypeFolder, IStorageFolder> Folders = new Dictionary<TypeFolder, IStorageFolder>()
+		public static readonly Dictionary<TypeFolder, IStorageFolder> Folders = new Dictionary<TypeFolder, IStorageFolder>()
 		{
 			{TypeFolder.Local, ApplicationData.Current.LocalFolder},
 			{TypeFolder.Roaming, ApplicationData.Current.RoamingFolder},

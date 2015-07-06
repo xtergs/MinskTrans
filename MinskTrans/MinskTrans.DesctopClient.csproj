@@ -220,6 +220,10 @@
       <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
       <Name>MyLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UniversalMinskTrans\DesktopLibrary\DesktopLibrary.csproj">
+      <Project>{95dd1ab8-a7a5-416e-be5b-76c39b2fa298}</Project>
+      <Name>DesktopLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Image\bus.jpg">

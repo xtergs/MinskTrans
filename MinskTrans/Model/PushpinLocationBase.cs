@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using MapControl;
-using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Model;
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
+using Windows.UI.Xaml;
+#else
+using System.Windows;
+#endif
 
-namespace MinskTrans.Universal
+namespace MinskTrans.DesctopClient.Model
 {
-	public class PushpinLocation 
+	public abstract class PushpinLocationBase
 	{
-		public PushpinLocation() { }
+		public PushpinLocationBase() { }
 
-		public PushpinLocation(Pushpin pin, Location loc)
+		public PushpinLocationBase(Pushpin pin, Location loc)
 		{
 			Pushpin = pin;
 			Location = loc;
 		}
-		
+
 		public Stop Stop;
-		//public Style Style;
+		public Style Style;
 		private Pushpin pushpin;
 
-		public PushpinLocation(Pushpin pin, bool getLocation = true)
+		public PushpinLocationBase(Pushpin pin, bool getLocation = true)
 		{
 			Pushpin = pin;
 			Location = MapPanel.GetLocation(pin);

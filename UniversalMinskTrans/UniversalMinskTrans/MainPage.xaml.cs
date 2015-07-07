@@ -90,13 +90,13 @@ namespace MinskTrans.Universal
 					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
 				if (stop.Routs.Any(tr=> tr.Transport == TransportType.Bus))
-					menu.Commands.Add(new UICommand(model.Context.GetBusToString(stop)));
+					menu.Commands.Add(new UICommand(model.TimeTableRepository.TransportToString(stop, TransportType.Bus)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
-					menu.Commands.Add(new UICommand(model.Context.GetTrolToString(stop)));
+					menu.Commands.Add(new UICommand(model.TimeTableRepository.TransportToString(stop, TransportType.Trol)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
-					menu.Commands.Add(new UICommand(model.Context.GetTramToString(stop)));
+					menu.Commands.Add(new UICommand(model.TimeTableRepository.TransportToString(stop, TransportType.Tram)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
-					menu.Commands.Add(new UICommand(model.Context.GetMetroToString(stop)));
+					menu.Commands.Add(new UICommand(model.TimeTableRepository.TransportToString(stop, TransportType.Metro)));
 				menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			

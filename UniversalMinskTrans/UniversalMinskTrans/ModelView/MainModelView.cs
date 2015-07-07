@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
+using MinskTrans.DesctopClient.Update;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -24,6 +25,10 @@ namespace MinskTrans.Universal.ModelView
 		private FindModelView findModelView;
 		private MapModelView mapMOdelView;
 		private readonly NewsManager newsManager;
+		readonly UpdateManagerBase updateManager;
+		readonly TimeTableRepositoryBase timeTableRepository;
+
+		public UpdateManagerBase UpdateManager { get { return updateManager; } }		
 
 		public static MainModelView Create(Context newContext)
 		{
@@ -128,5 +133,12 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
+		public TimeTableRepositoryBase TimeTableRepository
+		{
+			get
+			{
+				return timeTableRepository;
+			}
+		}
 	}
 }

@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient
 {
-	[Serializable]
+	//[Serializable]
 	public class ContextDesctop : Context
 	{
 
@@ -49,7 +49,7 @@ namespace MinskTrans.DesctopClient
 		//				writer.Close();
 		//			}
 		//		}
-				
+
 		//		SafeMoveFile(NameFileFavourite + TempExt, NameFileFavourite);
 
 		//		var jsonSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
@@ -79,7 +79,7 @@ namespace MinskTrans.DesctopClient
 		//	}
 		//}
 
-		
+
 		//async public override void Create(bool AutoUpdate = true)
 		//{
 		//	//TODO
@@ -149,32 +149,8 @@ namespace MinskTrans.DesctopClient
 		//	return false;
 		//}
 
-		
-		public override async Task<bool> DownloadUpdate()
-		{
-			//TODO
-			//throw new NotImplementedException();
-			OnDataBaseDownloadStarted();
-			try
-			{
-				using (var client = new WebClient())
-				{
-					//Task.WhenAll(
-					client.DownloadFile(list[0].Value, list[0].Key + NewExt);
-					client.DownloadFile(list[1].Value, list[1].Key + NewExt);
-					client.DownloadFile(list[2].Value, list[2].Key + NewExt);
-					//);
-				}
-				OnDataBaseDownloadEnded();
 
-			}
-			catch (System.Net.WebException e)
-			{
-				OnErrorDownloading();
-				return false;
-			}
-			return true;
-		}
+
 
 		//public override async Task Load(LoadType type = LoadType.LoadAll)
 		//{
@@ -307,7 +283,8 @@ namespace MinskTrans.DesctopClient
 
 		#endregion
 
-		public ContextDesctop(FileHelperBase helper) : base(helper)
+		public ContextDesctop(FileHelperBase helper, InternetHelperBase internetHelper) 
+			: base(helper, internetHelper)
 		{
 		}
 	}

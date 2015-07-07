@@ -14,6 +14,7 @@ using MapControl;
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Utilites.IO;
+using MinskTrans.DesctopClient.Net;
 
 namespace MinskTrans.DesctopClient
 {
@@ -68,7 +69,7 @@ namespace MinskTrans.DesctopClient
 			InitializeComponent();
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
 			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
-			ShedulerModelView = new MainModelView(new ContextDesctop(new FileHelper()), map);
+			//ShedulerModelView = new MainModelView(new ContextDesctop(new FileHelper(), new InternetHelperDesktop(new FileHelper())), map);
 			ShedulerModelView.Context.Load();
 
 			//Map model view events
@@ -104,8 +105,8 @@ namespace MinskTrans.DesctopClient
 				if (updateTimerInterval == new TimeSpan(0, 0, 0))
 				{
 					ResetUpdateTimer();
-					if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
-						ShedulerModelView.Context.UpdateDataCommand.Execute(null);
+					if (ShedulerModelView.UpdateDataCommand.CanExecute(null))
+						ShedulerModelView.UpdateDataCommand.Execute(null);
 				}
 				updateTimerInterval = updateTimerInterval.Subtract(new TimeSpan(0, 0, 1));
 				tickTimer.Content = updateTimerInterval;
@@ -116,11 +117,11 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
 			ShedulerModelView.StopMovelView.ShowStop += OnShowStop;
 
-			ShedulerModelView.Context.DataBaseDownloadStarted += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
+			ShedulerModelView.UpdateManager.DataBaseDownloadStarted += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
 			{
 				statusMessages.Content = "Data had started downloading";
 			});
-			ShedulerModelView.Context.DataBaseDownloadEnded += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
+			ShedulerModelView.UpdateManager.DataBaseDownloadEnded += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
 			{
 				statusMessages.Content = "Data has been downloaded";
 			});
@@ -128,7 +129,7 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.Context.LoadEnded += (sender, args) => StartUpdateTimer();
 			ShedulerModelView.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
 
-			ShedulerModelView.Context.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
+			ShedulerModelView.UpdateManager.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 
 			//var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
 

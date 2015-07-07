@@ -1,4 +1,6 @@
+using MinskTrans.DesctopClient.Model;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyLibrary
@@ -14,9 +16,9 @@ namespace MyLibrary
 	{
 		
 		void Create(bool a = true);
-		Task<bool> DownloadUpdate();
-		Task<bool> HaveUpdate(string a, string b, string c, bool t);
-		Task ApplyUpdate();
+		
+		Task<bool> HaveUpdate(IList<Rout> a, IList<Stop> b, IList<Schedule> c);
+		Task ApplyUpdate(IList<Rout> a, IList<Stop> b, IList<Schedule> c);
 		Task Save(bool saveAllDB = true);
 		Task Load(LoadType type = LoadType.LoadAll);
 	}

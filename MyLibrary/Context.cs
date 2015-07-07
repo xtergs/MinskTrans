@@ -15,34 +15,20 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using MinskTrans.DesctopClient.Comparer;
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
-using MinskTrans.DesctopClient.Annotations;
-using GalaSoft.MvvmLight.CommandWpf;
-#else
-using GalaSoft.MvvmLight.Command;
-using MinskTrans.Universal.Annotations;
-using CommonLibrary;
-using MinskTrans.Universal;
 
-#endif
+
 using MinskTrans.DesctopClient.Model;
-using MinskTrans.DesctopClient.Modelview;
+
 using MyLibrary;
 using Newtonsoft.Json;
 using TransportType = MinskTrans.DesctopClient.Model.TransportType;
-
+using GalaSoft.MvvmLight.Command;
 
 namespace MinskTrans.DesctopClient
 {
 public abstract class Context : INotifyPropertyChanged , IContext
 	{
-		protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
-		{
-			new KeyValuePair<string, string>("stops.txt", @"http://www.minsktrans.by/city/minsk/stops.txt"),
-			new KeyValuePair<string, string>("routes.txt", @"http://www.minsktrans.by/city/minsk/routes.txt"),
-			new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
-		};
+		
 
 		protected Dictionary<int, uint> counterViewStops =new Dictionary<int,uint>();
 
@@ -78,65 +64,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			return 0;
 		}
 
-		public string GetBusToString(Stop stop)
-		{
-			
-			var temp = stop.Routs.Where(rout=> rout.Transport == TransportType.Bus).Select(rout=> rout.RouteNum).Distinct().ToList();
-			if (temp.Count == 0)
-				return "";
-			StringBuilder builder = new StringBuilder("Авт: ");
-			foreach (var rout in temp)
-			{
-				builder.Append(rout).Append(", ");
-			}
-			//builder.Append(temp.Select(x => x.RouteNum + ", ").ToList());
-			builder.Remove(builder.Length - 2, 2);
-			return builder.ToString();
-		}
-		public string GetTrolToString(Stop stop)
-		{
-			var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Trol).Select(rout => rout.RouteNum).Distinct().ToList();
-			if (temp.Count == 0)
-				return "";
-			StringBuilder builder = new StringBuilder("трол: ");
-			foreach (var rout in temp)
-			{
-				builder.Append(rout).Append(", ");
-			}
-			//builder.Append(temp.Select(x => x.RouteNum + ", "));
-			builder.Remove(builder.Length - 2, 2);
-			return builder.ToString();
-		}
-		public string GetMetroToString(Stop stop)
-		{
-			var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Metro).Select(rout => rout.RouteNum).Distinct().ToList();
-			if (temp.Count == 0)
-				return "";
-			StringBuilder builder = new StringBuilder("Метро: ");
-			foreach (var rout in temp)
-			{
-				builder.Append(rout).Append(", ");
-			}
-			//builder.Append(temp.Select(x => x.RouteNum + ", "));
-			builder.Remove(builder.Length - 2, 2);
-			return builder.ToString();
-		}
-		public string GetTramToString(Stop stop)
-		{
-			var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Tram).Select(rout => rout.RouteNum).Distinct().ToList();
-			if (temp.Count == 0)
-				return "";
-			StringBuilder builder = new StringBuilder("Трам: ");
-			foreach (var rout in temp)
-			{
-				builder.Append(rout).Append(", ");
-			}
-			//builder.Append(temp.Select(x => x.RouteNum + ", "));
-			builder.Remove(builder.Length - 2, 2);
-
-			return builder.ToString();
-		}
-
+		
 		public string TempExt
 		{
 			get { return FileHelperBase.TempExt; }
@@ -229,63 +157,15 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			}
 		}
 
-		public ObservableCollection<RoutWithDestinations> FavouriteRouts
-		{
-			get
-			{
-				if (favouriteRouts == null)
-					favouriteRouts = new ObservableCollection<RoutWithDestinations>();
-				return favouriteRouts;
-			}
-			set
-			{
-				favouriteRouts = value;
-				//OnPropertyChanged();
-			}
-		}
-
-		public ObservableCollection<Stop> FavouriteStops
-		{
-			get
-			{
-				if (favouriteStops == null)
-					favouriteStops = new ObservableCollection<Stop>();
-				return favouriteStops;
-			}
-			set
-			{
-				favouriteStops = value;
-				//OnPropertyChanged();
-			}
-		}
-		public ObservableCollection<GroupStop> Groups
-		{
-			get
-			{
-				if (groups == null)
-					Groups = new ObservableCollection<GroupStop>();
-				return groups;
-			}
-			set
-			{
-				groups = value;
-				groups.CollectionChanged += (sender, args) =>
-				{
-					OnPropertyChanged("Groups.Count");
-					var s = Groups.Count;
-				};
-				//OnPropertyChanged();
-
-			}
-		}
+		
 
 	private readonly FileHelperBase fileHelper;
 		protected readonly InternetHelperBase internetHelper;
 		
-		public Context(FileHelperBase helper)
+		public Context(FileHelperBase helper, InternetHelperBase internetHelper)
 		{
 			fileHelper = helper;
-			internetHelper = new InternetHelperBase(fileHelper);
+			this.internetHelper = internetHelper;
 			Create();
 		}
 
@@ -301,60 +181,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			Groups = cont.Groups;
 		}
 
-		public ObservableCollection<Schedule> Times
-		{
-			get { return times; }
-			set
-			{
-				if (Equals(value, times)) return;
-				times = value;
-				//OnPropertyChanged();
-			}
-		}
-
-		public ObservableCollection<Stop> Stops
-		{
-			get { return stops; }
-			set
-			{
-				if (Equals(value, stops)) return;
-				stops = value;
-				//actualStops = null;
-				//ActualStops = new ObservableCollection<Stop>(value.AsParallel().Where(x => Routs != null && Routs.AsParallel().Any(d => d.Stops.Contains(x))));
-				//OnPropertyChanged();
-				//OnPropertyChanged("ActualStops");
-			}
-		}
-
-		public ObservableCollection<Stop> ActualStops
-		{
-			get
-			{
-				return Stops;
-			}
-
-			private set
-			{
-				//OnPropertyChanged();
-			}
-		}
-
-		public ObservableCollection<Rout> Routs
-		{
-			get { return routs; }
-			set
-			{
-				if (Equals(value, routs))
-					return;
-				routs = value;
-				//OnPropertyChanged();
-			}
-		}
-
-		public bool RoutsHaveStopId(int stopId)
-		{
-			return Routs.AsParallel().Any(x => x.RouteStops.Contains(stopId));
-		}
+		
 
 		public virtual void Create(bool AutoUpdate = true)
 		{
@@ -362,41 +189,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			FavouriteStops = new ObservableCollection<Stop>();
 			Groups = new ObservableCollection<GroupStop>();
 		}
-
-	public abstract Task<bool> DownloadUpdate();
-
-	protected ObservableCollection<Rout> newRoutes;
-		protected ObservableCollection<Stop> newStops;
-		protected ObservableCollection<Schedule> newSchedule;
-
-		public async Task ApplyUpdate()
+		
+		public async Task ApplyUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 		{
 			OnApplyUpdateStarted();
 			try
 			{
-
-				//Parallel.ForEach(list, async keyValuePair =>
-				
-				if (await FileHelper.FileExistAsync(TypeFolder.Roaming, list[0].Key + NewExt) && 
-					await FileHelper.FileExistAsync(TypeFolder.Roaming, list[1].Key + NewExt) && 
-					await FileHelper.FileExistAsync(TypeFolder.Roaming, list[2].Key + NewExt) )
-					foreach (var keyValuePair in list)
-					{
-						await FileHelper.SafeMoveAsync(TypeFolder.Roaming, keyValuePair.Key + NewExt, keyValuePair.Key);
-						
-					}
-
-				//Stops.Clear();
-				//Routs.Clear();
-				//Times.Clear();
-				//Parallel.ForEach(newStops, stop => Stops.Add(stop));
-				//Parallel.ForEach(newRoutes, rout => Routs.Add(rout));
-				//Parallel.ForEach(newSchedule, time => Times.Add(time));
-
-
-
-				 //Connect(newRoutes, newStops, newSchedule, VariantLoad);
-
 				Stops = newStops;
 				Routs = newRoutes;
 				Times = newSchedule;
@@ -410,90 +208,24 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			catch (Exception e)
 			{
 				Debug.WriteLine("Apply update: " + e.Message);
-				//OnLogMessage("Apply update: " + e.Message);
 #if BETA
 				Logger.Log("ApplyUpdate exception").WriteLine(e.Message).WriteLine(e.StackTrace).SaveToFile();
 #endif
 				throw;
 			}
-
-			//ActualStops = ;
-
-			//AllPropertiesChanged();
-
 			OnApplyUpdateEnded();
 		}
 
-		public virtual async Task<bool> HaveUpdate(string fileStops, string fileRouts, string fileTimes, bool checkUpdate)
+		public virtual async Task<bool> HaveUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 		{
-			//return  Task.Run(async () =>
-			//{
-			OnLogMessage("Have update started");
-			try
-			{
-				//#if DEBUG
-
-				await Task.WhenAll(Task.Run(async () =>
-				{
-					//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileStops);
-					newStops = new ObservableCollection<Stop>(ShedulerParser.ParsStops(await FileHelper.ReadAllTextAsync(TypeFolder.Roaming, fileStops)));
-				}),
-					Task.Run(async () =>
-					{
-						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileRouts);
-						newRoutes = new ObservableCollection<Rout>(ShedulerParser.ParsRout(await FileHelper.ReadAllTextAsync(TypeFolder.Roaming, fileRouts)));
-
-					}),
-					Task.Run(async () =>
-					{
-						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileTimes);
-						newSchedule = new ObservableCollection<Schedule>(ShedulerParser.ParsTime(await FileHelper.ReadAllTextAsync(TypeFolder.Roaming, fileTimes)));
-
-					}));
-				Debug.WriteLine("All threads ended");
-				//OnLogMessage("All threads ended");
-			}
-			catch (FileNotFoundException e)
-			{
-				OnLogMessage(e.Message);
-				return false;
-			}
-			catch (Exception e)
-			{
-#if BETA
-				Logger.Log("HaveUpdate").WriteLineTime(e.Message).WriteLine(e.StackTrace);
-#endif
-				return false;
-			}
 			Connect(newRoutes, newStops, newSchedule, VariantLoad);
-
 			newStops = new ObservableCollection<Stop>(newStops.Where(stop => stop.Routs.Any()));
 			newRoutes = new ObservableCollection<Rout>(newRoutes.Where(rout => rout.Stops.Any()));
-			if (checkUpdate)
-			{
-				return NeedUpdate();
-			}
-
-
-			OnLogMessage("don't have update true");
-			return false;
-			//});
-
+			return NeedUpdate(newRoutes, newStops, newSchedule);		
 		}
-
-
-
-
+		
 		protected virtual async Task SaveFavourite(TypeFolder storage)
 		{
-			//StorageFile stream = await storage.CreateFileAsync(NameFileFavourite + TempExt, CreationCollisionOption.ReplaceExisting);
-
-			//using (var writer = XmlWriter.Create(await stream.OpenStreamForWriteAsync()))
-			//{
-			//	WriteXml(writer);
-			//}
-			//await stream.RenameAsync(NameFileFavourite, NameCollisionOption.ReplaceExisting);
-
 			var favouriteString = JsonConvert.SerializeObject(new
 			{
 				Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
@@ -524,12 +256,6 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public virtual async Task Save(bool saveAllDb = true)
 		{
-
-			//await IsolatedStorageOperations.Save(this, "data.dat");
-
-			//var storage = ApplicationData.Current.RoamingFolder;
-			//StorageFile stream = null;
-
 			try
 			{
 
@@ -651,9 +377,9 @@ public abstract class Context : INotifyPropertyChanged , IContext
 						}));
 				else
 				{
-					tpRouts = Routs;
-					tpStops = Stops;
-					tpTimes = Times;
+					tpRouts = new ObservableCollection<Rout>(Routs);
+					tpStops = new ObservableCollection<Stop>(Stops);
+					tpTimes = new ObservableCollection<Schedule>(Times);
 				}
 			}
 			catch (TaskCanceledException e)
@@ -716,14 +442,6 @@ public abstract class Context : INotifyPropertyChanged , IContext
 							})
 						});
 
-
-
-
-						//using (var reader = XmlReader.Create(stream, new XmlReaderSettings()))
-						//{
-						//	ReadXml(reader);
-						//}
-
 						if (desFavourite.Routs != null)
 						{
 							var temp1 = desFavourite.Routs.Select(x =>
@@ -742,7 +460,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 							tpGroups = new ObservableCollection<GroupStop>(desFavourite.Groups.Select(x => new GroupStop()
 							{
 								Name = x.Name,
-								Stops = new ObservableCollection<Stop>(tpStops.Join(x.IDs, stop => stop.ID, i => i, (stop, i) => stop))
+								Stops = new List<Stop>(tpStops.Join(x.IDs, stop => stop.ID, i => i, (stop, i) => stop))
 							}));
 						}
 					}
@@ -772,7 +490,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 							tpGroups = new ObservableCollection<GroupStop>(GroupsStopIds.Select(x => new GroupStop()
 							{
 								Name = x.Name,
-								Stops = new ObservableCollection<Stop>(tpStops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
+								Stops = new List<Stop>(tpStops.Join(x.StopID, stop => stop.ID, i => i, (stop, i) => stop))
 							}));
 							GroupsStopIds = null;
 						}
@@ -859,7 +577,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 
 		static protected void Connect(/*[NotNull]*/ IList<Rout> routsl,/* [NotNull]*/ IList<Stop> stopsl,
-			[NotNull] IList<Schedule> timesl, int variantLoad)
+			/*[NotNull]*/ IList<Schedule> timesl, int variantLoad)
 		{
 			
 #if BETA
@@ -919,46 +637,46 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		//		ApplyUpdate();
 		//}
 
-		public virtual async Task UpdateAsync(bool SaveAllDB = true)
-		{
-			//TODO
-			//throw new NotImplementedException();
+		//public virtual async Task UpdateAsync(bool SaveAllDB = true)
+		//{
+		//	//TODO
+		//	//throw new NotImplementedException();
 
-			OnUpdateStarted();
-			try
-			{
-				try
-				{
-					if (!await DownloadUpdate())
-						return;
-				}
-				catch (TaskCanceledException)
-				{
-					await Task.WhenAll(FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
+		//	OnUpdateStarted();
+		//	try
+		//	{
+		//		try
+		//		{
+		//			if (!await DownloadUpdate())
+		//				return;
+		//		}
+		//		catch (TaskCanceledException)
+		//		{
+		//			await Task.WhenAll(FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
 
-											FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
-											FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
-					return;
-				}
-				if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
-				{
-					await ApplyUpdate();
-					await Save(SaveAllDB);
-				}
-				await Task.WhenAll(
-					FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
-					FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
-					FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt));
+		//									FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
+		//									FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt)).ContinueWith((x) => OnErrorDownloading());
+		//			return;
+		//		}
+		//		if (await HaveUpdate(list[0].Key + NewExt, list[1].Key + NewExt, list[2].Key + NewExt, checkUpdate: true))
+		//		{
+		//			await ApplyUpdate();
+		//			await Save(SaveAllDB);
+		//		}
+		//		await Task.WhenAll(
+		//			FileHelper.DeleteFile(TypeFolder.Roaming, list[0].Key + NewExt),
+		//			FileHelper.DeleteFile(TypeFolder.Roaming, list[1].Key + NewExt),
+		//			FileHelper.DeleteFile(TypeFolder.Roaming, list[2].Key + NewExt));
 
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-			OnUpdateEnded();
-		}
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw;
+		//	}
+		//	OnUpdateEnded();
+		//}
 
-		protected bool NeedUpdate()
+		protected bool NeedUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 		{
 			if (Stops == null || Routs == null || Times == null || !Stops.Any() || !Routs.Any() || !Times.Any())
 				return true;
@@ -976,7 +694,6 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			return false;
 		}
 
-		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChangedEventHandler handler = PropertyChanged;
@@ -986,12 +703,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		#region Event
 		public delegate void EmptyDelegate(object sender, EventArgs args);
 
-		public event EmptyDelegate DataBaseDownloadStarted;
-		public event EmptyDelegate DataBaseDownloadEnded;
+		//public event EmptyDelegate DataBaseDownloadStarted;
+		//public event EmptyDelegate DataBaseDownloadEnded;
 		public event EmptyDelegate ApplyUpdateStarted;
 		public event EmptyDelegate ApplyUpdateEnded;
 		public event LogDelegate LogMessage;
-		public event EmptyDelegate ErrorDownloading;
+		
 		public event EmptyDelegate UpdateStarted;
 		public event EmptyDelegate UpdateEnded;
 		public event EmptyDelegate LoadStarted;
@@ -999,16 +716,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		public event ErrorLoadingDelegate ErrorLoading;
 
 		#region Invokators
-		protected virtual void OnDataBaseDownloadStarted()
-		{
-			var handler = DataBaseDownloadStarted;
-			if (handler != null) handler(this, EventArgs.Empty);
-		}
-		protected virtual void OnDataBaseDownloadEnded()
-		{
-			var handler = DataBaseDownloadEnded;
-			if (handler != null) handler(this, EventArgs.Empty);
-		}
+		
 		protected virtual void OnApplyUpdateStarted()
 		{
 			var handler = ApplyUpdateStarted;
@@ -1024,16 +732,12 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			var handler = LogMessage;
 			if (handler != null) handler(this, new LogDelegateArgs(){Message = message});
 		}
-		protected virtual void OnErrorDownloading()
-		{
-			var handler = ErrorDownloading;
-			if (handler != null) handler(this, EventArgs.Empty);
-		}
+		
 		#endregion
 
 		#endregion
 
-		#region Implementation of IXmlSerializable
+		#region Legacy code, Using xml for store settings
 
 		/// <summary>
 		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
@@ -1095,91 +799,14 @@ public abstract class Context : INotifyPropertyChanged , IContext
 				Debug.WriteLine("Context.ReadXml: " + e.Message);
 				return;
 			}
-
-			//reader.ReadStartElement("ContextDesctop");
-			//LastUpdateDataDateTime = Convert.ToDateTime(reader.GetAttribute("LastUpdateTime"));
-			////Routs = new ObservableCollection<Rout>();
-
-			//reader.ReadStartElement();
-			//int count = Convert.ToInt32(reader.GetAttribute("Count"));
-			//FavouriteRoutsIds = new ObservableCollection<int>();
-			//for (int i = 0; i < count; i ++)
-			//{
-			//	reader.ReadStartElement();
-			//	FavouriteRoutsIds.Add(int.Parse(reader.GetAttribute("id")));
-				
-			//	//reader.ReadStartElement("Rout");
-			//	//var rout = new Rout();
-			//	//rout.ReadXml(reader);
-			//	//Routs.Add(rout);
-			//	//reader.ReadEndElement();
-			//	if (!reader.IsEmptyElement)
-			//		reader.ReadEndElement();
-				
-			//}
-
-			//if (!reader.IsEmptyElement)
-			//	reader.ReadEndElement();
-			//else
-			//{
-			//	reader.ReadStartElement();
-			//	if (reader.NodeType == XmlNodeType.EndElement)
-			//		reader.ReadEndElement();
-			//}
-
-			////reader.ReadStartElement();
-			//count = Convert.ToInt32(reader.GetAttribute("Count"));
-			//FavouriteStopsIds = new ObservableCollection<int>();
-			//for (int i = 0; i < count; i++)
-			//{
-			//	reader.ReadStartElement();
-			//	FavouriteStopsIds.Add(int.Parse(reader.GetAttribute("id")));
-
-			//	if (!reader.IsEmptyElement)
-			//		reader.ReadEndElement();
-
-			//}
-			//if (!reader.IsEmptyElement)
-			//	reader.ReadEndElement();
-			//else
-			//{
-			//	reader.ReadStartElement();
-			//	if (reader.NodeType == XmlNodeType.EndElement)
-			//		reader.ReadEndElement();				
-			//}
-
-			////reader.ReadStartElement();
-			//count = Convert.ToInt32(reader.GetAttribute("Count"));
-			//GroupsStopIds = new ObservableCollection<GroupStopId>();
-			//for (int i = 0; i < count; i++)
-			//{
-			//	var group = new GroupStopId();
-			//	reader.ReadStartElement();
-			//	group.Name = reader.GetAttribute("Name");
-			//	int countt = int.Parse(reader.GetAttribute("Count"));
-			//	group.StopID = new List<int>(countt);
-			//	for (int j = 0; j < countt; j++)
-			//	{
-			//		reader.ReadStartElement();
-			//		group.StopID.Add(int.Parse(reader.GetAttribute("id")));
-			//		if (!reader.IsEmptyElement)
-			//			reader.ReadEndElement();
-
-			//	}
-			//	GroupsStopIds.Add(group);
-
-			//	if (!reader.IsEmptyElement)
-			//		reader.ReadEndElement();
-
-			//}
-			//reader.ReadEndElement();
 		}
+
+		
 
 		public void ReadXml(XmlReader reader)
 		{
 			try
 			{
-
 				var node = XDocument.Load(reader);
 				var document = (XElement)node.Root;
 
@@ -1255,49 +882,8 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			element.Add(el);
 
 			document.Save(writer);
-
-			//writer.WriteAttributeString("LastUpdateTime", LastUpdateDataDateTime.ToString());
-
-			//writer.WriteStartElement("FavouritRouts");
-			//writer.WriteAttributeString("Count", FavouriteRouts.Count.ToString());
-			//foreach (var rout in FavouriteRouts)
-			//{
-			//	writer.WriteStartElement("Rout");
-			//	writer.WriteAttributeString("id", rout.Rout.RoutId.ToString());
-			//	writer.WriteEndElement();
-			//}
-			//writer.WriteEndElement();
-
-			//writer.WriteStartElement("FavouriteStops");
-			//writer.WriteAttributeString("Count", FavouriteStops.Count.ToString());
-			//foreach (var stop in FavouriteStops)
-			//{
-			//	writer.WriteStartElement("Stop");
-			//	writer.WriteAttributeString("id", stop.ID.ToString());
-			//	writer.WriteEndElement();
-			//}
-			//writer.WriteEndElement();
-
-			//writer.WriteStartElement("Groups");
-			//writer.WriteAttributeString("Count", Groups.Count.ToString());
-			//foreach (var group in Groups)
-			//{
-			//	writer.WriteStartElement("Group");
-			//	writer.WriteAttributeString("Name", group.Name);
-			//	writer.WriteAttributeString("Count", group.Stops.Count.ToString());
-
-			//	foreach (var stop in group.Stops)
-			//	{
-			//		writer.WriteStartElement("Stop");
-			//		writer.WriteAttributeString("id", stop.ID.ToString());
-			//		writer.WriteEndElement();
-			//	}
-			//	group.WriteXml(writer);
-			//	writer.WriteEndElement();
-			//}
-			//writer.WriteEndElement();
 		}
-
+		
 		#endregion
 
 		#region commands
@@ -1309,27 +895,27 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		private string nameFileStops;
 		private string nameFileTimes;
 
-		public RelayCommand UpdateDataCommand
-		{
-			get
-			{
-				return new RelayCommand(async () =>
-				{
-#if WINDOWS_PHONE_APP
-					InternetHelperBase.UpdateNetworkInformation();
-					if (!InternetHelperBase.Is_Connected)
-						return;
-#endif
-					updating = true;
-					UpdateDataCommand.RaiseCanExecuteChanged();
-					//InternetHelper.UpdateNetworkInformation();
+//		public RelayCommand UpdateDataCommand
+//		{
+//			get
+//			{
+//				return new RelayCommand(async () =>
+//				{
+//#if WINDOWS_PHONE_APP
+//					InternetHelperBase.UpdateNetworkInformation();
+//					if (!InternetHelperBase.Is_Connected)
+//						return;
+//#endif
+//					updating = true;
+//					UpdateDataCommand.RaiseCanExecuteChanged();
+//					//InternetHelper.UpdateNetworkInformation();
 					
-					await UpdateAsync();
-					updating = false;
-					UpdateDataCommand.RaiseCanExecuteChanged();
-				}, ()=>!updating);
-			}
-		}
+//					await UpdateAsync();
+//					updating = false;
+//					UpdateDataCommand.RaiseCanExecuteChanged();
+//				}, ()=>!updating);
+//			}
+//		}
 
 		public IEnumerable<string> GetDestinations(Rout rout)
 		{
@@ -1504,7 +1090,15 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		get { return fileHelper; }
 	}
 
-	#region Implementation of INotifyPropertyChanged
+		public IList<Rout> Routs { get; private set; }
+		public IList<Schedule> Times { get; private set; }
+		public IList<Stop> ActualStops { get; private set; }
+		public IList<RoutWithDestinations> FavouriteRouts { get; private set; }
+		public IList<GroupStop> Groups { get; private set; }
+		public IList<Stop> FavouriteStops { get; private set; }
+		public IList<Stop> Stops { get; private set; }
+
+		#region Implementation of INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

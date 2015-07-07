@@ -1,15 +1,11 @@
-﻿using MyLibrary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 
 namespace MyLibrary
 {
-	public class  InternetHelperBase
+	public abstract class  InternetHelperBase
 	{
 		public readonly FileHelperBase FileHelper;
 		public InternetHelperBase(FileHelperBase fileHelper)
@@ -67,7 +63,7 @@ namespace MyLibrary
 
 		static public bool Is_Connected { get; private set; }
 
-		public async Task<string> Download(string uri)
+		public virtual async Task<string> Download(string uri)
 		{
 			try
 			{
@@ -92,30 +88,8 @@ namespace MyLibrary
 				throw new TaskCanceledException(e.Message, e);
 			}
 		}
-//		{
-//			try
-//			{
-//				var httpClient = new HttpClient();
-//				// Increase the max buffer size for the response so we don't get an exception with so many web sites
 
-//				httpClient.DefaultRequestHeaders.Add("user-agent",
-//					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-
-//				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
-//				response.EnsureSuccessStatusCode();
-
-//				return await response.Content.ReadAsStringAsync();
-//			}
-//			catch (Exception e)
-//			{
-//#if BETA
-//				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-//#endif
-//				throw new TaskCanceledException(e.Message, e);
-//			}
-//		}
-
-		public async Task Download(string uri, string file, TypeFolder folder)
+		public virtual async Task Download(string uri, string file, TypeFolder folder)
 		{
 			try
 			{
@@ -140,6 +114,6 @@ namespace MyLibrary
 				throw new TaskCanceledException(e.Message, e);
 			}
 		}
-				
+
 	}
 }

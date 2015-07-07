@@ -80,6 +80,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PropertyChanged, Version=1.50.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\PropertyChanged.Fody.1.50.1\Lib\portable-net4+sl4+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\PropertyChanged.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -107,7 +111,6 @@
     </ApplicationDefinition>
     <Compile Include="CalculateRout.cs" />
     <Compile Include="Comparer\StopComparer.cs" />
-    <Compile Include="Context.cs" />
     <Compile Include="ContextDesctop.cs" />
     <Compile Include="Converters\listConverter.cs" />
     <Compile Include="Converters\ListToStr.cs" />
@@ -118,6 +121,7 @@
     <Compile Include="GroupAddWindow.xaml.cs">
       <DependentUpon>GroupAddWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InternetHelperDesktop.cs" />
     <Compile Include="Modelview\BaseModelView.cs" />
     <Compile Include="Modelview\FavouriteModelView.cs" />
     <Compile Include="Modelview\FindModelView.cs" />
@@ -131,23 +135,8 @@
     <Compile Include="Modelview\StopModelView.cs" />
     <Compile Include="Modelview\StopModelViewBase.cs" />
     <Compile Include="Modelview\StopsModelView.cs" />
-    <Compile Include="Model\BaseModel.cs" />
-    <Compile Include="Model\GroupStop.cs" />
-    <Compile Include="Model\GroupStopId.cs" />
-    <Compile Include="Model\List2.cs" />
     <Compile Include="Model\PushpinLocation.cs" />
-    <Compile Include="Model\Rout.cs" />
-    <Compile Include="Model\RoutBase.cs" />
-    <Compile Include="Model\RoutEx.cs" />
-    <Compile Include="Model\RoutsStops.cs" />
-    <Compile Include="Model\RoutWithDestinations.cs" />
-    <Compile Include="Model\Schedule.cs" />
-    <Compile Include="Model\Stop.cs" />
-    <Compile Include="Model\StopBase.cs" />
-    <Compile Include="Model\StopEx.cs" />
-    <Compile Include="Model\Time.cs" />
-    <Compile Include="Model\TimeEx.cs" />
-    <Compile Include="Model\Transport.cs" />
+    <Compile Include="Model\PushpinLocationBase.cs" />
     <Compile Include="NodeGraph.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="PushPinBuilder.cs" />
@@ -155,8 +144,8 @@
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SearchRout.cs" />
-    <Compile Include="ShedulerParser.cs" />
-    <Compile Include="ShowArgs.cs" />
+    <Compile Include="TimeTableRepository.cs" />
+    <Compile Include="UpdateManagerDesktop.cs" />
     <Compile Include="Utilites\IO\FileHelper.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -226,6 +215,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
     <Content Include="Image\bus.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -239,7 +229,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\UniversalMinskTrans\packages\Fody.1.13.0.0\Fody.targets" Condition="Exists('..\UniversalMinskTrans\packages\Fody.1.13.0.0\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

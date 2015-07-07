@@ -89,12 +89,9 @@
     <Compile Include="..\MinskTrans\ShedulerParser.cs">
       <Link>ShedulerParser.cs</Link>
     </Compile>
-    <Compile Include="..\MinskTrans\ShowArgs.cs">
-      <Link>ShowArgs.cs</Link>
-    </Compile>
     <Compile Include="Comparer\RoutsComparer.cs" />
+    <Compile Include="InternetHelperUniversal.cs" />
     <Compile Include="IO\FileHelper.cs" />
-    <Compile Include="InternetHelper.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="NewsManager.cs" />
     <Compile Include="Properties\Annotations.cs" />

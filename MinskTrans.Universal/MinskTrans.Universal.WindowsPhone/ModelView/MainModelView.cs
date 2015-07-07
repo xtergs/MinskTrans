@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
+using MinskTrans.DesctopClient.Update;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -25,6 +26,9 @@ namespace MinskTrans.Universal.ModelView
 		private readonly FindModelView findModelView;
 		private MapModelView mapMOdelView;
 		private readonly NewsManager newsManager;
+		private readonly TimeTableRepositoryBase timeTableRepositoryBase;
+		private readonly UpdateManagerBase updateManagerBase;
+		private bool updating;
 
 		public static MainModelView Create(Context newContext)
 		{
@@ -124,5 +128,44 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
+		public TimeTableRepositoryBase TimeTableRepositoryBase
+		{
+			get
+			{
+				return timeTableRepositoryBase;
+			}
+		}
+
+		public UpdateManagerBase UpdateManagerBase
+		{
+			get
+			{
+				return updateManagerBase;
+			}
+		}
+
+		RelayCommand updateDataCommand;
+		public RelayCommand UpdateDataCommand
+		{
+			get
+			{
+				if (updateDataCommand == null)
+					updateDataCommand = new RelayCommand(async () =>
+				{
+					updating = true;
+					UpdateDataCommand.RaiseCanExecuteChanged();
+
+					if (await UpdateManagerBase.DownloadUpdate())
+					{
+						var timeTable = await UpdateManagerBase.GetTimeTable();
+						if (await Context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
+							await Context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+					}
+					updating = false;
+					UpdateDataCommand.RaiseCanExecuteChanged();
+				}, () => !updating);
+				return updateDataCommand;
+			}
+		}
 	}
 }

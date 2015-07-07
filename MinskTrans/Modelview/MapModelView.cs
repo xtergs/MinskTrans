@@ -49,7 +49,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Location location;
 		private bool showAllPushpins = true;
 		private readonly Map map;
-		private List<PushpinLocation> allPushpins;
+		private List<PushpinLocationBase> allPushpins;
 		private Pushpin ipushpin;
 		private ObservableCollection<Pushpin> pushpins1;
 		private Pushpin startStopPushpin;
@@ -87,7 +87,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.898532, 27.562501);
-			allPushpins = new List<PushpinLocation>();
+			allPushpins = new List<PushpinLocationBase>();
 			RegistrMap(true);
 			
 		}
@@ -344,7 +344,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public int MaxZoomLevel { get; set; }
 
-		PushpinLocation CreatePushpin(Stop st)
+		PushpinLocationBase CreatePushpin(Stop st)
 		{
 			var tempPushPin = new PushpinLocation
 			{

@@ -141,12 +141,12 @@ namespace PushNotificationServer
 
 		FileHelperBase FileHelper { get { return fileHelper; } }
 
-		public NewsManager(FileHelperBase helper)
+		public NewsManager(FileHelperBase helper, InternetHelperBase internetHelper)
 		{
 			if (helper == null)
 				throw new ArgumentNullException("helper");
 			fileHelper = helper;
-			internetHelper = new InternetHelperBase(FileHelper);
+			this.internetHelper = internetHelper;
 			LastNewsTime = new DateTime();
 			newDictionary = new List<NewsEntry>();
 			hotNewsDictionary = new List<NewsEntry>();

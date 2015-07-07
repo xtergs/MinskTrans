@@ -12,16 +12,20 @@ using MyLibrary;
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
 using MinskTrans.DesctopClient.Utilites.IO;
+using MinskTrans.DesctopClient.Update;
+using MinskTrans.DesctopClient.Net;
+using Autofac;
 
 namespace PushNotificationServer
 {
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
-		private ContextDesctop context;
+		private Context context;
 		private string fileNameLastNews = "LastNews.txt";
 
 		private Timer timerNewsAutoUpdate;
+		readonly UpdateManagerBase updateManager;
 
 		public static ServerEngine Engine
 		{
@@ -69,10 +73,23 @@ namespace PushNotificationServer
 
 		ServerEngine()
 		{
-			newsManager = new NewsManager(new FileHelper());
+			//newsManager = new NewsManager(new FileHelper());
 			SetAutoUpdateTimer(NewsAutoUpdate);
 			ondeDriveController = new OneDriveController();
-			context = new ContextDesctop(new FileHelper());
+
+			var builder = new ContainerBuilder();
+
+			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
+			builder.RegisterType<ContextDesctop>().As<Context>();
+			builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
+			builder.RegisterType<NewsManager>();
+
+			var container = builder.Build();
+
+			context = container.Resolve<Context>();
+			newsManager = container.Resolve<NewsManager>();
+			updateManager = container.Resolve<UpdateManagerBase>();
 		}
 
 		public bool NewsAutoUpdate
@@ -169,8 +186,15 @@ namespace PushNotificationServer
 						throw;
 					}
 					//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
-				}),
-					Context1.UpdateAsync());
+				}), Task.Run( async ()=>
+				{
+					if (await updateManager.DownloadUpdate())
+					{
+						var timeTable = await updateManager.GetTimeTable();
+						if (await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
+							context.LastUpdateDataDateTime = DateTime.UtcNow;
+                        }
+				}));
 
 			}
 			catch (TaskCanceledException e)
@@ -210,7 +234,7 @@ namespace PushNotificationServer
 			get { return ondeDriveController; }
 		}
 
-		public ContextDesctop Context1
+		public Context Context1
 		{
 			get { return context; }
 		}

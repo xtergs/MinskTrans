@@ -14,7 +14,8 @@ namespace MyLibrary
 	{
 		Local,
 		Roaming,
-		Temp
+		Temp,
+		Current
 	}
 	public abstract class FileHelperBase
 	{

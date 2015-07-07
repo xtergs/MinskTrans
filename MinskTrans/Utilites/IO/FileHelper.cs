@@ -10,45 +10,31 @@ using System.Reflection;
 
 namespace MinskTrans.DesctopClient.Utilites.IO
 {
-	public sealed class FileHelper: FileHelperBase
+	public class FileHelperDesktop: FileHelperBase
 	{
-		
-//#if WINDOWS_PHONE_APP || WINDOWS_UAP
-		
-		
 
-	
-		//		public static bool FileExist(string file)
-//		{
-//			return File.Exists(file);
-//		}
-
-//		public static async Task<bool> FileExistAsync(string file)
-//		{
-//			return await Task.Run(()=> File.Exists(file));
-//		}
-
-		
-
-//		public static void SafeMove(string from, string to)
-//		{
-//			File.Delete(to + OldExt);
-//			File.Move(to, to + OldExt);
-//			File.Move(from, to);
-//		}
-
-//		public static async Task SafeMoveAsync(string from, string to)
-//		{
-//			await Task.Run(()=>SafeMove(from, to));
-//		}
-//#endif
-
-		private Dictionary<TypeFolder, string> Folders = new Dictionary<TypeFolder, string>()
+		Dictionary<TypeFolder, string> folders;
+		protected virtual Dictionary<TypeFolder, string> Folders
 		{
-			{TypeFolder.Local, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Assembly.GetEntryAssembly()},
-			{TypeFolder.Roaming, Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Assembly.GetEntryAssembly()},
-			{TypeFolder.Temp, Environment.GetFolderPath(Environment.SpecialFolder.InternetCache) + Assembly.GetEntryAssembly()}
+			get
+			{
+				if (folders == null)
+					folders = new Dictionary<TypeFolder, string>()
+		{
+			{TypeFolder.Local, Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetEntryAssembly().GetName().Name)},
+			{TypeFolder.Roaming, Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , Assembly.GetEntryAssembly().GetName().Name)},
+			{TypeFolder.Temp, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), Assembly.GetEntryAssembly().GetName().Name)},
+			{TypeFolder.Current, Directory.GetCurrentDirectory() }
 		};
+				return folders;
+			}
+		}
+		
+
+		public string GetPath(TypeFolder folder)
+		{
+			return Folders[folder];
+		}
 
 		#region Overrides of FileHelperBase
 

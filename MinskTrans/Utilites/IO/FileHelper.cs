@@ -87,7 +87,10 @@ namespace MinskTrans.DesctopClient.Utilites.IO
 
 		public override async Task WriteTextAsync(TypeFolder folder, string file, string text)
 		{
-			File.WriteAllText(Path.Combine(Folders[folder], file), text);
+			string path = Folders[folder];
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+            File.WriteAllText(Path.Combine(Folders[folder], file), text);
 		}
 
 		#endregion
@@ -96,7 +99,15 @@ namespace MinskTrans.DesctopClient.Utilites.IO
 
 		public override async Task DeleteFile(TypeFolder folder, string file)
 		{
-			File.Delete(Path.Combine(Folders[folder], file));
+			string path = Folders[folder];
+            if (Directory.Exists(path))
+				File.Delete(Path.Combine(path, file));
+		}
+
+		public async override Task<Stream> OpenStream(TypeFolder folder, string file)
+		{
+			string path = Folders[folder];
+			return File.Open(path, FileMode.Open);
 		}
 
 		#endregion

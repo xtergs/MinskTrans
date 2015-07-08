@@ -43,8 +43,8 @@ namespace MinskTrans.DesctopClient.Update
 
 			await Task.WhenAll(
 			fileHelper.SafeMoveAsync(TypeFolder.Current, list[0].Key + FileHelperBase.NewExt, list[0].Key),
-			fileHelper.SafeMoveAsync(TypeFolder.Current, list[1].Key + FileHelperBase.NewExt, list[0].Key),
-			fileHelper.SafeMoveAsync(TypeFolder.Current, list[2].Key + FileHelperBase.NewExt, list[0].Key));
+			fileHelper.SafeMoveAsync(TypeFolder.Current, list[1].Key + FileHelperBase.NewExt, list[1].Key),
+			fileHelper.SafeMoveAsync(TypeFolder.Current, list[2].Key + FileHelperBase.NewExt, list[2].Key));
 			return true;
 		}
 	}

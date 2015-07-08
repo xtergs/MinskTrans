@@ -30,7 +30,7 @@ namespace MyLibrary
 		public override string ToString()
 		{
 			return
-				(new StringBuilder()).AppendLine(PostedUtc.ToLocalTime().ToString())
+				(new StringBuilder()).AppendLine(PostedLocal.ToString())
 					.AppendLine(Message)
 					.ToString();
 		}
@@ -66,7 +66,7 @@ namespace MyLibrary
 
 		public DateTime RepairedLineUtc { get; set; }
 
-		public DateTime RepairedLIneLocal
+		public DateTime RepairedLineLocal
 		{
 			get
 			{

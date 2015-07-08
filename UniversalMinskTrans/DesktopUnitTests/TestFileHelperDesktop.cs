@@ -21,7 +21,7 @@ namespace DesktopUnitTests
 			{TypeFolder.Local, Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Test")},
 			{TypeFolder.Roaming, Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , "Test")},
 			{TypeFolder.Temp, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), "Test")},
-			{TypeFolder.Current, Directory.GetCurrentDirectory() }
+			{TypeFolder.Current, Path.Combine(Directory.GetCurrentDirectory(), "TestsEnviroment") }
 		};
 				return folders;
 			}

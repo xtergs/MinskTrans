@@ -36,5 +36,7 @@ namespace MyLibrary
 		public abstract Task<string> ReadAllTextAsync(TypeFolder folder, string file);
 		public abstract Task WriteTextAsync(TypeFolder folder, string file, string text);
 		public abstract Task DeleteFile(TypeFolder folder, string file);
+
+		public abstract Task<Stream> OpenStream(TypeFolder folder, string file);
 	}
 }

@@ -107,6 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ICloudStorageController.cs" />
     <Compile Include="OneDriveController.cs" />
     <Compile Include="ServerEngine.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

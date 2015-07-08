@@ -50,18 +50,36 @@ namespace MinskTrans.DesctopClient.Update
 				await Task.WhenAll(Task.Run(async () =>
 				{
 					//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileStops);
-					newStops = new List<Stop>(ShedulerParser.ParsStops(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[0].Key)));
+					try {
+						newStops = new List<Stop>(ShedulerParser.ParsStops(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[0].Key)));
+					}
+					catch(Exception)
+					{
+						throw;
+					}
 				}),
 					Task.Run(async () =>
 					{
 						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileRouts);
-						newRoutes = new List<Rout>(ShedulerParser.ParsRout(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[1].Key)));
+						try {
+							newRoutes = new List<Rout>(ShedulerParser.ParsRout(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[1].Key)));
+						}
+						catch(Exception)
+						{
+							throw;
+						}
 
 					}),
 					Task.Run(async () =>
 					{
 						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileTimes);
-						newSchedule = new List<Schedule>(ShedulerParser.ParsTime(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[2].Key)));
+						try {
+							newSchedule = new List<Schedule>(ShedulerParser.ParsTime(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[2].Key)));
+						}
+						catch(Exception)
+						{
+							throw;
+						}
 
 					}));
 				Debug.WriteLine("All threads ended");

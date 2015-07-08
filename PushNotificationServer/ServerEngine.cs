@@ -15,6 +15,8 @@ using MinskTrans.DesctopClient.Utilites.IO;
 using MinskTrans.DesctopClient.Update;
 using MinskTrans.DesctopClient.Net;
 using Autofac;
+using PushNotificationServer.CloudStorage.OneDrive;
+using PushNotificationServer.CloudStorage;
 
 namespace PushNotificationServer
 {
@@ -37,7 +39,7 @@ namespace PushNotificationServer
 			}
 		}
 
-		private OneDriveController ondeDriveController;
+		private readonly ICloudStorageController CloudController;
 
 		async public Task InicializeAsync()
 		{
@@ -55,9 +57,11 @@ namespace PushNotificationServer
 
 		void UploadAllToOneDrive()
 		{
-			OndeDriveController.UploadFileAsync(NewsManager.FileNameDays, NewsManager.FileNameDays);
-			OndeDriveController.UploadFileAsync(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
-			OndeDriveController.UploadFileAsync(fileNameLastNews, fileNameLastNews);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			OndeDriveController.UploadFileAsync(TypeFolder.Local, NewsManager.FileNameDays);
+			OndeDriveController.UploadFileAsync(TypeFolder.Local, NewsManager.FileNameMonths);
+			OndeDriveController.UploadFileAsync(TypeFolder.Local, fileNameLastNews);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 		}
 
 		void SaveTime()
@@ -75,7 +79,7 @@ namespace PushNotificationServer
 		{
 			//newsManager = new NewsManager(new FileHelper());
 			SetAutoUpdateTimer(NewsAutoUpdate);
-			ondeDriveController = new OneDriveController();
+			//CloudController = cloudStorageController;
 
 			var builder = new ContainerBuilder();
 
@@ -83,6 +87,7 @@ namespace PushNotificationServer
 			builder.RegisterType<ContextDesctop>().As<Context>();
 			builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
+			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
 			builder.RegisterType<NewsManager>();
 
 			var container = builder.Build();
@@ -90,6 +95,7 @@ namespace PushNotificationServer
 			context = container.Resolve<Context>();
 			newsManager = container.Resolve<NewsManager>();
 			updateManager = container.Resolve<UpdateManagerBase>();
+			CloudController = container.Resolve<ICloudStorageController>();
 		}
 
 		public bool NewsAutoUpdate
@@ -134,7 +140,7 @@ namespace PushNotificationServer
 
 		public async void ChuckNews(object obj)
 		{
-			CheckNews();
+			await CheckNews();
 		}
 
 		private bool Updating = false;
@@ -229,9 +235,9 @@ namespace PushNotificationServer
 			});}
 		}
 
-		public OneDriveController OndeDriveController
+		public ICloudStorageController OndeDriveController
 		{
-			get { return ondeDriveController; }
+			get { return CloudController; }
 		}
 
 		public Context Context1

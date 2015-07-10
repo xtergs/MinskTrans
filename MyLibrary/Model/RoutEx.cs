@@ -8,18 +8,24 @@ namespace MinskTrans.DesctopClient.Model
 {
 	public class RoutEx:Rout
 	{
-		private Context context;
+		private IContext context;
 
 		private List<Stop> stops;
 		private Schedule time; 
 
-		public RoutEx(Context context, string routS, Rout rout)
+		public RoutEx(IContext context, string routS, Rout rout)
 			:base(routS, rout)
 		{
 			this.context = context;
 		}
 
-		public RoutEx(Context context, string routS)
+		public RoutEx()
+			:base()
+		{
+
+		}
+
+		public RoutEx(IContext context, string routS)
 			:base(routS)
 		{
 			this.context = context;

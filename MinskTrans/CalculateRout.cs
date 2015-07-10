@@ -12,9 +12,9 @@ namespace MinskTrans.DesctopClient
 {
 	public class CalculateRout
 	{
-	readonly Context context;
+	readonly IContext context;
 
-		public CalculateRout(Context newContext)
+		public CalculateRout(IContext newContext)
 		{
 			context = newContext;
 		}

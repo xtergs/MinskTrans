@@ -207,8 +207,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return new DateTime(); }
+			set {  }
 #endif
 		}
 
@@ -226,8 +226,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return ""; }
+			set {  }
 #endif
 		}
 
@@ -245,8 +245,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return true; }
+			set {  }
 #endif
 		}
 
@@ -288,8 +288,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return false; }
+			set {  }
 #endif
 		}
 
@@ -312,8 +312,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return false; }
+			set {  }
 #endif
 		}
 
@@ -344,8 +344,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return new TimeSpan(0, 1, 0, 0, 0); }
+			set {  }
 #endif
 		}
 
@@ -368,8 +368,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return Error.None; }
+			set {  }
 #endif
 		}
 
@@ -393,8 +393,8 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 			}
 #else
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return 0; }
+			set {  }
 #endif
 		}
 

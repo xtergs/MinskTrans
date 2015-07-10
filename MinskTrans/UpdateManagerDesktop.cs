@@ -1,6 +1,7 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -23,9 +24,11 @@ namespace MinskTrans.DesctopClient.Update
 				using (var client = new WebClient())
 				{
 					//Task.WhenAll(
-					client.DownloadFile(list[0].Value, list[0].Key + FileHelperBase.NewExt);
-					client.DownloadFile(list[1].Value, list[1].Key + FileHelperBase.NewExt);
-					client.DownloadFile(list[2].Value, list[2].Key + FileHelperBase.NewExt);
+					if (!Directory.Exists(fileHelper.GetPath(TypeFolder.Current)))
+						Directory.CreateDirectory(fileHelper.GetPath(TypeFolder.Current));
+					client.DownloadFile(list[0].Value, Path.Combine(fileHelper.GetPath(TypeFolder.Current), list[0].Key + FileHelperBase.NewExt));
+					client.DownloadFile(list[1].Value, Path.Combine(fileHelper.GetPath(TypeFolder.Current), list[1].Key + FileHelperBase.NewExt));
+					client.DownloadFile(list[2].Value, Path.Combine(fileHelper.GetPath(TypeFolder.Current), list[2].Key + FileHelperBase.NewExt));
 					//);
 				}
 				OnDataBaseDownloadEnded();

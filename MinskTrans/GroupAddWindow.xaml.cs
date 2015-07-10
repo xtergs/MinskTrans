@@ -23,7 +23,7 @@ namespace MinskTrans.DesctopClient
 	public partial class GroupAddWindow : Window
 	{
 		readonly GroupEditModelView groupEditModelView;
-		public GroupAddWindow(Context newContext)
+		public GroupAddWindow(TimeTableRepositoryBase newContext)
 		{
 			InitializeComponent();
 			groupEditModelView = new GroupEditModelView(newContext, null);

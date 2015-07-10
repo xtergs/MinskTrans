@@ -27,6 +27,8 @@ namespace MyLibrary
 		public static string OldExt { get { return ".old"; } }
 		public static string NewExt { get { return ".new"; } }
 
+		public abstract string GetPath(TypeFolder folder);
+
 		//#if WINDOWS_PHONE_APP || WINDOWS_UAP
 
 		public abstract Task<bool> FileExistAsync(TypeFolder folder, string file);

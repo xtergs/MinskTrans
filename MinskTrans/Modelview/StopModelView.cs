@@ -60,7 +60,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		//{
 		//}
 
-		public StopModelView(Context newContext, SettingsModelView settings, bool UseGPS = false)
+		public StopModelView(TimeTableRepositoryBase newContext, SettingsModelView settings, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
@@ -176,7 +176,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					var temp = Context.ActualStops.Where(
 							x => x.SearchName.Contains(tempSt));
 					if (!Equals(LocationXX.Get(), defaultLocation))
-						return temp.OrderBy(Distance).ThenByDescending(Context.GetCounter);
+						return Enumerable.OrderBy<Stop, double>(temp,(Func<Stop, double>)this.Distance).ThenByDescending((Func<Stop, uint>)Context.GetCounter);
 					else
 						return temp.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName);
 				}

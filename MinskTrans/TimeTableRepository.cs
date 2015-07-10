@@ -13,8 +13,8 @@ namespace MinskTrans.DesctopClient
 //	[ImplementPropertyChanged]
 	public class TimeTableRepository : TimeTableRepositoryBase
 	{
-		readonly Context context;
-		public TimeTableRepository(Context context)
+		readonly IContext context;
+		public TimeTableRepository(IContext context)
 			: base(context)
 		{
 

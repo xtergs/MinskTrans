@@ -21,7 +21,7 @@ using MinskTrans.DesctopClient.Model;
 		//{
 		//}
 
-		public GroupStopsModelView(Context newContext, SettingsModelView settingsModelView)
+		public GroupStopsModelView(TimeTableRepositoryBase newContext, SettingsModelView settingsModelView)
 			: base(newContext, settingsModelView)
 		{
 			Bus = Trol = Tram = true;

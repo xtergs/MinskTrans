@@ -65,7 +65,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 
-		private MapModelView(Context context)
+		private MapModelView(TimeTableRepositoryBase context)
 			:base(context)
 		{
 			
@@ -75,7 +75,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private PushPinBuilder pushBuilder;
 
-		public MapModelView(Context context, Map map, SettingsModelView newSettigns = null, PushPinBuilder pushPinBuilder = null)
+		public MapModelView(TimeTableRepositoryBase context, Map map, SettingsModelView newSettigns = null, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;
@@ -149,6 +149,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return settings; }
 			set
 			{
+				if (value == null)
+					return;
 				if (settings != null)
 					settings.PropertyChanged -= SettingsOnPropertyChanged;
 				settings = value;
@@ -608,7 +610,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					calculateCommand = new RelayCommand(() =>
 					{
-						CalculateRout calculator = new CalculateRout(Context);
+						CalculateRout calculator = new CalculateRout(Context.Context);
 						calculator.CreateGraph();
 						if (!calculator.FindPath(StartStop, EndStop))
 							ResultString = "Bad";
@@ -651,9 +653,9 @@ namespace MinskTrans.DesctopClient.Modelview
 
 #region events
 
-		public event Context.EmptyDelegate MapInicialized;
-		public event Context.EmptyDelegate StartStopSeted;
-		public event Context.EmptyDelegate EndStopSeted;
+		public event EventHandler MapInicialized;
+		public event EventHandler StartStopSeted;
+		public event EventHandler EndStopSeted;
 
 #endregion
 

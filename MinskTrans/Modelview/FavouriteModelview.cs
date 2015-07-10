@@ -8,7 +8,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class FavouriteModelView : BaseModelView
 	{
-		public FavouriteModelView(Context newContext) : base(newContext)
+		public FavouriteModelView(TimeTableRepositoryBase newContext) : base(newContext)
 		{
 		}
 	}

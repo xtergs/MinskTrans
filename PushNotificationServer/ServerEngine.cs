@@ -23,7 +23,7 @@ namespace PushNotificationServer
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
-		private Context context;
+		private IContext context;
 		private string fileNameLastNews = "LastNews.txt";
 
 		private Timer timerNewsAutoUpdate;
@@ -84,7 +84,7 @@ namespace PushNotificationServer
 			var builder = new ContainerBuilder();
 
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-			builder.RegisterType<ContextDesctop>().As<Context>();
+			builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
 			builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
@@ -92,7 +92,7 @@ namespace PushNotificationServer
 
 			var container = builder.Build();
 
-			context = container.Resolve<Context>();
+			context = container.Resolve<IContext>();
 			newsManager = container.Resolve<NewsManager>();
 			updateManager = container.Resolve<UpdateManagerBase>();
 			CloudController = container.Resolve<ICloudStorageController>();
@@ -240,7 +240,7 @@ namespace PushNotificationServer
 			get { return CloudController; }
 		}
 
-		public Context Context1
+		public IContext Context1
 		{
 			get { return context; }
 		}

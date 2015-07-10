@@ -27,10 +27,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private Location lastLocation;
 
-		public StopModelViewBase(Context newContext, SettingsModelView newSettings) : base(newContext)
+		public StopModelViewBase(TimeTableRepositoryBase newContext, SettingsModelView newSettings) : base(newContext)
 		{
 			settings = newSettings;
-			newContext.PropertyChanged+= (sender, args) =>
+			newContext.Context.PropertyChanged+= (sender, args) =>
 			{
 				if (args.PropertyName == "ActualStops")
 				Refresh();
@@ -71,7 +71,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool IsStopFavourite
 		{
-			get { return Context.IsFavouriteStop(FilteredSelectedStop); }
+			get { return Context.Context.IsFavouriteStop(FilteredSelectedStop); }
 			set { OnPropertyChanged();}
 		}
 
@@ -85,7 +85,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (Equals(value, filteredSelectedStop)) return;
 				ShowStopMap.RaiseCanExecuteChanged();
 				filteredSelectedStop = value;
-				Context.IncrementCounter(filteredSelectedStop);
+				Context.Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 				OnPropertyChanged("IsStopFavourite");

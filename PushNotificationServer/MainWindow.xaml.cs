@@ -20,7 +20,7 @@ namespace PushNotificationServer
 
 		//private ContextDesctop context;
 		
-		public Context Context
+		public IContext Context
 		{
 			get { return ServerEngine.Engine.Context1; }
 		}

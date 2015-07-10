@@ -226,7 +226,7 @@
                         <Button Content="Show stop on map" Command="{Binding ShowStopMap}" Margin="5,0" />
                         <Button Content="Show route on map" Command="{Binding ShowRouteMap}" Margin="5,0" />
                         <Button Content ="Add to favourite" 
-                                Command="{Binding Context.AddFavouriteRoutCommand}"
+                                Command="{Binding TimeTable.AddFavouriteRoutCommand}"
                                 CommandParameter="{Binding RouteSelectedValue}"
                                 Margin="5,0"/>
                         <Button Content="Remove from favourite"
@@ -568,7 +568,7 @@
                         <ListView DockPanel.Dock="Bottom"
                                   DisplayMemberPath="Name"
                                   SelectedItem="{Binding SelectedGroupStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  ItemsSource="{Binding Context.Groups, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                  ItemsSource="{Binding Context.Groups, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                     <DataGrid Grid.Column="1"
                               ItemsSource="{Binding GroupTimeSchedule, UpdateSourceTrigger=PropertyChanged}"
@@ -675,7 +675,7 @@
 
 
                         <DataGrid Grid.Row="0" DockPanel.Dock="Top"
-                                  ItemsSource="{Binding  Context.Routs , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                  ItemsSource="{Binding  Context.Routs , UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                 </DockPanel>
             </TabItem>
@@ -690,7 +690,7 @@
                         </Grid.RowDefinitions>
 
                         <DataGrid Grid.Row="0" DockPanel.Dock="Top"
-                                  ItemsSource="{Binding  Context.Times, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                  ItemsSource="{Binding  Context.Times, UpdateSourceTrigger=PropertyChanged}">
                             <DataGrid.RowDetailsTemplate>
                                 <DataTemplate>
                                     <DataGrid ItemsSource="{Binding TimesDictionary}">
@@ -719,7 +719,7 @@
                         </Grid.RowDefinitions>
 
                         <DataGrid Grid.Row="0" DockPanel.Dock="Top"
-                                  ItemsSource="{Binding  Context.Stops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                  ItemsSource="{Binding  Context.Stops,  UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                 </DockPanel>
             </TabItem>
@@ -735,7 +735,7 @@
             <StatusBarItem
                 Content="{Binding Context.LastUpdateDataDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Update database"
-                    Command="{Binding Context.UpdateDataCommand}"
+                    Command="{Binding   UpdateDataCommand}"
                     HorizontalAlignment="Right" />
             <StatusBarItem x:Name="tickTimer" />
         </StatusBar>

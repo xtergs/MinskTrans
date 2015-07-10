@@ -9,7 +9,7 @@ namespace MinskTrans.DesctopClient
 {
 	public class ShedulerParser
 	{
-		public static IEnumerable<Stop> ParsStops(string stops, Context context = null)
+		public static IEnumerable<Stop> ParsStops(string stops, IContext context = null)
 		{
 			OnLogMessage("ParsStops Started");
 			int indexEnd = stops.IndexOf(' ');
@@ -76,7 +76,7 @@ namespace MinskTrans.DesctopClient
 			return resultList;
 		}
 
-		public static IEnumerable<Rout> ParsRout(string routs, Context context = null)
+		public static IEnumerable<Rout> ParsRout(string routs, IContext context = null)
 		{
 			OnLogMessage("ParsRout Started");
 			int indexEnd = routs.IndexOf(' ');

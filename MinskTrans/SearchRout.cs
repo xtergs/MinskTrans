@@ -8,9 +8,9 @@ namespace MinskTrans.DesctopClient
 {
 	public class SearchRout
 	{
-		private Context context;
+		private IContext context;
 
-		SearchRout(Context context)
+		SearchRout(IContext context)
 		{
 			this.context = context;
 		}

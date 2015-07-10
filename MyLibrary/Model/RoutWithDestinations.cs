@@ -6,7 +6,7 @@ namespace MinskTrans.DesctopClient.Model
 	public class RoutWithDestinations
 	{
 
-		public RoutWithDestinations(Rout newRout, Context context)
+		public RoutWithDestinations(Rout newRout, IContext context)
 		{
 			rout = newRout;
 			destinations =

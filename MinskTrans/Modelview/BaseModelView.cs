@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 #endif
 	public class BaseModelView : INotifyPropertyChanged
 	{
-		private readonly Context context;
+		private readonly TimeTableRepositoryBase context;
 		//protected readonly ISettingsModelView settingsModelView;
 
 		//public BaseModelView()
@@ -21,7 +21,7 @@ using System.Runtime.CompilerServices;
 		//{
 		//}
 
-		public BaseModelView(Context newContext)
+		public BaseModelView(TimeTableRepositoryBase newContext)
 		{
 			context = newContext;
 			
@@ -37,7 +37,7 @@ using System.Runtime.CompilerServices;
 		//	get { return settingsModelView;}
 		//}
 
-		public Context Context
+		public TimeTableRepositoryBase Context
 		{
 			get { return context; }
 		}

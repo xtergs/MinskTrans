@@ -15,7 +15,7 @@ public class Stop : StopBase
 		protected List<Rout> routs;
 
 		[JsonConstructor]
-		private Stop()
+		public Stop()
 		{ }
 		public Stop(string str, Stop stop)
 			: this(str)

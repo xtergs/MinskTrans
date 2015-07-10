@@ -8,13 +8,17 @@ namespace MinskTrans.DesctopClient.Model
 {
 	public class StopEx:Stop
 	{
-		private Context context;
-		public StopEx(Context context,string str, Stop stop) : base(str, stop)
+		private IContext context;
+		public StopEx(IContext context,string str, Stop stop) : base(str, stop)
 		{
 			this.context = context;
 		}
 
-		public StopEx(Context context,string str) : base(str)
+		public StopEx()
+			:base()
+		{ }
+
+		public StopEx(IContext context,string str) : base(str)
 		{
 			this.context = context;
 		}

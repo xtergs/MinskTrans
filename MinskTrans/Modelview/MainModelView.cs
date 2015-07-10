@@ -7,12 +7,16 @@ using GalaSoft.MvvmLight;
 using MapControl;
 using MinskTrans.DesctopClient.Update;
 using GalaSoft.MvvmLight.CommandWpf;
+using Autofac;
+using MinskTrans.DesctopClient.Utilites.IO;
+using MinskTrans.DesctopClient.Net;
+using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
 	public class MainModelView : ViewModelBase
 	{
-		private readonly Context context;
+		private readonly IContext context;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutesModelview routesModelview;
 		private readonly SettingsModelView settingsModelView;
@@ -20,24 +24,30 @@ namespace MinskTrans.DesctopClient.Modelview
 		private readonly FavouriteModelView favouriteModelView;
 		private readonly FindModelView findModelView;
 		private readonly MapModelView mapModelView;
-		private readonly TimeTableRepositoryBase TimeTable;
+		private readonly TimeTableRepositoryBase timeTable;
 		readonly UpdateManagerBase updateManager;
 
-		public MainModelView(Context newContext, TimeTableRepositoryBase timeTable, UpdateManagerBase updateManagerBase)
+		public MainModelView()
 		{
-			if (newContext == null)
-				throw new System.ArgumentNullException("newContext");
-			if (timeTable == null)
-				throw new System.ArgumentNullException("timeTable");
-			if (updateManagerBase == null)
-				throw new System.ArgumentNullException("updateManagerBase");
-			context = newContext;
+			var builder = new ContainerBuilder();
+			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
+			builder.RegisterType<ContextDesctop>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
+			builder.RegisterType<TimeTableRepository>().As<TimeTableRepositoryBase>();
+			
+			var container = builder.Build();
+
+			context = container.Resolve<IContext>();
+			updateManager = container.Resolve<UpdateManagerBase>();
+			timeTable = container.Resolve<TimeTableRepositoryBase>();
+
 			settingsModelView = new SettingsModelView();
-			routesModelview = new RoutesModelview(context);
-			stopMovelView = new StopModelView(context, settingsModelView, true);
-			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
-			favouriteModelView = new FavouriteModelView(context);
-			findModelView = new FindModelView(context, settingsModelView);
+			routesModelview = new RoutesModelview(TimeTable);
+			stopMovelView = new StopModelView(TimeTable, settingsModelView, true);
+			groupStopsModelView = new GroupStopsModelView(TimeTable, settingsModelView);
+			favouriteModelView = new FavouriteModelView(TimeTable);
+			findModelView = new FindModelView(TimeTable, settingsModelView);
 
 			if (IsInDesignMode)
 			{
@@ -45,10 +55,10 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public MainModelView(Context newContext, Map map, TimeTableRepositoryBase timeTable, UpdateManagerBase updateManager)
-			: this(newContext, timeTable, updateManager)
+		public MainModelView(Map map)
+			: this()
 		{
-			mapModelView = new MapModelView(newContext, map);
+			mapModelView = new MapModelView(TimeTable, map, settingsModelView);
 		}
 
 		public MapModelView MapModelView
@@ -87,7 +97,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public Context Context { get { return context; } }
+		public IContext Context { get { return context; } }
 
 		public UpdateManagerBase UpdateManager
 		{
@@ -118,6 +128,14 @@ namespace MinskTrans.DesctopClient.Modelview
 					}, () => { return !updateing; });
 
 				return updateDataCommand;
+			}
+		}
+
+		public TimeTableRepositoryBase TimeTable
+		{
+			get
+			{
+				return timeTable;
 			}
 		}
 	}

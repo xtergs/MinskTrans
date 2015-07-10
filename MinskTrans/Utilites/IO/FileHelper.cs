@@ -31,7 +31,7 @@ namespace MinskTrans.DesctopClient.Utilites.IO
 		}
 		
 
-		public string GetPath(TypeFolder folder)
+		public override string GetPath(TypeFolder folder)
 		{
 			return Folders[folder];
 		}

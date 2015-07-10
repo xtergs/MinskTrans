@@ -69,7 +69,8 @@ namespace MinskTrans.DesctopClient
 			InitializeComponent();
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
 			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
-			//ShedulerModelView = new MainModelView(new ContextDesctop(new FileHelper(), new InternetHelperDesktop(new FileHelper())), map);
+			ShedulerModelView = new MainModelView(map);
+			ShedulerModelView.Context.LoadEnded += (sender, args) => { Dispatcher.Invoke(() => { ShedulerModelView.Context.AllPropertiesChanged(); }); };
 			ShedulerModelView.Context.Load();
 
 			//Map model view events
@@ -130,8 +131,8 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
 
 			ShedulerModelView.UpdateManager.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
-
-			//var stop = ShedulerModelView.Context.Stops.First(x => x.SearchName == "шепичи");
+			ShedulerModelView.Context.Load();
+			//var stop = ShedulerModelView.IContext.Stops.First(x => x.SearchName == "шепичи");
 
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");
 
@@ -143,8 +144,8 @@ namespace MinskTrans.DesctopClient
 			timerr.Elapsed += (sender, args) => ShedulerModelView.StopMovelView.RefreshTimeSchedule.Execute(null);
 			timerr.Start();
 
-			//ShedulerModelView.Context.Save();
-			//ShedulerModelView.Context.Load();
+			//ShedulerModelView.IContext.Save();
+			//ShedulerModelView.IContext.Load();
 		}
 
 		void StopUpdateTimer()
@@ -180,8 +181,8 @@ namespace MinskTrans.DesctopClient
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			//if (ShedulerModelView.Context.UpdateDataCommand.CanExecute(null))
-			//	ShedulerModelView.Context.UpdateDataCommand.Execute(null);
+			//if (ShedulerModelView.IContext.UpdateDataCommand.CanExecute(null))
+			//	ShedulerModelView.IContext.UpdateDataCommand.Execute(null);
 		}
 
 		private int w(char x, char y)
@@ -315,7 +316,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_4(object sender, RoutedEventArgs e)
 		{
-			var window = new GroupAddWindow(ShedulerModelView.Context);
+			var window = new GroupAddWindow(ShedulerModelView.TimeTable);
 			var result = window.ShowDialog();
 			if (result.Value)
 			{
@@ -327,7 +328,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_5(object sender, RoutedEventArgs e)
 		{
-			var window = new GroupAddWindow(ShedulerModelView.Context);
+			var window = new GroupAddWindow(ShedulerModelView.TimeTable);
 			window.Group = ShedulerModelView.GroupStopsModelView.SelectedGroupStop;
 			var result = window.ShowDialog();
 			if (result.Value)

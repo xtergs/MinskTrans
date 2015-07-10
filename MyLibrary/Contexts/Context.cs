@@ -26,7 +26,7 @@ using GalaSoft.MvvmLight.Command;
 
 namespace MinskTrans.DesctopClient
 {
-public abstract class Context : INotifyPropertyChanged , IContext
+public class Context : INotifyPropertyChanged,  IContext
 	{
 		
 
@@ -133,13 +133,13 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			set { nameFileCounter = value; }
 		}
 
-		private ObservableCollection<Rout> routs;
+		//private ObservableCollection<Rout> routs;
 		private int variantLoad;
-		private ObservableCollection<Stop> stops;
-		private ObservableCollection<Schedule> times;
-		private ObservableCollection<GroupStop> groups;
-		private ObservableCollection<RoutWithDestinations> favouriteRouts;
-		private ObservableCollection<Stop> favouriteStops;
+		//private ObservableCollection<Stop> stops;
+		//private ObservableCollection<Schedule> times;
+		//private ObservableCollection<GroupStop> groups;
+		//private ObservableCollection<RoutWithDestinations> favouriteRouts;
+		//private ObservableCollection<Stop> favouriteStops;
 		private DateTime lastUpdateDataDateTime;
 
 		public int VariantLoad
@@ -173,10 +173,10 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		{
 			Routs = cont.Routs;
 			Stops = cont.Stops;
-			ActualStops = cont.ActualStops;
+			//ActualStops = cont.ActualStops;
 			Times = cont.Times;
 			FavouriteRouts = cont.FavouriteRouts;
-			FavouriteStops = cont.FavouriteStops;
+			favouriteStops = cont.favouriteStops;
 			LastUpdateDataDateTime = cont.LastUpdateDataDateTime;
 			Groups = cont.Groups;
 		}
@@ -186,7 +186,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		public virtual void Create(bool AutoUpdate = true)
 		{
 			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-			FavouriteStops = new ObservableCollection<Stop>();
+			favouriteStops = new ObservableCollection<int>();
 			Groups = new ObservableCollection<GroupStop>();
 		}
 		
@@ -198,6 +198,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 				Stops = newStops;
 				Routs = newRoutes;
 				Times = newSchedule;
+				//ActualStops = Stops;
 
 				LastUpdateDataDateTime = DateTime.UtcNow;
 
@@ -219,8 +220,14 @@ public abstract class Context : INotifyPropertyChanged , IContext
 		public virtual async Task<bool> HaveUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 		{
 			Connect(newRoutes, newStops, newSchedule, VariantLoad);
-			newStops = new ObservableCollection<Stop>(newStops.Where(stop => stop.Routs.Any()));
-			newRoutes = new ObservableCollection<Rout>(newRoutes.Where(rout => rout.Stops.Any()));
+			foreach (var toRemoveStop in newStops.Where(stop => !stop.Routs.Any()).ToList())
+            {
+				newStops.Remove(toRemoveStop);
+			}
+			foreach (var toRemoveRout in newRoutes.Where(rout => !rout.Stops.Any()).ToList())
+			{
+				newRoutes.Remove(toRemoveRout);
+			}
 			return NeedUpdate(newRoutes, newStops, newSchedule);		
 		}
 		
@@ -229,7 +236,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			var favouriteString = JsonConvert.SerializeObject(new
 			{
 				Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
-				Stops = FavouriteStops.Select(x => x.ID).ToList(),
+				Stops = favouriteStops,
 				Groups = Groups.Select(x => new
 				{
 					Name = x.Name,
@@ -315,7 +322,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			ObservableCollection<Rout> tpRouts = null;
 			ObservableCollection<Stop> tpStops = null;
 			ObservableCollection<Schedule> tpTimes = null;
-			ObservableCollection<Stop> tpFavouriteStops = null;
+			IList<int> tpFavouriteStops = null;
 			ObservableCollection<RoutWithDestinations> tpFavouriteRouts = null;
 			ObservableCollection<GroupStop> tpGroups = null;
 
@@ -421,6 +428,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 				Routs = tpRouts;
 				Stops = tpStops;
 				Times = tpTimes;
+				//ActualStops = Stops;
 			}
 			//await Task.Delay(new TimeSpan(0, 0, 0, 10));
 			Debug.WriteLine("UniversalContext loadfavourite started");
@@ -434,7 +442,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 						var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
 						{
 							Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
-							Stops = FavouriteStops.Select(x => x.ID).ToList(),
+							Stops = favouriteStops,
 							Groups = Groups.Select(x => new
 							{
 								Name = x.Name,
@@ -452,7 +460,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 						if (desFavourite.Stops != null)
 						{
-							tpFavouriteStops = new ObservableCollection<Stop>(desFavourite.Stops.Select(x => tpStops.First(d => d.ID == x)));
+							tpFavouriteStops = desFavourite.Stops;
 							//FavouriteStopsIds = null;
 						}
 						if (desFavourite.Groups != null)
@@ -482,7 +490,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 						if (FavouriteStopsIds != null)
 						{
-							tpFavouriteStops = new ObservableCollection<Stop>(FavouriteStopsIds.Select(x => tpStops.First(d => d.ID == x)));
+							tpFavouriteStops = FavouriteStopsIds;
 							FavouriteStopsIds = null;
 						}
 						if (GroupsStopIds != null)
@@ -517,7 +525,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			else
 			{
 				tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>();
-				tpFavouriteStops = new ObservableCollection<Stop>();
+				tpFavouriteStops = new ObservableCollection<int>();
 				tpGroups = new ObservableCollection<GroupStop>();
 			}
 
@@ -525,7 +533,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			try
 			{
 				FavouriteRouts = tpFavouriteRouts;
-				FavouriteStops = tpFavouriteStops;
+				favouriteStops = tpFavouriteStops;
 				Groups = tpGroups;
 				Debug.WriteLine("UniversalContext loadfavourite ended");
 
@@ -922,42 +930,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			return new List<string>();
 		}
 
-		public RelayCommand<RoutWithDestinations> AddFavouriteRoutCommand
-		{
-			get { return new RelayCommand<RoutWithDestinations>(async x =>
-				{
-					FavouriteRouts.Add(x);
-					await SaveFavourite(TypeFolder.Roaming);
-				}, p => p != null && !FavouriteRouts.Contains(p)); }
-		}
-
-		public RelayCommand<Stop> AddFavouriteSopCommand
-		{
-			get { return new RelayCommand<Stop>(async x =>
-			{
-				FavouriteStops.Add(x);
-				await SaveFavourite(TypeFolder.Roaming);
-			}
-
-				, p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p)); }
-		}
-		public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
-		{
-			get { return new RelayCommand<RoutWithDestinations>(async x =>
-			{
-				FavouriteRouts.Remove(x);
-				await SaveFavourite(TypeFolder.Roaming);
-			}, p => p != null && FavouriteRouts.Contains(p)); }
-		}
-
-		public RelayCommand<Stop> RemoveFavouriteSopCommand
-		{
-			get { return new RelayCommand<Stop>(async x =>
-			{
-				FavouriteStops.Remove(x);
-				await SaveFavourite(TypeFolder.Roaming);
-			}, p => p != null && FavouriteStops.Contains(p)); }
-		}
+		
 		#endregion
 
 		protected virtual void OnUpdateStarted()
@@ -974,7 +947,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public bool IsFavouriteStop(Stop stop)
 		{
-			return FavouriteStops.Contains(stop);
+			return favouriteStops.Contains(stop.ID);
 		}
 
 		public bool IsFavouriteRout(RoutWithDestinations rout)
@@ -982,62 +955,7 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			return FavouriteRouts.Contains(rout);
 		}
 
-		public RelayCommand<Stop> AddRemoveFavouriteStop
-		{
-			get { return new RelayCommand<Stop>(x =>
-			{
-				if (IsFavouriteStop(x))
-					RemoveFavouriteSopCommand.Execute(x);
-				else
-					AddFavouriteSopCommand.Execute(x);
-
-			}
-				);}
-		}
-
-		public RelayCommand<RoutWithDestinations> AddRemoveFavouriteRout
-		{
-			get
-			{
-				return new RelayCommand<RoutWithDestinations>(x =>
-				{
-					if (IsFavouriteRout(x))
-						RemoveFavouriteRoutCommand.Execute(x);
-					else
-						AddFavouriteRoutCommand.Execute(x);
-
-				}
-					);
-			}
-		}
-
-		public RelayCommand<string> CreateGroup
-		{
-			get
-			{
-				return new RelayCommand<string>(async x =>
-				{
-					Groups.Add(new GroupStop() { Name = x });
-					await SaveFavourite(TypeFolder.Roaming);
-				}, p=>!string.IsNullOrWhiteSpace(p));
-			}
-		}
-
-		public RelayCommand<GroupStop> DeleteGroups
-		{
-			get
-			{
-				return new RelayCommand<GroupStop>(async x =>
-				{
-					if (x != null)
-					{
-						Groups.Remove(x);
-						await SaveFavourite(TypeFolder.Roaming);
-						OnPropertyChanged("Groups");
-					}
-				});
-			}
-		}
+		
 
 		public event Show ShowStop;
 		public event Show ShowRoute;
@@ -1083,6 +1001,46 @@ public abstract class Context : INotifyPropertyChanged , IContext
 			if (handler != null) handler(this, args);
 		}
 
+		public async Task AddFavouriteRout(RoutWithDestinations rout)
+		{
+			FavouriteRouts.Add(rout);
+			await SaveFavourite(TypeFolder.Roaming);
+		}
+
+		public async Task AddFavouriteStop(Stop stop)
+		{
+			if (IsFavouriteStop(stop))
+				return;
+			favouriteStops.Add(stop.ID);
+			await SaveFavourite(TypeFolder.Roaming);
+		}
+
+		public async Task RemoveFavouriteRout(RoutWithDestinations rout)
+		{
+			FavouriteRouts.Remove(rout);
+			await SaveFavourite(TypeFolder.Roaming);
+		}
+
+		public async Task RemoveFavouriteStop(Stop stop)
+		{
+			if (!IsFavouriteStop(stop))
+				return;
+			FavouriteStops.Remove(stop);
+			await SaveFavourite(TypeFolder.Roaming);
+		}
+
+		public async Task AddGroup(GroupStop group)
+		{
+			Groups.Add(group);
+			await SaveFavourite(TypeFolder.Roaming);
+		}
+
+		public async Task RemoveGroup(GroupStop group)
+		{
+			Groups.Remove(group);
+			await SaveFavourite(TypeFolder.Roaming);
+		}
+
 		public string nameFileCounter { get; set; }
 
 	public FileHelperBase FileHelper
@@ -1092,12 +1050,20 @@ public abstract class Context : INotifyPropertyChanged , IContext
 
 		public IList<Rout> Routs { get; private set; }
 		public IList<Schedule> Times { get; private set; }
-		public IList<Stop> ActualStops { get; private set; }
+		public IList<Stop> ActualStops { get { return Stops; } }
 		public IList<RoutWithDestinations> FavouriteRouts { get; private set; }
 		public IList<GroupStop> Groups { get; private set; }
-		public IList<Stop> FavouriteStops { get; private set; }
+		IList<int> favouriteStops { get; set; }
+		public IList<Stop> FavouriteStops
+		{
+			get
+			{
+				if (ActualStops == null)
+					return null;
+				return ActualStops.Where(st => favouriteStops.Contains(st.ID)).ToList();
+			}
+		}
 		public IList<Stop> Stops { get; private set; }
-
 		#region Implementation of INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

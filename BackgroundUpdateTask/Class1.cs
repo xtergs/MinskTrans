@@ -14,6 +14,9 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 using MyLibrary;
+using Autofac;
+using MinskTrans.DesctopClient;
+using MinskTrans.DesctopClient.Update;
 
 namespace MinskTrans.BackgroundUpdateTask
 {
@@ -41,8 +44,18 @@ namespace MinskTrans.BackgroundUpdateTask
 #endif
 			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
+			var builder = new ContainerBuilder();
+			builder.RegisterType<FileHelper>().As<FileHelperBase>();
+			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+			builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
+			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
+			var container = builder.Build();
+
 			SettingsModelView settings = new SettingsModelView();
-			InternetHelperBase helper = new InternetHelperBase(new FileHelper());
+			InternetHelperBase helper = container.Resolve<InternetHelperBase>();
+			UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
+
             settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
 			InternetHelperBase.UpdateNetworkInformation();
 			if (!settings.HaveConnection())
@@ -56,14 +69,19 @@ namespace MinskTrans.BackgroundUpdateTask
 	        DateTime time = new DateTime();
 	        if (timeShtaps.Length > 2)
 		        time = DateTime.Parse(timeShtaps[2]);
-		        UniversalContext context = new UniversalContext(new FileHelper());
+			IContext context = container.Resolve<IContext>();
 	        if (context.LastUpdateDataDateTime < time)
 	        {
 		        try
 		        {
-			        await context.UpdateAsync();
-			        context.LastUpdateDataDateTime = time;
-			        settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
+					if (await updateManager.DownloadUpdate())
+					{
+						var timeTable = await updateManager.GetTimeTable();
+						await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+						await context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+						context.LastUpdateDataDateTime = time;
+						settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
+					}
 			        //await context.Save(false);
 		        }
 		        catch (Exception e)
@@ -110,7 +128,7 @@ namespace MinskTrans.BackgroundUpdateTask
 			        {
 						if (key.RepairedLineUtc != default(DateTime))
 						{
-							double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLIneLocal).TotalMinutes;
+							double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
 							if ( totalminutes <= MaxMinsAgo)
 								return true;
 							return false;

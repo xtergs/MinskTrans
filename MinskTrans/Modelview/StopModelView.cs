@@ -60,7 +60,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		//{
 		//}
 
-		public StopModelView(TimeTableRepositoryBase newContext, SettingsModelView settings, bool UseGPS = false)
+		public StopModelView(IContext newContext, SettingsModelView settings, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;

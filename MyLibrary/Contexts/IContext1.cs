@@ -47,12 +47,12 @@ namespace MinskTrans.DesctopClient
 		Task Load(LoadType type = LoadType.LoadAll);
 		Task Recover();
 		Task Save(bool saveAllDb = true);
-		Task AddFavouriteRout(RoutWithDestinations rout);
+		Task AddFavouriteRout(Rout rout);
 		Task AddFavouriteStop(Stop stop);
-		Task RemoveFavouriteRout(RoutWithDestinations rout);
+		Task RemoveFavouriteRout(Rout rout);
 		Task RemoveFavouriteStop(Stop stop);
 		Task AddGroup(GroupStop group);
 		Task RemoveGroup(GroupStop group);
-		bool IsFavouriteRout(RoutWithDestinations rout);
+		bool IsFavouriteRout(Rout rout);
     }
 }

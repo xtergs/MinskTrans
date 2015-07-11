@@ -49,7 +49,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Location location;
 		private bool showAllPushpins = true;
 		private readonly Map map;
-		private List<PushpinLocationBase> allPushpins;
+		private List<PushpinLocation> allPushpins;
 		private Pushpin ipushpin;
 		private ObservableCollection<Pushpin> pushpins1;
 		private Pushpin startStopPushpin;
@@ -65,7 +65,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 
-		private MapModelView(TimeTableRepositoryBase context)
+		private MapModelView(IContext context)
 			:base(context)
 		{
 			
@@ -75,7 +75,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private PushPinBuilder pushBuilder;
 
-		public MapModelView(TimeTableRepositoryBase context, Map map, SettingsModelView newSettigns = null, PushPinBuilder pushPinBuilder = null)
+		public MapModelView(IContext context, Map map, SettingsModelView newSettigns = null, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;
@@ -87,7 +87,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.898532, 27.562501);
-			allPushpins = new List<PushpinLocationBase>();
+			allPushpins = new List<PushpinLocation>();
 			RegistrMap(true);
 			
 		}
@@ -346,7 +346,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public int MaxZoomLevel { get; set; }
 
-		PushpinLocationBase CreatePushpin(Stop st)
+		PushpinLocation CreatePushpin(Stop st)
 		{
 			var tempPushPin = new PushpinLocation
 			{
@@ -610,7 +610,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					calculateCommand = new RelayCommand(() =>
 					{
-						CalculateRout calculator = new CalculateRout(Context.Context);
+						CalculateRout calculator = new CalculateRout(Context);
 						calculator.CreateGraph();
 						if (!calculator.FindPath(StartStop, EndStop))
 							ResultString = "Bad";

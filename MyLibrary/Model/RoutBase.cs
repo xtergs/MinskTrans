@@ -24,6 +24,31 @@ namespace MinskTrans.DesctopClient.Model
 			{"metro", TransportType.Metro},
 			{"tram", TransportType.Tram}
 		};
+
+		public RoutBase()
+		{ }
+
+		public RoutBase(RoutBase routbase)
+		{
+			RouteNum = routbase.RouteNum;
+			Authority = routbase.Authority;
+			City = routbase.City;
+			Transport = routbase.Transport;
+			Operator = routbase.Operator;
+			ValidityPeriods = routbase.ValidityPeriods;
+			SpecialDates = routbase.SpecialDates;
+			RoutTag = routbase.RoutTag;
+			RoutType = routbase.RoutType;
+			Commercial = routbase.Commercial;
+			RouteName = routbase.RouteName;
+			Weekdays = routbase.Weekdays;
+			RoutId = routbase.RoutId;
+			Entry = routbase.Entry;
+			RouteStops = routbase.RouteStops;
+			Data = routbase.Data;
+			Datestart = routbase.Datestart;
+		}
+
 		[JsonProperty]
 		public string RouteNum { get; set; }
 		[JsonProperty]

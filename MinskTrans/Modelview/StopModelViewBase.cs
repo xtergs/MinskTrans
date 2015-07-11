@@ -9,7 +9,7 @@ using Windows.UI.Core;
 using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.DesctopClient.Model;
-
+using System.Text;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -27,10 +27,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private Location lastLocation;
 
-		public StopModelViewBase(TimeTableRepositoryBase newContext, SettingsModelView newSettings) : base(newContext)
+		public StopModelViewBase(IContext newContext, SettingsModelView newSettings) : base(newContext)
 		{
 			settings = newSettings;
-			newContext.Context.PropertyChanged+= (sender, args) =>
+			newContext.PropertyChanged+= (sender, args) =>
 			{
 				if (args.PropertyName == "ActualStops")
 				Refresh();
@@ -71,7 +71,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool IsStopFavourite
 		{
-			get { return Context.Context.IsFavouriteStop(FilteredSelectedStop); }
+			get { return Context.IsFavouriteStop(FilteredSelectedStop); }
 			set { OnPropertyChanged();}
 		}
 
@@ -85,7 +85,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (Equals(value, filteredSelectedStop)) return;
 				ShowStopMap.RaiseCanExecuteChanged();
 				filteredSelectedStop = value;
-				Context.Context.IncrementCounter(filteredSelectedStop);
+				Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 				OnPropertyChanged("IsStopFavourite");
@@ -95,7 +95,72 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 
-		
+		public string TransportToString(Stop stop, TransportType type)
+		{
+			switch (type)
+			{
+				case TransportType.Bus:
+					{
+						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Bus).Select(rout => rout.RouteNum).Distinct().ToList();
+						if (temp.Count == 0)
+							return "";
+						StringBuilder builder = new StringBuilder("Авт: ");
+						foreach (var rout in temp)
+						{
+							builder.Append(rout).Append(", ");
+						}
+						//builder.Append(temp.Select(x => x.RouteNum + ", ").ToList());
+						builder.Remove(builder.Length - 2, 2);
+						return builder.ToString();
+					}
+				case TransportType.Tram:
+					{
+						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Tram).Select(rout => rout.RouteNum).Distinct().ToList();
+						if (temp.Count == 0)
+							return "";
+						StringBuilder builder = new StringBuilder("Трам: ");
+						foreach (var rout in temp)
+						{
+							builder.Append(rout).Append(", ");
+						}
+						//builder.Append(temp.Select(x => x.RouteNum + ", "));
+						builder.Remove(builder.Length - 2, 2);
+
+						return builder.ToString();
+					}
+				case TransportType.Metro:
+					{
+						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Metro).Select(rout => rout.RouteNum).Distinct().ToList();
+						if (temp.Count == 0)
+							return "";
+						StringBuilder builder = new StringBuilder("Метро: ");
+						foreach (var rout in temp)
+						{
+							builder.Append(rout).Append(", ");
+						}
+						//builder.Append(temp.Select(x => x.RouteNum + ", "));
+						builder.Remove(builder.Length - 2, 2);
+						return builder.ToString();
+					}
+				case TransportType.Trol:
+					{
+						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Trol).Select(rout => rout.RouteNum).Distinct().ToList();
+						if (temp.Count == 0)
+							return "";
+						StringBuilder builder = new StringBuilder("трол: ");
+						foreach (var rout in temp)
+						{
+							builder.Append(rout).Append(", ");
+						}
+						//builder.Append(temp.Select(x => x.RouteNum + ", "));
+						builder.Remove(builder.Length - 2, 2);
+						return builder.ToString();
+					}
+			}
+			return "";
+		}
+
+
 
 		public virtual IEnumerable<Stop> FilteredStops
 		{

@@ -15,7 +15,7 @@ using MinskTrans.DesctopClient.Model;
 		private GroupStop stop;
 		private Stop selectedStopGroup;
 
-		public GroupEditModelView(TimeTableRepositoryBase newContext, SettingsModelView settings) : base(newContext, settings)
+		public GroupEditModelView(IContext newContext, SettingsModelView settings) : base(newContext, settings)
 		{
 		}
 

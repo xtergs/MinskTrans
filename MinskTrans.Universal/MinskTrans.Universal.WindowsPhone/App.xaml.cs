@@ -131,7 +131,7 @@ namespace MinskTrans.Universal
 
 
 
-			MainModelView.Create(new UniversalContext(new FileHelper()));
+			
 #if BETA
 			Logger.Log("App ended");
 #endif

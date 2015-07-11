@@ -42,7 +42,7 @@ namespace MinskTrans.Universal.ModelView
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutsModelView(Context context)
+		public RoutsModelView(IContext context)
 			: base(context)
 		{
 			Context.PropertyChanged += (sender, args) =>

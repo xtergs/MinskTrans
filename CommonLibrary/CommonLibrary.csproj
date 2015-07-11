@@ -41,53 +41,8 @@
     <Compile Include="..\MinskTrans\Comparer\StopComparer.cs">
       <Link>Comparer\StopComparer.cs</Link>
     </Compile>
-    <Compile Include="..\MinskTrans\Context.cs">
-      <Link>Context.cs</Link>
-    </Compile>
     <Compile Include="..\MinskTrans\Modelview\SettingsModelView.cs">
       <Link>ModelView\SettingsModelView.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\BaseModel.cs">
-      <Link>Model\BaseModel.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\GroupStop.cs">
-      <Link>Model\GroupStop.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\GroupStopId.cs">
-      <Link>Model\GroupStopId.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\List2.cs">
-      <Link>Model\List2.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\Rout.cs">
-      <Link>Model\Rout.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\RoutBase.cs">
-      <Link>Model\RoutBase.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\RoutEx.cs">
-      <Link>Model\RoutEx.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\RoutWithDestinations.cs">
-      <Link>Model\RoutWithDestinations.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\Schedule.cs">
-      <Link>Model\Schedule.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\Stop.cs">
-      <Link>Model\Stop.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\StopBase.cs">
-      <Link>Model\StopBase.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\StopEx.cs">
-      <Link>Model\StopEx.cs</Link>
-    </Compile>
-    <Compile Include="..\minsktrans\model\Time.cs">
-      <Link>Model\Time.cs</Link>
-    </Compile>
-    <Compile Include="..\MinskTrans\ShedulerParser.cs">
-      <Link>ShedulerParser.cs</Link>
     </Compile>
     <Compile Include="Comparer\RoutsComparer.cs" />
     <Compile Include="InternetHelperUniversal.cs" />
@@ -97,6 +52,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniversalContext.cs" />
+    <Compile Include="UpdateManagerUniversal.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight">

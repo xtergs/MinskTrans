@@ -125,7 +125,6 @@
     </ApplicationDefinition>
     <Compile Include="CalculateRout.cs" />
     <Compile Include="Comparer\StopComparer.cs" />
-    <Compile Include="ContextDesctop.cs" />
     <Compile Include="Converters\listConverter.cs" />
     <Compile Include="Converters\ListToStr.cs" />
     <Compile Include="Converters\MinsLeftConverter.cs" />

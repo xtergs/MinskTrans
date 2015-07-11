@@ -306,8 +306,6 @@ public class Context : INotifyPropertyChanged,  IContext
 			}
 		}
 
-		private Timer saveTimer;
-
 		public virtual async Task Load(LoadType type = LoadType.LoadAll)
 		{
 			Debug.WriteLine("UniversalContext.Load started");
@@ -897,7 +895,6 @@ public class Context : INotifyPropertyChanged,  IContext
 		#region commands
 
 		private bool updating = false;
-		private ObservableCollection<Stop> actualStops;
 		private string nameFileFavourite;
 		private string nameFileRouts;
 		private string nameFileStops;
@@ -955,33 +952,113 @@ public class Context : INotifyPropertyChanged,  IContext
 			return FavouriteRouts.Contains(rout);
 		}
 
+		public RelayCommand<Rout> AddFavouriteRoutCommand
+		{
+			get
+			{
+				return new RelayCommand<Rout>(async x =>
+				{
+					await AddFavouriteRout(x);
+				}, p => p != null && !FavouriteRouts.Contains(p));
+			}
+		}
+
+		public RelayCommand<Stop> AddFavouriteSopCommand
+		{
+			get
+			{
+				return new RelayCommand<Stop>(async x =>
+				{
+					await AddFavouriteStop(x);
+				}
+
+			  , p => p != null && FavouriteStops != null && !FavouriteStops.Contains(p));
+			}
+		}
+		public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
+		{
+			get
+			{
+				return new RelayCommand<RoutWithDestinations>(async x =>
+				{
+					await RemoveFavouriteRout(x);
+				}, p => p != null && FavouriteRouts.Contains(p));
+			}
+		}
+
+		public RelayCommand<Stop> RemoveFavouriteSopCommand
+		{
+			get
+			{
+				return new RelayCommand<Stop>(async x =>
+				{
+					await RemoveFavouriteStop(x);
+				}, p => p != null && FavouriteStops.Contains(p));
+			}
+		}
+
+		public RelayCommand<Stop> AddRemoveFavouriteStop
+		{
+			get
+			{
+				return new RelayCommand<Stop>(async x =>
+				{
+					if (IsFavouriteStop(x))
+						await RemoveFavouriteStop(x);
+					else
+						await AddFavouriteStop(x);
+
+				}
+			  );
+			}
+		}
+
+		public RelayCommand<RoutWithDestinations> AddRemoveFavouriteRout
+		{
+			get
+			{
+				return new RelayCommand<RoutWithDestinations>(async x =>
+				{
+					if (IsFavouriteRout(x))
+						await RemoveFavouriteRout(x);
+					else
+						await AddFavouriteRout(x);
+
+				}
+					);
+			}
+		}
+
+		public RelayCommand<string> CreateGroup
+		{
+			get
+			{
+				return new RelayCommand<string>(async x =>
+				{
+					await AddGroup(new GroupStop() { Name = x });
+				}, p => !string.IsNullOrWhiteSpace(p));
+			}
+		}
+
+		public RelayCommand<GroupStop> DeleteGroups
+		{
+			get
+			{
+				return new RelayCommand<GroupStop>(async x =>
+				{
+					if (x != null)
+					{
+						await RemoveGroup(x);
+					}
+				});
+			}
+		}
+
+
+
 		
 
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
-
-		public RelayCommand<Stop> ShowStopMap
-		{
-			get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-		}
-
-		public RelayCommand<Rout> ShowRouteMap
-		{
-			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		}
-
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
-
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		
 
 		protected virtual void OnLoadStarted()
 		{
@@ -1001,7 +1078,7 @@ public class Context : INotifyPropertyChanged,  IContext
 			if (handler != null) handler(this, args);
 		}
 
-		public async Task AddFavouriteRout(RoutWithDestinations rout)
+		public async Task AddFavouriteRout(Rout rout)
 		{
 			FavouriteRouts.Add(rout);
 			await SaveFavourite(TypeFolder.Roaming);

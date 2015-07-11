@@ -14,7 +14,7 @@ using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-	public class MainModelView : ViewModelBase
+	public class MainModelView : BaseModelView
 	{
 		private readonly IContext context;
 		private readonly GroupStopsModelView groupStopsModelView;
@@ -24,41 +24,39 @@ namespace MinskTrans.DesctopClient.Modelview
 		private readonly FavouriteModelView favouriteModelView;
 		private readonly FindModelView findModelView;
 		private readonly MapModelView mapModelView;
-		private readonly TimeTableRepositoryBase timeTable;
+		//private readonly IContext timeTable;
 		readonly UpdateManagerBase updateManager;
 
 		public MainModelView()
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-			builder.RegisterType<ContextDesctop>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+			builder.RegisterType<Context>().As<IContext>().SingleInstance();
+            builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
-			builder.RegisterType<TimeTableRepository>().As<TimeTableRepositoryBase>();
+			//builder.RegisterType<Context>().As<IContext>();
 			
 			var container = builder.Build();
 
 			context = container.Resolve<IContext>();
 			updateManager = container.Resolve<UpdateManagerBase>();
-			timeTable = container.Resolve<TimeTableRepositoryBase>();
+			//timeTable = container.Resolve<IContext>();
 
 			settingsModelView = new SettingsModelView();
-			routesModelview = new RoutesModelview(TimeTable);
-			stopMovelView = new StopModelView(TimeTable, settingsModelView, true);
-			groupStopsModelView = new GroupStopsModelView(TimeTable, settingsModelView);
-			favouriteModelView = new FavouriteModelView(TimeTable);
-			findModelView = new FindModelView(TimeTable, settingsModelView);
+			routesModelview = new RoutesModelview(Context);
+			stopMovelView = new StopModelView(Context, settingsModelView, true);
+			groupStopsModelView = new GroupStopsModelView(Context, settingsModelView);
+			favouriteModelView = new FavouriteModelView(Context);
+			findModelView = new FindModelView(Context, settingsModelView);
 
-			if (IsInDesignMode)
-			{
-				StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));
-			}
+			
 		}
 
 		public MainModelView(Map map)
 			: this()
 		{
-			mapModelView = new MapModelView(TimeTable, map, settingsModelView);
+			mapModelView = new MapModelView(Context, map, settingsModelView);
 		}
 
 		public MapModelView MapModelView
@@ -131,12 +129,12 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public TimeTableRepositoryBase TimeTable
-		{
-			get
-			{
-				return timeTable;
-			}
-		}
+		//public IContext TimeTable
+		//{
+		//	get
+		//	{
+		//		return timeTable;
+		//	}
+		//}
 	}
 }

@@ -164,27 +164,24 @@ namespace UniversalMinskTrans
 
 						if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
 						{
+							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+								  {
 
-
-
-							rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-							{
-
-								Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
-								{
-									Commands =
-										{
+									  Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+									  {
+										  Commands =
+											  {
 										new UICommand("Обновить", command =>
 										{
-											if (model.Context.UpdateDataCommand.CanExecute(null))
-												model.Context.UpdateDataCommand.Execute(null);
+											if (model.UpdateDataCommand.CanExecute(null))
+												model.UpdateDataCommand.Execute(null);
 
 										})
-										}
-								};
-								await dialog.ShowAsync();
+											  }
+									  };
+									  await dialog.ShowAsync();
 
-							});
+								  });
 						}
 					};
 					model.Context.Load();
@@ -360,7 +357,7 @@ namespace UniversalMinskTrans
 
 
 
-			MainModelView.Create(new UniversalContext(new FileHelper()));
+			//MainModelView.Create(new UniversalContext(new FileHelper()));
 #if BETA
 			Logger.Log("App ended");
 #endif

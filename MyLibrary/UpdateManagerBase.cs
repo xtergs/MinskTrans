@@ -32,9 +32,11 @@ namespace MinskTrans.DesctopClient.Update
 		protected IList<Schedule> Time { get; set; }
 
 		protected readonly FileHelperBase fileHelper;
-		public UpdateManagerBase(FileHelperBase helper)
+		protected readonly InternetHelperBase internetHelper;
+		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet)
 		{
 			fileHelper = helper;
+			internetHelper = internet;
 		}
 
 		public async Task<TimeTable> GetTimeTable()

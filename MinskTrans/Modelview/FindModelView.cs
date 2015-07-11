@@ -19,7 +19,7 @@
 			}
 		}
 
-		public FindModelView(TimeTableRepositoryBase newContext, SettingsModelView settingsModelView) : base(newContext)
+		public FindModelView(IContext newContext, SettingsModelView settingsModelView) : base(newContext)
 		{
 			stopModelView = new StopModelView(newContext, settingsModelView);
 			routesModelview = new RoutesModelview(newContext);

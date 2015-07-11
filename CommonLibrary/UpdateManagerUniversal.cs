@@ -1,17 +1,16 @@
-﻿using MyLibrary;
+﻿using MinskTrans.DesctopClient.Update;
+using MyLibrary;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinskTrans.DesctopClient.Update
+namespace CommonLibrary
 {
-	public class UpdateManagerDesktop : UpdateManagerBase
+	public class UpdateManagerUniversal : UpdateManagerBase
 	{
-		public UpdateManagerDesktop(FileHelperBase helper, InternetHelperBase internet)
+		public UpdateManagerUniversal(FileHelperBase helper, InternetHelperBase internet)
 			:base(helper, internet)
 		{
 
@@ -23,10 +22,10 @@ namespace MinskTrans.DesctopClient.Update
 			try
 			{
 				await Task.WhenAll(
-				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt,folder),
+				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder),
 				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder),
 				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder));
-				
+
 				OnDataBaseDownloadEnded();
 
 			}
@@ -39,7 +38,7 @@ namespace MinskTrans.DesctopClient.Update
 				fileHelper.DeleteFile(folder, list[2].Key + FileHelperBase.NewExt));
 				return false;
 			}
-			catch(Exception)
+			catch (Exception)
 			{
 				OnErrorDownloading();
 				await Task.WhenAll(

@@ -19,6 +19,12 @@ namespace MinskTrans.DesctopClient.Model
 			
 		}
 
+		public Rout(Rout rout)
+			:base(rout)
+		{
+
+		}
+
 		public Rout(string rout, Rout routR)
 			: this(rout)
 		{

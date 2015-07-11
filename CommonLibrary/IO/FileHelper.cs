@@ -83,6 +83,17 @@ namespace CommonLibrary.IO
 			}
 		}
 
+		public override string GetPath(TypeFolder folder)
+		{
+			return Folders[folder].Path;
+		}
+
+		public async override Task<Stream> OpenStream(TypeFolder folder, string file)
+		{
+
+			return await Folders[folder].OpenStreamForReadAsync(file);
+		}
+
 		#endregion
 	}
 }

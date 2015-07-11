@@ -22,7 +22,7 @@ namespace CommonLibrary
 {
 	public class UniversalContext : Context
 	{
-		public UniversalContext(FileHelperBase helper) : base(helper)
+		public UniversalContext(FileHelperBase helper, InternetHelperBase internet) : base(helper, internet)
 		{
 		}
 

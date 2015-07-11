@@ -22,7 +22,7 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public FindModelView(Context newContext, SettingsModelView settingsModelView, bool UseGps = false) : base(newContext)
+		public FindModelView(IContext newContext, SettingsModelView settingsModelView, bool UseGps = false) : base(newContext)
 		{
 			stopModelView = new StopModelView(newContext, settingsModelView, UseGps);
 			routsModelview = new RoutsModelView(newContext);

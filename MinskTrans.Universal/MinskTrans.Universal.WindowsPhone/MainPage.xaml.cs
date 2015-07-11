@@ -90,20 +90,20 @@ namespace MinskTrans.Universal
 					model.FindModelView.StopModelView.ViewStop.Execute(stop);
 				}));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Bus))
-					menu.Commands.Add(new UICommand(model.TimeTableRepositoryBase.TransportToString(stop, TransportType.Bus)));
+					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Bus)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
-					menu.Commands.Add(new UICommand(model.TimeTableRepositoryBase.TransportToString(stop, TransportType.Trol)));
+					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Trol)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
-					menu.Commands.Add(new UICommand(model.TimeTableRepositoryBase.TransportToString(stop, TransportType.Tram)));
+					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
-					menu.Commands.Add(new UICommand(model.TimeTableRepositoryBase.TransportToString(stop, TransportType.Metro)));
+					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
 				await menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
-			model.Context.ShowRoute += OnShowRoute;
-			model.Context.ShowStop += OnShowStop;
+			model.ShowRoute += OnShowRoute;
+			model.ShowStop += OnShowStop;
 
 			model.FindModelView.StopModelView.ViewStopOn += (sender, args) =>
 			{

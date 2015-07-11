@@ -40,7 +40,7 @@ using GalaSoft.MvvmLight.Command;
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutesModelview(TimeTableRepositoryBase context)
+		public RoutesModelview(IContext context)
 			: base(context)
 		{
 			OnPropertyChanged("RouteNums");
@@ -117,6 +117,7 @@ using GalaSoft.MvvmLight.Command;
 			{
 				//if (Equals(value, routeSelectedValue)) return;
 				routeSelectedValue = value;
+				AddFavouriteRoutCommand.RaiseCanExecuteChanged();
 				OnPropertyChanged();
 				OnPropertyChanged("StopsObservableCollection");
 				OnPropertyChanged("StopSelectedIndex");

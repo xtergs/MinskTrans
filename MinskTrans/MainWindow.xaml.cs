@@ -24,8 +24,6 @@ namespace MinskTrans.DesctopClient
 	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		private readonly System.Timers.Timer timerr;
-		private Timer timer;
-		private List<Pushpin> pushpins;
 
 		public bool IsShowBusStops
 		{
@@ -316,7 +314,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_4(object sender, RoutedEventArgs e)
 		{
-			var window = new GroupAddWindow(ShedulerModelView.TimeTable);
+			var window = new GroupAddWindow(ShedulerModelView.Context);
 			var result = window.ShowDialog();
 			if (result.Value)
 			{
@@ -328,7 +326,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_5(object sender, RoutedEventArgs e)
 		{
-			var window = new GroupAddWindow(ShedulerModelView.TimeTable);
+			var window = new GroupAddWindow(ShedulerModelView.Context);
 			window.Group = ShedulerModelView.GroupStopsModelView.SelectedGroupStop;
 			var result = window.ShowDialog();
 			if (result.Value)

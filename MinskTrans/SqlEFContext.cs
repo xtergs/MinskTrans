@@ -31,9 +31,15 @@ namespace MinskTrans.DesctopClient
 		public uint Counter { get; set; }
 		public bool Favourite { get; set; }
 	}
+
+	public class GroupEx : GroupStop
+	{
+		public int GroupID { get; set; }
+	}
+
 	public class SqlEFContext : DbContext, IContext
 	{
-		private DbSet<RoutExtentionData> routExtentionData { get; set; }
+		public DbSet<RoutExtentionData> routExtentionData { get; set; }
 
 		public DbSet<Rout> routsEF { get; set; }
 		public DbSet<Stop> stopsEF { get; set; }
@@ -41,7 +47,8 @@ namespace MinskTrans.DesctopClient
 
 		public DbSet<StopExtentionData> stopsExtentionData { get; set; }
 		public DbSet<SettingsDataBase> settingsDataBase { get; set; }
-		//DbSet<GroupIdExt> groupsEF { get; set; }
+
+		public DbSet<GroupEx> groupsEF { get; set; }
 
 		public SqlEFContext(string connectionString)
 			:base(connectionString)
@@ -52,6 +59,8 @@ namespace MinskTrans.DesctopClient
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Schedule>().HasKey(x => x.RoutId);
+			modelBuilder.Entity<Schedule>();
+
 			modelBuilder.Entity<Rout>().HasOptional(key => key.Time).WithOptionalDependent(key => key.Rout);
 			modelBuilder.Entity<Rout>().HasMany(key => key.Stops).WithMany(key => key.Routs);
 			
@@ -66,6 +75,10 @@ namespace MinskTrans.DesctopClient
 			modelBuilder.Entity<StopExtentionData>().HasRequired(x => x.Stop);
 
 			modelBuilder.Entity<RoutExtentionData>().HasKey(x => x.RoutID);
+			modelBuilder.Entity<RoutExtentionData>().HasRequired(x => x.Rout).WithOptional().Map(x => { x.MapKey("aaa"); });
+
+			modelBuilder.Entity<GroupEx>().HasKey(x => x.GroupID);
+			modelBuilder.Entity<GroupEx>().HasMany(x => x.Stops);
 		}
 
 		public IList<Stop> ActualStops
@@ -80,7 +93,9 @@ namespace MinskTrans.DesctopClient
 		{
 			get
 			{
-				throw new NotImplementedException();
+				if (routExtentionData == null)
+					return null;
+				return routsEF.Where(x=> routExtentionData.Any(d=> d.Rout==x)).ToList().Select(x=> new RoutWithDestinations(x,this)).ToList();
 			}
 		}
 
@@ -96,7 +111,9 @@ namespace MinskTrans.DesctopClient
 		{
 			get
 			{
-				throw new NotImplementedException();
+				if (groupsEF == null)
+					return null;
+				return groupsEF.ToList<GroupStop>();
 			}
 		}
 
@@ -222,12 +239,12 @@ namespace MinskTrans.DesctopClient
 			stopsEF.AddRange(newStops);
 			timesEF.AddRange(newSchedule);
 
-			await SaveChangesAsync();
+			SaveChanges();
 		}
 
 		StopExtentionData GetExtDataFromStop(Stop stop)
 		{
-			return stopsExtentionData.FirstOrDefault(x => x.Stop == stop);
+			return stopsExtentionData.FirstOrDefault(x => x.Stop.ID == stop.ID);
 		}
 
 		RoutExtentionData GetExtDataFromRout(Rout rout)
@@ -246,7 +263,7 @@ namespace MinskTrans.DesctopClient
 
 		public void Create(bool AutoUpdate = true)
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 		public uint GetCounter(Stop stop)

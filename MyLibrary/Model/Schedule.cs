@@ -17,7 +17,7 @@ namespace MinskTrans.DesctopClient.Model
 			
 		}
 		[JsonProperty]
-		private string[] splitStr;
+		public string[] splitStr;
 		private List<List<Time>> timesDictionary;
 
 		public Schedule(string str, bool lazyInicialize = false)
@@ -40,6 +40,8 @@ namespace MinskTrans.DesctopClient.Model
 
 			TimesDictionary = new List<List<Time>>();
 
+			if (splitStr == null)
+				return;
 			//Route id
 			
 			int val = 0;
@@ -164,6 +166,8 @@ namespace MinskTrans.DesctopClient.Model
 		public List2<Rout, int> GetListTimes(int stop, int day, int startedTime, int endTime = int.MaxValue)
 		{
 			var result = new List2<Rout, int>();
+			if (TimesDictionary.Count <= 0)
+				return result;
 			IEnumerable<Time> temp = TimesDictionary[stop].Where(x => x.Days.Contains(day.ToString()));
 			foreach (Time time in temp)
 			{

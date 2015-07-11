@@ -226,7 +226,7 @@
                         <Button Content="Show stop on map" Command="{Binding ShowStopMap}" Margin="5,0" />
                         <Button Content="Show route on map" Command="{Binding ShowRouteMap}" Margin="5,0" />
                         <Button Content ="Add to favourite" 
-                                Command="{Binding TimeTable.AddFavouriteRoutCommand}"
+                                Command="{Binding AddFavouriteRoutCommand}"
                                 CommandParameter="{Binding RouteSelectedValue}"
                                 Margin="5,0"/>
                         <Button Content="Remove from favourite"

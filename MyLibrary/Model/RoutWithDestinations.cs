@@ -3,12 +3,14 @@ using System.Linq;
 
 namespace MinskTrans.DesctopClient.Model
 {
-	public class RoutWithDestinations
+	public class RoutWithDestinations : Rout
 	{
 
 		public RoutWithDestinations(Rout newRout, IContext context)
+			:base(newRout)
 		{
-			rout = newRout;
+
+			//rout = newRout;
 			destinations =
 				context.Routs.Where(
 					x =>
@@ -22,12 +24,12 @@ namespace MinskTrans.DesctopClient.Model
 			return str.Replace("~(посадки-высадки нет)", "");
 		}
 
-		private readonly Rout rout;
+		//private readonly Rout rout;
 		private readonly IEnumerable<string> destinations; 
 
 		public Rout Rout
 		{
-			get { return rout; }
+			get { return this; }
 		}
 
 		public IEnumerable<string> Destinations

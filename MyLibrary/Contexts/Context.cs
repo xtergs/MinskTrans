@@ -185,7 +185,7 @@ public class Context : INotifyPropertyChanged,  IContext
 
 		public virtual void Create(bool AutoUpdate = true)
 		{
-			FavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+			FavouriteRouts = new ObservableCollection<Rout>();
 			favouriteStops = new ObservableCollection<int>();
 			Groups = new ObservableCollection<GroupStop>();
 		}
@@ -235,7 +235,7 @@ public class Context : INotifyPropertyChanged,  IContext
 		{
 			var favouriteString = JsonConvert.SerializeObject(new
 			{
-				Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
+				Routs = FavouriteRouts.Select(x => x.RoutId).ToList(),
 				Stops = favouriteStops,
 				Groups = Groups.Select(x => new
 				{
@@ -321,7 +321,7 @@ public class Context : INotifyPropertyChanged,  IContext
 			ObservableCollection<Stop> tpStops = null;
 			ObservableCollection<Schedule> tpTimes = null;
 			IList<int> tpFavouriteStops = null;
-			ObservableCollection<RoutWithDestinations> tpFavouriteRouts = null;
+			ObservableCollection<Rout> tpFavouriteRouts = null;
 			ObservableCollection<GroupStop> tpGroups = null;
 
 			try
@@ -439,7 +439,7 @@ public class Context : INotifyPropertyChanged,  IContext
 					{
 						var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
 						{
-							Routs = FavouriteRouts.Select(x => x.Rout.RoutId).ToList(),
+							Routs = FavouriteRouts.Select(x => x.RoutId).ToList(),
 							Stops = favouriteStops,
 							Groups = Groups.Select(x => new
 							{
@@ -452,7 +452,7 @@ public class Context : INotifyPropertyChanged,  IContext
 						{
 							var temp1 = desFavourite.Routs.Select(x =>
 								new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
-							tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
+							tpFavouriteRouts = new ObservableCollection<Rout>(temp1);
 							//desFavourite.Routs = null;
 						}
 
@@ -482,7 +482,7 @@ public class Context : INotifyPropertyChanged,  IContext
 						{
 							var temp1 = FavouriteRoutsIds.Select(x =>
 								new RoutWithDestinations(tpRouts.First(d => d.RoutId == x), this)).ToList();
-							tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>(temp1);
+							tpFavouriteRouts = new ObservableCollection<Rout>(temp1);
 							FavouriteRoutsIds = null;
 						}
 
@@ -522,7 +522,7 @@ public class Context : INotifyPropertyChanged,  IContext
 			}
 			else
 			{
-				tpFavouriteRouts = new ObservableCollection<RoutWithDestinations>();
+				tpFavouriteRouts = new ObservableCollection<Rout>();
 				tpFavouriteStops = new ObservableCollection<int>();
 				tpGroups = new ObservableCollection<GroupStop>();
 			}
@@ -869,7 +869,7 @@ public class Context : INotifyPropertyChanged,  IContext
 			element.SetAttributeValue("V", 1);
 
 
-			XElement el = new XElement("FavouritRouts", FavouriteRouts.Select(x => new XElement("ID", x.Rout.RoutId)));
+			XElement el = new XElement("FavouritRouts", FavouriteRouts.Select(x => new XElement("ID", x.RoutId)));
 
 			element.Add(el);
 
@@ -947,7 +947,7 @@ public class Context : INotifyPropertyChanged,  IContext
 			return favouriteStops.Contains(stop.ID);
 		}
 
-		public bool IsFavouriteRout(RoutWithDestinations rout)
+		public bool IsFavouriteRout(Rout rout)
 		{
 			return FavouriteRouts.Contains(rout);
 		}
@@ -1080,7 +1080,7 @@ public class Context : INotifyPropertyChanged,  IContext
 
 		public async Task AddFavouriteRout(Rout rout)
 		{
-			FavouriteRouts.Add(rout);
+			FavouriteRouts.Add(new RoutWithDestinations(rout, this));
 			await SaveFavourite(TypeFolder.Roaming);
 		}
 
@@ -1092,7 +1092,7 @@ public class Context : INotifyPropertyChanged,  IContext
 			await SaveFavourite(TypeFolder.Roaming);
 		}
 
-		public async Task RemoveFavouriteRout(RoutWithDestinations rout)
+		public async Task RemoveFavouriteRout(Rout rout)
 		{
 			FavouriteRouts.Remove(rout);
 			await SaveFavourite(TypeFolder.Roaming);
@@ -1128,7 +1128,7 @@ public class Context : INotifyPropertyChanged,  IContext
 		public IList<Rout> Routs { get; private set; }
 		public IList<Schedule> Times { get; private set; }
 		public IList<Stop> ActualStops { get { return Stops; } }
-		public IList<RoutWithDestinations> FavouriteRouts { get; private set; }
+		public IList<Rout> FavouriteRouts { get; private set; }
 		public IList<GroupStop> Groups { get; private set; }
 		IList<int> favouriteStops { get; set; }
 		public IList<Stop> FavouriteStops

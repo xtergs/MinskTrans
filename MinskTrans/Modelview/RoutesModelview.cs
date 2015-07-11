@@ -151,6 +151,8 @@ using GalaSoft.MvvmLight.Command;
 			get { return stopsIndex; }
 			set
 			{
+				if (StopsObservableCollection == null)
+					return;
 				if (value < 0 || value >= StopsObservableCollection.Count)
 					value = 0;
 				stopsIndex = value;

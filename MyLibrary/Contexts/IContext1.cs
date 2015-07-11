@@ -18,7 +18,7 @@ namespace MinskTrans.DesctopClient
 	public interface IContext
 	{
 		IList<Stop> ActualStops { get; }
-		IList<RoutWithDestinations> FavouriteRouts { get; }
+		IList<Rout> FavouriteRouts { get; }
 		IList<Stop> FavouriteStops { get; }
 		IList<GroupStop> Groups { get; }
 		DateTime LastUpdateDataDateTime { get; set; }

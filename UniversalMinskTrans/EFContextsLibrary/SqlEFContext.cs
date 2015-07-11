@@ -89,13 +89,13 @@ namespace MinskTrans.DesctopClient
 			}
 		}
 
-		public IList<Rout> FavouriteRouts
+		public IList<RoutWithDestinations> FavouriteRouts
 		{
 			get
 			{
 				if (routExtentionData == null)
 					return null;
-				return routsEF.Where(x=> routExtentionData.Any(d=> d.Rout==x)).ToList().ToList();
+				return routsEF.Where(x=> routExtentionData.Any(d=> d.Rout==x)).ToList().Select(x=> new RoutWithDestinations(x,this)).ToList();
 			}
 		}
 
@@ -340,13 +340,13 @@ namespace MinskTrans.DesctopClient
 			return stopsExtentionData.Any(x => x.Stop == stop);
 		}
 
-		public async Task AddFavouriteRout(Rout rout)
+		public async Task AddFavouriteRout(RoutWithDestinations rout)
 		{
-			var tprout = GetExtDataFromRout(rout);
+			var tprout = GetExtDataFromRout(rout.Rout);
 			if (tprout != null)
 				tprout.Favourite = true;
 			else
-				routExtentionData.Add(new RoutExtentionData() { Rout = rout, Favourite = true });
+				routExtentionData.Add(new RoutExtentionData() { Rout = rout.Rout, Favourite = true });
 			await SaveChangesAsync();
 		}
 
@@ -360,9 +360,9 @@ namespace MinskTrans.DesctopClient
 			await SaveChangesAsync();
 		}
 
-		public async Task RemoveFavouriteRout(Rout rout)
+		public async Task RemoveFavouriteRout(RoutWithDestinations rout)
 		{
-			var tprout = GetExtDataFromRout(rout);
+			var tprout = GetExtDataFromRout(rout.Rout);
 			if (tprout != null)
 			{
 				tprout.Favourite = false;
@@ -390,9 +390,9 @@ namespace MinskTrans.DesctopClient
 			throw new NotImplementedException();
 		}
 
-		public bool IsFavouriteRout(Rout rout)
+		public bool IsFavouriteRout(RoutWithDestinations rout)
 		{
-			return routExtentionData.Any(x => x.Rout == rout);
+			return routExtentionData.Any(x => x.Rout == rout.Rout);
 		}
 	}
 }

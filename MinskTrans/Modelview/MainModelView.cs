@@ -26,8 +26,16 @@ namespace MinskTrans.DesctopClient.Modelview
 		private readonly MapModelView mapModelView;
 		//private readonly IContext timeTable;
 		readonly UpdateManagerBase updateManager;
+		MainModelView model;
 
-		public MainModelView()
+		public MainModelView Get()
+		{
+			if (model == null)
+				model = new MainModelView();
+			return model;
+		}
+
+		private MainModelView()
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
@@ -44,7 +52,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			//timeTable = container.Resolve<IContext>();
 
 			settingsModelView = new SettingsModelView();
-			routesModelview = new RoutesModelview(Context);
+			routesModelview = new RoutesModelview(Context, SettingsModelView);
 			stopMovelView = new StopModelView(Context, settingsModelView, true);
 			groupStopsModelView = new GroupStopsModelView(Context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(Context);
@@ -57,6 +65,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			: this()
 		{
 			mapModelView = new MapModelView(Context, map, settingsModelView);
+			model = this;
 		}
 
 		public MapModelView MapModelView
@@ -126,6 +135,14 @@ namespace MinskTrans.DesctopClient.Modelview
 					}, () => { return !updateing; });
 
 				return updateDataCommand;
+			}
+		}
+
+		public SettingsModelView SettingsModelView
+		{
+			get
+			{
+				return settingsModelView;
 			}
 		}
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using MinskTrans.DesctopClient.Model;
-using MyLibrary;
+
 
 namespace MinskTrans.DesctopClient
 {
@@ -43,7 +43,7 @@ namespace MinskTrans.DesctopClient
 		IEnumerable<string> GetDestinations(Rout rout);
 		Task<bool> HaveUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule);
 		void IncrementCounter(Stop stop);
-		void Inicialize(Context cont);
+		void Inicialize(IContext cont);
 		Task Load(LoadType type = LoadType.LoadAll);
 		Task Recover();
 		Task Save(bool saveAllDb = true);

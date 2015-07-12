@@ -61,7 +61,7 @@ namespace MinskTrans.DesctopClient.Utilites.IO
 			}
 			catch (FileNotFoundException)
 			{
-				throw;
+				//throw;
 			}
 			try
 			{

@@ -230,7 +230,7 @@
                                 CommandParameter="{Binding RouteSelectedValue}"
                                 Margin="5,0"/>
                         <Button Content="Remove from favourite"
-                                Command="{Binding Context.RemoveFavouriteRoutCommand}"
+                                Command="{Binding RemoveFavouriteRoutCommand}"
                                 CommandParameter="{Binding RouteSelectedValue}"
                                 Margin="5,0"/>
                     </WrapPanel>
@@ -248,8 +248,8 @@
                         
 
                         <CheckBox Content="Actual"
-                                  Visibility="Collapsed"
-                                  IsChecked="{Binding CurTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Visibility="Visible"
+                                  IsChecked="{Binding Settings.CurrentTimeRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Margin="5,0" />
 
                     </WrapPanel>
@@ -471,7 +471,7 @@
                             <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Remove from favourite"
-                                              Command="{Binding Context.RemoveFavouriteSopCommand}"
+                                              Command="{Binding RemoveFavouriteSopCommand}"
                                               CommandParameter="{Binding FilteredSelectedStop }"/>
                                     <MenuItem Header="Show on map"
                                               Command="{Binding ShowStopMap}"
@@ -533,11 +533,11 @@
                                 Command="{Binding ShowStopMap}" />
                         <Button DockPanel.Dock="Bottom"
                                 Content ="Add to favourite"
-                                Command="{Binding Context.AddFavouriteSopCommand}"
+                                Command="{Binding AddFavouriteSopCommand}"
                                 CommandParameter="{Binding FilteredSelectedStop}"/>
                         <Button DockPanel.Dock="Bottom"
                                 Content="Remove from favourite"
-                                Command="{Binding Context.RemoveFavouriteSopCommand}"
+                                Command="{Binding RemoveFavouriteSopCommand}"
                                 CommandParameter="{Binding FilteredSelectedStop}"/>
                         <DockPanel DockPanel.Dock="Bottom">
                             <CheckBox IsChecked="{Binding Bus, Mode=TwoWay}" DockPanel.Dock="Top" Content="bus" />
@@ -593,8 +593,13 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="150" />
+                        <RowDefinition Height="Auto" />
+                        
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="0.5*"/>
+                    </Grid.ColumnDefinitions>
                     <WrapPanel>
                         <CheckBox Content="Bus" Visibility="Collapsed" />
                         <CheckBox Content="Trol" Visibility="Collapsed" />
@@ -607,7 +612,7 @@
                         </mapControl:Map.Center>
 
                     </mapControl:Map>
-                    <WrapPanel Grid.Row="2">
+                    <WrapPanel Grid.Column="1">
                         <TextBlock Text="Start stop: "/>
                         <TextBox Text="{Binding StartStop.Name, UpdateSourceTrigger=PropertyChanged }" IsReadOnly="True"/>
                         <Button Content="&lt;-&gt;" Command="{Binding SwitchStopsCommand}"/>
@@ -615,7 +620,7 @@
                         <TextBox Text="{Binding EndStop.Name, UpdateSourceTrigger=PropertyChanged }" IsReadOnly="True"/>
                         <Button Content="Calculate" Click="Button_Click_2"/>
                     </WrapPanel>
-                    <DockPanel Grid.Row="3">
+                    <DockPanel Grid.Row="1" Grid.Column="1">
                         <TextBlock Text="Result: " DockPanel.Dock="Top"/>
                         <ListBox DockPanel.Dock="Top" x:Name="ResulTextBox" ScrollViewer.CanContentScroll="True"/>
                     </DockPanel>

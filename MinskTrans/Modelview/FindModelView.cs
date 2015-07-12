@@ -22,7 +22,7 @@
 		public FindModelView(IContext newContext, SettingsModelView settingsModelView) : base(newContext)
 		{
 			stopModelView = new StopModelView(newContext, settingsModelView);
-			routesModelview = new RoutesModelview(newContext);
+			routesModelview = new RoutesModelview(newContext, settingsModelView);
 		}
 	}
 }

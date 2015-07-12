@@ -61,6 +61,7 @@ namespace MinskTrans.DesctopClient
 		private TimeSpan updateTimerInterval = new TimeSpan(0, 1, 0, 0, 0);
 		private System.Timers.Timer checkUpdateTimer;
 		DispatcherTimer updateTime = new DispatcherTimer();
+		
 
 		public MainWindow()
 		{
@@ -314,7 +315,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_4(object sender, RoutedEventArgs e)
 		{
-			var window = new GroupAddWindow(ShedulerModelView.Context);
+			var window = new GroupAddWindow(ShedulerModelView.Context, ShedulerModelView.SettingsModelView);
 			var result = window.ShowDialog();
 			if (result.Value)
 			{
@@ -326,7 +327,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_5(object sender, RoutedEventArgs e)
 		{
-			var window = new GroupAddWindow(ShedulerModelView.Context);
+			var window = new GroupAddWindow(ShedulerModelView.Context, ShedulerModelView.SettingsModelView);
 			window.Group = ShedulerModelView.GroupStopsModelView.SelectedGroupStop;
 			var result = window.ShowDialog();
 			if (result.Value)

@@ -19,6 +19,11 @@ namespace MinskTrans.DesctopClient.Model
 					.Select(x => Trim(x.StartStop.Name) + " - " + Trim(x.DestinationStop.Name)).Distinct();
 		}
 
+		public RoutWithDestinations()
+			:base()
+		{
+			
+		}
 		string Trim(string str)
 		{
 			return str.Replace("~(посадки-высадки нет)", "");
@@ -32,13 +37,6 @@ namespace MinskTrans.DesctopClient.Model
 			get { return this; }
 		}
 
-		public IEnumerable<string> Destinations
-		{
-			get
-			{
-				return destinations;
-			}
-		} 
-
+		public IEnumerable<string> Destinations => destinations;
 	}
 }

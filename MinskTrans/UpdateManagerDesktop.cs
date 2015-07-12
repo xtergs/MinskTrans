@@ -22,10 +22,11 @@ namespace MinskTrans.DesctopClient.Update
 			var folder = TypeFolder.Temp;
 			try
 			{
+				
 				await Task.WhenAll(
 				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt,folder),
-				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder),
-				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder));
+				internetHelper.Download(list[1].Value, list[1].Key + FileHelperBase.NewExt, folder),
+				internetHelper.Download(list[2].Value, list[2].Key + FileHelperBase.NewExt, folder));
 				
 				OnDataBaseDownloadEnded();
 

@@ -59,7 +59,7 @@ namespace MinskTrans.DesctopClient
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Schedule>().HasKey(x => x.RoutId);
-			modelBuilder.Entity<Schedule>();
+			modelBuilder.Entity<Schedule>().Property(x=> x.InicializeString);
 
 			modelBuilder.Entity<Rout>().HasOptional(key => key.Time).WithOptionalDependent(key => key.Rout);
 			modelBuilder.Entity<Rout>().HasMany(key => key.Stops).WithMany(key => key.Routs);
@@ -79,6 +79,8 @@ namespace MinskTrans.DesctopClient
 
 			modelBuilder.Entity<GroupEx>().HasKey(x => x.GroupID);
 			modelBuilder.Entity<GroupEx>().HasMany(x => x.Stops);
+
+			
 		}
 
 		public IList<Stop> ActualStops
@@ -136,29 +138,11 @@ namespace MinskTrans.DesctopClient
             }
 		}
 
-		public IList<Rout> Routs
-		{
-			get
-			{
-				return routsEF.ToList();
-			}
-		}
+		public IList<Rout> Routs => routsEF.ToList();
 
-		public IList<Stop> Stops
-		{
-			get
-			{
-				return stopsEF.ToList<Stop>();
-			}
-		}
+		public IList<Stop> Stops => stopsEF.ToList<Stop>();
 
-		public IList<Schedule> Times
-		{
-			get
-			{
-				return timesEF.ToList();
-			}
-		}
+		public IList<Schedule> Times => timesEF.ToList();
 
 		public event Context.EmptyDelegate ApplyUpdateEnded;
 		public event Context.EmptyDelegate ApplyUpdateStarted;
@@ -249,7 +233,7 @@ namespace MinskTrans.DesctopClient
 
 		RoutExtentionData GetExtDataFromRout(Rout rout)
 		{
-			return routExtentionData.FirstOrDefault(x => x.Rout == rout);
+			return routExtentionData.FirstOrDefault(x => x.Rout.RoutId == rout.RoutId);
 		}
 
 		StopExtentionData GetOrCreateExtDataFromStop(Stop stop)
@@ -314,7 +298,7 @@ namespace MinskTrans.DesctopClient
 			SaveChanges();
 		}
 
-		public void Inicialize(Context cont)
+		public void Inicialize(IContext cont)
 		{
 			throw new NotImplementedException();
 		}
@@ -392,7 +376,7 @@ namespace MinskTrans.DesctopClient
 
 		public bool IsFavouriteRout(Rout rout)
 		{
-			return routExtentionData.Any(x => x.Rout == rout);
+			return routExtentionData.Any(x => x.Rout.RoutId == rout.RoutId);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -15,6 +16,18 @@ namespace MinskTrans.DesctopClient.Model
 		public Schedule()
 		{
 			
+		}
+
+		public String InicializeString
+		{
+			get {StringBuilder result = new StringBuilder();
+				foreach (var s in splitStr)
+				{
+					result.Append(s).Append("!!!");
+				}
+				return result.ToString();
+			}
+			set { splitStr = value.Split(new[] {"!!!"}, StringSplitOptions.RemoveEmptyEntries); }
 		}
 		[JsonProperty]
 		public string[] splitStr;

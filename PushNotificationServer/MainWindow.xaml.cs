@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
 using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Annotations;
+
 using PushNotificationServer.Properties;
 
 namespace PushNotificationServer
@@ -149,7 +149,7 @@ namespace PushNotificationServer
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		[NotifyPropertyChangedInvocator]
+		
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;

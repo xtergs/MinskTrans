@@ -123,7 +123,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CalculateRout.cs" />
+    <Compile Include="AutoRouting\CalculateRout.cs" />
+    <Compile Include="AutoRouting\Class1.cs" />
+    <Compile Include="AutoRouting\DistanceCalculator.cs" />
+    <Compile Include="AutoRouting\RoutNode.cs" />
     <Compile Include="Comparer\StopComparer.cs" />
     <Compile Include="Converters\listConverter.cs" />
     <Compile Include="Converters\ListToStr.cs" />
@@ -150,13 +153,13 @@
     <Compile Include="Modelview\StopsModelView.cs" />
     <Compile Include="Model\PushpinLocation.cs" />
     <Compile Include="Model\PushpinLocationBase.cs" />
-    <Compile Include="NodeGraph.cs" />
+    <Compile Include="AutoRouting\NodeGraph.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="PushPinBuilder.cs" />
     <Compile Include="ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SearchRout.cs" />
+    <Compile Include="AutoRouting\SearchRout.cs" />
     <Compile Include="SqlEFContext.cs" />
     <Compile Include="TimeTableRepository.cs" />
     <Compile Include="UpdateManagerDesktop.cs" />

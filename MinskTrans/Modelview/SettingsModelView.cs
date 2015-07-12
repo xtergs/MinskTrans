@@ -11,6 +11,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 using MinskTrans.DesctopClient.Annotations;
+using System.Configuration;
 using MinskTrans.DesctopClient.Properties;
 
 #else
@@ -125,6 +126,71 @@ using MinskTrans.Universal.Annotations;
 		{
 			return (int)SimleGet((object)defValue, key);
 		}
+#else
+		static public void SimpleSet(string value, [CallerMemberName]string key = null)
+		{
+			if (!Settings.Default.SettingsKey.Contains(key))
+				Settings.Default.Properties.Add(new SettingsProperty(key));
+			else
+				Settings.Default[key] = value;
+			Settings.Default.Save();
+		}
+
+		static public void SimpleSet(bool value, [CallerMemberName]string key = null)
+		{
+			try
+			{
+				var x = Settings.Default[key];
+				if (x == null)
+					Settings.Default.Properties.Add(new SettingsProperty(key));
+			}
+			catch
+			{
+				Settings.Default.Properties.Add(new SettingsProperty(key));
+			}
+			finally
+			{
+				//if (!Settings.Default.SettingsKey.Contains(key))
+
+				//else
+				Settings.Default[key] = value;
+				Settings.Default.Save();
+				Settings.Default.Reload();
+			}
+		}
+
+		static public void SimpleSet(int value, [CallerMemberName]string key = null)
+		{
+			if (!Settings.Default.SettingsKey.Contains(key))
+				Settings.Default.Properties.Add(new SettingsProperty(key));
+			else
+				Settings.Default[key] = value;
+			Settings.Default.Save();
+		}
+
+		static public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
+		{
+
+			return (string)SimleGet((object)defValue, key);
+		}
+
+		static public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
+		{
+			if (!Settings.Default.SettingsKey.Contains(key))
+				return defValue;
+			return Settings.Default[key];
+		}
+
+		static public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
+		{
+
+			return (bool)SimleGet((object)defValue, key);
+		}
+
+		static public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
+		{
+			return (int)SimleGet((object)defValue, key);
+		}
 #endif
 	}
 
@@ -156,6 +222,19 @@ using MinskTrans.Universal.Annotations;
 		static string SettingsToStr([CallerMemberName] string propertyName = null)
 		{
 			return propertyName;
+		}
+
+		public bool CurrentTimeRouts
+		{
+			get
+			{
+				return ApplicationSettingsHelper.SimleGet(false);
+			}
+			set
+			{
+				ApplicationSettingsHelper.SimpleSet(value);
+				OnPropertyChanged();
+			}
 		}
 
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
@@ -214,7 +293,7 @@ using MinskTrans.Universal.Annotations;
 
 		public string LastUnhandeledException
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet("");
@@ -225,15 +304,11 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return ""; }
-			set {  }
-#endif
+
 		}
 
 		public bool ShowTopStopsByCoordinats
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -244,15 +319,11 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return true; }
-			set {  }
-#endif
+
 		}
 
 		public int TimeInPast
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(15);
@@ -264,19 +335,12 @@ using MinskTrans.Universal.Annotations;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
-#else
-			get { return Properties.Settings.Default.TimeInPast; }
-			set
-			{
-				Settings.Default.TimeInPast = value;
-				Settings.Default.Save();
-			}
-#endif
+
 		}
 
 		public bool UseGPS
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -287,10 +351,7 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return false; }
-			set {  }
-#endif
+
 		}
 
 		public TimeSpan ReconnectPushServerTimeSpan
@@ -300,7 +361,7 @@ using MinskTrans.Universal.Annotations;
 
 		public bool KeepTracking
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -311,10 +372,7 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return false; }
-			set {  }
-#endif
+
 		}
 
 		public string PrivatyPolicity
@@ -420,7 +478,7 @@ using MinskTrans.Universal.Annotations;
 
 		public bool UpdateOnWiFi
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -431,19 +489,11 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return Settings.Default.UpdateOnWiFi; }
-			set
-			{
-				Settings.Default.UpdateOnWiFi = value;
-				Settings.Default.Save();
-			}
-#endif
 		}
 
 		public bool UpdateOnMobileData
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
 				return ApplicationSettingsHelper.SimleGet(true);
@@ -454,14 +504,7 @@ using MinskTrans.Universal.Annotations;
 				ApplicationSettingsHelper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return Settings.Default.UpdateOnMobileData; }
-			set
-			{
-				Settings.Default.UpdateOnMobileData = value;
-				Settings.Default.Save();
-			}
-#endif
+
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

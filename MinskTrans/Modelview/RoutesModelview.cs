@@ -35,14 +35,17 @@ using GalaSoft.MvvmLight.Command;
 		//private List<Time> timesObservableCollection;
 		private TransportType typeTransport = TransportType.Bus;
 
+		private readonly SettingsModelView settings;
+
 		//public RoutesModelview()
 		//{
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutesModelview(IContext context)
+		public RoutesModelview(IContext context, SettingsModelView settings)
 			: base(context)
 		{
+			this.settings = settings;
 			OnPropertyChanged("RouteNums");
 		}
 
@@ -180,11 +183,9 @@ using GalaSoft.MvvmLight.Command;
 				var timesObservableCollection = tempList.TimesDictionary[StopSelectedIndex];
 
 				int curTime;
-#if DEBUG
 					curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
-					CurTime = true;
-#else
-				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
+#if DEBUG
+				CurTime = Settings.CurrentTimeRouts;
 #endif
 				//TODO заменяет сущь-е время
 				if (CurTime)
@@ -290,6 +291,11 @@ using GalaSoft.MvvmLight.Command;
 		public RelayCommand ShowRouteMap
 		{
 			get { return new RelayCommand(() => OnShowRoute(new ShowArgs() { SelectedRoute = RouteSelectedValue }), () => RouteSelectedValue != null); }
+		}
+
+		public SettingsModelView Settings
+		{
+			get { return settings; }
 		}
 
 		protected virtual void OnShowStop(ShowArgs args)

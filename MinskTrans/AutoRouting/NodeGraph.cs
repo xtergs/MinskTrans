@@ -23,5 +23,21 @@ namespace MinskTrans.DesctopClient
 			}
 			set { connectedStops = value; }
 		}
+
+		#region Overrides of Object
+
+		/// <summary>
+		/// Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		/// A string that represents the current object.
+		/// </returns>
+		public override string ToString()
+		{
+			return Stop.ID + " " +
+			       Stop.Name;
+		}
+
+		#endregion
 	}
 }

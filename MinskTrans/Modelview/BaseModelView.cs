@@ -139,7 +139,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					addFavouriteRoutCommandBack = new RelayCommand<Rout>(async x =>
 				   {
 					   await Context.AddFavouriteRout(x);
-				   }, p => p != null && !Context.FavouriteRouts.Contains(p));
+				   }, p => p != null && !Context.IsFavouriteRout(p));
 				return addFavouriteRoutCommandBack;
 			}
 		}
@@ -163,7 +163,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				return new RelayCommand<RoutWithDestinations>(async x =>
 				{
 					await Context.RemoveFavouriteRout(x);
-				}, p => p != null && Context.FavouriteRouts.Contains(p));
+				}, p => p != null && Context.IsFavouriteRout(p));
 			}
 		}
 

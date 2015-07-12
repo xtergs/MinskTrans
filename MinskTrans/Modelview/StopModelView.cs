@@ -26,20 +26,22 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : StopModelViewBase
 	{
-		struct LocationXX
+		private struct LocationXX
 		{
 			private static Location loc;
-			static readonly object o = new object();
+			private static readonly object o = new object();
+
 			public static Location Get()
 			{
 				lock (o)
 				{
 					if (loc == null)
-						loc = new Location(0, 0);			
+						loc = new Location(0, 0);
 				}
 				return loc;
 			}
 		}
+
 		private ISettingsModelView settingsModelView;
 		private bool autoDay;
 		private bool autoNowTime;
@@ -65,21 +67,27 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
 			settingsModelView = settings;
-			
+
 			settingsModelView.PropertyChanged += async (sender, args) =>
 			{
 				switch (args.PropertyName)
 				{
-					case "TimeInPast": Refresh(); break;
-					case "UseGPS": await SetGPS(); OnStatusGPSChanged(); break;
-					default: break;
+					case "TimeInPast":
+						Refresh();
+						break;
+					case "UseGPS":
+						await SetGPS();
+						OnStatusGPSChanged();
+						break;
+					default:
+						break;
 				}
 			};
 			if (UseGPS)
 				SetGPS();
 		}
 
-		async Task SetGPS()
+		private async Task SetGPS()
 		{
 #if WINDOWS_PHONE_APP && WINDOWS_AP || WINDOWS_UAP
 				var geolocationStatus = await Geolocator.RequestAccessAsync();
@@ -164,7 +172,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				handler(this, new EventArgs());
 		}
 
-		static readonly Location defaultLocation = new Location(0,0);
+		private static readonly Location defaultLocation = new Location(0, 0);
 
 		public override IEnumerable<Stop> FilteredStops
 		{
@@ -174,17 +182,30 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					var tempSt = StopNameFilter.ToLower();
 					var temp = Context.ActualStops.Where(
-							x => x.SearchName.Contains(tempSt));
+						x => x.SearchName.Contains(tempSt));
 					if (!Equals(LocationXX.Get(), defaultLocation))
-						return Enumerable.OrderBy<Stop, double>(temp,(Func<Stop, double>)this.Distance).ThenByDescending((Func<Stop, uint>)Context.GetCounter);
+						return
+							SmartSort(temp);
+					//Enumerable.OrderBy<Stop, double>(temp, (Func<Stop, double>) this.Distance)
+					//	.ThenByDescending((Func<Stop, uint>) Context.GetCounter);
 					else
 						return temp.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName);
+
 				}
 				if (Context.ActualStops != null)
-					return Equals(LocationXX.Get(), defaultLocation) ? Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName) :
-												  Context.ActualStops.OrderBy(Distance).ThenByDescending(Context.GetCounter);
+					return Equals(LocationXX.Get(), defaultLocation)
+						? Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName)
+						//: Context.ActualStops.OrderBy(Distance).ThenByDescending(Context.GetCounter);
+						: SmartSort(Context.ActualStops);
 				return null;
 			}
+		}
+
+
+
+		private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops )
+		{
+			return stops.OrderBy(x=> Context.ActualStops.Count/Distance(x) + (double)Context.ActualStops.Count / Context.GetCounter(x));
 		}
 
 		private double Distance(Stop x)

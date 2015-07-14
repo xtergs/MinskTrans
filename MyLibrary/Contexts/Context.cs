@@ -22,7 +22,7 @@ using MinskTrans.DesctopClient.Model;
 using MyLibrary;
 using Newtonsoft.Json;
 using TransportType = MinskTrans.DesctopClient.Model.TransportType;
-using GalaSoft.MvvmLight.Command;
+
 
 namespace MinskTrans.DesctopClient
 {

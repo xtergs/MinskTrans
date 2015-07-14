@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
-using MinskTrans.DesctopClient.Model;
+﻿using MinskTrans.DesctopClient.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

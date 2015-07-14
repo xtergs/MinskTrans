@@ -107,9 +107,6 @@
     <Folder Include="Model\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\MinskTrans\Model\BaseModel.cs">
-      <Link>BaseModel.cs</Link>
-    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

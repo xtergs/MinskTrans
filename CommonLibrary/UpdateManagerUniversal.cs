@@ -36,7 +36,7 @@ namespace CommonLibrary
 			catch (System.Net.WebException)
 			{
 				OnErrorDownloading();
-				await Task.WhenAll(
+				/*await*/ Task.WhenAll(
 				fileHelper.DeleteFile(folder, list[0].Key + FileHelperBase.NewExt),
 				fileHelper.DeleteFile(folder, list[1].Key + FileHelperBase.NewExt),
 				fileHelper.DeleteFile(folder, list[2].Key + FileHelperBase.NewExt));
@@ -45,7 +45,7 @@ namespace CommonLibrary
 			catch (Exception)
 			{
 				OnErrorDownloading();
-				await Task.WhenAll(
+				/*await*/ Task.WhenAll(
 				fileHelper.DeleteFile(folder, list[0].Key + FileHelperBase.NewExt),
 				fileHelper.DeleteFile(folder, list[1].Key + FileHelperBase.NewExt),
 				fileHelper.DeleteFile(folder, list[2].Key + FileHelperBase.NewExt));

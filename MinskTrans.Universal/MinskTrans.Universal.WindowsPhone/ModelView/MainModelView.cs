@@ -11,6 +11,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
 using MinskTrans.DesctopClient.Update;
 using CommonLibrary.IO;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -180,6 +181,31 @@ namespace MinskTrans.Universal.ModelView
 				}, () => !updating);
 				return updateDataCommand;
 			}
+		}
+
+		public RelayCommand<Stop> ShowStopMap
+		{
+			get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		}
+
+		public RelayCommand<Rout> ShowRouteMap
+		{
+			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		}
+		public event Show ShowStop;
+		public event Show ShowRoute;
+		public delegate void Show(object sender, ShowArgs args);
+
+		protected virtual void OnShowStop(ShowArgs args)
+		{
+			var handler = ShowStop;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnShowRoute(ShowArgs args)
+		{
+			var handler = ShowRoute;
+			if (handler != null) handler(this, args);
 		}
 	}
 }

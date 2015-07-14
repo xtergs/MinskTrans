@@ -606,9 +606,9 @@ namespace MinskTrans.DesctopClient
 			Stopwatch watch = new Stopwatch();
 			watch.Start();
 
-			if (routsl == null) throw new ArgumentNullException(nameof(routsl));
-			if (stopsl == null) throw new ArgumentNullException(nameof(stopsl));
-			if (timesl == null) throw new ArgumentNullException(nameof(timesl));
+			if (routsl == null) throw new ArgumentNullException("routsl");
+			if (stopsl == null) throw new ArgumentNullException("stopsl");
+			if (timesl == null) throw new ArgumentNullException("timesl");
 
 			//Parallel.ForEach(routsl, (rout) =>
 
@@ -621,7 +621,7 @@ namespace MinskTrans.DesctopClient
 			foreach (var rout in routsl)
 			{
 				var rout1 = rout;
-				Schedule first = timesl.FirstOrDefault(x => x?.RoutId == rout1.RoutId);
+				Schedule first = timesl.FirstOrDefault(x => x.RoutId == rout1.RoutId);
 				rout.Time = first;
 				if (rout.Time != null)
 					rout.Time.Rout = rout;
@@ -951,7 +951,8 @@ namespace MinskTrans.DesctopClient
 		protected virtual void OnUpdateEnded()
 		{
 			var handler = UpdateEnded;
-			handler?.Invoke(this, EventArgs.Empty);
+			if (handler != null)
+				handler.Invoke(this, EventArgs.Empty);
 		}
 
 		public bool IsFavouriteStop(Stop stop)
@@ -1050,7 +1051,13 @@ namespace MinskTrans.DesctopClient
 
 		public IList<Rout> FavouriteRouts
 		{
-			get { return Routs?.Where(x => favouriteRouts.Contains(x.RoutId)).ToList(); }
+
+			get
+			{
+				if (Routs == null)
+					return null;
+				return Routs.Where(x => favouriteRouts.Contains(x.RoutId)).ToList();
+			}
 		}
 
 		public IList<GroupStop> Groups { get; private set; }
@@ -1060,7 +1067,9 @@ namespace MinskTrans.DesctopClient
 		{
 			get
 			{
-				return ActualStops?.Where(st => favouriteStops.Contains(st.ID)).ToList();
+				if (ActualStops == null)
+					return null;
+				return ActualStops.Where(st => favouriteStops.Contains(st.ID)).ToList();
 			}
 		}
 

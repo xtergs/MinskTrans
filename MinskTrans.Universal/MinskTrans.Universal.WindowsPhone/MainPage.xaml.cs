@@ -409,7 +409,7 @@ namespace MinskTrans.Universal
 				{
 					// the application does not have the right capability or the location master switch is off
 					MessageDialog dialog = new MessageDialog("location  is disabled in phone settings.");
-					await dialog.ShowAsync();
+					/*await*/ dialog.ShowAsync();
 					
 				}
 				//else

@@ -482,7 +482,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			set
 			{
 				fuzzySearch = value; 
-				OnPropertyChanged(nameof(FilteredStops));
+				OnPropertyChanged("FilteredStops");
 			}
 		}
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 #if WINDOWS_PHONE_APP
 using Windows.Devices.Geolocation;
 using Windows.UI.Core;

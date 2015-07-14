@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
@@ -12,10 +9,7 @@ using CommonLibrary;
 using CommonLibrary.IO;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
-using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 using MyLibrary;
-//using Autofac;
-using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Update;
 
 namespace MinskTrans.BackgroundUpdateTask

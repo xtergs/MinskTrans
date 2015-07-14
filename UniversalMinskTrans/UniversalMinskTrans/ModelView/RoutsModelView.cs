@@ -20,18 +20,18 @@ namespace MinskTrans.Universal.ModelView
 		
 		private bool curTime;
 		private string routNum;
-		private int routeNamesIndex;
+		//private int routeNamesIndex;
 		private RoutWithDestinations routeNumSelectedValue;
 		private IEnumerable<string> routeNums;
 
 		private ObservableCollection<Rout> routeObservableCollection;
 		private Rout routeSelectedValue;
-		private int selectedRouteNumIndex;
+		//private int selectedRouteNumIndex;
 
-		private int stopIndex;
+		//private int stopIndex;
 
 
-		private Stop stopSelectedValue;
+		//private Stop stopSelectedValue;
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
@@ -59,6 +59,11 @@ namespace MinskTrans.Universal.ModelView
 		{
 			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
 		}
+
+		//public RelayCommand<Rout> ShowRouteMap
+		//{
+		//	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		//}
 
 		public TransportType TypeTransport
 		{
@@ -318,31 +323,31 @@ namespace MinskTrans.Universal.ModelView
 			get { return new RelayCommand(() => TypeTransport = TransportType.Tram); }
 		}
 
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
+		//public event Show ShowStop;
+		//public event Show ShowRoute;
+		//public delegate void Show(object sender, ShowArgs args);
 
-		public RelayCommand ShowStopMap
-		{
-			get { return new RelayCommand(() => OnShowStop(new ShowArgs() { SelectedStop = StopSelectedValue }), () => StopSelectedValue != null); }
-		}
+		//public RelayCommand ShowStopMap
+		//{
+		//	get { return new RelayCommand(() => OnShowStop(new ShowArgs() { SelectedStop = StopSelectedValue }), () => StopSelectedValue != null); }
+		//}
 
-		public RelayCommand ShowRouteMap
-		{
-			get { return new RelayCommand(() => OnShowRoute(new ShowArgs() { SelectedRoute = RouteSelectedValue }), () => RouteSelectedValue != null); }
-		}
+		//public RelayCommand ShowRouteMap
+		//{
+		//	get { return new RelayCommand(() => OnShowRoute(new ShowArgs() { SelectedRoute = RouteSelectedValue }), () => RouteSelectedValue != null); }
+		//}
 
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowStop(ShowArgs args)
+		//{
+		//	var handler = ShowStop;
+		//	if (handler != null) handler(this, args);
+		//}
 
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowRoute(ShowArgs args)
+		//{
+		//	var handler = ShowRoute;
+		//	if (handler != null) handler(this, args);
+		//}
 
 		#region Overrides of BaseModelView
 

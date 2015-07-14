@@ -112,8 +112,8 @@
     <Compile Include="..\..\CommonLibrary\Comparer\RoutsComparer.cs">
       <Link>Comparer\RoutsComparer.cs</Link>
     </Compile>
-    <Compile Include="..\..\CommonLibrary\InternetHelper.cs">
-      <Link>InternetHelper.cs</Link>
+    <Compile Include="..\..\CommonLibrary\InternetHelperUniversal.cs">
+      <Link>InternetHelperUniversal.cs</Link>
     </Compile>
     <Compile Include="..\..\CommonLibrary\IO\FileHelper.cs">
       <Link>FileHelper.cs</Link>
@@ -127,83 +127,11 @@
     <Compile Include="..\..\CommonLibrary\UniversalContext.cs">
       <Link>UniversalContext.cs</Link>
     </Compile>
-    <Compile Include="..\..\minsktrans\comparer\StopComparer.cs">
-      <Link>Comparer\StopComparer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\Context.cs">
-      <Link>Context.cs</Link>
+    <Compile Include="..\..\CommonLibrary\UpdateManagerUniversal.cs">
+      <Link>UpdateManagerUniversal.cs</Link>
     </Compile>
     <Compile Include="..\..\minsktrans\modelview\SettingsModelView.cs">
       <Link>ModelView\SettingsModelView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\BaseModel.cs">
-      <Link>Model\BaseModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\GroupStop.cs">
-      <Link>Model\GroupStop.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\GroupStopId.cs">
-      <Link>Model\GroupStopId.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\List2.cs">
-      <Link>Model\List2.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\Rout.cs">
-      <Link>Model\Rout.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\RoutBase.cs">
-      <Link>Model\RoutBase.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\RoutEx.cs">
-      <Link>Model\RoutEx.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\RoutWithDestinations.cs">
-      <Link>Model\RoutWithDestinations.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\Schedule.cs">
-      <Link>Model\Schedule.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\Stop.cs">
-      <Link>Model\Stop.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\StopBase.cs">
-      <Link>Model\StopBase.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\StopEx.cs">
-      <Link>Model\StopEx.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\model\Time.cs">
-      <Link>Model\Time.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\ShedulerParser.cs">
-      <Link>ShedulerParser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MinskTrans\ShowArgs.cs">
-      <Link>ShowArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\FileHelperBase.cs">
-      <Link>FileHelperBase.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\IContext.cs">
-      <Link>IContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\ISettingsModelView.cs">
-      <Link>ISettingsModelView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\Log.cs">
-      <Link>Log.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\LogDelegateArgs.cs">
-      <Link>LogDelegateArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\NewsEntry.cs">
-      <Link>NewsEntry.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\SerializeSettings.cs">
-      <Link>SerializeSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\MyLibrary\Tools.cs">
-      <Link>Tools.cs</Link>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -242,6 +170,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary2\MyLibraryUniversal.csproj">
+      <Project>{b2be734f-7766-471d-98fa-ab6f0d00e92b}</Project>
+      <Name>MyLibraryUniversal</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

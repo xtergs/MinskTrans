@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinskTrans.DesctopClient.AutoRouting
 {
-	internal class EquirectangularDistance : IDistanceCalculator
+	public class EquirectangularDistance : IDistanceCalculator
 	{
 		public double CalculateDistance(double lat1, double long1, double lat2, double long2)
 		{

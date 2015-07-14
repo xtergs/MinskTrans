@@ -11,14 +11,15 @@ using MyLibrary;
 
 namespace CommonLibrary.IO
 {
-	public sealed class FileHelper: FileHelperBase
+	public class FileHelper: FileHelperBase
 	{
 		
 		public static readonly Dictionary<TypeFolder, IStorageFolder> Folders = new Dictionary<TypeFolder, IStorageFolder>()
 		{
 			{TypeFolder.Local, ApplicationData.Current.LocalFolder},
 			{TypeFolder.Roaming, ApplicationData.Current.RoamingFolder},
-			{TypeFolder.Temp, ApplicationData.Current.TemporaryFolder}
+			{TypeFolder.Temp, ApplicationData.Current.TemporaryFolder},
+			{TypeFolder.Current, ApplicationData.Current.LocalFolder }
 		};
 
 		#region Overrides of FileHelperBase
@@ -45,7 +46,7 @@ namespace CommonLibrary.IO
 			try
 			{
 				var file = await Folders[folder].GetFileAsync(to);
-				file.RenameAsync(to + OldExt, NameCollisionOption.ReplaceExisting);
+				await file.RenameAsync(to + OldExt, NameCollisionOption.ReplaceExisting);
 			}
 			catch (FileNotFoundException)
 			{
@@ -68,7 +69,9 @@ namespace CommonLibrary.IO
 
 		public override async Task WriteTextAsync(TypeFolder folder, string file, string text)
 		{
-			await FileIO.WriteTextAsync(await Folders[folder].CreateFileAsync(file), text);
+			if (text == null)
+				throw new ArgumentNullException(file);
+			await FileIO.WriteTextAsync(await Folders[folder].CreateFileAsync(file, CreationCollisionOption.ReplaceExisting), text);
 		}
 
 		public override async Task DeleteFile(TypeFolder folder, string file)

@@ -35,7 +35,7 @@ namespace MinskTrans.DesctopClient.Model
 
 		public Schedule(string str, bool lazyInicialize = false)
 		{
-			char sym = ',';
+			//char sym = ',';
 
 			//Route id
 			splitStr = str.Split(new[] { ",," }, StringSplitOptions.RemoveEmptyEntries);
@@ -48,7 +48,7 @@ namespace MinskTrans.DesctopClient.Model
 		
 		void InicializeTime()
 		{
-			char sym = ',';
+			//char sym = ',';
 			var timesDictionary = new List<Time>();
 
 			TimesDictionary = new List<List<Time>>();
@@ -58,7 +58,7 @@ namespace MinskTrans.DesctopClient.Model
 			//Route id
 			
 			int val = 0;
-			int hour = 0;
+			//int hour = 0;
 
 
 			var list = new List<List<int>>();

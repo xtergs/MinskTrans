@@ -10,7 +10,7 @@ namespace MinskTrans.DesctopClient.Model
 	[JsonObject(MemberSerialization.OptIn)]
 	public class StopBase
 	{
-		private string name;
+		//private string name;
 
 		[JsonProperty]
 		public int ID { get; set; }

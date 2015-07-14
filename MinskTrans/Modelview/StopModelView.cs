@@ -6,6 +6,8 @@ using System.Linq;
 
 using MapControl;
 using System.Threading.Tasks;
+using MinskTrans.DesctopClient.AutoRouting;
+using MyLibrary.FuzzySearch;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
 using GalaSoft.MvvmLight.CommandWpf;
@@ -14,12 +16,7 @@ using MinskTrans.DesctopClient.Properties;
 #else
 using GalaSoft.MvvmLight.Command;
 using Windows.Devices.Geolocation;
-using Windows.System.Threading;
-using Windows.Storage;
-using Windows.UI.Xaml;
-using MinskTrans.Universal;
-using GalaSoft.MvvmLight.Command;
-using MinskTrans.DesctopClient.Model;
+
 #endif
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -62,10 +59,13 @@ namespace MinskTrans.DesctopClient.Modelview
 		//{
 		//}
 
+		private TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
+		                                          TransportType.Trol;
+
 		public StopModelView(IContext newContext, SettingsModelView settings, bool UseGPS = false)
 			: base(newContext, settings)
 		{
-			Bus = Trol = Tram = AutoDay = AutoNowTime = true;
+			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;
 			settingsModelView = settings;
 
 			settingsModelView.PropertyChanged += async (sender, args) =>
@@ -84,7 +84,9 @@ namespace MinskTrans.DesctopClient.Modelview
 				}
 			};
 			if (UseGPS)
+#pragma warning disable 4014
 				SetGPS();
+#pragma warning restore 4014
 		}
 
 		private async Task SetGPS()
@@ -173,7 +175,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 		private static readonly Location defaultLocation = new Location(0, 0);
-
+		public bool fuzzySearch;
 		public override IEnumerable<Stop> FilteredStops
 		{
 			get
@@ -181,15 +183,19 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (StopNameFilter != null && Context.ActualStops != null)
 				{
 					var tempSt = StopNameFilter.ToLower();
-					var temp = Context.ActualStops.Where(
-						x => x.SearchName.Contains(tempSt));
-					if (!Equals(LocationXX.Get(), defaultLocation))
+					IEnumerable<Stop> temp;
+					if (FuzzySearch)
+						temp = Levenshtein.Search(tempSt, Context.ActualStops, 0.4);
+					else
+						temp = Context.ActualStops.Where(
+							x => x.SearchName.Contains(tempSt)).OrderBy(x=> x.SearchName.StartsWith(tempSt));
+                    if (!Equals(LocationXX.Get(), defaultLocation))
 						return
 							SmartSort(temp);
 					//Enumerable.OrderBy<Stop, double>(temp, (Func<Stop, double>) this.Distance)
 					//	.ThenByDescending((Func<Stop, uint>) Context.GetCounter);
 					else
-						return temp.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName);
+						return temp.OrderByDescending(Context.GetCounter).ThenByDescending(x => x.SearchName.StartsWith(tempSt));
 
 				}
 				if (Context.ActualStops != null)
@@ -205,12 +211,24 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops )
 		{
-			return stops.OrderBy(x=> Context.ActualStops.Count/Distance(x) + (double)Context.ActualStops.Count / Context.GetCounter(x));
+			return stops.OrderByDescending(x=>
+			{
+				double counter = Context.GetCounter(x);
+				if (counter == 0)
+					counter = 0;
+				else
+					counter = counter/ Context.ActualStops.Count;
+				double dist = Distance(x);
+				dist = 1/dist;
+                return dist + counter;
+			});
 		}
 
+		EquirectangularDistance distance = new EquirectangularDistance();
 		private double Distance(Stop x)
 		{
-			return Math.Abs(Math.Sqrt(Math.Pow(LocationXX.Get().Longitude - x.Lng, 2) + Math.Pow(LocationXX.Get().Latitude - x.Lat, 2)));
+			return distance.CalculateDistance(LocationXX.Get().Latitude, LocationXX.Get().Longitude, x.Lat, x.Lng);
+            //return Math.Abs(Math.Sqrt(Math.Pow( - x.Lng, 2) + Math.Pow(LocationXX.Get().Latitude - x.Lat, 2)));
 		}
 	public ISettingsModelView SettingsModelView
 	{
@@ -339,15 +357,22 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool Bus
 		{
-			get { return bus; }
+			get { return selectedTransport.HasFlag(TransportType.Bus); }
 			set
 			{
-				if (value.Equals(bus)) return;
-				bus = value;
+				if (value)
+					selectedTransport |= TransportType.Bus;
+				else
+					selectedTransport ^= TransportType.Bus; 
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
 		}
+
+		//public RelayCommand<Stop> ShowStopMap
+		//{
+		//	get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		//}
 
 		public bool Tram
 		{
@@ -356,6 +381,19 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				if (value.Equals(tram)) return;
 				tram = value;
+				OnPropertyChanged();
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
+
+		private bool metro;
+		public bool Metro
+		{
+			get { return metro; }
+			set
+			{
+				if (value.Equals(metro)) return;
+				metro = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
@@ -436,6 +474,16 @@ namespace MinskTrans.DesctopClient.Modelview
 				FilteredSelectedStop = stop;
 				RefreshTimeSchedule.Execute(null);
 			});}
+		}
+
+		public bool FuzzySearch
+		{
+			get { return fuzzySearch; }
+			set
+			{
+				fuzzySearch = value; 
+				OnPropertyChanged(nameof(FilteredStops));
+			}
 		}
 
 		public event EventHandler ViewStopOn;

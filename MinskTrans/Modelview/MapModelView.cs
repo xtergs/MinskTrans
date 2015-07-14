@@ -92,6 +92,15 @@ namespace MinskTrans.DesctopClient.Modelview
 			
 		}
 
+		public void MarkPushPins(IEnumerable<Stop> stops, Style stylePushPin)
+		{
+			foreach (var pushpinLocation in allPushpins)
+			{
+				if (stops.Any(x => pushpinLocation.Stop.ID == x.ID))
+					pushpinLocation.Pushpin.Style = stylePushPin;
+			}
+		}
+
 		private bool isActive = true;
 
 		public void Disable()
@@ -321,7 +330,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					map.Children.Add(pushpin);
 				}
-				catch (System.Exception ex)
+				catch (System.Exception)
 				{
 					throw;
 				}
@@ -412,7 +421,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public async void RefreshPushPinsAsync()
+		public void RefreshPushPinsAsync()
 		{
 
 			if (showAllPushpins && map != null && Context.ActualStops != null)

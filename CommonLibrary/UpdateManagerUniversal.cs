@@ -21,15 +21,19 @@ namespace CommonLibrary
 			var folder = TypeFolder.Temp;
 			try
 			{
+#if DEBUG
+				var ur = new Uri(list[2].Value);
+				await internetHelper.Download(list[2].Value, list[2].Key + FileHelperBase.NewExt, folder);
+#endif
 				await Task.WhenAll(
 				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder),
-				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder),
-				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder));
+				internetHelper.Download(list[1].Value, list[1].Key + FileHelperBase.NewExt, folder),
+				internetHelper.Download(list[2].Value, list[2].Key + FileHelperBase.NewExt, folder));
 
 				OnDataBaseDownloadEnded();
 
 			}
-			catch (System.Net.WebException e)
+			catch (System.Net.WebException)
 			{
 				OnErrorDownloading();
 				await Task.WhenAll(

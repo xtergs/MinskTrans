@@ -24,7 +24,7 @@ using MinskTrans.DesctopClient.Model;
 		public GroupStopsModelView(IContext newContext, SettingsModelView settingsModelView)
 			: base(newContext, settingsModelView)
 		{
-			Bus = Trol = Tram = true;
+			Bus = Trol = Tram=Metro = true;
 		}
 
 		//public ObservableCollection<GroupStop> Groups

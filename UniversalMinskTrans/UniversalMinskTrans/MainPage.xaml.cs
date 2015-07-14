@@ -79,7 +79,7 @@ namespace MinskTrans.Universal
 
 			var builder = new PushPinBuilder();
 			builder.Style = (Style)mainPage.Resources["PushpinStyle1"];
-			builder.Tapped += (sender, args) =>
+			builder.Tapped += async (sender, args) =>
 			{
 				PopupMenu menu = new PopupMenu();
 				var push = ((Pushpin) sender);
@@ -97,7 +97,7 @@ namespace MinskTrans.Universal
 					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
 					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
-				menu.ShowAsync(push.RenderTransformOrigin);
+				await menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
@@ -229,7 +229,7 @@ namespace MinskTrans.Universal
 			Pivot.SelectedItem = GroupsPivtoItem;
 		}
 
-		private MapPanel mappanel;
+		//private MapPanel mappanel;
 
 
 
@@ -284,7 +284,7 @@ namespace MinskTrans.Universal
 			MainModelView.MainModelViewGet.AllNews = null;
 			
 #if BETA
-			Logger.Log("Page_Loaded ended").SaveToFile();
+			await Logger.Log("Page_Loaded ended").SaveToFile();
 #endif
 		}
 
@@ -432,60 +432,58 @@ namespace MinskTrans.Universal
 
 		private void GroupSelectedListView(object sender, SelectionChangedEventArgs e)
 		{
-			if (((Selector)sender).SelectedIndex == -1 || ((ListBox)sender).SelectionMode != SelectionMode.Single)
-				;
-			else
+			if (!(((Selector)sender).SelectedIndex == -1 || ((ListBox)sender).SelectionMode != SelectionMode.Single))
 				VisualStateManager.GoToState(mainPage, "ShowGroupVisualState", true);
 		}
 
 		private Pushpin ipushpin;
 		private ObservableCollection<Pushpin> pushpins1;
 
-		public Pushpin Ipushpin
-		{
-			get
-			{
-				if (ipushpin == null)
-					ipushpin = new Pushpin(){Content = "Я"};
-				return ipushpin;
-			}
-			set { ipushpin = value; }
-		}
+		//public Pushpin Ipushpin
+		//{
+		//	get
+		//	{
+		//		if (ipushpin == null)
+		//			ipushpin = new Pushpin(){Content = "Я"};
+		//		return ipushpin;
+		//	}
+		//	set { ipushpin = value; }
+		//}
 
-		private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
-		{
-			Geolocator geolocator = new Geolocator();
+		//private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+		//{
+		//	Geolocator geolocator = new Geolocator();
 			
-			geolocator.DesiredAccuracy = PositionAccuracy.High;
-			//geolocator.DesiredAccuracyInMeters = 5;
+		//	geolocator.DesiredAccuracy = PositionAccuracy.High;
+		//	//geolocator.DesiredAccuracyInMeters = 5;
 
-			try
-			{
-				Geoposition geoposition = await geolocator.GetGeopositionAsync(
-					maximumAge: TimeSpan.FromMinutes(5),
-					timeout: TimeSpan.FromSeconds(10)
-					);
+		//	try
+		//	{
+		//		Geoposition geoposition = await geolocator.GetGeopositionAsync(
+		//			maximumAge: TimeSpan.FromMinutes(5),
+		//			timeout: TimeSpan.FromSeconds(10)
+		//			);
 
-				map.Center = new Location(geoposition.Coordinate.Latitude, geoposition.Coordinate.Longitude);
-				MapPanel.SetLocation(Ipushpin, map.Center);
-				map.Children.Add(Ipushpin);
+		//		map.Center = new Location(geoposition.Coordinate.Latitude, geoposition.Coordinate.Longitude);
+		//		MapPanel.SetLocation(Ipushpin, map.Center);
+		//		map.Children.Add(Ipushpin);
 
-			}
-			catch (Exception ex)
-			{
-				if ((uint)ex.HResult == 0x80004004)
-				{
-					// the application does not have the right capability or the location master switch is off
-					MessageDialog dialog = new MessageDialog("location  is disabled in phone settings.");
-					dialog.ShowAsync();
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		if ((uint)ex.HResult == 0x80004004)
+		//		{
+		//			// the application does not have the right capability or the location master switch is off
+		//			MessageDialog dialog = new MessageDialog("location  is disabled in phone settings.");
+		//			await dialog.ShowAsync();
 					
-				}
-				//else
-				{
-					// something else happened acquring the location
-				}
-			}
-		}
+		//		}
+		//		//else
+		//		{
+		//			// something else happened acquring the location
+		//		}
+		//	}
+		//}
 
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -535,18 +533,18 @@ namespace MinskTrans.Universal
 			await model.Context.Load();
 		}
 
-		private void OnOffLocationServises(object sender, RoutedEventArgs e)
+		private async void OnOffLocationServises(object sender, RoutedEventArgs e)
 		{
-			Launcher.LaunchUriAsync(new Uri("ms-settings-location://"));
+			await Launcher.LaunchUriAsync(new Uri("ms-settings-location://"));
 		}
 
-		private void ShowPolicity(object sender, RoutedEventArgs e)
+		private async void ShowPolicity(object sender, RoutedEventArgs e)
 		{
 			MessageDialog dialog = new MessageDialog(model.SettingsModelView.PrivatyPolicity);
-			dialog.ShowAsync();
+			await dialog.ShowAsync();
 		}
 
-		private async void SendLog(object sender, RoutedEventArgs e)
+		private void SendLog(object sender, RoutedEventArgs e)
 		{
 			SendLog();
 		}

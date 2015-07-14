@@ -19,7 +19,7 @@ namespace MinskTrans.DesctopClient.Update
 		public override async Task<bool> DownloadUpdate()
 		{
 			OnDataBaseDownloadStarted();
-			var folder = TypeFolder.Temp;
+			var folder = Folder;
 			try
 			{
 				

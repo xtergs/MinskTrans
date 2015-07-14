@@ -113,9 +113,9 @@ namespace MinskTrans.DesctopClient
 			};
 			updateTime.Start();
 			
-			ShedulerModelView.RoutesModelview.ShowRoute += OnShowRoute;
-			ShedulerModelView.RoutesModelview.ShowStop += OnShowStop;
-			ShedulerModelView.StopMovelView.ShowStop += OnShowStop;
+			ShedulerModelView.ShowRoute += OnShowRoute;
+			ShedulerModelView.ShowStop += OnShowStop;
+			ShedulerModelView.ShowStop += OnShowStop;
 
 			ShedulerModelView.UpdateManager.DataBaseDownloadStarted += (sender, args) => statusMessages.Dispatcher.Invoke(() =>
 			{
@@ -414,6 +414,14 @@ namespace MinskTrans.DesctopClient
 				ResultString = builder.ToString();
 			}
 			ResulTextBox.ItemsSource = reusltList;
+			if (oldStops != null)
+				;
+			oldStops = calculator.resultRout.SelectMany(x => x.Value).Distinct().ToList();
+            MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
 		}
+
+		private List<Stop> oldStops;
+
+
 	}
 }

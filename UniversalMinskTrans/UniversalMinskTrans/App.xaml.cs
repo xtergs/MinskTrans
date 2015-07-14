@@ -86,8 +86,8 @@ namespace UniversalMinskTrans
 				case BackgroundAccessStatus.Unspecified:
 					// The user didn't explicitly disable or enable access and updates. 
 					var updateTaskRegistration = RegisterBackgroundTask("MinskTrans.BackgroundUpdateTask.UpdateBackgroundTask",
-						"UpdateBackgroundTasks", new TimeTrigger(15, false),
-						 new SystemCondition(SystemConditionType.InternetAvailable));
+						"UpdateBackgroundTasks1", new TimeTrigger(15, false),
+						null);
 
 					updateTaskRegistration.Completed += async (sender, args) =>
 					{
@@ -184,7 +184,9 @@ namespace UniversalMinskTrans
 								  });
 						}
 					};
+#pragma warning disable 4014
 					model.Context.Load();
+#pragma warning restore 4014
 
 
 					//					timer = new Timer(state =>
@@ -258,7 +260,7 @@ namespace UniversalMinskTrans
 		{
 #if BETA
 			Logger.Log("Onsuspending");
-			Logger.Log().SaveToFile();
+			await Logger.Log().SaveToFile();
 #endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
@@ -385,7 +387,7 @@ namespace UniversalMinskTrans
 				settings.TypeError = SettingsModelView.Error.Repeated;
 			else if (settings.TypeError == SettingsModelView.Error.Repeated)
 			{
-				MainModelView.MainModelViewGet.Context.Recover();
+				await MainModelView.MainModelViewGet.Context.Recover();
 			}
 			else
 			{

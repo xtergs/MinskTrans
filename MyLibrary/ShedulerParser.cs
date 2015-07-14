@@ -65,7 +65,7 @@ namespace MinskTrans.DesctopClient
 					stop.Stops.Add(resultList.First(x => x.ID == id));
 
 					}
-					catch (InvalidOperationException e)
+					catch (InvalidOperationException)
 					{
 						continue;
 					}

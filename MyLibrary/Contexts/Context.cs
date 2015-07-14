@@ -200,7 +200,9 @@ namespace MinskTrans.DesctopClient
 			Groups = new ObservableCollection<GroupStop>();
 		}
 
+#pragma warning disable 1998
 		public async Task ApplyUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
+#pragma warning restore 1998
 		{
 			OnApplyUpdateStarted();
 			try
@@ -227,7 +229,9 @@ namespace MinskTrans.DesctopClient
 			OnApplyUpdateEnded();
 		}
 
+#pragma warning disable 1998
 		public virtual async Task<bool> HaveUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
+#pragma warning restore 1998
 		{
 			Connect(newRoutes, newStops, newSchedule, VariantLoad);
 			foreach (var toRemoveStop in newStops.Where(stop => !stop.Routs.Any()).ToList())
@@ -305,7 +309,7 @@ namespace MinskTrans.DesctopClient
 
 						}));
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Debug.WriteLine("Exception in UniversalContext.Save");
 #if BETA
@@ -347,7 +351,7 @@ namespace MinskTrans.DesctopClient
 						counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
 					}
 
-					catch (FileNotFoundException e)
+					catch (FileNotFoundException)
 					{
 						counterViewStops = new Dictionary<int, uint>();
 					}
@@ -397,7 +401,7 @@ namespace MinskTrans.DesctopClient
 					tpTimes = new ObservableCollection<Schedule>(Times);
 				}
 			}
-			catch (TaskCanceledException e)
+			catch (TaskCanceledException)
 			{
 				//CleanTp();
 				OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
@@ -480,7 +484,7 @@ namespace MinskTrans.DesctopClient
 							}));
 						}
 					}
-					catch (JsonReaderException ex)
+					catch (JsonReaderException)
 					{
 
 						ReadXml(textFavourite);
@@ -706,8 +710,15 @@ namespace MinskTrans.DesctopClient
 
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			PropertyChangedEventHandler handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+			try
+			{
+				PropertyChangedEventHandler handler = PropertyChanged;
+				if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+			}
+			finally
+			{
+				
+			}
 		}
 
 		#region Event
@@ -787,9 +798,7 @@ namespace MinskTrans.DesctopClient
 				FavouriteStopsIds = new ObservableCollection<int>(temp1.Select(x => (int) (x)).ToList());
 
 				var temp = document.Elements("FavouritRouts").Elements("ID").ToList();
-				if (temp.Count() <= 0)
-					;
-				else
+				if (temp.Count() > 0)
 					FavouriteRoutsIds = new ObservableCollection<int>(temp.Select(x => (int) x));
 
 				var xGroups = document.Element("Groups");
@@ -828,9 +837,8 @@ namespace MinskTrans.DesctopClient
 				FavouriteStopsIds = new ObservableCollection<int>(temp1.Select(x => (int) (x)).ToList());
 
 				var temp = document.Elements("FavouritRouts").Elements("ID").ToList();
-				if (temp.Count() <= 0)
-					;
-				else
+				if (temp.Any())
+					
 					FavouriteRoutsIds = new ObservableCollection<int>(temp.Select(x =>
 					{
 
@@ -948,11 +956,15 @@ namespace MinskTrans.DesctopClient
 
 		public bool IsFavouriteStop(Stop stop)
 		{
+			if (stop == null)
+				return false;
 			return favouriteStops.Contains(stop.ID);
 		}
 
 		public bool IsFavouriteRout(Rout rout)
 		{
+			if (rout == null)
+				return false;
 			return FavouriteRouts.Contains(rout);
 		}
 

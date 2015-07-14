@@ -889,6 +889,8 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+
                             </Grid.RowDefinitions>
 
 
@@ -896,7 +898,7 @@
 								Visibility="Visible"
 								x:Name="FindStop" 
 								Text="{Binding StopModelView.StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  InputScope="Search" IsTextPredictionEnabled="False" />
-
+                            
                             <ListView Grid.Row="1" 
 								x:Name="StopsListView"
 								ItemsSource="{Binding FilteredStops, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -909,6 +911,7 @@
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:GoToStateAction StateName="ShowStopVisualState"/>
                                     </Core:EventTriggerBehavior>
+                                   
                                 </Interactivity:Interaction.Behaviors>
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
@@ -916,7 +919,14 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
-
+                            <AppBar Grid.Row="2" DataContext="{Binding StopModelView}">
+                                <VariableSizedWrapGrid Orientation="Horizontal">
+                                    <CheckBox Content="Автобус" IsChecked="{Binding Bus, UpdateSourceTrigger=PropertyChanged}" IsDoubleTapEnabled="False" IsHoldingEnabled="False"></CheckBox>
+                                    <CheckBox Content="Тролейбус" IsChecked="{Binding Trol}"></CheckBox>
+                                    <CheckBox Content="Трамвай" IsChecked="{Binding Tram, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+                                    <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+                                </VariableSizedWrapGrid>
+                            </AppBar>
                         </Grid>
 
                         <local:ShowStopView x:Name="ShowStop" 
@@ -1064,8 +1074,8 @@
                             </ListView>
                             <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                                 <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                                    <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-                                    <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                    <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                    <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
                                 </Controls:WrapPanel>
                             </Border>
                         </Grid>
@@ -1257,8 +1267,8 @@
                                 </ListView>
                                 <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                                     <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
                                     </Controls:WrapPanel>
                                 </Border>
                             </Grid>

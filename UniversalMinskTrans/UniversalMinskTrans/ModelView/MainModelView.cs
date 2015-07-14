@@ -11,6 +11,7 @@ using MyLibrary;
 using MinskTrans.DesctopClient.Update;
 using Autofac;
 using CommonLibrary.IO;
+using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -18,7 +19,7 @@ namespace MinskTrans.Universal.ModelView
 	public class MainModelView : BaseModelView, INotifyPropertyChanged
 	{
 		private static MainModelView mainModelView;
-		private readonly IContext context;
+		//private readonly IContext context;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutsModelView routesModelview;
 		private readonly SettingsModelView settingsModelView;
@@ -43,19 +44,25 @@ namespace MinskTrans.Universal.ModelView
 				return mainModelView;}
 		}
 
-		public MainModelView()
+		private MainModelView()
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			builder.RegisterType<Context>().As<IContext>().SingleInstance();
-			//builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			//builder.RegisterType<Context>().As<IContext>();
 
 			var container = builder.Build();
 
 			context = container.Resolve<IContext>();
+			updateManager = container.Resolve<UpdateManagerBase>();
+
+			//var fileHelper = new FileHelper();
+			//var internetHelper = new InternetHelperUniversal(fileHelper);
+			//context = new UniversalContext(fileHelper, internetHelper);
+			//updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
 
 			settingsModelView = new SettingsModelView();
 			//routesModelview = new RoutsModelView(context);
@@ -66,19 +73,19 @@ namespace MinskTrans.Universal.ModelView
 			newsManager = new NewsManager();
 		}
 
-		private MainModelView(Context newContext)
-		{
-			context = newContext;
-			settingsModelView = new SettingsModelView();
-			//routesModelview = new RoutsModelView(context);
-			//stopMovelView = new StopModelView(context, settingsModelView, true);
-			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
-			favouriteModelView = new FavouriteModelView(context, settingsModelView);
+		//private MainModelView(Context newContext)
+		//{
+		//	context = newContext;
+		//	settingsModelView = new SettingsModelView();
+		//	//routesModelview = new RoutsModelView(context);
+		//	//stopMovelView = new StopModelView(context, settingsModelView, true);
+		//	groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
+		//	favouriteModelView = new FavouriteModelView(context, settingsModelView);
 			
-			newsManager = new NewsManager();
-			//Context.VariantLoad = SettingsModelView.VariantConnect;
+		//	newsManager = new NewsManager();
+		//	//Context.VariantLoad = SettingsModelView.VariantConnect;
 			
-		}
+		//}
 
 		public NewsManager NewsManager
 		{
@@ -129,7 +136,7 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public IContext Context { get { return context; } }
+		//public IContext Context { get { return context; } }
 
 
 		public List<NewsEntry> AllNews
@@ -167,13 +174,42 @@ namespace MinskTrans.Universal.ModelView
 						{
 							var timeTable = await updateManager.GetTimeTable();
 							if (await Context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
+							{
 								await Context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+								Context.AllPropertiesChanged();
+								await Context.Save(true);
+							}
 						}
 						updating = false;
 						UpdateDataCommand.RaiseCanExecuteChanged();
 					}, () => !updating);
 				return updateDataCommand;
 			}
+		}
+
+		public RelayCommand<Stop> ShowStopMap
+		{
+			get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		}
+
+		public RelayCommand<Rout> ShowRouteMap
+		{
+			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		}
+		public event Show ShowStop;
+		public event Show ShowRoute;
+		public delegate void Show(object sender, ShowArgs args);
+
+		protected virtual void OnShowStop(ShowArgs args)
+		{
+			var handler = ShowStop;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnShowRoute(ShowArgs args)
+		{
+			var handler = ShowRoute;
+			if (handler != null) handler(this, args);
 		}
 	}
 }

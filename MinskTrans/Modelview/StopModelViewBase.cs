@@ -83,7 +83,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (value == null)
 					return;
 				//if (Equals(value, filteredSelectedStop)) return;
-				ShowStopMap.RaiseCanExecuteChanged();
+				//ShowStopMap.RaiseCanExecuteChanged();
 				filteredSelectedStop = value;
 				Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
@@ -93,73 +93,6 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged("DirectionsStop");
 			}
 		}
-
-
-		public string TransportToString(Stop stop, TransportType type)
-		{
-			switch (type)
-			{
-				case TransportType.Bus:
-					{
-						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Bus).Select(rout => rout.RouteNum).Distinct().ToList();
-						if (temp.Count == 0)
-							return "";
-						StringBuilder builder = new StringBuilder("Авт: ");
-						foreach (var rout in temp)
-						{
-							builder.Append(rout).Append(", ");
-						}
-						//builder.Append(temp.Select(x => x.RouteNum + ", ").ToList());
-						builder.Remove(builder.Length - 2, 2);
-						return builder.ToString();
-					}
-				case TransportType.Tram:
-					{
-						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Tram).Select(rout => rout.RouteNum).Distinct().ToList();
-						if (temp.Count == 0)
-							return "";
-						StringBuilder builder = new StringBuilder("Трам: ");
-						foreach (var rout in temp)
-						{
-							builder.Append(rout).Append(", ");
-						}
-						//builder.Append(temp.Select(x => x.RouteNum + ", "));
-						builder.Remove(builder.Length - 2, 2);
-
-						return builder.ToString();
-					}
-				case TransportType.Metro:
-					{
-						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Metro).Select(rout => rout.RouteNum).Distinct().ToList();
-						if (temp.Count == 0)
-							return "";
-						StringBuilder builder = new StringBuilder("Метро: ");
-						foreach (var rout in temp)
-						{
-							builder.Append(rout).Append(", ");
-						}
-						//builder.Append(temp.Select(x => x.RouteNum + ", "));
-						builder.Remove(builder.Length - 2, 2);
-						return builder.ToString();
-					}
-				case TransportType.Trol:
-					{
-						var temp = stop.Routs.Where(rout => rout.Transport == TransportType.Trol).Select(rout => rout.RouteNum).Distinct().ToList();
-						if (temp.Count == 0)
-							return "";
-						StringBuilder builder = new StringBuilder("трол: ");
-						foreach (var rout in temp)
-						{
-							builder.Append(rout).Append(", ");
-						}
-						//builder.Append(temp.Select(x => x.RouteNum + ", "));
-						builder.Remove(builder.Length - 2, 2);
-						return builder.ToString();
-					}
-			}
-			return "";
-		}
-
 
 
 		public virtual IEnumerable<Stop> FilteredStops
@@ -201,16 +134,16 @@ namespace MinskTrans.DesctopClient.Modelview
 		private RelayCommand showStopMap;
 		private GroupStop selectedGroup;
 
-		public RelayCommand ShowStopMap
-		{
-			get
-			{
-				if (showStopMap == null)
-					showStopMap = new RelayCommand(() => OnShowStop(new ShowArgs() { SelectedStop = FilteredSelectedStop }),
-						() => FilteredSelectedStop != null);
-				return showStopMap;
-			}
-		}
+		//public new RelayCommand ShowStopMap
+		//{
+		//	get
+		//	{
+		//		if (showStopMap == null)
+		//			showStopMap = new RelayCommand(() => OnShowStop(new ShowArgs() { SelectedStop = FilteredSelectedStop }),
+		//				() => FilteredSelectedStop != null);
+		//		return showStopMap;
+		//	}
+		//}
 
 
 		public RelayCommand AddStopToGroup
@@ -218,20 +151,20 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return new RelayCommand(()=>SelectedGroup.Stops.Add(FilteredSelectedStop) );}
 		}
 
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
+		//public event Show ShowStop;
+		//public event Show ShowRoute;
+		//public delegate void Show(object sender, ShowArgs args);
 
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowStop(ShowArgs args)
+		//{
+		//	var handler = ShowStop;
+		//	if (handler != null) handler(this, args);
+		//}
 
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowRoute(ShowArgs args)
+		//{
+		//	var handler = ShowRoute;
+		//	if (handler != null) handler(this, args);
+		//}
 	}
 }

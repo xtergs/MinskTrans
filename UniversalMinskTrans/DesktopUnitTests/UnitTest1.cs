@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MinskTrans.DesctopClient.Update;
 using MinskTrans.DesctopClient.Utilites.IO;
 using Autofac;
+using MinskTrans.DesctopClient.Net;
 
 namespace DesktopUnitTests
 {
@@ -14,10 +15,10 @@ namespace DesktopUnitTests
 	public class UnitTest1
 	{
 		[TestMethod]
-		public async Task TestMethod1()
+		public async Task TestUpdateManager()
 		{
 
-			UpdateManagerDesktop updateManager = new UpdateManagerDesktop(new TestFileHelperDesktop());
+			UpdateManagerDesktop updateManager = new UpdateManagerDesktop(new TestFileHelperDesktop(), new InternetHelperDesktop(new TestFileHelperDesktop()));
 
 			using (SqlEFContext context = new SqlEFContext(@"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"))
 			{

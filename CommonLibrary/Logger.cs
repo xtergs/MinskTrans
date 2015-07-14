@@ -55,9 +55,9 @@ namespace MinskTrans.Universal
 			{
 				storage = await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.OpenIfExists);
 				if ((await storage.GetBasicPropertiesAsync()).Size > 1*1024*1024)
-					FileIO.WriteTextAsync(storage, String.Empty);
+					await FileIO.WriteTextAsync(storage, String.Empty);
 			}
-			catch (FileNotFoundException e)
+			catch (FileNotFoundException)
 			{
 			}
 			await FileIO.AppendTextAsync(storage, buffer);
@@ -70,7 +70,7 @@ namespace MinskTrans.Universal
 			{
 				storage = await ApplicationData.Current.LocalFolder.CreateFileAsync(file, CreationCollisionOption.OpenIfExists);
 			}
-			catch (FileNotFoundException e)
+			catch (FileNotFoundException)
 			{
 			}
 			await FileIO.AppendTextAsync(storage, builder.ToString());

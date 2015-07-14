@@ -3,57 +3,74 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MinskTrans.DesctopClient.Model;
 
 namespace MyLibrary.FuzzySearch
 {
-	public static class LevenshteinDistance
+	public class Levenshtein
 	{
-		/// <summary>
-		/// Compute the distance between two strings.
-		/// </summary>
-		public static int Compute(string s, string t)
+		public static int LevenshteinDistance(string src, string dest)
 		{
-			int n = s.Length;
-			int m = t.Length;
-			int[,] d = new int[n + 1, m + 1];
+			int[,] d = new int[src.Length + 1, dest.Length + 1];
+			int i, j, cost;
+			char[] str1 = src.ToCharArray();
+			char[] str2 = dest.ToCharArray();
 
-			// Step 1
-			if (n == 0)
+			for (i = 0; i <= str1.Length; i++)
 			{
-				return m;
+				d[i, 0] = i;
 			}
-
-			if (m == 0)
+			for (j = 0; j <= str2.Length; j++)
 			{
-				return n;
+				d[0, j] = j;
 			}
-
-			// Step 2
-			for (int i = 0; i <= n; d[i, 0] = i++)
+			for (i = 1; i <= str1.Length; i++)
 			{
-			}
-
-			for (int j = 0; j <= m; d[0, j] = j++)
-			{
-			}
-
-			// Step 3
-			for (int i = 1; i <= n; i++)
-			{
-				//Step 4
-				for (int j = 1; j <= m; j++)
+				for (j = 1; j <= str2.Length; j++)
 				{
-					// Step 5
-					int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
 
-					// Step 6
-					d[i, j] = Math.Min(
-						Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-						d[i - 1, j - 1] + cost);
+					if (str1[i - 1] == str2[j - 1])
+						cost = 0;
+					else
+						cost = 1;
+
+					d[i, j] =
+						Math.Min(
+							d[i - 1, j] + 1, // Deletion
+							Math.Min(
+								d[i, j - 1] + 1, // Insertion
+								d[i - 1, j - 1] + cost)); // Substitution
+
+					if ((i > 1) && (j > 1) && (str1[i - 1] ==
+					                           str2[j - 2]) && (str1[i - 2] == str2[j - 1]))
+					{
+						d[i, j] = Math.Min(d[i, j], d[i - 2, j - 2] + cost);
+					}
 				}
 			}
-			// Step 7
-			return d[n, m];
+
+			return d[str1.Length, str2.Length];
 		}
+	public static List<Stop> Search(
+	string word,
+	IList<Stop> wordList,
+	double fuzzyness)
+	{
+		// Tests have prove that the !LINQ-variant is about 3 times
+		// faster!
+		List<Stop> foundWords =
+			(
+				from s in wordList
+				let levenshteinDistance = LevenshteinDistance(word, s.SearchName)
+				let length = Math.Max(s.SearchName.Length, word.Length)
+				let score = 1.0 - (double)levenshteinDistance / length
+				where score >= fuzzyness
+				orderby score descending 
+				select s
+			).ToList();
+
+		return foundWords;
 	}
+	}
+
 }

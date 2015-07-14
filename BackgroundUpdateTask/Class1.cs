@@ -14,66 +14,71 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal;
 using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 using MyLibrary;
-using Autofac;
+//using Autofac;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Update;
 
 namespace MinskTrans.BackgroundUpdateTask
 {
-    public sealed class UpdateBackgroundTask : IBackgroundTask
-    {
+	public sealed class UpdateBackgroundTask : IBackgroundTask
+	{
 
 		private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
 		private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
 		private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
-	    private string fileNews = "datesNews.dat";
+		private string fileNews = "datesNews.dat";
 		int MaxDaysAgo { get; set; }
 		int MaxMinsAgo { get; set; }
 
-	    //Dictionary<int, string> DaysLinks 
+		//Dictionary<int, string> DaysLinks 
 
-        public async void Run(IBackgroundTaskInstance taskInstance)
-        {
+		public async void Run(IBackgroundTaskInstance taskInstance)
+		{
 #if _DEBUG
-	        urlUpdateDates =
-		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111667&authkey=%21AKygfncKSi8je9M&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
-	        urlUpdateNews =
-		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111668&authkey=%21ANMtQUGlZfobwFk&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D3";
-	        urlUpdateHotNews =
-		        @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111666&authkey=%21AEsBwSeL-AGmwg0&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
+			urlUpdateDates =
+				@"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111667&authkey=%21AKygfncKSi8je9M&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
+			urlUpdateNews =
+				@"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111668&authkey=%21ANMtQUGlZfobwFk&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D3";
+			urlUpdateHotNews =
+				@"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111666&authkey=%21AEsBwSeL-AGmwg0&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
 #endif
 			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
-			var builder = new ContainerBuilder();
-			builder.RegisterType<FileHelper>().As<FileHelperBase>();
-			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-			builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
-			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
-			var container = builder.Build();
+			//var builder = new ContainerBuilder();
+			//builder.RegisterType<FileHelper>().As<FileHelperBase>();
+			////builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+			//builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
+			//builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
+			//builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
+			//var container = builder.Build();
+
+			var fileHelper = new FileHelper();
+			var internetHelper = new InternetHelperUniversal(fileHelper);
+			var context = new UniversalContext(fileHelper, internetHelper);
 
 			SettingsModelView settings = new SettingsModelView();
-			InternetHelperBase helper = container.Resolve<InternetHelperBase>();
-			UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
+			InternetHelperBase helper = internetHelper;
+			//UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
+			UpdateManagerBase updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
 
-            settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
+			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
 			InternetHelperBase.UpdateNetworkInformation();
 			if (!settings.HaveConnection())
 				_deferral.Complete();
-	        MaxDaysAgo = 30;
-	        MaxMinsAgo = 20;
+			MaxDaysAgo = 30;
+			MaxMinsAgo = 20;
 
-	        await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+			await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
 			string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
-	        var timeShtaps = resultStr.Split('\n');
-	        DateTime time = new DateTime();
-	        if (timeShtaps.Length > 2)
-		        time = DateTime.Parse(timeShtaps[2]);
-			IContext context = container.Resolve<IContext>();
-	        if (context.LastUpdateDataDateTime < time)
-	        {
-		        try
-		        {
+			var timeShtaps = resultStr.Split('\n');
+			DateTime time = new DateTime();
+			if (timeShtaps.Length > 2)
+				time = DateTime.Parse(timeShtaps[2]);
+			//IContext context = container.Resolve<IContext>();
+			if (context.LastUpdateDataDateTime < time)
+			{
+				try
+				{
 					if (await updateManager.DownloadUpdate())
 					{
 						var timeTable = await updateManager.GetTimeTable();
@@ -82,50 +87,50 @@ namespace MinskTrans.BackgroundUpdateTask
 						context.LastUpdateDataDateTime = time;
 						settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
 					}
-			        //await context.Save(false);
-		        }
-		        catch (Exception e)
-		        {
-			        Logger.Log("BackgroundUpdate, updateDb Exception");
-		        }
-	        }
+					//await context.Save(false);
+				}
+				catch (Exception)
+				{
+					Logger.Log("BackgroundUpdate, updateDb Exception");
+				}
+			}
 
-	        if (timeShtaps.Length < 1)
-	        {
-		        _deferral.Complete();
-		        return;
-	        }
+			if (timeShtaps.Length < 1)
+			{
+				_deferral.Complete();
+				return;
+			}
 
-	        try
-	        {
-		        time = DateTime.Parse(timeShtaps[0]);
-		        NewsManager manager = new NewsManager();
+			try
+			{
+				time = DateTime.Parse(timeShtaps[0]);
+				NewsManager manager = new NewsManager();
 				if (time > manager.LastUpdateMainNewsDateTime)
-		        {
+				{
 					await helper.Download(urlUpdateNews, manager.fileNameNews, TypeFolder.Local);
-			        DateTime oldTime = manager.LastUpdateMainNewsDateTime;
-			        manager.LastUpdateMainNewsDateTime = time;
+					DateTime oldTime = manager.LastUpdateMainNewsDateTime;
+					manager.LastUpdateMainNewsDateTime = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-			        DateTime nowTimeUtc = DateTime.UtcNow;
+					DateTime nowTimeUtc = DateTime.UtcNow;
 					foreach (var source in manager.NewNews.Where(key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)))
-			        {
-				        ShowNotification(source.Message);
-			        }
-		        }
+					{
+						ShowNotification(source.Message);
+					}
+				}
 				time = DateTime.Parse(timeShtaps[1]);
-		        if (time > manager.LastUpdateHotNewsDateTime)
-		        {
+				if (time > manager.LastUpdateHotNewsDateTime)
+				{
 					await helper.Download(urlUpdateHotNews, manager.fileNameHotNews, TypeFolder.Local);
-			        DateTime oldTime = manager.LastUpdateHotNewsDateTime;
-			        manager.LastUpdateHotNewsDateTime = time;
+					DateTime oldTime = manager.LastUpdateHotNewsDateTime;
+					manager.LastUpdateHotNewsDateTime = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
 					//	resultStr);
-			        DateTime nowDateTimeUtc = DateTime.UtcNow;
+					DateTime nowDateTimeUtc = DateTime.UtcNow;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					//int todayDay = nowDateTime.Day;
 					//int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
-			        foreach (var source in manager.AllHotNews.Where(key =>
-			        {
+					foreach (var source in manager.AllHotNews.Where(key =>
+					{
 						if (key.RepairedLineUtc != default(DateTime))
 						{
 							double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
@@ -134,32 +139,32 @@ namespace MinskTrans.BackgroundUpdateTask
 							return false;
 						}
 						return (key.CollectedUtc > oldTime) &&
-				               ((nowDateTimeUtc- key.CollectedUtc).TotalDays < 1);
-			        }))
-			        {
-				        ShowNotification(source.Message);
-			        }
-		        }
-	        }
-	        catch (Exception e)
-	        {
-		        string message =
-			        new StringBuilder("Background task exception").AppendLine(e.ToString())
-				        .AppendLine(e.Message)
-				        .AppendLine(e.StackTrace)
-				        .ToString();
-		        Debug.WriteLine(message);
+							   ((nowDateTimeUtc- key.CollectedUtc).TotalDays < 1);
+					}))
+					{
+						ShowNotification(source.Message);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				string message =
+					new StringBuilder("Background task exception").AppendLine(e.ToString())
+						.AppendLine(e.Message)
+						.AppendLine(e.StackTrace)
+						.ToString();
+				Debug.WriteLine(message);
 
-		        throw;
-	        }
+				throw;
+			}
 
 			Debug.WriteLine("Background task ended");
-	        _deferral.Complete();
+			_deferral.Complete();
 			
-        }
+		}
 
-	    void ShowNotification(string text)
-	    {
+		void ShowNotification(string text)
+		{
 			var notifi = ToastNotificationManager.CreateToastNotifier();
 
 			var xaml = ToastNotificationManager.GetTemplateContent(Windows.UI.Notifications.ToastTemplateType.ToastText04);
@@ -168,8 +173,8 @@ namespace MinskTrans.BackgroundUpdateTask
 			//value.appendChild(toastXml.createTextNode(text));
 			ToastNotification notification = new ToastNotification(xaml);
 			notifi.Show(notification);
-	    }
-    }
+		}
+	}
 }
 
 

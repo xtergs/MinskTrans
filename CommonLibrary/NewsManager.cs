@@ -84,7 +84,7 @@ namespace CommonLibrary
 		private ApplicationSettingsHelper lastUpdateDataDateTimeBack;
 		public DateTime LastUpdateMainNewsDateTime
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (lastUpdateDataDateTimeBack == null)
@@ -108,7 +108,7 @@ namespace CommonLibrary
 		private ApplicationSettingsHelper lastUpdateHotDataDateTimeBack;
 		public DateTime LastUpdateHotNewsDateTime
 		{
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
 				if (lastUpdateHotDataDateTimeBack == null)
@@ -147,7 +147,9 @@ namespace CommonLibrary
 			set { OnPropertyChanged(); }
 		}
 
+#pragma warning disable 1998
 		public async Task LoadNews(string jsonData)
+#pragma warning restore 1998
 		{
 			allNews.Clear();
 			allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(jsonData, new JsonSerializerSettings(){ContractResolver = new ShouldSerializeContractResolver()}));
@@ -168,7 +170,7 @@ namespace CommonLibrary
 					var allLines = await FileIO.ReadTextAsync(file);
 					await LoadNews(allLines);
 				}
-				catch (FileNotFoundException e)
+				catch (FileNotFoundException)
 				{
 
 				}
@@ -188,7 +190,7 @@ namespace CommonLibrary
 					var allLines = await FileIO.ReadTextAsync(file);
 					allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings(){ContractResolver = new ShouldSerializeContractResolver()}));
 				}
-				catch (FileNotFoundException e)
+				catch (FileNotFoundException)
 				{
 
 				}

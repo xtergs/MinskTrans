@@ -163,6 +163,45 @@
             </Setter>
         </Style>
 
+        <Style x:Key="PushpinStyleMarket" TargetType="{x:Type mapControl:Pushpin}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Background" Value="Green" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type mapControl:Pushpin}">
+                        <Grid x:Name="MainGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Rectangle x:Name="Rectangle">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush x:Name="SolidColorBrush" Color="Red" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Path x:Name="Path" Data="M0,-0.5L0,16 16,-0.5" Grid.Row="1">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="SolidColorBrush1" Color="Red" />
+                                </Path.Fill>
+                            </Path>
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <DataTemplate x:Key="DataTemplate1">
             <Grid x:Name="Grid">
                 <Grid.ColumnDefinitions>
@@ -398,6 +437,7 @@
                         <TextBox DockPanel.Dock="Top" Margin="0" TextWrapping="Wrap"
                                  Text="{Binding StopNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  VerticalAlignment="Top" />
+                        <CheckBox DockPanel.Dock="Top" Content="Use fuzzy search" IsChecked="{Binding FuzzySearch, UpdateSourceTrigger=PropertyChanged}"/>
                         <ListView x:Name="ListView"
                                   SelectedValue="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   ItemsSource="{Binding FilteredStops}" DisplayMemberPath="Name" Margin="0"

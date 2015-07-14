@@ -37,6 +37,9 @@ namespace MinskTrans.DesctopClient.Model
 			get { return this; }
 		}
 
-		public IEnumerable<string> Destinations => destinations;
+		public IEnumerable<string> Destinations
+		{
+			get { return destinations; }
+		}
 	}
 }

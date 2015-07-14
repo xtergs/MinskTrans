@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient.Model
 {
-	
-		public enum TransportType
+	[Flags]
+	public enum TransportType
 		{
 			None,
-			Trol,
-			Bus,
-			Tram,
-			Metro
-		}
+			Trol = 0x00000001,
+			Bus = 0x00000002,
+			Tram = 0x00000004,
+			Metro = 0x00000008
+	}
 	[JsonObject(MemberSerialization.OptIn)]
 	public class RoutBase
 	{

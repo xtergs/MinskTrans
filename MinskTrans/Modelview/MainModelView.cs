@@ -8,6 +8,7 @@ using MapControl;
 using MinskTrans.DesctopClient.Update;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
+using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Utilites.IO;
 using MinskTrans.DesctopClient.Net;
 using MyLibrary;
@@ -26,9 +27,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		private readonly MapModelView mapModelView;
 		//private readonly IContext timeTable;
 		readonly UpdateManagerBase updateManager;
-		MainModelView model;
+		static MainModelView model;
 
-		public MainModelView Get()
+		public static MainModelView Get()
 		{
 			if (model == null)
 				model = new MainModelView();
@@ -144,6 +145,31 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				return settingsModelView;
 			}
+		}
+
+		public GalaSoft.MvvmLight.Command.RelayCommand<Stop> ShowStopMap
+		{
+			get { return new GalaSoft.MvvmLight.Command.RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		}
+
+		public GalaSoft.MvvmLight.Command.RelayCommand<Rout> ShowRouteMap
+		{
+			get { return new GalaSoft.MvvmLight.Command.RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		}
+		public event Show ShowStop;
+		public event Show ShowRoute;
+		public delegate void Show(object sender, ShowArgs args);
+
+		protected virtual void OnShowStop(ShowArgs args)
+		{
+			var handler = ShowStop;
+			if (handler != null) handler(this, args);
+		}
+
+		protected virtual void OnShowRoute(ShowArgs args)
+		{
+			var handler = ShowRoute;
+			if (handler != null) handler(this, args);
 		}
 
 		//public IContext TimeTable

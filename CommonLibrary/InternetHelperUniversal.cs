@@ -1,6 +1,7 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -47,12 +48,12 @@ namespace CommonLibrary
 				var httpClient = new HttpClient();
 				// Increase the max buffer size for the response so we don't get an exception with so many web sites
 
-				httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
-				httpClient.MaxResponseContentBufferSize = 256000;
+				httpClient.Timeout = new TimeSpan(0, 0, 10, 0,0);
+				httpClient.MaxResponseContentBufferSize = 2560000;
 				httpClient.DefaultRequestHeaders.Add("user-agent",
 					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
 
-				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
+				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri), HttpCompletionOption.ResponseContentRead);
 				response.EnsureSuccessStatusCode();
 
 				await FileHelper.WriteTextAsync(folder, file, await response.Content.ReadAsStringAsync());
@@ -62,6 +63,7 @@ namespace CommonLibrary
 //#if BETA
 //				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
 //#endif
+				Debug.WriteLine("InternetHelperUniversal exception");
 				throw new TaskCanceledException(e.Message, e);
 			}
 		}

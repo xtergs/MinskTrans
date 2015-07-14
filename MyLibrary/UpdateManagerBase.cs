@@ -25,6 +25,8 @@ namespace MinskTrans.DesctopClient.Update
 			new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
 		};
 
+		public TypeFolder Folder { get; set; } //= TypeFolder.Temp;
+
 		public abstract Task<bool> DownloadUpdate();
 
 		protected IList<Rout> Routs { get; set; }
@@ -37,6 +39,7 @@ namespace MinskTrans.DesctopClient.Update
 		{
 			fileHelper = helper;
 			internetHelper = internet;
+			Folder = TypeFolder.Temp;
 		}
 
 		public async Task<TimeTable> GetTimeTable()
@@ -53,7 +56,7 @@ namespace MinskTrans.DesctopClient.Update
 				{
 					//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileStops);
 					try {
-						newStops = new List<Stop>(ShedulerParser.ParsStops(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[0].Key)));
+						newStops = new List<Stop>(ShedulerParser.ParsStops(await fileHelper.ReadAllTextAsync(Folder, list[0].Key)));
 					}
 					catch(Exception)
 					{
@@ -64,7 +67,7 @@ namespace MinskTrans.DesctopClient.Update
 					{
 						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileRouts);
 						try {
-							newRoutes = new List<Rout>(ShedulerParser.ParsRout(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[1].Key)));
+							newRoutes = new List<Rout>(ShedulerParser.ParsRout(await fileHelper.ReadAllTextAsync(Folder, list[1].Key)));
 						}
 						catch(Exception)
 						{
@@ -76,7 +79,7 @@ namespace MinskTrans.DesctopClient.Update
 					{
 						//StorageFile file = await ApplicationData.Current.RoamingFolder.GetFileAsync(fileTimes);
 						try {
-							newSchedule = new List<Schedule>(ShedulerParser.ParsTime(await fileHelper.ReadAllTextAsync(TypeFolder.Current, list[2].Key)));
+							newSchedule = new List<Schedule>(ShedulerParser.ParsTime(await fileHelper.ReadAllTextAsync(Folder, list[2].Key)));
 						}
 						catch(Exception)
 						{
@@ -87,11 +90,11 @@ namespace MinskTrans.DesctopClient.Update
 				Debug.WriteLine("All threads ended");
 				//OnLogMessage("All threads ended");
 			}
-			catch (FileNotFoundException e)
+			catch (FileNotFoundException)
 			{
 				throw;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				throw;
 			}

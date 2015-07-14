@@ -9,7 +9,6 @@
     <Import_RootNamespace>MinskTrans.Universal</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Class.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\IntToVisibleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsLeftConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsToTimeConverter.cs" />

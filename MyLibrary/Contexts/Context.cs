@@ -1,28 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
-
-
+using System.Xml.Schema;
 using MinskTrans.DesctopClient.Model;
-
 using MyLibrary;
 using Newtonsoft.Json;
-using TransportType = MinskTrans.DesctopClient.Model.TransportType;
-
 
 namespace MinskTrans.DesctopClient
 {

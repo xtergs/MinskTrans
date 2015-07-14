@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MinskTrans.DesctopClient.Model
+﻿namespace MinskTrans.DesctopClient.Model
 {
 	public class RoutsStops
 	{

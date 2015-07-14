@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;

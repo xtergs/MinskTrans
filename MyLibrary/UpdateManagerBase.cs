@@ -1,12 +1,10 @@
-﻿using MinskTrans.DesctopClient.Model;
-using MyLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MinskTrans.DesctopClient.Model;
+using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Update
 {

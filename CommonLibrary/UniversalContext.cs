@@ -1,22 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
-using Windows.Storage;
-using Windows.System.Threading;
 using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Model;
-using MinskTrans.Universal;
-using MyLibrary;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 using MinskTrans.DesctopClient.Modelview;
+using MyLibrary;
 
 namespace CommonLibrary
 {

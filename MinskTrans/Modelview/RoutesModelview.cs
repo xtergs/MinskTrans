@@ -1,7 +1,4 @@
-﻿
-
-using System.Xml.Linq;
-using MinskTrans.DesctopClient.Model;
+﻿using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient.Modelview
 {

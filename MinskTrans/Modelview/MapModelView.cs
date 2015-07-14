@@ -14,7 +14,6 @@ using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using MapControl;
 
 
@@ -22,9 +21,7 @@ using MapControl;
 #if (WINDOWS_PHONE_APP || WINDOWS_UAP)
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
-using Windows.UI.Popups;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
 

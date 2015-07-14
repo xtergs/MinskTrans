@@ -1,6 +1,4 @@
-﻿using System;
-
-
+﻿
 namespace MinskTrans.DesctopClient.Model
 {
 	public class BaseModel

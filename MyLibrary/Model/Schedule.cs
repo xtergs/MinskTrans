@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace MinskTrans.DesctopClient.Model

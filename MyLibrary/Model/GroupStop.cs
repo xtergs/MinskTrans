@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-
 
 namespace MinskTrans.DesctopClient.Model
 {

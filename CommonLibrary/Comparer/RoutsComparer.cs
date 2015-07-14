@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
 
 namespace CommonLibrary.Comparer

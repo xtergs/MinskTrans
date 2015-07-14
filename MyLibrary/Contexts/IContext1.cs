@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using MinskTrans.DesctopClient.Model;
 
-
 namespace MinskTrans.DesctopClient
 {
 	[Flags]

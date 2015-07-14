@@ -15,8 +15,7 @@ using System.Configuration;
 using MinskTrans.DesctopClient.Properties;
 
 #else
-	using CommonLibrary;
-using MinskTrans.Universal;
+
 using MinskTrans.Universal.Annotations;
 	using Windows.Storage;
 

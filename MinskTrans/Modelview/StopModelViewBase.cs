@@ -8,7 +8,6 @@ using Windows.UI.Core;
 using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.DesctopClient.Model;
-using System.Text;
 
 namespace MinskTrans.DesctopClient.Modelview
 {

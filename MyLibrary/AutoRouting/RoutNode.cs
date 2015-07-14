@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MinskTrans.DesctopClient.Model;
+﻿using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient.AutoRouting
 {

@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Windows.UI.Xaml;
 using Autofac;
 using CommonLibrary;
-using GalaSoft.MvvmLight;
+using CommonLibrary.IO;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Modelview;
-using MyLibrary;
-using MinskTrans.DesctopClient.Update;
-using CommonLibrary.IO;
 using MinskTrans.DesctopClient.Model;
+using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.DesctopClient.Update;
+using MyLibrary;
 
 namespace MinskTrans.Universal.ModelView
 {

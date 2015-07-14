@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using MapControl;
-using MinskTrans.DesctopClient;
+﻿using MapControl;
 using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal

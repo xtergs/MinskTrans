@@ -10,7 +10,6 @@ using Windows.Phone.UI.Input;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

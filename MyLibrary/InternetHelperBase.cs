@@ -21,7 +21,7 @@ namespace MyLibrary
 			Logger.Log("UpdateNetworkInformation");
 #endif
 			// Get current Internet Connection Profile.
-			ConnectionProfile internetConnectionProfile = Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile();
+			ConnectionProfile internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
 			Is_Connected = true;
 			//air plan mode is on...
 			if (internetConnectionProfile == null)

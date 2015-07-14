@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MinskTrans.DesctopClient.AutoRouting;
 using MinskTrans.DesctopClient.Comparer;
 using MinskTrans.DesctopClient.Model;

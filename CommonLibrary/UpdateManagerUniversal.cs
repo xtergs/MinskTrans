@@ -1,10 +1,8 @@
-﻿using MinskTrans.DesctopClient.Update;
-using MyLibrary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using MinskTrans.DesctopClient.Update;
+using MyLibrary;
 
 namespace CommonLibrary
 {
@@ -33,7 +31,7 @@ namespace CommonLibrary
 				OnDataBaseDownloadEnded();
 
 			}
-			catch (System.Net.WebException)
+			catch (WebException)
 			{
 				OnErrorDownloading();
 				/*await*/ Task.WhenAll(

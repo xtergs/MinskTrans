@@ -56,7 +56,7 @@ namespace MinskTrans.BackgroundUpdateTask
 			UpdateManagerBase updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
 
 			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
-			InternetHelperBase.UpdateNetworkInformation();
+			helper.UpdateNetworkInformation();
 			if (!settings.HaveConnection())
 				_deferral.Complete();
 			MaxDaysAgo = 30;

@@ -147,13 +147,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary2\MyLibraryUniversal.csproj">
-      <Project>{b2be734f-7766-471d-98fa-ab6f0d00e92b}</Project>
-      <Name>MyLibraryUniversal</Name>
+    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
+      <Name>CommonLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UniversalCommonLibrary\UniversalCommonLibrary.csproj">
-      <Project>{5fb8ca85-7d29-42ee-8f32-cbbdf4845f82}</Project>
-      <Name>UniversalCommonLibrary</Name>
+    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
+      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
+      <Name>MyLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

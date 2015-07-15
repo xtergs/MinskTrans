@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MinskTrans.DesctopClient.Model
+namespace MinskTrans.Context.Base.BaseModel
 {
 	class Transport
 	{

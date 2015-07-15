@@ -211,17 +211,26 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops )
 		{
-			return stops.OrderByDescending(x=>
-			{
-				double counter = Context.GetCounter(x);
-				if (counter == 0)
-					counter = 0;
-				else
-					counter = counter/ Context.ActualStops.Count;
-				double dist = Distance(x);
-				dist = 1/dist;
-                return dist + counter;
-			});
+
+			var byDeistance = stops.OrderBy(Distance).ToList();
+			var result =  stops.OrderByDescending(x => Context.GetCounter(x))
+				.Select((x, i) => new {x, byCounter = i, byDistance = byDeistance.IndexOf(x)})
+				.OrderBy(x => x.byCounter + x.byDistance)
+				.Select(x => x.x)
+				.ToList();
+			return result;
+
+			//return stops.OrderByDescending(x=>
+			//{
+			//	double counter = Context.GetCounter(x);
+			//	if (counter == 0)
+			//		counter = 0;
+			//	else
+			//		counter = counter/ Context.ActualStops.Count;
+			//	double dist = Distance(x);
+			//	dist = 1/dist;
+			//	return dist + counter;
+			//});
 		}
 
 		EquirectangularDistance distance = new EquirectangularDistance();

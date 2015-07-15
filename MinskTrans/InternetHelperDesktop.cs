@@ -62,5 +62,14 @@ namespace MinskTrans.DesctopClient.Net
 //				throw new TaskCanceledException(e.Message, e);
 //			}
 //		}
+
+		#region Overrides of InternetHelperBase
+
+		public override void UpdateNetworkInformation()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 }

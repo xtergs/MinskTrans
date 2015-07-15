@@ -53,7 +53,7 @@ namespace MinskTrans.Universal.ModelView
 			builder.RegisterType<FileHelper>().As<FileHelperBase>();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			builder.RegisterType<Context>().As<IContext>().SingleInstance();
-			//builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			//builder.RegisterType<Context>().As<IContext>();
 
@@ -61,14 +61,16 @@ namespace MinskTrans.Universal.ModelView
 
 			context = container.Resolve<IContext>();
 			newsManager = new NewsManager();
+			updateManagerBase = container.Resolve<DesctopClient.Update.UpdateManagerBase>();
+
 			//updateManager = container.Resolve<UpdateManagerBase>();
 			//context = newContext;
-			//settingsModelView = new SettingsModelView();
+			settingsModelView = new SettingsModelView();
 			////routesModelview = new RoutsModelView(context);
-			////stopMovelView = new StopModelView(context, settingsModelView, true);
-			//groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
-			//favouriteModelView = new FavouriteModelView(context, settingsModelView);
-			//findModelView = new FindModelView(context, settingsModelView);
+			//stopMovelView = new StopModelView(context, settingsModelView, true);
+			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
+			favouriteModelView = new FavouriteModelView(context, settingsModelView);
+			findModelView = new FindModelView(context, settingsModelView);
 			//newsManager = new NewsManager();
 			////Context.VariantLoad = SettingsModelView.VariantConnect;
 			//if (IsInDesignMode)

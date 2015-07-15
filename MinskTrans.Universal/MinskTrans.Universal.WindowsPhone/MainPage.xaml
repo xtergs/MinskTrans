@@ -1270,7 +1270,7 @@
                 <Border BorderThickness="0,3,0,0" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
                     <ListView Margin="5,0,5,0" MinHeight="0" IsItemClickEnabled="False" ItemContainerStyle="{StaticResource FullListViewItem}">
                         
-                        <Button Content="Обновить расписание" DataContext="{Binding DataContext, ElementName=mainPage}" Command="{Binding Context.UpdateDataCommand}"/>
+                        <Button Content="Обновить расписание" DataContext="{Binding DataContext, ElementName=mainPage}" Command="{Binding UpdateDataCommand}"/>
                         <ToggleSwitch OnContent="Использовать WiFi"
 							OffContent="Не использовать WiFi"
 							IsOn="{Binding UpdateOnWiFi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

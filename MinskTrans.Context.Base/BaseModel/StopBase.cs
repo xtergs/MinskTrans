@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace MinskTrans.DesctopClient.Model
+﻿namespace MinskTrans.Context.Base.BaseModel
 {
 	[JsonObject(MemberSerialization.OptIn)]
 	public class StopBase

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MinskTrans.DesctopClient.Model;
 using MyLibrary;
@@ -25,7 +26,42 @@ namespace MinskTrans.DesctopClient.Update
 
 		public TypeFolder Folder { get; set; } //= TypeFolder.Temp;
 
-		public abstract Task<bool> DownloadUpdate();
+		public async Task<bool> DownloadUpdate()
+		{
+			OnDataBaseDownloadStarted();
+			var folder = Folder;
+			try
+			{
+
+				await Task.WhenAll(
+				internetHelper.Download(list[0].Value, list[0].Key + FileHelperBase.NewExt, folder),
+				internetHelper.Download(list[1].Value, list[1].Key + FileHelperBase.NewExt, folder),
+				internetHelper.Download(list[2].Value, list[2].Key + FileHelperBase.NewExt, folder));
+
+				OnDataBaseDownloadEnded();
+
+			}
+			catch (System.Net.WebException e)
+			{
+				OnErrorDownloading();
+				/*await*/
+				fileHelper.DeleteFiels(folder, list.Select(x => x.Key + FileHelperBase.NewExt));
+				return false;
+			}
+			catch (Exception)
+			{
+				OnErrorDownloading();
+				/*await*/
+				fileHelper.DeleteFiels(folder, list.Select(x => x.Key + FileHelperBase.NewExt));
+				throw;
+			}
+			await fileHelper.SafeMoveFilesAsync(folder, list.Select(x => x.Key + FileHelperBase.NewExt), list.Select(x => x.Key));
+			//await Task.WhenAll(
+			//fileHelper.SafeMoveAsync(folder, list[0].Key + FileHelperBase.NewExt, list[0].Key),
+			//fileHelper.SafeMoveAsync(folder, list[1].Key + FileHelperBase.NewExt, list[1].Key),
+			//fileHelper.SafeMoveAsync(folder, list[2].Key + FileHelperBase.NewExt, list[2].Key));
+			return true;
+		}
 
 		protected IList<Rout> Routs { get; set; }
 		protected IList<Stop> Stops { get; set; }

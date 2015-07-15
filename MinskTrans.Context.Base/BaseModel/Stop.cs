@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Newtonsoft.Json;
 
-namespace MinskTrans.DesctopClient.Model
+namespace MinskTrans.Context.Base.BaseModel
 {
 public class Stop : StopBase
 	{

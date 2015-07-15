@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
-namespace MinskTrans.DesctopClient.Model
+namespace MinskTrans.Context.Base.BaseModel
 {
 	[Flags]
 	public enum TransportType

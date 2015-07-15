@@ -173,7 +173,6 @@
     <None Include="UniversalMinskTrans_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
     <Content Include="Image\bus.jpg" />
     <Content Include="Image\subway.jpg" />
     <Content Include="Image\tram.jpg" />
@@ -272,20 +271,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BackgroundUpdateTask\BackgroundUpdateTask.csproj">
-      <Project>{6e15ca74-6c56-4b65-8c3c-91fb29c6c2c6}</Project>
-      <Name>BackgroundUpdateTask</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ClassLibrary2\MyLibraryUniversal.csproj">
-      <Project>{b2be734f-7766-471d-98fa-ab6f0d00e92b}</Project>
-      <Name>MyLibraryUniversal</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UniversalCommonLibrary\UniversalCommonLibrary.csproj">
-      <Project>{5fb8ca85-7d29-42ee-8f32-cbbdf4845f82}</Project>
-      <Name>UniversalCommonLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0">
       <Name>Behaviors SDK %28XAML%29</Name>
     </SDKReference>
@@ -295,6 +280,20 @@
     <SDKReference Include="WindowsMobile, Version=10.0.0.1">
       <Name>Microsoft Mobile Extension SDK for Universal App Platform</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BackgroundUpdateTask\BackgroundUpdateTask.csproj">
+      <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
+      <Name>BackgroundUpdateTask</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
+      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
+      <Name>MyLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

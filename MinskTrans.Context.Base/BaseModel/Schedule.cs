@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 
-namespace MinskTrans.DesctopClient.Model
+namespace MinskTrans.Context.Base.BaseModel
 {
 	[JsonObject(MemberSerialization.OptIn)]
 	public class Schedule : BaseModel

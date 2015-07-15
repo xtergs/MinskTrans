@@ -1,5 +1,5 @@
 ﻿
-namespace MinskTrans.DesctopClient.Model
+namespace MinskTrans.Context.Base.BaseModel
 {
 	public class BaseModel
 	{

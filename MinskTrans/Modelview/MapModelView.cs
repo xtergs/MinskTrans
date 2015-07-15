@@ -72,7 +72,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private PushPinBuilder pushBuilder;
 
-		public MapModelView(IContext context, Map map, SettingsModelView newSettigns = null, PushPinBuilder pushPinBuilder = null)
+		public MapModelView(IContext context, Map map, SettingsModelView newSettigns, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;

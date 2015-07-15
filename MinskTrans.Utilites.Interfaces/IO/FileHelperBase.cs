@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyLibrary
+namespace MinskTrans.Utilites.Base.IO
 {
 	public enum TypeFolder
 	{
@@ -33,5 +35,17 @@ namespace MyLibrary
 		public abstract Task DeleteFile(TypeFolder folder, string file);
 
 		public abstract Task<Stream> OpenStream(TypeFolder folder, string file);
+
+		public async Task DeleteFiels(TypeFolder folder, IEnumerable<string> filesList)
+		{
+			List<Task> taskList = filesList.Select(file => DeleteFile(folder, file)).ToList();
+			await Task.WhenAll(taskList);
+		}
+
+		public async Task SafeMoveFilesAsync(TypeFolder folder, IEnumerable<string> from, IEnumerable<string> to)
+		{
+			List<Task> taskList = from.Select((file, index) => SafeMoveAsync(folder, file, to.ElementAt(index))).ToList();
+			await Task.WhenAll(taskList);
+		}
 	}
 }

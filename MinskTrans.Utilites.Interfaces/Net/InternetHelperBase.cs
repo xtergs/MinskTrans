@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MinskTrans.Utilites.Base.IO;
 
-
-namespace MyLibrary
+namespace MinskTrans.Utilites.Base.Net
 {
 	public abstract class  InternetHelperBase
 	{

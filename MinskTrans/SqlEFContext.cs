@@ -138,11 +138,18 @@ namespace MinskTrans.DesctopClient
             }
 		}
 
-		public IList<Rout> Routs => routsEF.ToList();
+		public IList<Rout> Routs
+		{
+			get { return routsEF.ToList(); }
+		}
 
-		public IList<Stop> Stops => stopsEF.ToList<Stop>();
+		public IList<Stop> Stops{get{return stopsEF.ToList<Stop>();
+			
+		}}
 
-		public IList<Schedule> Times => timesEF.ToList();
+		public IList<Schedule> Times { get { return timesEF.ToList();
+			
+		} }
 
 		public event Context.EmptyDelegate ApplyUpdateEnded;
 		public event Context.EmptyDelegate ApplyUpdateStarted;

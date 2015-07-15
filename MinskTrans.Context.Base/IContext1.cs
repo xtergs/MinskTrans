@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using MinskTrans.DesctopClient.Model;
+using MinskTrans.Context.Base.BaseModel;
 
 namespace MinskTrans.DesctopClient
 {
@@ -25,14 +25,14 @@ namespace MinskTrans.DesctopClient
 		IList<Stop> Stops { get; }
 		IList<Schedule> Times { get; }
 
-		event Context.EmptyDelegate ApplyUpdateEnded;
-		event Context.EmptyDelegate ApplyUpdateStarted;
+		event EventHandler<EventArgs> ApplyUpdateEnded;
+		event EventHandler<EventArgs> ApplyUpdateStarted;
 		event ErrorLoadingDelegate ErrorLoading;
-		event Context.EmptyDelegate LoadEnded;
-		event Context.EmptyDelegate LoadStarted;
+		event EventHandler<EventArgs> LoadEnded;
+		event EventHandler<EventArgs> LoadStarted;
 		event PropertyChangedEventHandler PropertyChanged;
-		event Context.EmptyDelegate UpdateEnded;
-		event Context.EmptyDelegate UpdateStarted;
+		event EventHandler<EventArgs> UpdateEnded;
+		event EventHandler<EventArgs> UpdateStarted;
 
 		bool IsFavouriteStop(Stop stop);
         void AllPropertiesChanged();

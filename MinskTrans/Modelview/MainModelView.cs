@@ -1,23 +1,18 @@
-﻿
-
-
-
-using System.Linq;
-using GalaSoft.MvvmLight;
-using MapControl;
-using MinskTrans.DesctopClient.Update;
+﻿using MapControl;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
-using MinskTrans.DesctopClient.Model;
-using MinskTrans.DesctopClient.Utilites.IO;
-using MinskTrans.DesctopClient.Net;
-using MyLibrary;
+using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Net.Base;
+using MinskTrans.Utilites;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Base.Net;
+using MinskTrans.Utilites.Desktop;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
 	public class MainModelView : BaseModelView
 	{
-		private readonly IContext context;
+		//private readonly IContext context;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutesModelview routesModelview;
 		private readonly SettingsModelView settingsModelView;
@@ -41,8 +36,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-			builder.RegisterType<Context>().As<IContext>().SingleInstance();
-            builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
 			//builder.RegisterType<Context>().As<IContext>();
 			
@@ -105,7 +101,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public IContext Context { get { return context; } }
+		//public IContext Context { get { return context; } }
 
 		public UpdateManagerBase UpdateManager
 		{
@@ -147,30 +143,30 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public GalaSoft.MvvmLight.Command.RelayCommand<Stop> ShowStopMap
-		{
-			get { return new GalaSoft.MvvmLight.Command.RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-		}
+		//public GalaSoft.MvvmLight.Command.RelayCommand<Stop> ShowStopMap
+		//{
+		//	get { return new GalaSoft.MvvmLight.Command.RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		//}
 
-		public GalaSoft.MvvmLight.Command.RelayCommand<Rout> ShowRouteMap
-		{
-			get { return new GalaSoft.MvvmLight.Command.RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		}
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
+		//public GalaSoft.MvvmLight.Command.RelayCommand<Rout> ShowRouteMap
+		//{
+		//	get { return new GalaSoft.MvvmLight.Command.RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		//}
+		//public event Show ShowStop;
+		//public event Show ShowRoute;
+		//public delegate void Show(object sender, ShowArgs args);
 
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowStop(ShowArgs args)
+		//{
+		//	var handler = ShowStop;
+		//	if (handler != null) handler(this, args);
+		//}
 
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowRoute(ShowArgs args)
+		//{
+		//	var handler = ShowRoute;
+		//	if (handler != null) handler(this, args);
+		//}
 
 		//public IContext TimeTable
 		//{

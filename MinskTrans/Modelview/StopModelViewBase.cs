@@ -7,6 +7,7 @@ using Windows.UI.Core;
 #endif
 using GalaSoft.MvvmLight.Command;
 using MapControl;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.DesctopClient.Modelview

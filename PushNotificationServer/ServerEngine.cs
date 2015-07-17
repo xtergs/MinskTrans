@@ -6,17 +6,20 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
-using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Annotations;
-using MyLibrary;
+
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
-using MinskTrans.DesctopClient.Utilites.IO;
-using MinskTrans.DesctopClient.Update;
-using MinskTrans.DesctopClient.Net;
 using Autofac;
-using PushNotificationServer.CloudStorage.OneDrive;
-using PushNotificationServer.CloudStorage;
+using MinskTrans.Context;
+using MinskTrans.DesctopClient;
+using MinskTrans.Net;
+using MinskTrans.Net.Base;
+using MinskTrans.Net.Cloud.Desktop;
+using MinskTrans.Utilites;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Base.Net;
+using MinskTrans.Utilites.Desktop;
+
 
 namespace PushNotificationServer
 {
@@ -71,9 +74,9 @@ namespace PushNotificationServer
 				Environment.NewLine + Context1.LastUpdateDataDateTime);
 		}
 
-		private NewsManager newsManager;
+		private NewsManagerBase newsManager;
 
-		public NewsManager NewsManager { get { return newsManager;} }
+		public NewsManagerBase NewsManager { get { return newsManager; } }
 
 		ServerEngine()
 		{
@@ -84,18 +87,24 @@ namespace PushNotificationServer
 			var builder = new ContainerBuilder();
 
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-			builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
-			builder.RegisterType<UpdateManagerDesktop>().As<UpdateManagerBase>();
+			//builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
+			builder.RegisterType<Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
-			builder.RegisterType<NewsManager>();
+			builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 
 			var container = builder.Build();
 
 			context = container.Resolve<IContext>();
-			newsManager = container.Resolve<NewsManager>();
+			newsManager = container.Resolve<NewsManagerBase>();
 			updateManager = container.Resolve<UpdateManagerBase>();
 			CloudController = container.Resolve<ICloudStorageController>();
+
+			NewsManager.FileNameDays = "daysDebug.txt";
+			NewsManager.FileNameMonths = "monthDebug.txt";
+			fileNameLastNews = "lastNewsDebug.txt";
 		}
 
 		public bool NewsAutoUpdate
@@ -199,7 +208,7 @@ namespace PushNotificationServer
 						var timeTable = await updateManager.GetTimeTable();
 						if (await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
 							context.LastUpdateDataDateTime = DateTime.UtcNow;
-                        }
+						}
 				}));
 
 			}
@@ -207,7 +216,7 @@ namespace PushNotificationServer
 			{
 				Updating = false;
 				OnStopChecknews();
-				throw;
+				//throw;
 			}
 			catch (Exception)
 			{
@@ -247,7 +256,7 @@ namespace PushNotificationServer
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		[NotifyPropertyChangedInvocator]
+		
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;

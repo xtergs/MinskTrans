@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+using MinskTrans.Utilites.Base.IO;
 using MyLibrary;
 //#if WINDOWS_PHONE_APP || WINDOWS_UAPWINDOWS_UAP
 

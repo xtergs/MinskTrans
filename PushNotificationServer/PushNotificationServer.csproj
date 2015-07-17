@@ -71,9 +71,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.WindowsAzure.Messaging.Managed">
-      <HintPath>..\packages\WindowsAzure.Messaging.Managed.0.1.7.9\lib\wpa81\Microsoft.WindowsAzure.Messaging.Managed.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -122,9 +119,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ICloudStorageController.cs" />
-    <Compile Include="NewsManager.cs" />
-    <Compile Include="OneDriveController.cs" />
     <Compile Include="ServerEngine.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -170,13 +164,29 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MinskTrans\MinskTrans.DesctopClient.csproj">
-      <Project>{B0D150C2-9F62-4577-9A6F-970A67033CCC}</Project>
-      <Name>MinskTrans.DesctopClient</Name>
+    <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
+      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
+      <Name>MinskTrans.Context</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MyLibrary\MyLibrary.csproj">
-      <Project>{7684D5C4-C88A-47A2-8525-5EC7B319018A}</Project>
-      <Name>MyLibrary</Name>
+    <ProjectReference Include="..\MinskTrans.Net.Cloud.Desktop\MinskTrans.Net.Cloud.Desktop.csproj">
+      <Project>{0614470a-407a-44e0-a821-ff692d63113f}</Project>
+      <Name>MinskTrans.Net.Cloud.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Net\MinskTrans.Net.csproj">
+      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
+      <Name>MinskTrans.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Utilites.Desktop\MinskTrans.Utilites.Desktop.csproj">
+      <Project>{02880AEB-7ECB-4F06-8281-A66DAF84E2F8}</Project>
+      <Name>MinskTrans.Utilites.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
+      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
+      <Name>MinskTrans.Utilites.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
+      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
+      <Name>MinskTrans.Utilites</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

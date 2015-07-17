@@ -47,6 +47,10 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
@@ -71,18 +75,43 @@
     <Compile Include="UnitTest2.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
+      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
+      <Name>MinskTrans.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Context.Desktop\MinskTrans.Context.Desktop.csproj">
+      <Project>{C4FBD2FD-EA17-4F5C-B240-FDC9E8826DC0}</Project>
+      <Name>MinskTrans.Context.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Net\MinskTrans.Net.csproj">
+      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
+      <Name>MinskTrans.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Utilites.Desktop\MinskTrans.Utilites.Desktop.csproj">
+      <Project>{02880AEB-7ECB-4F06-8281-A66DAF84E2F8}</Project>
+      <Name>MinskTrans.Utilites.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
+      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
+      <Name>MinskTrans.Utilites.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
+      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
+      <Name>MinskTrans.Utilites</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MinskTrans\MinskTrans.DesctopClient.csproj">
       <Project>{b0d150c2-9f62-4577-9a6f-970a67033ccc}</Project>
       <Name>MinskTrans.DesctopClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
-      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
-      <Name>MyLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="months.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

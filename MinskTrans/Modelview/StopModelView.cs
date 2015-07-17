@@ -6,8 +6,9 @@ using System.Linq;
 
 using MapControl;
 using System.Threading.Tasks;
-using MinskTrans.DesctopClient.AutoRouting;
-using MyLibrary.FuzzySearch;
+using MinskTrans.AutoRouting.AutoRouting;
+using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Utilites.FuzzySearch;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
 using GalaSoft.MvvmLight.CommandWpf;

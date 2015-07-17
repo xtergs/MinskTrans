@@ -1,4 +1,5 @@
 ﻿using MapControl;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal

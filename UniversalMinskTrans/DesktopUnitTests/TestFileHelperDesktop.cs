@@ -1,11 +1,8 @@
-﻿using MinskTrans.DesctopClient.Utilites.IO;
-using MyLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Desktop;
 
 namespace DesktopUnitTests
 {

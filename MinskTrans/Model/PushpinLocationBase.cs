@@ -1,4 +1,5 @@
 using MapControl;
+using MinskTrans.Context.Base.BaseModel;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 using Windows.UI.Xaml;
 #else

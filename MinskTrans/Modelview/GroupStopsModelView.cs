@@ -1,5 +1,7 @@
 ﻿
 
+using MinskTrans.Context.Base.BaseModel;
+
 namespace MinskTrans.DesctopClient.Modelview
 {
 using System.Collections.Generic;

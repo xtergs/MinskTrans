@@ -51,7 +51,6 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniversalContext.cs" />
-    <Compile Include="UpdateManagerUniversal.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -59,12 +58,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MyLibrary\MyLibrary.csproj">
-      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
-      <Name>MyLibrary</Name>
+    <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
+      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
+      <Name>MinskTrans.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Net\MinskTrans.Net.csproj">
+      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
+      <Name>MinskTrans.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
+      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
+      <Name>MinskTrans.Utilites.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
+      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
+      <Name>MinskTrans.Utilites</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

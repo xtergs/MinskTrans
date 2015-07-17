@@ -4,17 +4,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using MinskTrans.DesctopClient.Modelview;
-
 using MapControl;
+using MinskTrans.AutoRouting.AutoRouting;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Annotations;
-using MinskTrans.DesctopClient.Model;
-using MinskTrans.DesctopClient.Utilites.IO;
-using MinskTrans.DesctopClient.Net;
+using MinskTrans.DesctopClient.Modelview;
 
 namespace MinskTrans.DesctopClient
 {
@@ -23,7 +21,7 @@ namespace MinskTrans.DesctopClient
 	/// </summary>
 	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
-		private readonly System.Timers.Timer timerr;
+		private readonly Timer timerr;
 
 		public bool IsShowBusStops
 		{
@@ -59,7 +57,7 @@ namespace MinskTrans.DesctopClient
 		}
 
 		private TimeSpan updateTimerInterval = new TimeSpan(0, 1, 0, 0, 0);
-		private System.Timers.Timer checkUpdateTimer;
+		private Timer checkUpdateTimer;
 		DispatcherTimer updateTime = new DispatcherTimer();
 		
 
@@ -139,7 +137,7 @@ namespace MinskTrans.DesctopClient
 			DataContext = ShedulerModelView;
 			//timer = new Timer((x)=>{});
 
-			timerr = new System.Timers.Timer(10000);
+			timerr = new Timer(10000);
 			timerr.Elapsed += (sender, args) => ShedulerModelView.StopMovelView.RefreshTimeSchedule.Execute(null);
 			timerr.Start();
 
@@ -266,7 +264,7 @@ namespace MinskTrans.DesctopClient
 			routeNamesListView.SelectedIndex = 0;
 		}
 
-		private void routeNamesListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private void routeNamesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			stopsListView.SelectedIndex = 0;
 		}
@@ -417,7 +415,7 @@ namespace MinskTrans.DesctopClient
 			if (oldStops != null)
 				;
 			oldStops = calculator.resultRout.SelectMany(x => x.Value).Distinct().ToList();
-            MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
+			MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
 		}
 
 		private List<Stop> oldStops;

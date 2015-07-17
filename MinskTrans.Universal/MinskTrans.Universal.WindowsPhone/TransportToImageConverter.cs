@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
 
 namespace MinskTrans.Universal.Converters

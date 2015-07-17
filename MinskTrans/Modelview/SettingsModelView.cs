@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MinskTrans.Utilites.Base.Net;
 
 //using MinskTrans.DesctopClient.Annotations;
 //using MinskTrans.DesctopClient.Annotations;

@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;

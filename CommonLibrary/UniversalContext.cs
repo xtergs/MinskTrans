@@ -1,7 +1,8 @@
 ﻿using System;
-using MinskTrans.DesctopClient;
+using MinskTrans.Context;
 using MinskTrans.DesctopClient.Modelview;
-using MyLibrary;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Base.Net;
 
 namespace CommonLibrary
 {
@@ -12,14 +13,14 @@ namespace CommonLibrary
 		}
 
 		ApplicationSettingsHelper lastUpdateDataDateTime;
-        public override DateTime LastUpdateDataDateTime
+		public override DateTime LastUpdateDataDateTime
 		{
 			get
 			{
 				if (lastUpdateDataDateTime == null)
 					lastUpdateDataDateTime = new ApplicationSettingsHelper();
 				return lastUpdateDataDateTime.DateTimeSettings;
-            }
+			}
 
 			set
 			{

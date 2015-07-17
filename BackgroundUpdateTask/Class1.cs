@@ -5,12 +5,17 @@ using System.Text;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
+using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
+using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.Net;
+using MinskTrans.Net.Base;
 using MinskTrans.Universal;
-using MyLibrary;
-using MinskTrans.DesctopClient.Update;
+using MinskTrans.Utilites;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Base.Net;
 
 namespace MinskTrans.BackgroundUpdateTask
 {
@@ -28,32 +33,26 @@ namespace MinskTrans.BackgroundUpdateTask
 
 		public async void Run(IBackgroundTaskInstance taskInstance)
 		{
-#if _DEBUG
-			urlUpdateDates =
-				@"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111667&authkey=%21AKygfncKSi8je9M&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
-			urlUpdateNews =
-				@"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111668&authkey=%21ANMtQUGlZfobwFk&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D3";
-			urlUpdateHotNews =
-				@"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111666&authkey=%21AEsBwSeL-AGmwg0&canary=t3n9UqNfnwhSuGIRQt3HE7V3dRh0GsrkOOz1BGrzuZE%3D9";
-#endif
 			Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
-			//var builder = new ContainerBuilder();
-			//builder.RegisterType<FileHelper>().As<FileHelperBase>();
-			////builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-			//builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
-			//builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
-			//builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
-			//var container = builder.Build();
+			var builder = new ContainerBuilder();
+			builder.RegisterType<FileHelper>().As<FileHelperBase>();
+			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+			builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>();
+			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
+			var container = builder.Build();
 
 			var fileHelper = new FileHelper();
-			var internetHelper = new InternetHelperUniversal(fileHelper);
-			var context = new UniversalContext(fileHelper, internetHelper);
-
+			//InternetHelperBase internetHelper = new InternetHelperUniversal(fileHelper);
 			SettingsModelView settings = new SettingsModelView();
-			InternetHelperBase helper = internetHelper;
-			//UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
-			UpdateManagerBase updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
+
+			var context = container.Resolve<IContext>();
+			InternetHelperBase helper = container.Resolve<InternetHelperBase>();
+			UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
+			NewsManagerBase manager = container.Resolve<NewsManagerBase>();
+			//UpdateManagerBase updateManager = new UpdateManagerBase(fileHelper, internetHelper, new ShedulerParser());
 
 			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
 			helper.UpdateNetworkInformation();
@@ -98,12 +97,13 @@ namespace MinskTrans.BackgroundUpdateTask
 			try
 			{
 				time = DateTime.Parse(timeShtaps[0]);
-				NewsManager manager = new NewsManager();
-				if (time > manager.LastUpdateMainNewsDateTime)
+				//NewsManager manager = new NewsManager();
+				await manager.Load();
+				if (time > manager.LastUpdateMainNewsDateTimeUtc)
 				{
-					await helper.Download(urlUpdateNews, manager.fileNameNews, TypeFolder.Local);
-					DateTime oldTime = manager.LastUpdateMainNewsDateTime;
-					manager.LastUpdateMainNewsDateTime = time;
+					await helper.Download(urlUpdateNews, manager.FileNameMonths, TypeFolder.Local);
+					DateTime oldTime = manager.LastUpdateMainNewsDateTimeUtc;
+					//manager.LastUpdateMainNewsDateTime = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					DateTime nowTimeUtc = DateTime.UtcNow;
 					foreach (var source in manager.NewNews.Where(key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)))
@@ -112,11 +112,11 @@ namespace MinskTrans.BackgroundUpdateTask
 					}
 				}
 				time = DateTime.Parse(timeShtaps[1]);
-				if (time > manager.LastUpdateHotNewsDateTime)
+				if (time > manager.LastUpdateHotNewsDateTimeUtc)
 				{
-					await helper.Download(urlUpdateHotNews, manager.fileNameHotNews, TypeFolder.Local);
-					DateTime oldTime = manager.LastUpdateHotNewsDateTime;
-					manager.LastUpdateHotNewsDateTime = time;
+					await helper.Download(urlUpdateHotNews, manager.FileNameDays, TypeFolder.Local);
+					DateTime oldTime = manager.LastUpdateHotNewsDateTimeUtc;
+					//manager.LastUpdateHotNewsDateTime = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
 					//	resultStr);
 					DateTime nowDateTimeUtc = DateTime.UtcNow;
@@ -161,7 +161,7 @@ namespace MinskTrans.BackgroundUpdateTask
 		{
 			var notifi = ToastNotificationManager.CreateToastNotifier();
 
-			var xaml = ToastNotificationManager.GetTemplateContent(Windows.UI.Notifications.ToastTemplateType.ToastText04);
+			var xaml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText04);
 			var textNode = xaml.GetElementsByTagName("text");
 			textNode.Item(0).AppendChild(xaml.CreateTextNode(text));
 			//value.appendChild(toastXml.createTextNode(text));

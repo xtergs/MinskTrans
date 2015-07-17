@@ -15,9 +15,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using MapControl;
-
-
-
+using MinskTrans.AutoRouting.AutoRouting;
+using MinskTrans.Context.Base.BaseModel;
 #if (WINDOWS_PHONE_APP || WINDOWS_UAP)
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
@@ -30,10 +29,8 @@ using Windows.Devices.Geolocation;
 
 using MinskTrans.DesctopClient.Properties;
 using System.Windows.Controls;
-using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
-using GalaSoft.MvvmLight.CommandWpf;
 #endif
 //using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 

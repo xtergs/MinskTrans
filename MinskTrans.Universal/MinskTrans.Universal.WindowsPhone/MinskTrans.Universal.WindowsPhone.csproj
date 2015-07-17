@@ -27,7 +27,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>a:\wp\bin\Debug\</OutputPath>
+    <OutputPath>a:\bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_PHONE_APP; BETA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -207,6 +207,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\XAML.MapControl.2.4.12\lib\wpa81\MapControl.WinRT.dll</HintPath>
     </Reference>
+    <Reference Include="MinskTrans.Context">
+      <HintPath>..\..\MinskTrans.Context.Base\bin\Debug\MinskTrans.Context.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -224,9 +227,21 @@
       <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
       <Name>CommonLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
-      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
-      <Name>MyLibrary</Name>
+    <ProjectReference Include="..\..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj">
+      <Project>{33DB7D58-46C8-4756-B7AC-39994422188E}</Project>
+      <Name>MinskTrans.AutoRouting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Net\MinskTrans.Net.csproj">
+      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
+      <Name>MinskTrans.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
+      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
+      <Name>MinskTrans.Utilites.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
+      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
+      <Name>MinskTrans.Utilites</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

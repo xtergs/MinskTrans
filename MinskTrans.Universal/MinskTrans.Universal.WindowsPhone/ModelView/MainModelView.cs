@@ -5,10 +5,14 @@ using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.DesctopClient.Update;
+using MinskTrans.Net;
+using MinskTrans.Net.Base;
+using MinskTrans.Utilites;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Base.Net;
 using MyLibrary;
 
 namespace MinskTrans.Universal.ModelView
@@ -17,7 +21,7 @@ namespace MinskTrans.Universal.ModelView
 	public class MainModelView : BaseModelView, INotifyPropertyChanged
 	{
 		private static MainModelView mainModelView;
-		private readonly IContext context;
+		//private readonly IContext context;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutsModelView routesModelview;
 		private readonly SettingsModelView settingsModelView;
@@ -25,7 +29,7 @@ namespace MinskTrans.Universal.ModelView
 		private readonly FavouriteModelView favouriteModelView;
 		private readonly FindModelView findModelView;
 		private MapModelView mapMOdelView;
-		private readonly NewsManager newsManager;
+		private readonly NewsManagerBase newsManager;
 		
 		private readonly UpdateManagerBase updateManagerBase;
 		private bool updating;
@@ -52,16 +56,18 @@ namespace MinskTrans.Universal.ModelView
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-			builder.RegisterType<Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerUniversal>().As<UpdateManagerBase>();
+			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>();
+			builder.RegisterType<ITimeTableParser>().As<ShedulerParser>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
+			builder.RegisterType<NewsManager>().As<NewsManagerBase>();
 			//builder.RegisterType<Context>().As<IContext>();
 
 			var container = builder.Build();
 
 			context = container.Resolve<IContext>();
-			newsManager = new NewsManager();
-			updateManagerBase = container.Resolve<DesctopClient.Update.UpdateManagerBase>();
+			newsManager = container.Resolve<NewsManagerBase>();
+			updateManagerBase = container.Resolve<UpdateManagerBase>();
 
 			//updateManager = container.Resolve<UpdateManagerBase>();
 			//context = newContext;
@@ -79,7 +85,7 @@ namespace MinskTrans.Universal.ModelView
 			//}
 		}
 
-		public NewsManager NewsManager
+		public NewsManagerBase NewsManager
 		{
 			get { return newsManager;}
 		}
@@ -123,7 +129,7 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public IContext Context { get { return context; } }
+		//public IContext Context { get { return context; } }
 
 
 		public List<NewsEntry> AllNews
@@ -183,29 +189,29 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public RelayCommand<Stop> ShowStopMap
-		{
-			get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-		}
+		//public RelayCommand<Stop> ShowStopMap
+		//{
+		//	get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+		//}
 
-		public RelayCommand<Rout> ShowRouteMap
-		{
-			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		}
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
+		//public RelayCommand<Rout> ShowRouteMap
+		//{
+		//	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+		//}
+		//public event Show ShowStop;
+		//public event Show ShowRoute;
+		//public delegate void Show(object sender, ShowArgs args);
 
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowStop(ShowArgs args)
+		//{
+		//	var handler = ShowStop;
+		//	if (handler != null) handler(this, args);
+		//}
 
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		//protected virtual void OnShowRoute(ShowArgs args)
+		//{
+		//	var handler = ShowRoute;
+		//	if (handler != null) handler(this, args);
+		//}
 	}
 }

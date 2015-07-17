@@ -143,8 +143,8 @@
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\..\packages\MvvmLightLibs.5.1.1.0\lib\windows81\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="MapControl.WinRT, Version=2.4.11.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\XAML.MapControl.2.4.11\lib\netcore451\MapControl.WinRT.dll</HintPath>
+    <Reference Include="MapControl.WinRT, Version=2.4.12.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XAML.MapControl.2.4.12\lib\netcore451\MapControl.WinRT.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
@@ -156,9 +156,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MyLibrary\MyLibrary.csproj">
-      <Project>{7684d5c4-c88a-47a2-8525-5ec7b319018a}</Project>
-      <Name>MyLibrary</Name>
+    <ProjectReference Include="..\..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
+      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
+      <Name>MinskTrans.Utilites</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

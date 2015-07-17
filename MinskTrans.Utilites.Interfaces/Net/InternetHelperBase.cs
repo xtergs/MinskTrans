@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MinskTrans.Utilites.Base.IO;
@@ -70,6 +71,10 @@ namespace MinskTrans.Utilites.Base.Net
 				response.EnsureSuccessStatusCode();
 
 				await FileHelper.WriteTextAsync(folder, file, await response.Content.ReadAsStringAsync());
+			}
+			catch (HttpRequestException)
+			{
+				throw;
 			}
 			catch (Exception e)
 			{

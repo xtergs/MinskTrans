@@ -1,9 +1,9 @@
 ﻿using System;
-using MyLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MinskTrans.DesctopClient.Utilites.IO;
 using System.IO;
 using System.Threading.Tasks;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Desktop;
 
 namespace DesktopUnitTests
 {

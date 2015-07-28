@@ -207,9 +207,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\XAML.MapControl.2.4.12\lib\wpa81\MapControl.WinRT.dll</HintPath>
     </Reference>
-    <Reference Include="MinskTrans.Context">
-      <HintPath>..\..\MinskTrans.Context.Base\bin\Debug\MinskTrans.Context.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -231,6 +228,10 @@
       <Project>{33DB7D58-46C8-4756-B7AC-39994422188E}</Project>
       <Name>MinskTrans.AutoRouting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
+      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
+      <Name>MinskTrans.Context</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MinskTrans.Net\MinskTrans.Net.csproj">
       <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
       <Name>MinskTrans.Net</Name>
@@ -246,9 +247,6 @@
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0" />
-    <SDKReference Include="Microsoft.Advertising.Mobile.Display, Version=8.1">
-      <Name>Microsoft.Advertising.Mobile.Display</Name>
-    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

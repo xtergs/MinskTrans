@@ -22,110 +22,110 @@ using MinskTrans.Universal.Annotations;
 
 #endif
 
-	public class ApplicationSettingsHelper
-	{
+    public class ApplicationSettingsHelper
+    {
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 
-		public ApplicationSettingsHelper([CallerMemberName] string member = null)
-		{
-			SettingsMember = member;
-		}
+        public ApplicationSettingsHelper([CallerMemberName] string member = null)
+        {
+            SettingsMember = member;
+        }
 
-		private string SettingsMember;
-		private DateTime backField;
-		public DateTime DateTimeSettings
-		{
-			get
-			{
-				if (backField == default(DateTime) && !ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
-				{
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, backField.ToString());
-					return backField;
-				}
-				if (backField != default(DateTime))
-					return backField;
-				else
-				{
-					backField = DateTime.Parse(ApplicationData.Current.LocalSettings.Values[SettingsMember].ToString());
-					return backField;
-				}
-			}
+        private string SettingsMember;
+        private DateTime backField;
+        public DateTime DateTimeSettings
+        {
+            get
+            {
+                if (backField == default(DateTime) && !ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
+                {
+                    ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, backField.ToString());
+                    return backField;
+                }
+                if (backField != default(DateTime))
+                    return backField;
+                else
+                {
+                    backField = DateTime.Parse(ApplicationData.Current.LocalSettings.Values[SettingsMember].ToString());
+                    return backField;
+                }
+            }
 
-			set
-			{
-				if (backField == value)
-					return;
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, value.ToString());
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsMember] = value.ToString();
-				backField = value;
-			}
+            set
+            {
+                if (backField == value)
+                    return;
+                if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
+                    ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, value.ToString());
+                else
+                    ApplicationData.Current.LocalSettings.Values[SettingsMember] = value.ToString();
+                backField = value;
+            }
 
-		}
+        }
 
-		#region Overrides of Object
+        #region Overrides of Object
 
-		/// <summary>
-		/// Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		/// A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			return SettingsMember + " : " + DateTimeSettings;
-		}
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return SettingsMember + " : " + DateTimeSettings;
+        }
 
-		#endregion
+        #endregion
 
-		static public void SimpleSet(string value, [CallerMemberName]string key = null)
-		{
-			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-				ApplicationData.Current.LocalSettings.Values.Add(key, value);
-			else
-				ApplicationData.Current.LocalSettings.Values[key] = value;
-		}
+        static public void SimpleSet(string value, [CallerMemberName]string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, value);
+            else
+                ApplicationData.Current.LocalSettings.Values[key] = value;
+        }
 
-		static public void SimpleSet(bool value, [CallerMemberName]string key = null)
-		{
-			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-				ApplicationData.Current.LocalSettings.Values.Add(key, value);
-			else
-				ApplicationData.Current.LocalSettings.Values[key] = value;
-		}
+        static public void SimpleSet(bool value, [CallerMemberName]string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, value);
+            else
+                ApplicationData.Current.LocalSettings.Values[key] = value;
+        }
 
-		static public void SimpleSet(int value, [CallerMemberName]string key = null)
-		{
-			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-				ApplicationData.Current.LocalSettings.Values.Add(key, value);
-			else
-				ApplicationData.Current.LocalSettings.Values[key] = value;
-		}
+        static public void SimpleSet(int value, [CallerMemberName]string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, value);
+            else
+                ApplicationData.Current.LocalSettings.Values[key] = value;
+        }
 
-		static public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
-		{
+        static public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
+        {
 
-			return (string)SimleGet((object)defValue, key);
-		}
+            return (string)SimleGet((object)defValue, key);
+        }
 
-		static public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
-		{
-			if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-				ApplicationData.Current.LocalSettings.Values.Add(key, defValue);
-			return ApplicationData.Current.LocalSettings.Values[key];
-		}
+        static public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, defValue);
+            return ApplicationData.Current.LocalSettings.Values[key];
+        }
 
-		static public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
-		{
+        static public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
+        {
 
-			return (bool)SimleGet((object)defValue, key);
-		}
+            return (bool)SimleGet((object)defValue, key);
+        }
 
-		static public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
-		{
-			return (int)SimleGet((object)defValue, key);
-		}
+        static public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
+        {
+            return (int)SimleGet((object)defValue, key);
+        }
 #else
 		static public void SimpleSet(string value, [CallerMemberName]string key = null)
 		{
@@ -192,9 +192,9 @@ using MinskTrans.Universal.Annotations;
 			return (int)SimleGet((object)defValue, key);
 		}
 #endif
-	}
+    }
 
-	public class SettingsModelView : ISettingsModelView
+    public class SettingsModelView : ISettingsModelView
 	{
 
 

@@ -30,9 +30,56 @@ namespace CommonLibrary
 		}
 
 
-		#region Overrides of NewsManagerBase
+        #region Overrides of NewsManagerBase
 
-		public override Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
+        private ApplicationSettingsHelper lastUpdateDataDateTimeBack;
+        public override DateTime LastUpdateMainNewsDateTimeUtc
+        {
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
+            get
+            {
+                if (lastUpdateDataDateTimeBack == null)
+                    lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
+                return lastUpdateDataDateTimeBack.DateTimeSettings;
+            }
+
+            set
+            {
+                if (lastUpdateDataDateTimeBack == null)
+                    lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
+                lastUpdateDataDateTimeBack.DateTimeSettings = value;
+                OnPropertyChanged();
+            }
+#else
+			get { return allNews.Max(x => x.PostedUtc); }
+#endif
+        }
+
+        private ApplicationSettingsHelper lastUpdateHotDataDateTimeBack;
+        public override DateTime LastUpdateHotNewsDateTimeUtc
+        {
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
+			get
+			{
+				if (lastUpdateHotDataDateTimeBack == null)
+					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
+				return lastUpdateHotDataDateTimeBack.DateTimeSettings;
+			}
+
+			set
+			{
+				if (lastUpdateHotDataDateTimeBack == null)
+					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
+				lastUpdateHotDataDateTimeBack.DateTimeSettings = value;
+				OnPropertyChanged();
+			}
+#else
+            get { return allHotNewsDictionary.Max(x => x.CollectedUtc); }
+
+#endif
+        }
+
+        public override Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
 		{
 			throw new NotImplementedException();
 		}

@@ -1,4 +1,5 @@
 ﻿using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Universal.Annotations;
 
 namespace MinskTrans.DesctopClient.Modelview
 {

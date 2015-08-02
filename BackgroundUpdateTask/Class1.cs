@@ -40,6 +40,7 @@ namespace MinskTrans.BackgroundUpdateTask
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
+		    builder.RegisterType<NewsManager>().As<NewsManagerBase>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 			var container = builder.Build();
@@ -106,10 +107,14 @@ namespace MinskTrans.BackgroundUpdateTask
 					//manager.LastUpdateMainNewsDateTime = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					DateTime nowTimeUtc = DateTime.UtcNow;
-					foreach (var source in manager.NewNews.Where(key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)))
-					{
-						ShowNotification(source.Message);
-					}
+				    var newNews =
+				        manager.NewNews.Where(
+				            key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)).ToList();
+                    if (newNews.Count>0)
+                        foreach (var source in newNews)
+                        {
+                            ShowNotification(source.Message);
+                        }
 				}
 				time = DateTime.Parse(timeShtaps[1]);
 				if (time > manager.LastUpdateHotNewsDateTimeUtc)
@@ -121,23 +126,25 @@ namespace MinskTrans.BackgroundUpdateTask
 					//	resultStr);
 					DateTime nowDateTimeUtc = DateTime.UtcNow;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-					//int todayDay = nowDateTime.Day;
-					//int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
-					foreach (var source in manager.AllHotNews.Where(key =>
-					{
-						if (key.RepairedLineUtc != default(DateTime))
-						{
-							double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
-							if ( totalminutes <= MaxMinsAgo)
-								return true;
-							return false;
-						}
-						return (key.CollectedUtc > oldTime) &&
-							   ((nowDateTimeUtc- key.CollectedUtc).TotalDays < 1);
-					}))
-					{
-						ShowNotification(source.Message);
-					}
+                    //int todayDay = nowDateTime.Day;
+                    //int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
+				    var newHotNewslist = manager.AllHotNews.Where(key =>
+				    {
+				        if (key.RepairedLineUtc != default(DateTime))
+				        {
+				            double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
+				            if (totalminutes <= MaxMinsAgo)
+				                return true;
+				            return false;
+				        }
+				        return (key.CollectedUtc > oldTime) &&
+				               ((nowDateTimeUtc - key.CollectedUtc).TotalDays < 1);
+				    }).ToList();
+                    if (newHotNewslist.Count>0)
+                        foreach (var source in newHotNewslist)
+                        {
+                            ShowNotification(source.Message);
+                        }
 				}
 			}
 			catch (Exception e)

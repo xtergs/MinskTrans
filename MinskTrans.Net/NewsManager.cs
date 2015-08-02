@@ -52,6 +52,8 @@ namespace MinskTrans.Net
     }
 }
 
+
+
 	public abstract class NewsManagerBase : INotifyPropertyChanged
 	{
 		private string uriNews = @"http://www.minsktrans.by/ru/newsall/news/newscity.html";
@@ -90,51 +92,10 @@ namespace MinskTrans.Net
 			set { OnPropertyChanged(); }
 		}
 
-		//private ApplicationSettingsHelper lastUpdateDataDateTimeBack;
-		public DateTime LastUpdateMainNewsDateTimeUtc
-		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
-			get
-			{
-				if (lastUpdateDataDateTimeBack == null)
-					lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
-				return lastUpdateDataDateTimeBack.DateTimeSettings;
-			}
+		//
+		public abstract DateTime LastUpdateMainNewsDateTimeUtc { get; set; }
 
-			set
-			{
-				if (lastUpdateDataDateTimeBack == null)
-					lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
-				lastUpdateDataDateTimeBack.DateTimeSettings = value;
-				OnPropertyChanged();
-			}
-#else
-			get { return allNews.Max(x => x.PostedUtc); }
-#endif
-		}
-
-		public DateTime LastUpdateHotNewsDateTimeUtc
-		{
-#if _WINDOWS_PHONE_APP || _WINDOWS_UAP
-			get
-			{
-				if (lastUpdateHotDataDateTimeBack == null)
-					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
-				return lastUpdateHotDataDateTimeBack.DateTimeSettings;
-			}
-
-			set
-			{
-				if (lastUpdateHotDataDateTimeBack == null)
-					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
-				lastUpdateHotDataDateTimeBack.DateTimeSettings = value;
-				OnPropertyChanged();
-			}
-#else
-			get { return allHotNewsDictionary.Max(x => x.CollectedUtc); }
-			
-#endif
-		}
+		public abstract DateTime LastUpdateHotNewsDateTimeUtc { get; set; }
 
 		public string FileNameMonths
 		{

@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.Net", "..\MinskT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.AutoRouting", "..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj", "{33DB7D58-46C8-4756-B7AC-39994422188E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalMinskTransRelease", "UniversalMinskTransRelease\UniversalMinskTransRelease.csproj", "{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems*{59beb27b-8c75-4e30-a0d1-5ed336038c3c}*SharedItemsImports = 13
@@ -377,6 +379,26 @@ Global
 		{33DB7D58-46C8-4756-B7AC-39994422188E}.Release|x64.Build.0 = Release|Any CPU
 		{33DB7D58-46C8-4756-B7AC-39994422188E}.Release|x86.ActiveCfg = Release|Any CPU
 		{33DB7D58-46C8-4756-B7AC-39994422188E}.Release|x86.Build.0 = Release|Any CPU
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|ARM.ActiveCfg = Debug|ARM
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|ARM.Build.0 = Debug|ARM
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|ARM.Deploy.0 = Debug|ARM
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|x64.ActiveCfg = Debug|x64
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|x64.Build.0 = Debug|x64
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|x64.Deploy.0 = Debug|x64
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|x86.ActiveCfg = Debug|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|x86.Build.0 = Debug|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Debug|x86.Deploy.0 = Debug|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|Any CPU.ActiveCfg = Release|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|ARM.ActiveCfg = Release|ARM
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|ARM.Build.0 = Release|ARM
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|ARM.Deploy.0 = Release|ARM
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|x64.ActiveCfg = Release|x64
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|x64.Build.0 = Release|x64
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|x64.Deploy.0 = Release|x64
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|x86.ActiveCfg = Release|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|x86.Build.0 = Release|x86
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -399,5 +421,6 @@ Global
 		{0DD1F107-07BA-4455-A9A9-827C8FD8B255} = {D35DD1F8-A7E7-4A85-8E77-82C2C74E9F86}
 		{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B} = {D35DD1F8-A7E7-4A85-8E77-82C2C74E9F86}
 		{33DB7D58-46C8-4756-B7AC-39994422188E} = {D35DD1F8-A7E7-4A85-8E77-82C2C74E9F86}
+		{8DAF65FC-578E-48E2-9DD3-ADCCFDA842F3} = {90EA039D-37AC-4D93-A91B-42DF8AE25E15}
 	EndGlobalSection
 EndGlobal

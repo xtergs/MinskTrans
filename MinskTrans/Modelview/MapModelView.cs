@@ -14,9 +14,13 @@ using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
+using Windows.Devices.Geolocation;
+using Windows.UI.Xaml;
+using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Universal;
 #if (WINDOWS_PHONE_APP || WINDOWS_UAP)
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;

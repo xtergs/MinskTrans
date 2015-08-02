@@ -216,10 +216,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BackgroundUpdateTask\BackgroundUpdateTask.csproj">
-      <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
-      <Name>BackgroundUpdateTask</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
       <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
       <Name>CommonLibrary</Name>

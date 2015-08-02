@@ -47,7 +47,12 @@ namespace MinskTrans.Universal
 		private List<PushpinLocation> pushpins;
 		States state = States.Stops;
 
-		void ShowPopup(string text)
+	    public MainModelView MainView
+	    {
+	        get { return MainModelView.MainModelViewGet; }
+	    }
+
+	    void ShowPopup(string text)
 		{
 			TextBlock textBlock = new TextBlock()
 			{

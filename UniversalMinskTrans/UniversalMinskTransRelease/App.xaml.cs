@@ -41,7 +41,7 @@ namespace UniversalMinskTrans
 		/// <summary>
 		/// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
 		/// </summary>
-		public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
+		//public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
 
 
 
@@ -350,7 +350,7 @@ namespace UniversalMinskTrans
 #if BETA
 			Logger.Log().WriteLine(Environment.NewLine+Environment.NewLine + Environment.NewLine).WriteLineTime("App");
 #endif
-			TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
+			//TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
 
 			this.InitializeComponent();
 			this.Suspending += this.OnSuspending;

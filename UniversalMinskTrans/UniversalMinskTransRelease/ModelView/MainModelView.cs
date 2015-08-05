@@ -8,7 +8,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
-
+using MinskTrans.DesctopClient;
 using Autofac;
 using CommonLibrary.IO;
 using MinskTrans.Context.Base.BaseModel;
@@ -18,6 +18,7 @@ using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
+using UniversalMinskTransRelease.Context;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -54,7 +55,7 @@ namespace MinskTrans.Universal.ModelView
 		{
             var builder = new ContainerBuilder();
             builder.RegisterType<FileHelper>().As<FileHelperBase>();
-            //builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            //builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
             builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
             builder.RegisterType<UpdateManagerBase>();
             builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();

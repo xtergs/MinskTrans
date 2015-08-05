@@ -476,7 +476,20 @@ using MinskTrans.Universal.Annotations;
 			get { return 1000; }
 		}
 
-		public bool UpdateOnWiFi
+        public bool CurrentDate {
+            get
+            {
+                return ApplicationSettingsHelper.SimleGet(true);
+            }
+
+            set
+            {
+                ApplicationSettingsHelper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public bool UpdateOnWiFi
 		{
 
 			get
@@ -491,7 +504,22 @@ using MinskTrans.Universal.Annotations;
 			}
 		}
 
-		public bool UpdateOnMobileData
+        public bool Develop
+        {
+
+            get
+            {
+                return ApplicationSettingsHelper.SimleGet(true);
+            }
+
+            set
+            {
+                ApplicationSettingsHelper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public bool UpdateOnMobileData
 		{
 
 			get

@@ -181,14 +181,17 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				if (StopNameFilter != null && Context.ActualStops != null)
+			    IList<Stop> returnList = Context.ActualStops;
+			    if (returnList != null)
+			        returnList = returnList.Where(x => x.Routs.Any(d => selectedTransport.HasFlag(d.Transport))).ToList();
+                if (StopNameFilter != null && returnList != null)
 				{
 					var tempSt = StopNameFilter.ToLower();
 					IEnumerable<Stop> temp;
 					if (FuzzySearch)
-						temp = Levenshtein.Search(tempSt, Context.ActualStops, 0.4);
+						temp = Levenshtein.Search(tempSt, returnList, 0.4);
 					else
-						temp = Context.ActualStops.Where(
+						temp = returnList.Where(
 							x => x.SearchName.Contains(tempSt)).OrderBy(x=> x.SearchName.StartsWith(tempSt));
                     if (!Equals(LocationXX.Get(), defaultLocation))
 						return
@@ -199,11 +202,11 @@ namespace MinskTrans.DesctopClient.Modelview
 						return temp.OrderByDescending(Context.GetCounter).ThenByDescending(x => x.SearchName.StartsWith(tempSt));
 
 				}
-				if (Context.ActualStops != null)
+				if (returnList != null)
 					return Equals(LocationXX.Get(), defaultLocation)
-						? Context.ActualStops.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName)
+						? returnList.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName)
 						//: Context.ActualStops.OrderBy(Distance).ThenByDescending(Context.GetCounter);
-						: SmartSort(Context.ActualStops);
+						: SmartSort(returnList);
 				return null;
 			}
 		}
@@ -355,15 +358,19 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool Trol
 		{
-			get { return trol; }
-			set
-			{
-				if (value.Equals(trol)) return;
-				trol = value;
-				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
-			}
-		}
+            get { return selectedTransport.HasFlag(TransportType.Trol); }
+            set
+            {
+                if (value)
+                    selectedTransport |= TransportType.Trol;
+                else
+                    selectedTransport ^= TransportType.Trol;
+                OnPropertyChanged();
+                OnPropertyChanged("FilteredStops");
+                OnPropertyChanged("TimeSchedule");
+
+            }
+        }
 
 		public bool Bus
 		{
@@ -375,9 +382,11 @@ namespace MinskTrans.DesctopClient.Modelview
 				else
 					selectedTransport ^= TransportType.Bus; 
 				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
-			}
-		}
+				OnPropertyChanged("FilteredStops");
+                OnPropertyChanged("TimeSchedule");
+
+            }
+        }
 
 		//public RelayCommand<Stop> ShowStopMap
 		//{
@@ -386,28 +395,35 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool Tram
 		{
-			get { return tram; }
-			set
-			{
-				if (value.Equals(tram)) return;
-				tram = value;
-				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
-			}
-		}
+            get { return selectedTransport.HasFlag(TransportType.Tram); }
+            set
+            {
+                if (value)
+                    selectedTransport |= TransportType.Tram;
+                else
+                    selectedTransport ^= TransportType.Tram;
+                OnPropertyChanged();
+                OnPropertyChanged("FilteredStops");
+                OnPropertyChanged("TimeSchedule");
+            }
+        }
 
 		private bool metro;
 		public bool Metro
 		{
-			get { return metro; }
-			set
-			{
-				if (value.Equals(metro)) return;
-				metro = value;
-				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
-			}
-		}
+            get { return selectedTransport.HasFlag(TransportType.Metro); }
+            set
+            {
+                if (value)
+                    selectedTransport |= TransportType.Metro;
+                else
+                    selectedTransport ^= TransportType.Metro;
+                OnPropertyChanged();
+                OnPropertyChanged("FilteredStops");
+                OnPropertyChanged("TimeSchedule");
+
+            }
+        }
 
 		virtual public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
 		{
@@ -443,13 +459,7 @@ namespace MinskTrans.DesctopClient.Modelview
 						IEnumerable<KeyValuePair<Rout, int>> temp =
 							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - settingsModelView.TimeInPast).Where(x =>
 							{
-								if (x.Key.Transport == TransportType.Bus)
-									return Bus;
-								if (x.Key.Transport == TransportType.Trol)
-									return Trol;
-								if (x.Key.Transport == TransportType.Tram)
-									return Tram;
-								return true;
+							    return selectedTransport.HasFlag(x.Key.Transport);
 							});
 
 						ss = ss.Concat(temp);

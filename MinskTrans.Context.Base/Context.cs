@@ -191,7 +191,7 @@ namespace MinskTrans.Context
 			await FileHelper.SafeMoveAsync(storage, Settings.NameFileFavourite + TempExt, Settings.NameFileFavourite);
 		}
 
-		private async Task SaveStatistics(JsonSerializerSettings jsonSettings, TypeFolder storage)
+	    protected async Task SaveStatistics(JsonSerializerSettings jsonSettings, TypeFolder storage)
 		{
 			string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
 			//var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
@@ -912,15 +912,15 @@ namespace MinskTrans.Context
 			get { return fileHelper; }
 		}
 
-		public IList<Rout> Routs { get; private set; }
-		public IList<Schedule> Times { get; private set; }
+		public IList<Rout> Routs { get; protected set; }
+		public IList<Schedule> Times { get; protected set; }
 
 		public IList<Stop> ActualStops
 		{
 			get { return Stops; }
 		}
 
-		private IList<int> favouriteRouts { get; set; }
+	    protected IList<int> favouriteRouts { get; set; }
 
 		public IList<Rout> FavouriteRouts
 		{
@@ -933,8 +933,8 @@ namespace MinskTrans.Context
 			}
 		}
 
-		public IList<GroupStop> Groups { get; private set; }
-		private IList<int> favouriteStops { get; set; }
+		public IList<GroupStop> Groups { get; protected set; }
+	    protected IList<int> favouriteStops { get; set; }
 
 		public IList<Stop> FavouriteStops
 		{
@@ -946,7 +946,7 @@ namespace MinskTrans.Context
 			}
 		}
 
-		public IList<Stop> Stops { get; private set; }
+		public IList<Stop> Stops { get; protected set; }
 
 		public ContextFileSettings Settings
 		{

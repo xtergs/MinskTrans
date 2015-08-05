@@ -240,6 +240,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -1857,6 +1858,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -3507,6 +3509,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -5162,6 +5165,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -6812,6 +6816,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -8467,6 +8472,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -10117,6 +10123,7 @@
           "lib/netcore45/Newtonsoft.Json.dll": {}
         }
       },
+      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Runtime": "[4.0.20, )",
@@ -12326,6 +12333,18 @@
         "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.xml",
         "tools/install.ps1",
         "package/services/metadata/core-properties/7bd81f63ed434f8eb6458981b8a7d5a8.psmdcp",
+        "[Content_Types].xml"
+      ]
+    },
+    "sqlite-net/1.0.8": {
+      "sha512": "gJXHCj1gSTPTYzL9oJevih+JwF9EUnt/EO2ccnTLDBtYeVDCIRXPdTSBokSWL7mjNIDnOcpB1zAuC9Qg9YAgAg==",
+      "type": "Package",
+      "files": [
+        "_rels/.rels",
+        "sqlite-net.nuspec",
+        "content/SQLite.cs",
+        "content/SQLiteAsync.cs",
+        "package/services/metadata/core-properties/261ed628192946e8a72777c551360e85.psmdcp",
         "[Content_Types].xml"
       ]
     },
@@ -15030,7 +15049,8 @@
       "Autofac >= 3.5.2",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
       "MvvmLightLibs >= 5.1.1",
-      "Newtonsoft.Json >= 6.0.7"
+      "Newtonsoft.Json >= 6.0.7",
+      "sqlite-net >= 1.0.8"
     ],
     "UAP,Version=v10.0": []
   }

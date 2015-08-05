@@ -3,7 +3,8 @@
     "Autofac": "3.5.2",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "MvvmLightLibs": "5.1.1",
-    "Newtonsoft.Json": "6.0.7"
+    "Newtonsoft.Json": "6.0.7",
+    "sqlite-net": "1.0.8"
   },
   "frameworks": {
     "uap10.0": {}

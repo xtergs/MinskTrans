@@ -308,17 +308,7 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
 
-                <VisualStateGroup.Transitions>
-                    <VisualTransition GeneratedDuration="0:0:0.2" To="StopsVisualState">
-                        <VisualTransition.GeneratedEasingFunction>
-                            <ElasticEase EasingMode="EaseInOut" />
-                        </VisualTransition.GeneratedEasingFunction>
-                    </VisualTransition>
-                </VisualStateGroup.Transitions>
                 <VisualState x:Name="StopsVisualState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="600" />
-                    </VisualState.StateTriggers>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -923,7 +913,13 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
+                            <RowDefinition Height="Auto" />
+
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
                         <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
                             <Grid.ColumnDefinitions>
@@ -932,6 +928,7 @@
                             </Grid.ColumnDefinitions>
                             <HyperlinkButton x:Uid="StopsButton"
                                              x:Name="StopsHyperlinkButton"
+                                             Command="{Binding ToggleFindViewCommand}"
                                              Content="Остановки"
                                              IsEnabled="False">
                                 <Interactivity:Interaction.Behaviors>
@@ -942,6 +939,7 @@
                             </HyperlinkButton>
                             <HyperlinkButton x:Name="RoutsHyperlinkButton"
                                              Grid.Column="1"
+                                             Command="{Binding ToggleFindViewCommand}"
                                              Content="Транспорт"
                                              RequestedTheme="Dark">
                                 <Interactivity:Interaction.Behaviors>
@@ -1079,6 +1077,8 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+
 
                             </Grid.RowDefinitions>
 
@@ -1117,18 +1117,6 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
-                            <AppBar Grid.Row="2" DataContext="{Binding StopModelView}">
-                                <VariableSizedWrapGrid Orientation="Horizontal">
-                                    <CheckBox Content="Автобус"
-                                              IsChecked="{Binding Bus,
-                                                                  UpdateSourceTrigger=PropertyChanged}"
-                                              IsDoubleTapEnabled="False"
-                                              IsHoldingEnabled="False" />
-                                    <CheckBox Content="Тролейбус" IsChecked="{Binding Trol}" />
-                                    <CheckBox Content="Трамвай" IsChecked="{Binding Tram, UpdateSourceTrigger=PropertyChanged}" />
-                                    <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged}" />
-                                </VariableSizedWrapGrid>
-                            </AppBar>
                         </Grid>
 
                         <Grid x:Name="ShowRoutsGrid"
@@ -1163,6 +1151,10 @@
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                             </ListView>
+
+
+
+
                             <Grid x:Name="ShowRoutsListGrid"
                                   Grid.Row="1"
                                   Grid.ColumnSpan="2"
@@ -1189,6 +1181,8 @@
                                                FontSize="20"
                                                Text="{Binding RouteNumSelectedValue.Rout.RouteNum}" />
                                 </Grid>
+
+
                                 <ListView x:Name="ShowRoutsListView"
                                           Grid.Row="1"
                                           Grid.ColumnSpan="2"
@@ -1206,6 +1200,42 @@
                                 </ListView>
                             </Grid>
                         </Grid>
+                        <AppBar Grid.Row="2" DataContext="{Binding StopModelView}">
+                            <VariableSizedWrapGrid Orientation="Horizontal">
+                                <CheckBox Content="Автобус"
+                                          IsChecked="{Binding Bus,
+                                                              UpdateSourceTrigger=PropertyChanged,
+                                                              Mode=TwoWay}"
+                                          IsDoubleTapEnabled="False"
+                                          IsHoldingEnabled="False" />
+                                <CheckBox Content="Тролейбус" IsChecked="{Binding Trol, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                <CheckBox Content="Трамвай" IsChecked="{Binding Tram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                                <VariableSizedWrapGrid DataContext="{Binding SettingsModelView}"
+                                                       VariableSizedWrapGrid.ColumnSpan="10"
+                                                       Visibility="Collapsed">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:DataTriggerBehavior Binding="{Binding Develop}" Value="true">
+                                            <Core:ChangePropertyAction PropertyName="Visibility" />
+                                        </Core:DataTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <TextBlock Text="Develop settings: " VariableSizedWrapGrid.ColumnSpan="1" />
+                                    <CheckBox x:Name="CurDateCheckBox"
+                                              Content="Текущее время"
+                                              DataContext="{Binding ElementName=ShowStop,
+                                                                    Path=DataContext}"
+                                              IsChecked="{Binding AutoDay,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Text="{Binding DayOfWeek, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Slider Maximum="6"
+                                            Minimum="0"
+                                            Visibility="{Binding CurrentDate,
+                                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </VariableSizedWrapGrid>
+                            </VariableSizedWrapGrid>
+                        </AppBar>
 
 
                     </Grid>
@@ -1646,7 +1676,8 @@
 
                         <Button Command="{Binding UpdateDataCommand}"
                                 Content="Обновить расписание"
-                                DataContext="{Binding MainView, ElementName=mainPage}" />
+                                DataContext="{Binding MainView,
+                                                      ElementName=mainPage}" />
                         <ToggleSwitch IsOn="{Binding UpdateOnWiFi,
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
@@ -1719,7 +1750,7 @@
                         <Button Click="OnOffLocationServises" Content="Настройка сервисов местоположения" />
                         <Button Click="ShowPolicity" Content="Политика безопасности" />
                         <Button Click="SendLog" Content="Отправить лог разработчику" />
-
+                        <CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     </ListView>
                 </Border>

@@ -33,7 +33,8 @@ namespace MinskTrans.BackgroundUpdateTask
 
 		public async void Run(IBackgroundTaskInstance taskInstance)
 		{
-			Debug.WriteLine("Background task started");
+            Logger.Log("Background task started");
+            Debug.WriteLine("Background task started");
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>();
@@ -160,7 +161,8 @@ namespace MinskTrans.BackgroundUpdateTask
 			}
 
 			Debug.WriteLine("Background task ended");
-			_deferral.Complete();
+            Logger.Log("Background task ended");
+            _deferral.Complete();
 			
 		}
 

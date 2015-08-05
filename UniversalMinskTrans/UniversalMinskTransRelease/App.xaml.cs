@@ -80,7 +80,7 @@ namespace UniversalMinskTrans
 					// can use the network connectivity broker.
 					//
 					// Windows Phone: This value is never used on Windows Phone.
-					break;
+					//break;
 
 				case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
 				case BackgroundAccessStatus.Unspecified:

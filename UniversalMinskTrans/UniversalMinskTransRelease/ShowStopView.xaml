@@ -95,6 +95,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+
 
         </Grid.RowDefinitions>
         <TextBlock FontSize="20" Text="{Binding FilteredSelectedStop.Name, UpdateSourceTrigger=PropertyChanged}" />
@@ -218,5 +220,13 @@
                               Label="" />
             </controls:WrapPanel>
         </Border>
+        <AppBar Grid.Row="3">
+            <controls:WrapPanel>
+                <TextBlock Text="День недели: "/>
+                <TextBlock Text="{Binding CurDay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+            <AppBarToggleButton Content="Текущее время" IsEnabled="{Binding AutoDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></AppBarToggleButton>
+                <Slider Minimum="1" Maximum="7" Value="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Slider>
+            </controls:WrapPanel>
+        </AppBar>
     </Grid>
 </UserControl>

@@ -139,6 +139,8 @@
     <Compile Include="ShowStopView.xaml.cs">
       <DependentUpon>ShowStopView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SQLite.cs" />
+    <Compile Include="SQLiteAsync.cs" />
     <Compile Include="TextBoxDelete.cs" />
     <Compile Include="Themes\EmptyToVisibility.cs" />
     <Compile Include="TransportToColor.cs" />

@@ -103,7 +103,9 @@ namespace MinskTrans.Universal
 					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
 					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
-				await menu.ShowAsync(push.RenderTransformOrigin);
+                
+                
+				await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
 			};
 			
 			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);

@@ -105,7 +105,7 @@ namespace MinskTrans.BackgroundUpdateTask
 				{
 					await helper.Download(urlUpdateNews, manager.FileNameMonths, TypeFolder.Local);
 					DateTime oldTime = manager.LastUpdateMainNewsDateTimeUtc;
-					//manager.LastUpdateMainNewsDateTime = time;
+					manager.LastUpdateMainNewsDateTimeUtc = time;
 					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 					DateTime nowTimeUtc = DateTime.UtcNow;
 				    var newNews =
@@ -122,7 +122,7 @@ namespace MinskTrans.BackgroundUpdateTask
 				{
 					await helper.Download(urlUpdateHotNews, manager.FileNameDays, TypeFolder.Local);
 					DateTime oldTime = manager.LastUpdateHotNewsDateTimeUtc;
-					//manager.LastUpdateHotNewsDateTime = time;
+					manager.LastUpdateHotNewsDateTimeUtc = time;
 					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
 					//	resultStr);
 					DateTime nowDateTimeUtc = DateTime.UtcNow;

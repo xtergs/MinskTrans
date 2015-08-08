@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Windows.UI.Xaml;
 #if WINDOWS_PHONE_APP
 using Windows.Devices.Geolocation;
 using Windows.UI.Core;
@@ -74,16 +75,31 @@ namespace MinskTrans.DesctopClient.Modelview
 			set { OnPropertyChanged();}
 		}
 
-		public virtual Stop FilteredSelectedStop
+        public bool ShowDetailViewStop
+        {
+            get { return showDetailViewStop; }
+            set
+            {
+                showDetailViewStop = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public virtual Stop FilteredSelectedStop
 		{
 			get { return filteredSelectedStop; }
 			set
 			{
-				if (value == null)
-					return;
-				//if (Equals(value, filteredSelectedStop)) return;
-				//ShowStopMap.RaiseCanExecuteChanged();
-				filteredSelectedStop = value;
+			    if (value == null)
+			    {
+			        ShowDetailViewStop = true;
+			        return;
+			    }
+			    else
+			        ShowDetailViewStop = true;
+                //if (Equals(value, filteredSelectedStop)) return;
+                //ShowStopMap.RaiseCanExecuteChanged();
+                filteredSelectedStop = value;
 				Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
@@ -132,8 +148,9 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private RelayCommand showStopMap;
 		private GroupStop selectedGroup;
+	    private bool showDetailViewStop;
 
-		//public new RelayCommand ShowStopMap
+	    //public new RelayCommand ShowStopMap
 		//{
 		//	get
 		//	{

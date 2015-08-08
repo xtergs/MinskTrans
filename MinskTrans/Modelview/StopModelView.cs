@@ -6,6 +6,7 @@ using System.Linq;
 
 using MapControl;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.FuzzySearch;
@@ -40,7 +41,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		private ISettingsModelView settingsModelView;
+	   
+
+	    private ISettingsModelView settingsModelView;
 		private bool autoDay;
 		private bool autoNowTime;
 		private bool bus;
@@ -49,6 +52,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private int nowTimeMin;
 		private bool tram;
 		private bool trol;
+
 		private string destinationStop;
 		//private LocationXX lastLocation;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
@@ -409,7 +413,9 @@ namespace MinskTrans.DesctopClient.Modelview
         }
 
 		private bool metro;
-		public bool Metro
+	    private Visibility showDetailViewStop;
+
+	    public bool Metro
 		{
             get { return selectedTransport.HasFlag(TransportType.Metro); }
             set

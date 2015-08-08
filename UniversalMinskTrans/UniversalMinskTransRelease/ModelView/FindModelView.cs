@@ -16,7 +16,18 @@ namespace MinskTrans.Universal.ModelView
 	        }
 	    }
 
-	    private readonly StopModelView stopModelView;
+	    private bool isShowTransportView;
+        public bool IsShowTransportsView
+        {
+            get { return isShowTransportView; }
+            set
+            {
+                isShowTransportView = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private readonly StopModelView stopModelView;
 		private readonly RoutsModelView routsModelview;
 
 		public StopModelView StopModelView
@@ -46,18 +57,38 @@ namespace MinskTrans.Universal.ModelView
 
 	    private RelayCommand toggleFindViewCommanBack;
 
-	    public RelayCommand ToggleFindViewCommand
+	    public RelayCommand TogleToShowStopsFindViewCommand
 	    {
 	        get
 	        {
 	            if (toggleFindViewCommanBack == null)
 	                toggleFindViewCommanBack = new RelayCommand(() =>
 	                {
-	                    IsShowStopsView = !IsShowStopsView;
-	                    ToggleFindViewCommand.RaiseCanExecuteChanged();
-	                }, () => !IsShowStopsView);
+	                    IsShowStopsView = true;
+	                    IsShowTransportsView = false;
+                        TogleToShowStopsFindViewCommand.RaiseCanExecuteChanged();
+                        TogleToShowRoutsFindViewCommand.RaiseCanExecuteChanged();
+                    }, () => !IsShowStopsView);
 	            return toggleFindViewCommanBack;
 	        }
 	    }
-	}
+
+        private RelayCommand toggleRoutsViewCommanBack;
+
+        public RelayCommand TogleToShowRoutsFindViewCommand
+        {
+            get
+            {
+                if (toggleRoutsViewCommanBack== null)
+                    toggleRoutsViewCommanBack = new RelayCommand(() =>
+                    {
+                        IsShowStopsView = false;
+                        IsShowTransportsView = true;
+                        TogleToShowRoutsFindViewCommand.RaiseCanExecuteChanged();
+                        TogleToShowStopsFindViewCommand.RaiseCanExecuteChanged();
+                    }, () => !IsShowTransportsView);
+                return toggleRoutsViewCommanBack;
+            }
+        }
+    }
 }

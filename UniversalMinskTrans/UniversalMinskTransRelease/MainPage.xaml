@@ -11,6 +11,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:desctopClient="using:MinskTrans.DesctopClient"
       xmlns:local="using:MinskTrans.Universal"
+      xmlns:logicalTriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
       xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WinRT"
       xmlns:mapControl1="using:MapControl"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,11 +19,13 @@
       xmlns:modelView="using:MinskTrans.Universal.ModelView"
       xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
       xmlns:popups="using:Windows.UI.Popups"
+      xmlns:windowsStateTriggers="using:WindowsStateTriggers"
       x:Name="mainPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       KeyDown="mainPage_KeyDown"
       Loaded="Page_Loaded"
       PointerPressed="mainPage_PointerPressed"
+      SizeChanged="mainPage_SizeChanged"
       Unloaded="Page_Unloaded"
       d:DataContext="{d:DesignInstance modelView:MainModelView}"
       mc:Ignorable="d">
@@ -309,15 +312,12 @@
             <VisualStateGroup x:Name="VisualStateGroup">
 
                 <VisualState x:Name="StopsVisualState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="800" />
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="StopsListView.(Grid.Column)" Value="0" />
                         <Setter Target="StopsListView.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="ShowStop.(Grid.Column)" Value="1" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="1" />
-                        <Setter Target="secondColumn.Width" Value="0.3*" />
+                        <Setter Target="secondColumn.Width" Value="1*" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -352,9 +352,6 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="StopsCompactVisualState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="StopsListView.(Grid.Column)" Value="0" />
                         <Setter Target="StopsListView.(Grid.ColumnSpan)" Value="2" />
@@ -386,14 +383,12 @@
                         <Setter Target="StopsListView.(Grid.Column)" Value="0" />
                         <Setter Target="StopsListView.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="StopsListView.Visibility" Value="Collapsed" />
+                        <Setter Target="FindStop.Visibility" Value="Collapsed" />
                         <Setter Target="ShowStop.(Grid.Column)" Value="0" />
                         <Setter Target="ShowStop.Visibility" Value="Visible" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="secondColumn.Width" Value="Auto" />
                     </VisualState.Setters>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -406,7 +401,36 @@
 
                     </Storyboard>
                 </VisualState>
+                <VisualState x:Name="DescktopRoutsVisualState">
+
+                    <VisualState.Setters>
+
+
+                        <Setter Target="ShowRoutsGrid.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="ShowRoutsListGrid.(Grid.Column)" Value="1"/>
+                        <Setter Target="ShowRoutsListGrid.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="RoutViews.(Grid.Column)" Value="2"/>
+                        <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="secondColumn.Width" Value="1*"/>
+                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Collapsed"/>
+
+                    </VisualState.Setters>
+
+                    
+                </VisualState>
                 <VisualState x:Name="TransportListVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="ShowRoutsListGrid.(Grid.Row)" Value="1"/>
+                        <Setter Target="ShowRoutsListGrid.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="ShowRoutsListGrid.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0</Thickness>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1"/>
+                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -937,6 +961,7 @@
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <Grid>
+
                         <!--<Interactivity:Interaction.Behaviors>
                             <Core:DataTriggerBehavior Binding="{Binding IsShowStopsView, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Core:GoToStateAction StateName="StopsCompactVisualState" />
@@ -952,6 +977,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition x:Name="secondColumn" Width="Auto" />
+                            <ColumnDefinition x:Name="thriedColumn" Width="Auto" />
+
                         </Grid.ColumnDefinitions>
 
                         <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
@@ -966,7 +993,7 @@
                                              IsEnabled="False">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:DataTriggerBehavior Binding="{Binding IsShowStopsView}" Value="True">
-                                        <Core:GoToStateAction StateName="StopsCompactVisualState" />
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:DataTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                             </HyperlinkButton>
@@ -977,7 +1004,7 @@
                                              RequestedTheme="Dark">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="Click">
-                                        <Core:GoToStateAction StateName="TransportListVisualState" />
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                             </HyperlinkButton>
@@ -1099,7 +1126,18 @@
                                             Grid.ColumnSpan="2"
                                             DataContext="{Binding StopModelView}"
                                             ShowStatusBar="Visible"
-                                            Visibility="Visible" />
+                                            Visibility="Collapsed" />
+
+                        <Button x:Name="UpdateButton"
+                                Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Content="Обновить расписание"
+                                Visibility="Collapsed" />
+
+                        <Button Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Content="Обновить расписание"
+                                Visibility="Collapsed" />
 
 
                         <Grid x:Name="ShowStopsGrid"
@@ -1139,11 +1177,10 @@
                                                              UpdateSourceTrigger=PropertyChanged}">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:GoToStateAction StateName="StopsCompactVisualState" />
-                                        <Core:GoToStateAction StateName="StopsVisualState" />
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:EventTriggerBehavior>
-
                                 </Interactivity:Interaction.Behaviors>
+
 
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
@@ -1162,6 +1199,10 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
                             <local:MyTextBox x:Name="FindTrans"
                                              Grid.Row="0"
                                              InputScope="Number"
@@ -1181,9 +1222,14 @@
                                                              UpdateSourceTrigger=PropertyChanged}">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:GoToStateAction StateName="RoutsListVisualState" />
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
+                                <!--<Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:GoToStateAction StateName="RoutsListVisualState" />
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>-->
                             </ListView>
 
 
@@ -1228,9 +1274,14 @@
                                                                  UpdateSourceTrigger=PropertyChanged}">
                                     <Interactivity:Interaction.Behaviors>
                                         <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                            <Core:GoToStateAction StateName="ShowRoutVisualState" />
+                                            <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                         </Core:EventTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
+                                    <!--<Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                            <Core:GoToStateAction StateName="ShowRoutVisualState" />
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>-->
                                 </ListView>
                             </Grid>
                         </Grid>

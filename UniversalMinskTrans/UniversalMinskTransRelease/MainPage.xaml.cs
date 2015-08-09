@@ -16,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
+using AdaptiveTriggerLibrary.Triggers.LogicalTriggers;
 using MapControl;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
@@ -125,17 +126,17 @@ namespace MinskTrans.Universal
 
 			};
 
-			VisualStateGroup.CurrentStateChanged += (sender, args) =>
-			{
-				if (args.NewState == ShowStopVisualState)
-				{
-					StopsListView.SelectedIndex = -1;
-				} else if (args.NewState == RoutsListVisualState)
-					RoutsListView.SelectedIndex = -1;
-				else if (args.NewState == ShowRoutVisualState)
-					ShowRoutsListView.SelectedIndex = -1;
+			//VisualStateGroup.CurrentStateChanged += (sender, args) =>
+			//{
+			//	if (args.NewState == ShowStopVisualState)
+			//	{
+			//		StopsListView.SelectedIndex = -1;
+			//	} else if (args.NewState == RoutsListVisualState)
+			//		RoutsListView.SelectedIndex = -1;
+			//	else if (args.NewState == ShowRoutVisualState)
+			//		ShowRoutsListView.SelectedIndex = -1;
 				
-			};
+			//};
 
 			FavouriteVisualStateGroup.CurrentStateChanged += (sender, args) =>
 			{
@@ -230,6 +231,88 @@ namespace MinskTrans.Universal
 			Logger.Log("MainPage ended");
 #endif
 		}
+
+
+	    public void SelectVisualState()
+	    {
+	        if (Pivot.SelectedItem == SearchPivotItem)
+	        {
+	                var curState = VisualStateGroup.CurrentState;
+	            if (curState == null)
+	            {
+                    VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+	                return;
+	            }
+	            if (model.FindModelView.IsShowStopsView)
+	            {
+	                if (this.ActualWidth >= 800)
+	                {
+	                    if (StopsListView.SelectedItem == null)
+	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+	                    else
+	                        VisualStateManager.GoToState(mainPage, nameof(StopsVisualState), true);
+	                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+	                        AppViewBackButtonVisibility.Collapsed;
+	                }
+	                else
+	                {
+	                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+	                        AppViewBackButtonVisibility.Visible;
+	                    if (curState == null)
+	                    {
+	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+	                        return;
+	                    }
+	                    //if windows was in wide mode, go to compact
+
+	                    if (StopsListView.SelectedItem != null)
+	                        VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
+	                    else
+	                    {
+	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+	                    }
+	                }
+	            }
+	            else
+	            {
+                   // var curState = VisualStateGroup.CurrentState;
+                    if (this.ActualWidth >= 800)
+                    {
+                        if (StopsListView.SelectedItem == null)
+                            VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
+                        else
+                            VisualStateManager.GoToState(mainPage, nameof(DescktopRoutsVisualState), true);
+                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                            AppViewBackButtonVisibility.Collapsed;
+                    }
+                    else
+                    {
+                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                            AppViewBackButtonVisibility.Visible;
+                        if (curState == null)
+                        {
+                            VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
+                            return;
+                        }
+                        //if windows was in wide mode, go to compact
+
+                        if (ShowRoutsListView.SelectedItem != null)
+                            VisualStateManager.GoToState(mainPage, nameof(ShowRoutVisualState), true);
+                        else if (RoutsListView.SelectedItem != null)
+                        {
+                            VisualStateManager.GoToState(mainPage, nameof(RoutsListVisualState), true);
+                        }
+                        else
+                            VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
+                    }
+                }
+	        }
+	    }
+
+	    void BackVisualState()
+	    {
+	        
+	    }
 
 
 		private void ShowAddGroup(object sender, EventArgs args)
@@ -634,5 +717,76 @@ namespace MinskTrans.Universal
 		{
 			WebViewMap.Source = new Uri(MisnkTransVirtualTableAdress);
 		}
-	}
+
+        private void mainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SelectVisualState();
+            //if (Pivot.SelectedItem == SearchPivotItem)
+            //{
+            //    if (e.NewSize.Width >= 800)
+            //    {
+            //        var curState = VisualStateGroup.CurrentState;
+            //        //if windows was in compact mode, go to wide mode
+            //        if (curState == StopsCompactVisualState || curState == ShowStopVisualState)
+            //        {
+            //            VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        var curState = VisualStateGroup.CurrentState;
+            //        //if windows was in wide mode, go to compact
+            //        if (curState == StopsVisualState)
+            //        {
+            //            if (StopsListView != null)
+            //                VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
+            //            else
+            //            {
+            //                VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //    if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
+            //        VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
+            //    else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
+            //        VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
+            //    else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
+            //        VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
+            //    else
+            //    {
+
+            //    }
+
+            //}
+            //else if (Pivot.SelectedItem == FavourPivotItem)
+            //{
+
+
+            //    if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
+            //        VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
+            //    else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+            //        VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
+            //    else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
+            //             !FavouriteRoutssHyperlinkButton.IsEnabled)
+            //        VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+            //    else
+
+
+            //}
+            //else if (Pivot.SelectedItem == GroupsPivtoItem)
+            //{
+
+            //    if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+            //        VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+            //    else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+            //        VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+            //    else
+            //    {
+
+            //    }
+            //}
+        }
+    }
 }

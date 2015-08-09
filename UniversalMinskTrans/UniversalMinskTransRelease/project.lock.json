@@ -3,6 +3,14 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -1575,9 +1583,25 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -3240,9 +3264,25 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -4877,9 +4917,25 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -6547,9 +6603,25 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -8184,9 +8256,25 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -9854,9 +9942,25 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
+      "AdaptiveTriggerLibrary/1.0.4": {
+        "compile": {
+          "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        },
+        "runtime": {
+          "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
+        }
+      },
       "Autofac/3.5.2": {
         "compile": {
           "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
@@ -11491,10 +11595,33 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsStateTriggers/1.0.2": {
+        "compile": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/WindowsStateTriggers.dll": {}
+        }
       }
     }
   },
   "libraries": {
+    "AdaptiveTriggerLibrary/1.0.4": {
+      "sha512": "D/STVJkB32BBxrGEfOTCsne9/Iu1UdzQMXTFCsGvtffkFHah++Jw2DGNEPaHXGV/OpO8uTauGZRTAwudIC2+1Q==",
+      "type": "Package",
+      "files": [
+        "_rels/.rels",
+        "AdaptiveTriggerLibrary.nuspec",
+        "lib/uap10.0/AdaptiveTriggerLibrary.dll",
+        "lib/uap10.0/AdaptiveTriggerLibrary.xml",
+        "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll",
+        "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll",
+        "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll",
+        "package/services/metadata/core-properties/05098eaba921489bbde4141564a6b3f2.psmdcp",
+        "[Content_Types].xml"
+      ]
+    },
     "Autofac/3.5.2": {
       "sha512": "pGR5LjY8T/16x6SkJNd7u6EjQnE4C7JS0BZJ7Yl7pt313gIUZ/2ZnPSOIM5eaIA7ArxaudlyyLvAT4ayX5UJ/A==",
       "type": "Package",
@@ -15042,15 +15169,52 @@
         "package/services/metadata/core-properties/1cffc42bca944f1d81ef3c3abdb0f0be.psmdcp",
         "[Content_Types].xml"
       ]
+    },
+    "WindowsStateTriggers/1.0.2": {
+      "sha512": "p15cFsOKxRrzSxXMZ/yNpPxra3HaGTBttFzjXUiDpEvyo8Ujm3hOcqWUsDa/9rz7HfUcJ4ZOqFREo0cIZojGhQ==",
+      "type": "Package",
+      "files": [
+        "_rels/.rels",
+        "WindowsStateTriggers.nuspec",
+        "lib/uap10.0/WindowsStateTriggers.dll",
+        "lib/uap10.0/WindowsStateTriggers.pdb",
+        "lib/uap10.0/WindowsStateTriggers.pri",
+        "lib/uap10.0/WindowsStateTriggers.xml",
+        "lib/uap10.0/WindowsStateTriggers/Properties/WindowsStateTriggers.rd.xml",
+        "src/CompareStateTrigger.cs",
+        "src/CompositeStateTrigger.cs",
+        "src/DeviceFamilyStateTrigger.cs",
+        "src/EqualsStateTrigger.cs",
+        "src/InputTypeTrigger.cs",
+        "src/IsFalseStateTrigger.cs",
+        "src/IsNullOrEmptyStateTrigger.cs",
+        "src/IsTypePresentStateTrigger.cs",
+        "src/ITriggerValue.cs",
+        "src/NetworkConnectionStateTrigger.cs",
+        "src/NotEqualStateTrigger.cs",
+        "src/OrientationStateTrigger.cs",
+        "src/RegexStateTrigger.cs",
+        "src/UserHandPreferenceStateTrigger.cs",
+        "src/UserInteractionModeTrigger.cs",
+        "src/WeakEventListener.cs",
+        "src/obj/Release/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs",
+        "src/obj/Release/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs",
+        "src/obj/Release/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs",
+        "src/Properties/AssemblyInfo.cs",
+        "package/services/metadata/core-properties/2f267b14e65f42b78af535f2513ee898.psmdcp",
+        "[Content_Types].xml"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
+      "AdaptiveTriggerLibrary >= 1.0.4",
       "Autofac >= 3.5.2",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
       "MvvmLightLibs >= 5.1.1",
       "Newtonsoft.Json >= 6.0.7",
-      "sqlite-net >= 1.0.8"
+      "sqlite-net >= 1.0.8",
+      "WindowsStateTriggers >= 1.0.2"
     ],
     "UAP,Version=v10.0": []
   }

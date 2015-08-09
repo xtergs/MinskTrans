@@ -50,6 +50,8 @@ namespace MinskTrans.Universal.ModelView
 
         public FindModelView(IContext newContext, SettingsModelView settingsModelView, bool UseGps = false) : base(newContext)
         {
+            IsShowTransportsView = false;
+            IsShowStopsView = true;
             mainSettings = settingsModelView;
 			stopModelView = new StopModelView(newContext, settingsModelView, UseGps);
 			routsModelview = new RoutsModelView(newContext);

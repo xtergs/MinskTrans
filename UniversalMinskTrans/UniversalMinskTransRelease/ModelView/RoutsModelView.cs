@@ -115,10 +115,11 @@ namespace MinskTrans.Universal.ModelView
 					return;
 				//if (value == routeNumSelectedValue) return;
 				routeNumSelectedValue = value;
-				OnPropertyChanged();
+			    RouteSelectedValue = null;
+                OnPropertyChanged();
 				OnPropertyChanged("RouteNames");
 				OnPropertyChanged("IsRoutFavourite");
-				OnPropertyChanged("RouteSelectedValue");
+				
 				OnPropertyChanged("StopsObservableCollection");
 			}
 		}
@@ -143,8 +144,8 @@ namespace MinskTrans.Universal.ModelView
 			get { return routeSelectedValue; }
 			set
 			{
-				if (value == null)
-					return;
+				//if (value == null)
+				//	return;
 				//if (Equals(value, routeSelectedValue)) return;
 				routeSelectedValue = value;
 				OnPropertyChanged();

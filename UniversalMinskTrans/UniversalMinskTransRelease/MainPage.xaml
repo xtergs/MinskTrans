@@ -415,21 +415,25 @@
                         <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="secondColumn.Width" Value="1*"/>
                         <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="ShowStopsGrid.(UIElement.Visibility)" Value="Collapsed" />
+
+
+
 
                     </VisualState.Setters>
 
-                    
+
                 </VisualState>
                 <VisualState x:Name="TransportListVisualState">
                     <VisualState.Setters>
-                        <Setter Target="ShowRoutsListGrid.(Grid.Row)" Value="1"/>
-                        <Setter Target="ShowRoutsListGrid.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="ShowRoutsListGrid.(Grid.Row)" Value="1" />
+                        <Setter Target="ShowRoutsListGrid.(Grid.RowSpan)" Value="1" />
                         <Setter Target="ShowRoutsListGrid.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>0</Thickness>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
@@ -992,9 +996,9 @@
                                              Content="Остановки"
                                              IsEnabled="False">
                                 <Interactivity:Interaction.Behaviors>
-                                    <Core:DataTriggerBehavior Binding="{Binding IsShowStopsView}" Value="True">
+                                    <Core:EventTriggerBehavior EventName="IsEnabledChanged">
                                         <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                    </Core:DataTriggerBehavior>
+                                    </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                             </HyperlinkButton>
                             <HyperlinkButton x:Name="RoutsHyperlinkButton"
@@ -1003,7 +1007,7 @@
                                              Content="Транспорт"
                                              RequestedTheme="Dark">
                                 <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="Click">
+                                    <Core:EventTriggerBehavior EventName="IsEnabledChanged">
                                         <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
@@ -1200,8 +1204,8 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <local:MyTextBox x:Name="FindTrans"
                                              Grid.Row="0"
@@ -1306,7 +1310,12 @@
                                         </Core:DataTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
                                     <TextBlock Text="Develop settings: " VariableSizedWrapGrid.ColumnSpan="1" />
-                                    <CheckBox x:Name="CurDateCheckBox"
+                                    <CheckBox Content="Нечеткий поиск" DataContext="{Binding ElementName=ShowStop,
+                                                                    Path=DataContext}"
+                                              IsChecked="{Binding FuzzySearch,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}" />
+                                    <!--<CheckBox x:Name="CurDateCheckBox"
                                               Content="Текущее время"
                                               DataContext="{Binding ElementName=ShowStop,
                                                                     Path=DataContext}"
@@ -1317,7 +1326,7 @@
                                     <Slider Maximum="6"
                                             Minimum="0"
                                             Visibility="{Binding CurrentDate,
-                                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />-->
                                 </VariableSizedWrapGrid>
                             </VariableSizedWrapGrid>
                         </AppBar>
@@ -1810,11 +1819,11 @@
 
 
                             </Grid>
-                            <Slider Grid.Row="1"
-                                    IsThumbToolTipEnabled="True"
-                                    Value="{Binding TimeInPast,
-                                                    Mode=TwoWay,
-                                                    UpdateSourceTrigger=Default}" />
+                            <ComboBox Grid.Row="1"
+                                      ItemsSource="{Binding PreDefMins}"
+                                      SelectedValue="{Binding TimeInPast,
+                                                              Mode=TwoWay,
+                                                              UpdateSourceTrigger=Default}" />
                         </Grid>
                         <!--<Grid>
                             <Grid.ColumnDefinitions>

@@ -248,52 +248,66 @@ namespace MinskTrans.Universal
 	                if (this.ActualWidth >= 800)
 	                {
 	                    if (StopsListView.SelectedItem == null)
+	                    {
+	                        if (curState == StopsCompactVisualState)
+	                            return;
 	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+	                    }
 	                    else
+	                    {
+	                        if (curState == StopsVisualState)
+	                            return;
 	                        VisualStateManager.GoToState(mainPage, nameof(StopsVisualState), true);
-	                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-	                        AppViewBackButtonVisibility.Collapsed;
+	                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+	                            AppViewBackButtonVisibility.Collapsed;
+	                    }
 	                }
 	                else
 	                {
 	                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
 	                        AppViewBackButtonVisibility.Visible;
-	                    if (curState == null)
-	                    {
-	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
-	                        return;
-	                    }
-	                    //if windows was in wide mode, go to compact
+	                   //if windows was in wide mode, go to compact
 
 	                    if (StopsListView.SelectedItem != null)
+	                    {
+	                        if (curState == ShowStopVisualState)
+	                            return;
 	                        VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
+	                    }
 	                    else
 	                    {
+	                        if (curState == StopsCompactVisualState)
+	                            return;
 	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
 	                    }
 	                }
 	            }
-	            else
+	            else if (model.FindModelView.IsShowTransportsView)
 	            {
+                    
                    // var curState = VisualStateGroup.CurrentState;
                     if (this.ActualWidth >= 800)
                     {
-                        if (StopsListView.SelectedItem == null)
+                        if (RoutsListView.SelectedItem == null)
+                        {
+                            if (curState == TransportListVisualState)
+                                return;
                             VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
+                        }
                         else
+                        {
+                            if (curState == DescktopRoutsVisualState)
+                                return;
                             VisualStateManager.GoToState(mainPage, nameof(DescktopRoutsVisualState), true);
-                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
                             AppViewBackButtonVisibility.Collapsed;
+                        }
                     }
                     else
                     {
                         SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                            AppViewBackButtonVisibility.Visible;
-                        if (curState == null)
-                        {
-                            VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
-                            return;
-                        }
+                           AppViewBackButtonVisibility.Visible;
+                       
                         //if windows was in wide mode, go to compact
 
                         if (ShowRoutsListView.SelectedItem != null)
@@ -309,9 +323,66 @@ namespace MinskTrans.Universal
 	        }
 	    }
 
-	    void BackVisualState()
+	    bool BackVisualState()
 	    {
-	        
+            if (Pivot.SelectedItem == SearchPivotItem)
+            {
+                var curState = VisualStateGroup.CurrentState;
+                if (curState == null)
+                {
+                    return false;
+                }
+                if (model.FindModelView.IsShowStopsView)
+                {
+                    if (this.ActualWidth >= 800)
+                    {
+                        if (StopsListView.SelectedItem != null)
+                        {
+                            StopsListView.SelectedItem = null;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                       
+                        if (StopsListView.SelectedItem != null)
+                        {
+                            StopsListView.SelectedItem = null;
+                            return true;
+                        }
+                       
+                    }
+                    return false;
+                }
+                else
+                {
+                    // var curState = VisualStateGroup.CurrentState;
+                    if (this.ActualWidth >= 800)
+                    {
+                        if (StopsListView.SelectedItem != null)
+                        {
+                            StopsListView.SelectedItem = null;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+
+                        if (ShowRoutsListView.SelectedItem != null)
+                        {
+                            ShowRoutsListView.SelectedItem = null;
+                            return true;
+                        }
+                        else if (RoutsListView.SelectedItem != null)
+                        {
+                            RoutsListView.SelectedItem = null;
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+	        return false;
 	    }
 
 
@@ -384,17 +455,8 @@ namespace MinskTrans.Universal
 		{
 			if (Pivot.SelectedItem == SearchPivotItem)
 			{
-				e.Handled = true;
-				if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
-				else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
-				else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
-				else
-				{
-					e.Handled = false;
-				}
+			    e.Handled = BackVisualState();
+                SelectVisualState();
 
 			}
 			else if (Pivot.SelectedItem == FavourPivotItem)

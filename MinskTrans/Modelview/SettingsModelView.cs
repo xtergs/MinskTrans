@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using MinskTrans.Utilites.Base.Net;
@@ -321,6 +322,8 @@ using MinskTrans.Universal.Annotations;
 			}
 
 		}
+        List<int> predefMins = new List<int>() {5,10,15,20,30,60};
+        public List<int> PreDefMins { get { return predefMins; } }
 
 		public int TimeInPast
 		{

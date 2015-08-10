@@ -188,7 +188,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			    IList<Stop> returnList = Context.ActualStops;
 			    if (returnList != null)
 			        returnList = returnList.Where(x => x.Routs.Any(d => selectedTransport.HasFlag(d.Transport))).ToList();
-                if (StopNameFilter != null && returnList != null)
+                if (!string.IsNullOrWhiteSpace(StopNameFilter) && returnList != null)
 				{
 					var tempSt = StopNameFilter.ToLower();
 					IEnumerable<Stop> temp;

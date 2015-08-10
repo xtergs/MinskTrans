@@ -11,6 +11,7 @@ using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
+using MinskTrans.Universal;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using Newtonsoft.Json;
@@ -147,7 +148,7 @@ namespace UniversalMinskTransRelease.Context
                     tpTimes = new ObservableCollection<Schedule>(Times);
                 }
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException e)
             {
                 //CleanTp();
                 OnErrorLoading(new ErrorLoadingDelegateArgs() {Error = ErrorLoadingDelegateArgs.Errors.NoSourceFiles});
@@ -372,7 +373,7 @@ namespace UniversalMinskTransRelease.Context
 
                         }));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("Exception in UniversalContext.Save");
 #if BETA

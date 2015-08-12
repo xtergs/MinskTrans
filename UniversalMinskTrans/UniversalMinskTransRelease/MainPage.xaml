@@ -402,24 +402,18 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="DescktopRoutsVisualState">
-
                     <VisualState.Setters>
-
-
+                        <Setter Target="StopsHyperlinkButton.(Control.IsEnabled)" Value="True"/>
+                        <Setter Target="RoutsHyperlinkButton.(Control.IsEnabled)" Value="False"/>
+                        <Setter Target="ShowStopsGrid.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="ShowRoutsGrid.(UIElement.Visibility)" Value="Visible"/>
-                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="ShowRoutsGrid.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1"/>
                         <Setter Target="ShowRoutsListGrid.(Grid.Column)" Value="1"/>
                         <Setter Target="ShowRoutsListGrid.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="RoutViews.(Grid.Column)" Value="2"/>
+                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible"/>
-                        <Setter Target="secondColumn.Width" Value="1*"/>
-                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Collapsed"/>
-                        <Setter Target="ShowStopsGrid.(UIElement.Visibility)" Value="Collapsed" />
-
-
-
-
+                        <Setter Target="RoutViews.(Grid.Column)" Value="1"/>
                     </VisualState.Setters>
 
 

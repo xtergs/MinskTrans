@@ -25,9 +25,12 @@ public class Stop : StopBase
 				Area = stop.Area;
 			if (String.IsNullOrWhiteSpace(Streat))
 				Streat = stop.Streat;
-			if (string.IsNullOrWhiteSpace(Name))
-				Name = stop.Name;
-			//if (string.IsNullOrWhiteSpace(Info))
+		    if (string.IsNullOrWhiteSpace(Name))
+		    {
+		        Name = stop.Name;
+		        SearchName = Name.ToLowerInvariant();
+		    }
+		    //if (string.IsNullOrWhiteSpace(Info))
 			//	Info = stop.Info;
 			if (string.IsNullOrWhiteSpace(StopsStr))
 				StopsStr = stop.StopsStr;
@@ -60,7 +63,7 @@ public class Stop : StopBase
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
 			Name = GetStr().Trim();
-			SearchName = Name.ToLower();
+			SearchName = Name.ToLowerInvariant();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);

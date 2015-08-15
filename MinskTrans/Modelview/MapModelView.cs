@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
-using GalaSoft.MvvmLight.Command;
 using MapControl;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base.BaseModel;
@@ -368,6 +367,9 @@ namespace MinskTrans.DesctopClient.Modelview
 				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
 				tempPushPin.Pushpin.Tag = st;
 				tempPushPin.Pushpin.Content = st.Name;
+#if DEBUG
+			    tempPushPin.Pushpin.Content += string.Format("\n {0} \n {1} ", st.ID, st.SearchName);
+#endif
 			}
 #else
 					tempPushPin.Pushpin.ContextMenu = new ContextMenu();
@@ -451,8 +453,26 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+	    public string SearchPattern
+	    {
+	        get { return searchPattern; }
+	        set
+	        {
+	            searchPattern = value;
+	            OnPropertyChanged("FilteredStops");
+	        }
+	    }
 
-
+	    public IList<Stop> FilteredStops
+	    {
+	        get
+	        {
+	            if (string.IsNullOrWhiteSpace(SearchPattern))
+	                return Context.ActualStops;
+	            string filterPat = SearchPattern.ToLowerInvariant();
+	            return Context.ActualStops.Where(x => x.SearchName.Contains(filterPat)).ToList();
+	        }
+	    }
 
 		public Pushpin Ipushpin
 		{
@@ -471,6 +491,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (Equals(value, currentStop)) return;
 				currentStop = value;
 				OnPropertyChanged();
+			    if (value != null)
+			        ShowStopCommand.Execute(currentStop);
 			}
 		}
 
@@ -607,8 +629,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		});} }
 
 		private RelayCommand calculateCommand;
+	    private string searchPattern;
 
-		public RelayCommand CalculateRoutCommand
+	    public RelayCommand CalculateRoutCommand
 		{
 			get
 			{

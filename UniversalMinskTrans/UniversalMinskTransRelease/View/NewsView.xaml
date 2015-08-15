@@ -20,7 +20,15 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <ListBox ItemsSource="{Binding ListDates}" SelectedIndex="{Binding SelectedDateIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <ListBox Grid.Column="1" ItemsSource="{Binding FilteredStops}" />
+        <ListBox ItemsSource="{Binding ListOfDatesStrings}" SelectedIndex="{Binding SelectedDateIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ListBox Grid.Column="1" ItemsSource="{Binding FilteredStops}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Margin="5,5"
+                               Text="{Binding}"
+                               TextWrapping="Wrap" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

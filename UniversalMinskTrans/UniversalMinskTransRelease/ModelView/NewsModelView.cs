@@ -28,7 +28,7 @@ namespace UniversalMinskTransRelease.ModelView
             {
                 var tmp =
                     newsManager.AllHotNews.Concat(newsManager.NewNews)
-                        .Select(x => x.PostedLocal).Distinct()
+                        .Select(x => x.PostedLocal.Date).Distinct()
                         .OrderByDescending(x => x)
                         .ToList();
                 tmp.Insert(0, default(DateTime));

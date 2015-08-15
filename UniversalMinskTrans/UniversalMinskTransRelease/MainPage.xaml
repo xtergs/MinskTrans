@@ -1673,6 +1673,10 @@
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.3*" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition Height="Auto" />
@@ -1687,7 +1691,30 @@
                         <WebView x:Name="WebViewMap"
                                  PermissionRequested="WebViewMap_PermissionRequested"
                                  Visibility="Collapsed" />
-
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <local:MyTextBox Text="{Binding SearchPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ListView Grid.Row="1"
+                                      Grid.ColumnSpan="1"
+                                      DataContext="{Binding}"
+                                      IsSynchronizedWithCurrentItem="False"
+                                      ItemTemplate="{StaticResource ListStopsDataTemplate}"
+                                      ItemsSource="{Binding FilteredStops,
+                                                            Mode=OneWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding CurrentStop,
+                                                             Mode=TwoWay,
+                                                             UpdateSourceTrigger=PropertyChanged}" >
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:InvokeCommandAction Command="{Binding ShowStopMap}"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                        </Grid>
                         <Border Grid.Row="1"
                                 Margin="0,0"
                                 VerticalAlignment="Bottom"
@@ -1695,9 +1722,11 @@
                             <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <AppBarButton x:Name="ButtonIMap"
                                               Command="{Binding ShowICommand}"
-                                              IsCompact="True">
+                                              IsCompact="True"
+                                              Label="Местоположение"
+                                              ToolTipService.ToolTip="Определить мое местоположение">
                                     <AppBarButton.Icon>
-                                        <FontIcon Glyph="Я" />
+                                        <FontIcon FontFamily="Segoe UI" Glyph="Я" />
                                     </AppBarButton.Icon>
                                 </AppBarButton>
                                 <AppBarButton x:Name="ButtonIMinskTrans"
@@ -1716,7 +1745,9 @@
                                 <AppBarButton Name="ShowRoutingMinskTrans"
                                               Click="ShowWebViewRouting"
                                               Icon="MapDrive"
-                                              IsCompact="True">
+                                              IsCompact="True"
+                                              Label="Минсктранс"
+                                              ToolTipService.ToolTip="Отобразить карту минсктранса">
                                     <Interactivity:Interaction.Behaviors>
                                         <Core:EventTriggerBehavior EventName="Click">
                                             <Core:GoToStateAction StateName="ShowMinskTransRoutingVisualState" />
@@ -1737,7 +1768,9 @@
                                 <AppBarButton Name="ShowVirtualTable"
                                               Click="ShowVirtualTableClick"
                                               Icon="Tag"
-                                              IsCompact="True">
+                                              IsCompact="True"
+                                              Label="Маршрут"
+                                              ToolTipService.ToolTip="Отобразить карту для прокладки маршрута">
                                     <Interactivity:Interaction.Behaviors>
                                         <Core:EventTriggerBehavior EventName="Click">
                                             <Core:GoToStateAction StateName="ShowVirtualTableVisualState" />

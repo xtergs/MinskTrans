@@ -19,6 +19,7 @@ using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using UniversalMinskTransRelease.Context;
+using UniversalMinskTransRelease.ModelView;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -27,6 +28,7 @@ namespace MinskTrans.Universal.ModelView
 	{
 		private static MainModelView mainModelView;
 		//private readonly IContext context;
+	    private readonly NewsModelView newsModelView;
 		private readonly GroupStopsModelView groupStopsModelView;
 		private readonly RoutsModelView routesModelview;
 		private readonly SettingsModelView settingsModelView;
@@ -79,7 +81,7 @@ namespace MinskTrans.Universal.ModelView
 			//stopMovelView = new StopModelView(context, settingsModelView, true);
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context, settingsModelView);
-
+		    newsModelView = new NewsModelView(NewsManager);
 		}
 
 		//private MainModelView(Context newContext)
@@ -205,7 +207,13 @@ namespace MinskTrans.Universal.ModelView
 		{
 			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
 		}
-		public event Show ShowStop;
+
+	    public NewsModelView NewsModelView
+        {
+	        get { return newsModelView; }
+	    }
+
+	    public event Show ShowStop;
 		public event Show ShowRoute;
 		public delegate void Show(object sender, ShowArgs args);
 

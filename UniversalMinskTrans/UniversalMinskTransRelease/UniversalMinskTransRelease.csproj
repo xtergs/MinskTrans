@@ -140,6 +140,7 @@
     <Compile Include="Class.cs" />
     <Compile Include="Class2.cs" />
     <Compile Include="Context\SqliteContext.cs" />
+    <Compile Include="Converters\DateToString.cs" />
     <Compile Include="Converters\IntToVisibleConverter.cs" />
     <Compile Include="Converters\MinsLeftConverter.cs" />
     <Compile Include="Converters\MinsToTimeConverter.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="ModelView\FavouriteModelView.cs" />
     <Compile Include="ModelView\FindModelView.cs" />
     <Compile Include="ModelView\MainModelView.cs" />
+    <Compile Include="ModelView\NewsModelView.cs" />
     <Compile Include="ModelView\RoutsModelView.cs" />
     <Compile Include="MyTextBox.xaml.cs">
       <DependentUpon>MyTextBox.xaml</DependentUpon>
@@ -176,6 +178,9 @@
     <Compile Include="TransportToImageConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\NewsView.xaml.cs">
+      <DependentUpon>NewsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WrapPanel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +231,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\NewsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

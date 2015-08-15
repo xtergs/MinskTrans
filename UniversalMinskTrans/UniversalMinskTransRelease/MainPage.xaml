@@ -19,6 +19,7 @@
       xmlns:modelView="using:MinskTrans.Universal.ModelView"
       xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
       xmlns:popups="using:Windows.UI.Popups"
+      xmlns:view="using:UniversalMinskTransRelease.View"
       xmlns:windowsStateTriggers="using:WindowsStateTriggers"
       x:Name="mainPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -403,17 +404,17 @@
                 </VisualState>
                 <VisualState x:Name="DescktopRoutsVisualState">
                     <VisualState.Setters>
-                        <Setter Target="StopsHyperlinkButton.(Control.IsEnabled)" Value="True"/>
-                        <Setter Target="RoutsHyperlinkButton.(Control.IsEnabled)" Value="False"/>
-                        <Setter Target="ShowStopsGrid.(UIElement.Visibility)" Value="Collapsed"/>
-                        <Setter Target="ShowRoutsGrid.(UIElement.Visibility)" Value="Visible"/>
-                        <Setter Target="ShowRoutsGrid.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="ShowRoutsListGrid.(Grid.Column)" Value="1"/>
-                        <Setter Target="ShowRoutsListGrid.(Grid.ColumnSpan)" Value="1"/>
-                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible"/>
-                        <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible"/>
-                        <Setter Target="RoutViews.(Grid.Column)" Value="1"/>
+                        <Setter Target="StopsHyperlinkButton.(Control.IsEnabled)" Value="True" />
+                        <Setter Target="RoutsHyperlinkButton.(Control.IsEnabled)" Value="False" />
+                        <Setter Target="ShowStopsGrid.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="ShowRoutsGrid.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="ShowRoutsGrid.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="ShowRoutsListGrid.(Grid.Column)" Value="1" />
+                        <Setter Target="ShowRoutsListGrid.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="RoutViews.(Grid.Column)" Value="1" />
                     </VisualState.Setters>
 
 
@@ -1304,7 +1305,8 @@
                                         </Core:DataTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
                                     <TextBlock Text="Develop settings: " VariableSizedWrapGrid.ColumnSpan="1" />
-                                    <CheckBox Content="Нечеткий поиск" DataContext="{Binding ElementName=ShowStop,
+                                    <CheckBox Content="Нечеткий поиск"
+                                              DataContext="{Binding ElementName=ShowStop,
                                                                     Path=DataContext}"
                                               IsChecked="{Binding FuzzySearch,
                                                                   Mode=TwoWay,
@@ -1561,6 +1563,19 @@
                 </Border>
 
             </PivotItem>
+
+            <PivotItem Name="TestNewsView"
+                       Margin="0"
+                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       DataContext="{Binding NewsModelView}"
+                       Header="Тест_Новости"
+                       Padding="0">
+                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+                    <view:NewsView DataContext="{Binding}" />
+                </Border>
+            </PivotItem>
+
+
             <PivotItem Name="GroupsPivtoItem"
                        Margin="0"
                        BorderBrush="{StaticResource LightBlueSolidColorBrush}"

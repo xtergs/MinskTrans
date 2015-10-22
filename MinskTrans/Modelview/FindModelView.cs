@@ -1,4 +1,6 @@
-﻿namespace MinskTrans.DesctopClient.Modelview
+﻿using MinskTrans.Context.Base;
+
+namespace MinskTrans.DesctopClient.Modelview
 {
 	public class FindModelView : BaseModelView
 	{

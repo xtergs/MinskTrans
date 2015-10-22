@@ -11,6 +11,7 @@ using MyLibrary;
 using MinskTrans.DesctopClient;
 using Autofac;
 using CommonLibrary.IO;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Net;

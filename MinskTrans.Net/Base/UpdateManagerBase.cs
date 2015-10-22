@@ -82,7 +82,7 @@ namespace MinskTrans.Net.Base
 		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser)
 		{
 			if (helper == null)
-				throw new ArgumentNullException("fileHelper");
+				throw new ArgumentNullException("helper");
 			if (internet == null)
 				throw new ArgumentNullException("internet");
 			if (parser == null)

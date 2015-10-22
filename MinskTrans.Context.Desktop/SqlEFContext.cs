@@ -4,9 +4,10 @@ using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
-namespace MinskTrans.DesctopClient
+namespace MinskTrans.Context.Desktop
 {
 	
 	public class SettingsDataBase
@@ -81,11 +82,11 @@ namespace MinskTrans.DesctopClient
 			
 		}
 
-		public IList<Stop> ActualStops
+		public IEnumerable<Stop> ActualStops
 		{
 			get
 			{
-				return stopsEF.ToList<Stop>();
+				return stopsEF;
 			}
 		}
 

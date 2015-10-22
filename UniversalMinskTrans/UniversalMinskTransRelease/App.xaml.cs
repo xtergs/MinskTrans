@@ -28,6 +28,7 @@ using System.Diagnostics;
 using Windows.UI.Popups;
 using MyLibrary;
 using CommonLibrary.IO;
+using MinskTrans.Context.Base;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 

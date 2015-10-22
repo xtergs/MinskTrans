@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
 
-namespace MinskTrans.DesctopClient
+namespace MinskTrans.Context.Base
 {
 	[Flags]
 	public enum LoadType
@@ -17,7 +16,7 @@ namespace MinskTrans.DesctopClient
 
 	public interface IContext
 	{
-		IList<Stop> ActualStops { get; }
+		IEnumerable<Stop> ActualStops { get; }
 		IList<Rout> FavouriteRouts { get; }
 		IList<Stop> FavouriteStops { get; }
 		IList<GroupStop> Groups { get; }

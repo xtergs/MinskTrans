@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommonLibrary;
 using MinskTrans.Context;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;

@@ -6,19 +6,18 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
-
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
 using Autofac;
-using MinskTrans.Context;
-using MinskTrans.DesctopClient;
+using MinskTrans.Context.Base;
+using MinskTrans.Context.Desktop;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
-using MinskTrans.Net.Cloud.Desktop;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using MinskTrans.Utilites.Desktop;
+
 
 
 namespace PushNotificationServer
@@ -88,7 +87,7 @@ namespace PushNotificationServer
 
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
-			builder.RegisterType<Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
@@ -107,7 +106,27 @@ namespace PushNotificationServer
 			fileNameLastNews = "lastNewsDebug.txt";
 		}
 
-		public bool NewsAutoUpdate
+	    private class OneDriveController :ICloudStorageController
+	    {
+	        #region Implementation of ICloudStorageController
+
+	        public void Inicialize()
+	        {
+	           // throw new NotImplementedException();
+	        }
+
+	        public Task UploadFileAsync(TypeFolder pathToFile, string newNameFile)
+	        {
+	            //throw new NotImplementedException();
+	            return Task.Delay(0);
+	        }
+
+	        public event EventHandler<EventArgs> NeedAttention;
+
+	        #endregion
+	    }
+
+	    public bool NewsAutoUpdate
 		{
 			get { return Settings.Default.NewsAutoUpdate; }
 			set
@@ -142,6 +161,8 @@ namespace PushNotificationServer
 			}
 			else
 			{
+			    if (timerNewsAutoUpdate == null)
+			        return;
 				timerNewsAutoUpdate.Dispose();
 				timerNewsAutoUpdate = null;
 			}
@@ -201,15 +222,19 @@ namespace PushNotificationServer
 						throw;
 					}
 					//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
-				}), Task.Run( async ()=>
+				}), Task.Run( new Action(async ()=>
 				{
 					if (await updateManager.DownloadUpdate())
 					{
 						var timeTable = await updateManager.GetTimeTable();
-						if (await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
-							context.LastUpdateDataDateTime = DateTime.UtcNow;
-						}
-				}));
+					    if (await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
+					    {
+					        await context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+					        await context.Save(true);
+					        context.LastUpdateDataDateTime = DateTime.UtcNow;
+					    }
+					}
+				})));
 
 			}
 			catch (TaskCanceledException e)

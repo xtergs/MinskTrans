@@ -33,20 +33,36 @@ namespace MinskTrans.Utilites.Base.Net
 		{
 			try
 			{
-				var httpClient = new HttpClient();
-				// Increase the max buffer size for the response so we don't get an exception with so many web sites
+			    using (var httpClient = new HttpClient())
+			    {
+			        // Increase the max buffer size for the response so we don't get an exception with so many web sites
 
-				httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
-				httpClient.MaxResponseContentBufferSize = 256000000;
-				httpClient.DefaultRequestHeaders.Add("user-agent",
-					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+			        httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
+			        httpClient.MaxResponseContentBufferSize = 256000000;
+			        httpClient.DefaultRequestHeaders.Add("user-agent",
+			            "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
 
-				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
-				response.EnsureSuccessStatusCode();
+			        HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
+			        response.EnsureSuccessStatusCode();
 
-				return await response.Content.ReadAsStringAsync();
+			        return await response.Content.ReadAsStringAsync();
+			    }
 			}
-			catch (Exception e)
+            catch (TimeoutException)
+            {
+#if BETA
+				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
+#endif
+                throw;
+            }
+            catch (HttpRequestException)
+            {
+#if BETA
+				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
+#endif
+                throw;
+            }
+            catch (Exception e)
 			{
 #if BETA
 				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
@@ -57,32 +73,43 @@ namespace MinskTrans.Utilites.Base.Net
 
 		public virtual async Task Download(string uri, string file, TypeFolder folder)
 		{
-			try
-			{
-				var httpClient = new HttpClient();
-				// Increase the max buffer size for the response so we don't get an exception with so many web sites
+		    try
+		    {
+		        using (var httpClient = new HttpClient())
+		        {
+		            // Increase the max buffer size for the response so we don't get an exception with so many web sites
 
-				httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
-				httpClient.MaxResponseContentBufferSize = 256000000;
-				httpClient.DefaultRequestHeaders.Add("user-agent",
-					"Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
+		            httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
+		            httpClient.MaxResponseContentBufferSize = 256000000;
+		            httpClient.DefaultRequestHeaders.Add("user-agent",
+		                "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
 
-				HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
-				response.EnsureSuccessStatusCode();
-
-				await FileHelper.WriteTextAsync(folder, file, await response.Content.ReadAsStringAsync());
-			}
-			catch (HttpRequestException)
-			{
-				throw;
-			}
-			catch (Exception e)
-			{
+		            HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
+		            response.EnsureSuccessStatusCode();
+		            await FileHelper.WriteTextAsync(folder, file, await response.Content.ReadAsStringAsync());
+		        }
+		    }
+		    catch (TimeoutException)
+		    {
 #if BETA
 				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
 #endif
-				throw new TaskCanceledException(e.Message, e);
-			}
+                throw;
+		    }
+		    catch (HttpRequestException)
+		    {
+#if BETA
+				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
+#endif
+                throw;
+		    }
+		    catch (Exception e)
+		    {
+#if BETA
+				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
+#endif
+		        throw new TaskCanceledException(e.Message, e);
+		    }
 		}
 
 	}

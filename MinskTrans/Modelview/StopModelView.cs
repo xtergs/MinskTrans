@@ -1,13 +1,13 @@
-﻿using MinskTrans.DesctopClient.Model;
-using MyLibrary;
+﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using MapControl;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
+using System.Windows;
 using MinskTrans.AutoRouting.AutoRouting;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.FuzzySearch;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Properties;
 
 #else
+using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
 using Windows.Devices.Geolocation;
 

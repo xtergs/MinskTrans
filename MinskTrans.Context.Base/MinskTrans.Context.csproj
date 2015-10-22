@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,7 +52,8 @@
     <Compile Include="Base\BaseModel\StopBase.cs" />
     <Compile Include="Base\BaseModel\Time.cs" />
     <Compile Include="Base\BaseModel\Transport.cs" />
-    <Compile Include="Base\IContext1.cs" />
+    <Compile Include="Base\IContext.cs" />
+    <Compile Include="Base\IScheduleRepository.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="ContextFileSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

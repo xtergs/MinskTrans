@@ -6,8 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
-using MinskTrans.DesctopClient;
-
+using MinskTrans.Context.Base;
 using PushNotificationServer.Properties;
 
 namespace PushNotificationServer

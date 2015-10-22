@@ -970,8 +970,8 @@
                             </ListView>
                             <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                                 <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                                    <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-                                    <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                    <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                    <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
                                 </Controls:WrapPanel>
                             </Border>
                         </Grid>
@@ -1163,8 +1163,8 @@
                                 </ListView>
                                 <Border Grid.Row="3" Background="#FF5D5959" Margin="-10,0" VerticalAlignment="Bottom">
                                     <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" >
-                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
+                                        <AppBarToggleButton IsChecked="{Binding IsRoutFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding AddRemoveFavouriteRout}" CommandParameter="{Binding RouteNumSelectedValue}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                                        <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowRouteMap}" CommandParameter="{Binding RouteNumSelectedValue.Rout}" IsCompact="True"/>
                                     </Controls:WrapPanel>
                                 </Border>
                             </Grid>
@@ -1208,12 +1208,12 @@
                                             <StackPanel>
                                                 <TextBlock FontSize="18" Text="Название группы"/>
                                                 <local:MyTextBox Name="NameTextBox"/>
-                                                <Button Content="Добавить" Command="{Binding Context.CreateGroup}" CommandParameter="{Binding ElementName=NameTextBox, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Button>
+                                                <Button Content="Добавить" Command="{Binding CreateGroup}" CommandParameter="{Binding ElementName=NameTextBox, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Button>
                                             </StackPanel>
                                         </Flyout>
                                     </AppBarButton.Flyout>
                                 </AppBarButton>
-                                <AppBarButton x:Name="appBarButton" Command="{Binding Context.DeleteGroups}" CommandParameter="{Binding SelectedGroupStop, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Icon="Delete" Label=""  IsCompact="True" Visibility="Collapsed"/>
+                                <AppBarButton x:Name="appBarButton" Command="{Binding DeleteGroups}" CommandParameter="{Binding SelectedGroupStop, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Icon="Delete" Label=""  IsCompact="True" Visibility="Collapsed"/>
                             </Controls:WrapPanel>
                         </Border>
                     </Grid>

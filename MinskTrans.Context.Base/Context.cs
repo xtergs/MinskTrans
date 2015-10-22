@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
-using MinskTrans.DesctopClient;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using Newtonsoft.Json;
@@ -144,6 +144,7 @@ namespace MinskTrans.Context
 				newStops = null;
 				newRoutes = null;
 				newSchedule = null;
+                await Save(true);
 			}
 			catch (Exception e)
 			{
@@ -153,7 +154,8 @@ namespace MinskTrans.Context
 #endif
 				throw;
 			}
-			OnApplyUpdateEnded();
+		    AllPropertiesChanged();
+            OnApplyUpdateEnded();
 		}
 
 #pragma warning disable 1998
@@ -915,7 +917,7 @@ namespace MinskTrans.Context
 		public IList<Rout> Routs { get; protected set; }
 		public IList<Schedule> Times { get; protected set; }
 
-		public IList<Stop> ActualStops
+		public IEnumerable<Stop> ActualStops
 		{
 			get { return Stops; }
 		}

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context.Base;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 

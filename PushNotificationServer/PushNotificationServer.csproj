@@ -71,6 +71,14 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MinskTrans.Library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MinskTrans.Utilites.Desktop\bin\Debug\MinskTrans.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="MinskTrans.Utilites.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MinskTrans.Utilites.Desktop\bin\Debug\MinskTrans.Utilites.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -162,41 +170,22 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Content Include="Service1.xamlx">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
       <Name>MinskTrans.Context</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Net.Cloud.Desktop\MinskTrans.Net.Cloud.Desktop.csproj">
-      <Project>{0614470a-407a-44e0-a821-ff692d63113f}</Project>
-      <Name>MinskTrans.Net.Cloud.Desktop</Name>
+    <ProjectReference Include="..\MinskTrans.Context.Desktop\MinskTrans.Context.Desktop.csproj">
+      <Project>{C4FBD2FD-EA17-4F5C-B240-FDC9E8826DC0}</Project>
+      <Name>MinskTrans.Context.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Net\MinskTrans.Net.csproj">
-      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
-      <Name>MinskTrans.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Utilites.Desktop\MinskTrans.Utilites.Desktop.csproj">
-      <Project>{02880AEB-7ECB-4F06-8281-A66DAF84E2F8}</Project>
-      <Name>MinskTrans.Utilites.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
-      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
-      <Name>MinskTrans.Utilites.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
-      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
-      <Name>MinskTrans.Utilites</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

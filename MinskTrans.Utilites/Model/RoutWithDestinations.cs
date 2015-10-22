@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
 namespace MinskTrans.DesctopClient.Model

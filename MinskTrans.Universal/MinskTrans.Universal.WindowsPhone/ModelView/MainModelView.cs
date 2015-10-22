@@ -5,6 +5,7 @@ using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
@@ -58,9 +59,10 @@ namespace MinskTrans.Universal.ModelView
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
-			builder.RegisterType<ITimeTableParser>().As<ShedulerParser>();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			builder.RegisterType<NewsManager>().As<NewsManagerBase>();
+            
 			//builder.RegisterType<Context>().As<IContext>();
 
 			var container = builder.Build();
@@ -69,20 +71,10 @@ namespace MinskTrans.Universal.ModelView
 			newsManager = container.Resolve<NewsManagerBase>();
 			updateManagerBase = container.Resolve<UpdateManagerBase>();
 
-			//updateManager = container.Resolve<UpdateManagerBase>();
-			//context = newContext;
 			settingsModelView = new SettingsModelView();
-			////routesModelview = new RoutsModelView(context);
-			//stopMovelView = new StopModelView(context, settingsModelView, true);
 			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
 			favouriteModelView = new FavouriteModelView(context, settingsModelView);
 			findModelView = new FindModelView(context, settingsModelView);
-			//newsManager = new NewsManager();
-			////Context.VariantLoad = SettingsModelView.VariantConnect;
-			//if (IsInDesignMode)
-			//{
-			//	StopMovelView.FilteredSelectedStop = Context.ActualStops.First(x => x.SearchName.Contains("шепичи"));
-			//}
 		}
 
 		public NewsManagerBase NewsManager

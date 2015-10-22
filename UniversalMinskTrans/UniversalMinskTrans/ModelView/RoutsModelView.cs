@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context.Base;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;

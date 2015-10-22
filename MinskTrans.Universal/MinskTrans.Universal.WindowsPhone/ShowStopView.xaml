@@ -142,8 +142,8 @@
                     </AppBarButton.Flyout>
                 </AppBarButton>
                 <AppBarButton HorizontalAlignment="Center" Icon="Sync" Command="{Binding RefreshTimeSchedule}" IsCompact="True" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"/>
-                <AppBarToggleButton IsChecked="{Binding IsStopFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Context.AddRemoveFavouriteStop}" CommandParameter="{Binding FilteredSelectedStop}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
-                <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding Context.ShowStopMap}" CommandParameter="{Binding FilteredSelectedStop}" IsCompact="True"/>
+                <AppBarToggleButton IsChecked="{Binding IsStopFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding AddRemoveFavouriteStop}" CommandParameter="{Binding FilteredSelectedStop}" HorizontalAlignment="Center" Icon="Favorite" IsCompact="True"/>
+                <AppBarButton HorizontalAlignment="Center" Icon="Map" Label="" Command="{Binding ShowStopMap}" CommandParameter="{Binding FilteredSelectedStop}" IsCompact="True"/>
             </controls:WrapPanel>
         </Border>
     </Grid>

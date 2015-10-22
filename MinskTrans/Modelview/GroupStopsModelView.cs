@@ -1,5 +1,6 @@
 ﻿
 
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
 namespace MinskTrans.DesctopClient.Modelview

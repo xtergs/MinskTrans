@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Windows.UI.Xaml;
 #if WINDOWS_PHONE_APP
+using Windows.UI.Xaml;
 using Windows.Devices.Geolocation;
 using Windows.UI.Core;
 #endif
 using GalaSoft.MvvmLight.Command;
 using MapControl;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
 

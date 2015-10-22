@@ -1,5 +1,5 @@
-﻿using MinskTrans.Context.Base.BaseModel;
-using MinskTrans.Universal.Annotations;
+﻿using MinskTrans.Context.Base;
+using MinskTrans.Context.Base.BaseModel;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -124,7 +124,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public RelayCommand<Stop> AddFavouriteSopCommand
+		public RelayCommand<Stop> AddFavouriteStopCommand
 		{
 			get
 			{
@@ -147,7 +147,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public RelayCommand<Stop> RemoveFavouriteSopCommand
+		public RelayCommand<Stop> RemoveFavouriteStopCommand
 		{
 			get
 			{

@@ -8,6 +8,7 @@ using Windows.UI.Notifications;
 using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
+using MinskTrans.Context.Base;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
@@ -35,6 +36,7 @@ namespace MinskTrans.BackgroundUpdateTask
 		{
             Logger.Log("Background task started");
             Debug.WriteLine("Background task started");
+
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>();
@@ -52,8 +54,6 @@ namespace MinskTrans.BackgroundUpdateTask
 
 			var context = container.Resolve<IContext>();
 			InternetHelperBase helper = container.Resolve<InternetHelperBase>();
-			UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
-			NewsManagerBase manager = container.Resolve<NewsManagerBase>();
 			//UpdateManagerBase updateManager = new UpdateManagerBase(fileHelper, internetHelper, new ShedulerParser());
 
 			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
@@ -63,13 +63,24 @@ namespace MinskTrans.BackgroundUpdateTask
 			MaxDaysAgo = 30;
 			MaxMinsAgo = 20;
 
-			await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
-			string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
+		    try
+		    {
+		        await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+		    }
+		    catch (Exception e)
+		    {
+                _deferral.Complete();
+		        return;
+		    }
+		    string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
+
 			var timeShtaps = resultStr.Split('\n');
 			DateTime time = new DateTime();
 			if (timeShtaps.Length > 2)
 				time = DateTime.Parse(timeShtaps[2]);
 			//IContext context = container.Resolve<IContext>();
+
+			UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
 			if (context.LastUpdateDataDateTime < time)
 			{
 				try
@@ -89,6 +100,7 @@ namespace MinskTrans.BackgroundUpdateTask
 					Logger.Log("BackgroundUpdate, updateDb Exception");
 				}
 			}
+		    updateManager = null;
 
 			if (timeShtaps.Length < 1)
 			{
@@ -96,71 +108,95 @@ namespace MinskTrans.BackgroundUpdateTask
 				return;
 			}
 
-			try
-			{
-				time = DateTime.Parse(timeShtaps[0]);
-				//NewsManager manager = new NewsManager();
-				await manager.Load();
-				if (time > manager.LastUpdateMainNewsDateTimeUtc)
-				{
-					await helper.Download(urlUpdateNews, manager.FileNameMonths, TypeFolder.Local);
-					DateTime oldTime = manager.LastUpdateMainNewsDateTimeUtc;
-					manager.LastUpdateMainNewsDateTimeUtc = time;
-					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-					DateTime nowTimeUtc = DateTime.UtcNow;
-				    var newNews =
-				        manager.NewNews.Where(
-				            key => key.PostedUtc > oldTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo)).ToList();
-                    if (newNews.Count>0)
-                        foreach (var source in newNews)
-                        {
-                            ShowNotification(source.Message);
-                        }
-				}
-				time = DateTime.Parse(timeShtaps[1]);
-				if (time > manager.LastUpdateHotNewsDateTimeUtc)
-				{
-					await helper.Download(urlUpdateHotNews, manager.FileNameDays, TypeFolder.Local);
-					DateTime oldTime = manager.LastUpdateHotNewsDateTimeUtc;
-					manager.LastUpdateHotNewsDateTimeUtc = time;
-					//await FileIO.WriteTextAsync(await ApplicationData.Current.LocalFolder.CreateFileAsync(manager.fileNameHotNews, CreationCollisionOption.ReplaceExisting),
-					//	resultStr);
-					DateTime nowDateTimeUtc = DateTime.UtcNow;
-					settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-                    //int todayDay = nowDateTime.Day;
-                    //int prevday = nowDateTime.Subtract(new TimeSpan(1, 0, 0, 0)).Day;
-				    var newHotNewslist = manager.AllHotNews.Where(key =>
-				    {
-				        if (key.RepairedLineUtc != default(DateTime))
-				        {
-				            double totalminutes = (nowDateTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
-				            if (totalminutes <= MaxMinsAgo)
-				                return true;
-				            return false;
-				        }
-				        return (key.CollectedUtc > oldTime) &&
-				               ((nowDateTimeUtc - key.CollectedUtc).TotalDays < 1);
-				    }).ToList();
-                    if (newHotNewslist.Count>0)
-                        foreach (var source in newHotNewslist)
-                        {
-                            ShowNotification(source.Message);
-                        }
-				}
-			}
-			catch (Exception e)
-			{
-				string message =
-					new StringBuilder("Background task exception").AppendLine(e.ToString())
-						.AppendLine(e.Message)
-						.AppendLine(e.StackTrace)
-						.ToString();
-				Debug.WriteLine(message);
+			NewsManagerBase manager = container.Resolve<NewsManagerBase>();
+		    try
+		    {
+		        time = DateTime.Parse(timeShtaps[0]);
+		        //NewsManager manager = new NewsManager();
+		        await manager.Load();
+		        DateTime oldMonthTime = manager.LastUpdateMainNewsDateTimeUtc;
+		        DateTime oldDaylyTime = manager.LastUpdateHotNewsDateTimeUtc;
 
-				throw;
-			}
+		        if (time > manager.LastUpdateMainNewsDateTimeUtc)
+		        {
+		            try
+		            {
+		                await helper.Download(urlUpdateNews, manager.FileNameMonths, TypeFolder.Local);
+		                manager.LastUpdateMainNewsDateTimeUtc = time;
+		                settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
+		            }
+		            catch (Exception e)
+		            {
+		                string message =
+		                    new StringBuilder("News manager download months exception").AppendLine(e.ToString())
+		                        .AppendLine(e.Message)
+		                        .AppendLine(e.StackTrace)
+		                        .ToString();
+		                Debug.WriteLine(message);
+		            }
+		        }
 
-			Debug.WriteLine("Background task ended");
+
+		        time = DateTime.Parse(timeShtaps[1]);
+		        if (time > manager.LastUpdateHotNewsDateTimeUtc)
+		        {
+		            try
+		            {
+		                await helper.Download(urlUpdateHotNews, manager.FileNameDays, TypeFolder.Local);
+		                manager.LastUpdateHotNewsDateTimeUtc = time;
+		                settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;  
+		            }
+		            catch (Exception e)
+		            {
+		                string message =
+		                    new StringBuilder("News manager download days exception").AppendLine(e.ToString())
+		                        .AppendLine(e.Message)
+		                        .AppendLine(e.StackTrace)
+		                        .ToString();
+		                Debug.WriteLine(message);
+		            }
+		        }
+
+		        DateTime nowTimeUtc = DateTime.UtcNow;
+		        var listOfDaylyNews = manager.NewNews.Where(
+		            key => key.PostedUtc > oldMonthTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo));
+
+		        var listOfMonthNews = manager.AllHotNews.Where(key =>
+		        {
+		            if (key.RepairedLineUtc != default(DateTime))
+		            {
+		                double totalminutes = (nowTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
+		                if (totalminutes <= MaxMinsAgo)
+		                    return true;
+		                return false;
+		            }
+		            return (key.CollectedUtc > oldDaylyTime) &&
+		                   ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
+		        });
+
+
+		        foreach (var source in listOfDaylyNews.Concat(listOfMonthNews))
+		        {
+		            ShowNotification(source.Message);
+		        }
+
+
+
+		    }
+		    catch (Exception e)
+		    {
+		        string message =
+		            new StringBuilder("Background task exception").AppendLine(e.ToString())
+		                .AppendLine(e.Message)
+		                .AppendLine(e.StackTrace)
+		                .ToString();
+		        Debug.WriteLine(message);
+
+		        throw;
+		    }
+            manager = null;
+
+            Debug.WriteLine("Background task ended");
             Logger.Log("Background task ended");
             _deferral.Complete();
 			

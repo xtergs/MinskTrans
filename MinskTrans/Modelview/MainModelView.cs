@@ -1,6 +1,7 @@
 ﻿using MapControl;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
@@ -121,6 +122,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (updateDataCommand == null)
 					updateDataCommand = new RelayCommand(async () =>
 					{
+					    if (updateing)
+					        return;
 						updateing = true;
 						if (await UpdateManager.DownloadUpdate())
 						{
@@ -129,7 +132,7 @@ namespace MinskTrans.DesctopClient.Modelview
 								await Context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
 						}
 						updateing = false;
-					}, () => { return !updateing; });
+					}, () => !updateing);
 
 				return updateDataCommand;
 			}

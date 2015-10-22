@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
@@ -22,7 +23,7 @@ namespace MinskTrans.Universal.ModelView
 		private bool curTime;
 		private string routNum;
 		//private int routeNamesIndex;
-		private RoutWithDestinations routeNumSelectedValue;
+		private Rout routeNumSelectedValue;
 		private IEnumerable<string> routeNums;
 
 		private ObservableCollection<Rout> routeObservableCollection;
@@ -106,7 +107,27 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public RoutWithDestinations RouteNumSelectedValue
+	    public IEnumerable<IGrouping<TransportType,RoutWithDestinations>> RouteNumsGroups
+	    {
+            get
+            {
+                if (Context.Routs != null)
+                {
+                    IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
+                    if (RoutNum != null)
+                        temp = temp.Where(x => x.RouteNum.Contains(routNum));
+                    List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
+                    foreach (var item in temp)
+                    {
+                        returnEnumerable.Add(new RoutWithDestinations(item, Context));
+                    }
+                    return returnEnumerable.GroupBy(x => x.Transport);
+                }
+                return null;
+            }
+        }
+
+		public Rout RouteNumSelectedValue
 		{
 			get { return routeNumSelectedValue; }
 			set
@@ -133,8 +154,10 @@ namespace MinskTrans.Universal.ModelView
 				if (Context.Routs != null)
 					routeObservableCollection =
 						new ObservableCollection<Rout>(Context.Routs.Where(x => RouteNumSelectedValue != null 
-							&& x.RouteNum == RouteNumSelectedValue.Rout.RouteNum 
-							&& x.Transport == RouteNumSelectedValue.Rout.Transport));
+							&& x.RouteNum == RouteNumSelectedValue.RouteNum 
+							&& x.Transport == RouteNumSelectedValue.Transport));
+			    if (routeObservableCollection != null && routeObservableCollection.Count == 1)
+			        RouteSelectedValue = routeObservableCollection[0];
 				return routeObservableCollection;
 			}
 		}

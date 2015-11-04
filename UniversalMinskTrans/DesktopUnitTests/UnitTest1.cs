@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using MinskTrans.Context.Desktop;
-using MinskTrans.DesctopClient;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Desktop;

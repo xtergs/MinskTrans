@@ -128,14 +128,14 @@ namespace MinskTrans.Context
 		}
 
 #pragma warning disable 1998
-		public async Task ApplyUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
+		public async Task ApplyUpdate(IEnumerable<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 #pragma warning restore 1998
 		{
 			OnApplyUpdateStarted();
 			try
 			{
 				Stops = newStops;
-				Routs = newRoutes;
+			    Routs = newRoutes.ToList();
 				Times = newSchedule;
 				//ActualStops = Stops;
 
@@ -581,7 +581,7 @@ namespace MinskTrans.Context
 #if DEBUG
 			var xx = newSchedule.Except(Times).ToList();
 #endif
-			if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+			if (newStops.Count != Stops.Count() || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
 				return true;
 
 			foreach (var newRoute in newRoutes)
@@ -844,7 +844,12 @@ namespace MinskTrans.Context
 			return FavouriteRouts.Contains(rout);
 		}
 
-		protected virtual void OnLoadStarted()
+	    public Stop GetStop(int id)
+	    {
+	        return Stops.FirstOrDefault(x => x.ID == id);
+	    }
+
+	    protected virtual void OnLoadStarted()
 		{
 			var handler = LoadStarted;
 			if (handler != null) handler(this, EventArgs.Empty);
@@ -948,7 +953,7 @@ namespace MinskTrans.Context
 			}
 		}
 
-		public IList<Stop> Stops { get; protected set; }
+		public IEnumerable<Stop> Stops { get; protected set; }
 
 		public ContextFileSettings Settings
 		{
@@ -971,6 +976,32 @@ namespace MinskTrans.Context
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+
+
+	    public IEnumerable<KeyValuePair<Rout, TimeSpan>> GetStopTimeLine(Stop stp, int day, int startingTime,TransportType selectedTransportType = TransportType.All, int endTime = int.MaxValue)
+	    {
+            IEnumerable<KeyValuePair<Rout, TimeSpan>> stopTimeLine = new List<KeyValuePair<Rout, TimeSpan>>();
+            
+
+            foreach (Rout rout in stp.Routs.Where(x=> selectedTransportType.HasFlag(x.Transport)))
+            {
+                Schedule sched = rout.Time;
+                IEnumerable<KeyValuePair<Rout, TimeSpan>> temp =
+                    sched.GetListTimes(rout.Stops.IndexOf(stp), day, startingTime, endTime)
+                        .Select(x => new KeyValuePair<Rout, TimeSpan>(x.Key, new TimeSpan(0, 0, x.Value, 0, 0)));
+
+                stopTimeLine = stopTimeLine.Concat(temp);
+
+
+            }
+            stopTimeLine = stopTimeLine.OrderBy(x => x.Value);
+	        return stopTimeLine;
+	    }
+
+	    public IQueryable<Stop> GetDirection(int stopID)
+	    {
+	        throw new NotImplementedException();
+	    }
 	}
 
 }

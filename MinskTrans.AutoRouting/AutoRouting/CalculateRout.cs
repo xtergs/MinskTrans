@@ -19,7 +19,7 @@ namespace MinskTrans.AutoRouting.AutoRouting
 		private List<NodeGraph> meshGraphs;
 		public void CreateGraph()
 		{
-			meshGraphs = new List<NodeGraph>(context.ActualStops.Count);
+			meshGraphs = new List<NodeGraph>(context.ActualStops.Count());
 			foreach (var actualStop in context.ActualStops)
 			{
 				meshGraphs.Add(new NodeGraph(){Stop = actualStop});

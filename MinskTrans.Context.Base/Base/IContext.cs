@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base.BaseModel;
 
@@ -22,7 +23,7 @@ namespace MinskTrans.Context.Base
 		IList<GroupStop> Groups { get; }
 		DateTime LastUpdateDataDateTime { get; set; }
 		IList<Rout> Routs { get; }
-		IList<Stop> Stops { get; }
+		IEnumerable<Stop> Stops { get; }
 		IList<Schedule> Times { get; }
 
 		event EventHandler<EventArgs> ApplyUpdateEnded;
@@ -36,7 +37,7 @@ namespace MinskTrans.Context.Base
 
 		bool IsFavouriteStop(Stop stop);
 		void AllPropertiesChanged();
-		Task ApplyUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule);
+		Task ApplyUpdate(IEnumerable<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule);
 		void Create(bool AutoUpdate = true);
 		uint GetCounter(Stop stop);
 		IEnumerable<string> GetDestinations(Rout rout);
@@ -53,6 +54,12 @@ namespace MinskTrans.Context.Base
 		Task AddGroup(GroupStop group);
 		Task RemoveGroup(GroupStop group);
 		bool IsFavouriteRout(Rout rout);
+	    Stop GetStop(int id);
+
+	    IEnumerable<KeyValuePair<Rout, TimeSpan>> GetStopTimeLine(Stop stp, int day, int startingTime,
+	        TransportType selectedTransportType = TransportType.All, int endTime = int.MaxValue);
+
+        IQueryable<Stop> GetDirection(int stopID);
 
 	}
 

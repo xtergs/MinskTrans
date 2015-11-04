@@ -141,10 +141,11 @@ namespace MinskTrans.Context.Desktop
 		{
 			get { return routsEF.ToList(); }
 		}
+        
+		public IEnumerable<Stop> Stops{get{return stopsEF;
 
-		public IList<Stop> Stops{get{return stopsEF.ToList<Stop>();
-			
-		}}
+        }
+        }
 
 		public IList<Schedule> Times { get { return timesEF.ToList();
 			
@@ -221,7 +222,7 @@ namespace MinskTrans.Context.Desktop
 #endif
 		}
 
-		public async Task ApplyUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
+		public async Task ApplyUpdate(IEnumerable<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 		{
 			//Connect(newRoutes, newStops, newSchedule);
 			//routsEF.RemoveRange(Routs);
@@ -232,7 +233,7 @@ namespace MinskTrans.Context.Desktop
 			stopsEF.AddRange(newStops);
 			timesEF.AddRange(newSchedule);
 
-			SaveChanges();
+			await SaveChangesAsync();
 		}
 
 		StopExtentionData GetExtDataFromStop(Stop stop)
@@ -288,7 +289,7 @@ namespace MinskTrans.Context.Desktop
 #if DEBUG
 			var xx = newSchedule.Except(Times).ToList();
 #endif
-			if (newStops.Count != Stops.Count || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+			if (newStops.Count != Stops.Count() || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
 				return true;
 
 			foreach (var newRoute in newRoutes)
@@ -388,7 +389,41 @@ namespace MinskTrans.Context.Desktop
 			return routExtentionData.Any(x => x.Rout.RoutId == rout.RoutId);
 		}
 
-		public void Dispose()
+	    public Stop GetStop(int id)
+	    {
+	        return ActualStops.FirstOrDefault(x => x.ID == id);
+	    }
+
+	    public IEnumerable<KeyValuePair<Rout, TimeSpan>> GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
+	        int endTime = int.MaxValue)
+	    {
+            IEnumerable<KeyValuePair<Rout, TimeSpan>> stopTimeLine = new List<KeyValuePair<Rout, TimeSpan>>();
+
+
+            foreach (Rout rout in stp.Routs.Where(x => selectedTransportType.HasFlag(x.Transport)))
+            {
+                Schedule sched = rout.Time;
+                IEnumerable<KeyValuePair<Rout, TimeSpan>> temp =
+                    sched.GetListTimes(rout.Stops.IndexOf(stp), day, startingTime, endTime)
+                        .Select(x => new KeyValuePair<Rout, TimeSpan>(x.Key, new TimeSpan(0, 0, x.Value, 0, 0)));
+
+                stopTimeLine = stopTimeLine.Concat(temp);
+
+
+            }
+            stopTimeLine = stopTimeLine.OrderBy(x => x.Value);
+            return stopTimeLine;
+        }
+
+	    public IQueryable<Stop> GetDirection(int stopID)
+	    {
+            return stopsEF.Select(x=> new {x.ID, x.Routs}).First(s => s.ID == stopID).Routs.Select(
+	            r =>
+	                r.Stops.Last()).AsQueryable();
+	    } 
+
+        
+	    public void Dispose()
 		{
 			throw new NotImplementedException();
 		}

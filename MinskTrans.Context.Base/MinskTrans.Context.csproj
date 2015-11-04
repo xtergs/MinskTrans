@@ -28,18 +28,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>a:\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
-      <Project>{e60c2cb1-cc08-4f78-bd70-d8ada2501e2d}</Project>
-      <Name>MinskTrans.Utilites.Base</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\BaseModel\BaseModel.cs" />
     <Compile Include="Base\BaseModel\GroupStop.cs" />
@@ -54,18 +47,30 @@
     <Compile Include="Base\BaseModel\Transport.cs" />
     <Compile Include="Base\IContext.cs" />
     <Compile Include="Base\IScheduleRepository.cs" />
+    <Compile Include="BussnessLogic.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="ContextFileSettings.cs" />
+    <Compile Include="IBussnessLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MinskTrans.Utilites">
+      <HintPath>..\MinskTrans.Utilites\bin\Debug\MinskTrans.Utilites.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
+      <Project>{e60c2cb1-cc08-4f78-bd70-d8ada2501e2d}</Project>
+      <Name>MinskTrans.Utilites.Base</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

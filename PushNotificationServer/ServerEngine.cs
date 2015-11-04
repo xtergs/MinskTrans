@@ -19,7 +19,6 @@ using MinskTrans.Utilites.Base.Net;
 using MinskTrans.Utilites.Desktop;
 
 
-
 namespace PushNotificationServer
 {
 	public class ServerEngine:INotifyPropertyChanged
@@ -86,8 +85,8 @@ namespace PushNotificationServer
 			var builder = new ContainerBuilder();
 
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-			//builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
-			builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance();
+            //builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
+            builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", "default");
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
@@ -222,7 +221,7 @@ namespace PushNotificationServer
 						throw;
 					}
 					//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
-				}), Task.Run( new Action(async ()=>
+				}), Task.Run( (async ()=>
 				{
 					if (await updateManager.DownloadUpdate())
 					{

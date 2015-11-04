@@ -9,7 +9,6 @@ using HtmlAgilityPack;
 using MinskTrans.Net;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
-using MyLibrary;
 
 namespace MinskTrans.Utilites.Desktop
 {
@@ -116,7 +115,13 @@ namespace MinskTrans.Utilites.Desktop
 			AllHotNews = null;
 		}
 
-		public override async Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
+	    public override DateTime LastUpdateMainNewsDateTimeUtc { get { return LastNewsTime; } set { LastNewsTime = value; } }
+	    public override DateTime LastUpdateHotNewsDateTimeUtc { get { return LastHotNewstime; } set
+	    {
+	        LastHotNewstime = value;
+	    } }
+
+	    public override async Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
 		{
 			List<NewsEntry> returnDictionary = new List<NewsEntry>();
 			string text = await internetHelper.Download(uri);

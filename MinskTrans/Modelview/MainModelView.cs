@@ -2,7 +2,6 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
 using MinskTrans.Context.Base;
-using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;

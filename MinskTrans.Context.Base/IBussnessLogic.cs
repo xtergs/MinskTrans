@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace WindowsRuntimeComponent1
+namespace MinskTrans.Context
 {
-    public sealed class Class1
+    interface IBussnessLogic
     {
     }
 }

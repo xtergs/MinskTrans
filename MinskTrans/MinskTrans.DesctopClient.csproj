@@ -204,7 +204,7 @@
       <Name>MinskTrans.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\MinskTrans.Utilites.Desktop\MinskTrans.Utilites.Desktop.csproj">
-      <Project>{02880aeb-7ecb-4f06-8281-a66daf84e2f8}</Project>
+      <Project>{02880AEB-7ECB-4F06-8281-A66DAF84E2F8}</Project>
       <Name>MinskTrans.Utilites.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">

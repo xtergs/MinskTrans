@@ -1,12 +1,13 @@
-﻿using System;
+﻿
+//#endif
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using MinskTrans.Utilites.Base.IO;
-
-//#endif
 
 namespace MinskTrans.Utilites.Desktop
 {

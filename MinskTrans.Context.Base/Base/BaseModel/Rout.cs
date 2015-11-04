@@ -180,7 +180,7 @@ namespace MinskTrans.Context.Base.BaseModel
 		{
 			get
 			{
-				if (Stops != null) return Stops.Last();
+				if (Stops != null) return Stops.LastOrDefault();
 				return null;
 			}
 		}

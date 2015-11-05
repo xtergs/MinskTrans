@@ -5,16 +5,18 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{76BFE88D-0563-4897-B242-58CEEBA93431}</ProjectGuid>
+    <ProjectGuid>{7684D5C4-C88A-47A2-8525-5EC7B319018A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MinskTrans.Context</RootNamespace>
-    <AssemblyName>MinskTrans.Context</AssemblyName>
+    <RootNamespace>MyLibrary</RootNamespace>
+    <AssemblyName>MyLibrary</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile151</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,50 +36,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AutoRouting\CalculateRout.cs" />
-    <Compile Include="AutoRouting\Class1.cs" />
-    <Compile Include="AutoRouting\DistanceCalculator.cs" />
-    <Compile Include="AutoRouting\NodeGraph.cs" />
-    <Compile Include="AutoRouting\RoutNode.cs" />
-    <Compile Include="AutoRouting\SearchRout.cs" />
-    <Compile Include="Base\BaseModel\BaseModel.cs" />
-    <Compile Include="Base\BaseModel\GroupStop.cs" />
-    <Compile Include="Base\BaseModel\GroupStopId.cs" />
-    <Compile Include="Base\BaseModel\List2.cs" />
-    <Compile Include="Base\BaseModel\Rout.cs" />
-    <Compile Include="Base\BaseModel\RoutBase.cs" />
-    <Compile Include="Base\BaseModel\Schedule.cs" />
-    <Compile Include="Base\BaseModel\Stop.cs" />
-    <Compile Include="Base\BaseModel\StopBase.cs" />
-    <Compile Include="Base\BaseModel\Time.cs" />
-    <Compile Include="Base\BaseModel\Transport.cs" />
-    <Compile Include="Base\IContext.cs" />
-    <Compile Include="Base\IScheduleRepository.cs" />
-    <Compile Include="Base\TimeLineModel.cs" />
-    <Compile Include="BussnessLogic.cs" />
-    <Compile Include="Comparer\StopComparer.cs" />
-    <Compile Include="Context.cs" />
-    <Compile Include="ContextFileSettings.cs" />
-    <Compile Include="IBussnessLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MinskTrans.Utilites">
-      <HintPath>..\MinskTrans.Utilites\bin\Debug\MinskTrans.Utilites.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\UniversalMinskTrans\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Windows">
+      <HintPath>..\..\..\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
-      <Project>{e60c2cb1-cc08-4f78-bd70-d8ada2501e2d}</Project>
-      <Name>MinskTrans.Utilites.Base</Name>
+    <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
+      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
+      <Name>MinskTrans.Context</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

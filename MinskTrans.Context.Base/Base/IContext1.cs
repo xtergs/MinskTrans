@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
+using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
 
-namespace MinskTrans.Context.Base
+namespace MinskTrans.DesctopClient
 {
 	[Flags]
 	public enum LoadType
@@ -17,13 +17,13 @@ namespace MinskTrans.Context.Base
 
 	public interface IContext
 	{
-		IEnumerable<Stop> ActualStops { get; }
+		IList<Stop> ActualStops { get; }
 		IList<Rout> FavouriteRouts { get; }
 		IList<Stop> FavouriteStops { get; }
 		IList<GroupStop> Groups { get; }
 		DateTime LastUpdateDataDateTime { get; set; }
 		IList<Rout> Routs { get; }
-		IEnumerable<Stop> Stops { get; }
+		IList<Stop> Stops { get; }
 		IList<Schedule> Times { get; }
 
 		event EventHandler<EventArgs> ApplyUpdateEnded;
@@ -37,7 +37,7 @@ namespace MinskTrans.Context.Base
 
 		bool IsFavouriteStop(Stop stop);
 		void AllPropertiesChanged();
-		Task ApplyUpdate(IEnumerable<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule);
+		Task ApplyUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule);
 		void Create(bool AutoUpdate = true);
 		uint GetCounter(Stop stop);
 		IEnumerable<string> GetDestinations(Rout rout);
@@ -54,7 +54,7 @@ namespace MinskTrans.Context.Base
 		Task AddGroup(GroupStop group);
 		Task RemoveGroup(GroupStop group);
 		bool IsFavouriteRout(Rout rout);
-		Stop GetStop(int id);
+
 	}
 
 	public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);

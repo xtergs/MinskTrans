@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using MapControl;
-using MinskTrans.AutoRouting.AutoRouting;
+
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Modelview;

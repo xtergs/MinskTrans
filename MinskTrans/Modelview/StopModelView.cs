@@ -1,15 +1,16 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using MapControl;
 using System.Threading.Tasks;
 using System.Windows;
 using MinskTrans.AutoRouting.AutoRouting;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.FuzzySearch;
+using Location = MinskTrans.Context.Location;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
 using GalaSoft.MvvmLight.CommandWpf;
@@ -182,73 +183,14 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private static readonly Location defaultLocation = new Location(0, 0);
 		public bool fuzzySearch;
-		public override IEnumerable<Stop> FilteredStops
-		{
-			get
-			{
-			    IList<Stop> returnList = Context.ActualStops;
-			    if (returnList != null)
-			        returnList = returnList.Where(x => x.Routs.Any(d => selectedTransport.HasFlag(d.Transport))).ToList();
-                if (!string.IsNullOrWhiteSpace(StopNameFilter) && returnList != null)
-				{
-					var tempSt = StopNameFilter.ToLower();
-					IEnumerable<Stop> temp;
-					if (FuzzySearch)
-						temp = Levenshtein.Search(tempSt, returnList, 0.4);
-					else
-						temp = returnList.Where(
-							x => x.SearchName.Contains(tempSt)).OrderBy(x=> x.SearchName.StartsWith(tempSt));
-                    if (!Equals(LocationXX.Get(), defaultLocation))
-						return
-							SmartSort(temp);
-					//Enumerable.OrderBy<Stop, double>(temp, (Func<Stop, double>) this.Distance)
-					//	.ThenByDescending((Func<Stop, uint>) Context.GetCounter);
-					else
-						return temp.OrderByDescending(Context.GetCounter).ThenByDescending(x => x.SearchName.StartsWith(tempSt));
 
-				}
-				if (returnList != null)
-					return Equals(LocationXX.Get(), defaultLocation)
-						? returnList.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName)
-						//: Context.ActualStops.OrderBy(Distance).ThenByDescending(Context.GetCounter);
-						: SmartSort(returnList);
-				return null;
-			}
-		}
+	    public override IEnumerable<Stop> FilteredStops
+	    {
+	        get { return context.FilteredStops(StopNameFilter, selectedTransport, LocationXX.Get(), FuzzySearch); }
 
-
-
-		private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops )
-		{
-
-			var byDeistance = stops.OrderBy(Distance).ToList();
-			var result =  stops.OrderByDescending(x => Context.GetCounter(x))
-				.Select((x, i) => new {x, byCounter = i, byDistance = byDeistance.IndexOf(x)})
-				.OrderBy(x => x.byCounter + x.byDistance)
-				.Select(x => x.x)
-				.ToList();
-			return result;
-
-			//return stops.OrderByDescending(x=>
-			//{
-			//	double counter = Context.GetCounter(x);
-			//	if (counter == 0)
-			//		counter = 0;
-			//	else
-			//		counter = counter/ Context.ActualStops.Count;
-			//	double dist = Distance(x);
-			//	dist = 1/dist;
-			//	return dist + counter;
-			//});
-		}
-
-		EquirectangularDistance distance = new EquirectangularDistance();
-		private double Distance(Stop x)
-		{
-			return distance.CalculateDistance(LocationXX.Get().Latitude, LocationXX.Get().Longitude, x.Lat, x.Lng);
-            //return Math.Abs(Math.Sqrt(Math.Pow( - x.Lng, 2) + Math.Pow(LocationXX.Get().Latitude - x.Lat, 2)));
-		}
-	public ISettingsModelView SettingsModelView
+	    }
+        
+	    public ISettingsModelView SettingsModelView
 	{
 		get { return settingsModelView; }
 	}
@@ -432,58 +374,18 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
-		virtual public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
-		{
-			get
-			{
-				if (Context.Times != null && FilteredSelectedStop != null)
-				{
-					IEnumerable<Schedule> dd = Context.Times.Where(time => time != null && time.Rout != null && (time.Rout.Stops.Contains(FilteredSelectedStop) &&
-						time.Rout.Stops.Any(stop=> stop.SearchName.Contains(DestinationStop.Trim().ToLower()))));
-					IEnumerable<KeyValuePair<Rout, int>> ss = new List<KeyValuePair<Rout, int>>();
-					IEnumerable<KeyValuePair<Rout, int>> tt = new List<KeyValuePair<Rout, int>>();
-					//foreach (var schedule in dd)
-					//{
-					//	var temp =
-					//		schedule.GetListTimes(schedule.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay - 1, 24 * 60 + CurTime - settingsModelView.TimeInPast).Where(x =>
-					//		{
-					//			if (x.Key.Transport == Rout.TransportType.Bus)
-					//				return Bus;
-					//			if (x.Key.Transport == Rout.TransportType.Trol)
-					//				return Trol;
-					//			if (x.Key.Transport == Rout.TransportType.Tram)
-					//				return Tram;
-					//			return true;
-					//		});
+	    public virtual IEnumerable<TimeLineModel> TimeSchedule
+	    {
+	        get
+	        {
+	            return Context.GetStopTimeLine(FilteredSelectedStop, CurDay, CurTime - SettingsModelView.TimeInPast,
+	                selectedTransport);
+	        }
+	    }
 
-					//	tt = tt.Concat(temp);
-					//}
 
-					//tt.OrderBy(x => x.Value);
 
-					foreach (Schedule sched in dd)
-					{
-						IEnumerable<KeyValuePair<Rout, int>> temp =
-							sched.GetListTimes(sched.Rout.Stops.IndexOf(FilteredSelectedStop), CurDay, CurTime - settingsModelView.TimeInPast).Where(x =>
-							{
-							    return selectedTransport.HasFlag(x.Key.Transport);
-							});
-
-						ss = ss.Concat(temp);
-
-						
-					}
-					ss = ss.OrderBy(x => x.Value);
-					//ss.ToString();
-					return tt.Concat(ss);
-				}
-				return null;
-			}
-		}
-
-		
-
-		public RelayCommand RefreshTimeSchedule
+	    public RelayCommand RefreshTimeSchedule
 		{
 			get { return new RelayCommand(() => OnPropertyChanged("TimeSchedule")); }
 		}

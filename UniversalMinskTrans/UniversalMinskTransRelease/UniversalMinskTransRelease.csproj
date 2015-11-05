@@ -58,7 +58,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>a:\bin\x64\Release\</OutputPath>
+    <OutputPath>bin\x64\Release\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINDOWS_UAP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
@@ -245,10 +245,6 @@
     <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
       <Project>{A7577975-54ED-4521-997B-6FACD396DAD9}</Project>
       <Name>CommonLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj">
-      <Project>{33DB7D58-46C8-4756-B7AC-39994422188E}</Project>
-      <Name>MinskTrans.AutoRouting</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>

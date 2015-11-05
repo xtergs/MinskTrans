@@ -15,7 +15,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using MapControl;
-using MinskTrans.AutoRouting.AutoRouting;
+
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 #if (WINDOWS_PHONE_APP || WINDOWS_UAP)

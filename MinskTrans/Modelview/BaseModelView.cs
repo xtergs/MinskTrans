@@ -1,4 +1,5 @@
-﻿using MinskTrans.Context.Base;
+﻿using MinskTrans.Context;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -16,12 +17,11 @@ namespace MinskTrans.DesctopClient.Modelview
 	using GalaSoft.MvvmLight.Command;
 	using MinskTrans.DesctopClient.Model;
 	using System.Text;
-	using System.Linq;
 
 #endif
 	public class BaseModelView : INotifyPropertyChanged
 	{
-		protected IContext context;
+		protected BussnessLogic context;
 		//protected readonly ISettingsModelView settingsModelView;
 
 		//public BaseModelView()
@@ -220,7 +220,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		//	get { return settingsModelView;}
 		//}
 
-		public IContext Context
+		public BussnessLogic Context
 		{
 			get { return context; }
 		}

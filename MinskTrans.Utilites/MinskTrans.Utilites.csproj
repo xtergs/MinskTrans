@@ -35,10 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj">
-      <Project>{33DB7D58-46C8-4756-B7AC-39994422188E}</Project>
-      <Name>MinskTrans.AutoRouting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76bfe88d-0563-4897-b242-58ceeba93431}</Project>
       <Name>MinskTrans.Context</Name>

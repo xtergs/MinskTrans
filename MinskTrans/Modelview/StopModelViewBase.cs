@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 #if WINDOWS_PHONE_APP
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.Devices.Geolocation;
 using Windows.UI.Core;
@@ -72,7 +72,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool IsStopFavourite
 		{
-			get { return Context.IsFavouriteStop(FilteredSelectedStop); }
+			get { return Context.Context.IsFavouriteStop(FilteredSelectedStop); }
 			set { OnPropertyChanged();}
 		}
 
@@ -101,7 +101,7 @@ namespace MinskTrans.DesctopClient.Modelview
                 //if (Equals(value, filteredSelectedStop)) return;
                 //ShowStopMap.RaiseCanExecuteChanged();
                 filteredSelectedStop = value;
-				Context.IncrementCounter(filteredSelectedStop);
+				Context.Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 				OnPropertyChanged("IsStopFavourite");
@@ -113,30 +113,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public virtual IEnumerable<Stop> FilteredStops
 		{
-			get
-			{
-				if (StopNameFilter != null && Context.ActualStops != null)
-				{
-					var tempSt = StopNameFilter.ToLower();
-					var temp = Context.ActualStops.AsParallel().Where(
-							x => x.SearchName.Contains(tempSt));
-					if (lastLocation != null)
-						return temp.OrderByDescending(x=>Context.GetCounter(x)).ThenBy(Distance);
-					else
-						return temp.OrderByDescending(x => Context.GetCounter(x)).ThenBy(x => x.SearchName);
-				}
-				if (Context.ActualStops != null)
-					return lastLocation == null ? Context.ActualStops.OrderByDescending(x => Context.GetCounter(x)).ThenBy(x => x.SearchName) :
-												  Context.ActualStops.OrderByDescending(x => Context.GetCounter(x)).ThenBy(Distance);
-				return null;
-			}
+		    get { throw new NotImplementedException(); }
+		    set { throw new NotImplementedException(); }
 		}
-
-		private double Distance(Stop x)
-		{
-			return Math.Abs(Math.Sqrt(Math.Pow(lastLocation.Longitude - x.Lng, 2) + Math.Pow(lastLocation.Latitude - x.Lat, 2)));
-		}
-
+        
 		public GroupStop SelectedGroup
 		{
 			get { return selectedGroup; }

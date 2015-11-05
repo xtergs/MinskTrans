@@ -19,6 +19,11 @@ namespace MinskTrans.Context
 {
 	public class Location
 	{
+	    public Location(double lat, double longit)
+	    {
+	        Latitude = lat;
+	        Longitude = longit;
+	    }
 		public double Latitude { get; set; }
 		public double Longitude { get; set; }
 	}

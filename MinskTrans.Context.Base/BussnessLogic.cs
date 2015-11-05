@@ -1,11 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.FuzzySearch;
 using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
 using MinskTrans.AutoRouting.AutoRouting;
+using MinskTrans.Net;
+using MinskTrans.Net.Base;
+using MinskTrans.Utilites.Base.IO;
+using MinskTrans.Utilites.Base.Net;
+using MyLibrary;
 
 namespace MinskTrans.Context
 {
@@ -23,11 +31,28 @@ namespace MinskTrans.Context
 
 	public class BussnessLogic : IBussnessLogic
 	{
-		private IContext context;
+        private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
+        private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
+        private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
+      
 
-		public IContext Context { get { return context; } }
+        private IContext context;
+	    private UpdateManagerBase updateManager;
+	    private InternetHelperBase internetHelper;
+	    private FileHelperBase fileHelper;
+	    private NewsManagerBase newManager;
+	    private ISettingsModelView settings;
+
+        public IContext Context { get { return context; } }
 		
 		Queue<ErrorMessage> MessageToShow { get; set; }
+
+        public DateTime LastUpdateDbDateTimeUtc { get; set; }
+
+	    public async Task LoadDataBase(LoadType loadType = LoadType.LoadAll)
+	    {
+	        await Context.Load(loadType);
+	    }
 
 
 		public IEnumerable<Stop> FilteredStops(string StopNameFilter, TransportType selectedTransport = TransportType.All, Location location = null,bool FuzzySearch = false)
@@ -39,9 +64,11 @@ namespace MinskTrans.Context
 				if (!string.IsNullOrWhiteSpace(StopNameFilter) && returnList != null)
 				{
 					var tempSt = StopNameFilter.ToLower();
-					IEnumerable<Stop> temp;
-					if (FuzzySearch)
-						temp = Levenshtein.Search(tempSt, returnList.ToList(), 0.4);
+				    IEnumerable<Stop> temp = new List<Stop>();
+				    if (FuzzySearch)
+				        //TODO
+				        //temp = Levenshtein.Search(tempSt, (List<Stop>) returnList.ToList(), 0.4);
+				        ;
 					else
 						temp = returnList.Where(
 							x => x.SearchName.Contains(tempSt)).OrderBy(x => x.SearchName.StartsWith(tempSt));
@@ -67,9 +94,9 @@ namespace MinskTrans.Context
 
 		private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops, Location location)
 		{
-
-			var byDeistance = stops.OrderBy(x=> Distance(x, location)).ToList();
-			var result = stops.OrderByDescending(x => Context.GetCounter(x))
+		    IEnumerable<Stop> enumerable = stops as IList<Stop> ?? stops.ToList();
+		    var byDeistance = enumerable.OrderBy(x=> Distance(x, location)).ToList();
+			var result = enumerable.OrderByDescending(x => Context.GetCounter(x))
 				.Select((x, i) => new { x, byCounter = i, byDistance = byDeistance.IndexOf(x) })
 				.OrderBy(x => x.byCounter + x.byDistance)
 				.Select(x => x.x)
@@ -132,5 +159,154 @@ namespace MinskTrans.Context
 			else
 				context.AddFavouriteRout(route);
 		}
-    }
+
+
+
+	    private bool updatingNewsTable = false;
+
+	    public async Task<bool> UpdateNewsTableAsync()
+	    {
+	        if (updatingNewsTable)
+	            return false;
+	        DateTime utcNow = DateTime.UtcNow;
+	        string fileNews = "datesNews_002.dat";
+	        try
+	        {
+	            updatingNewsTable = true;
+	            try
+	            {
+	                await internetHelper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+	            }
+	            catch (Exception e)
+	            {
+
+	                return false;
+	            }
+	            string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
+
+	            var timeShtaps = resultStr.Split('\n');
+                utcNow = DateTime.Parse(timeShtaps[0]);
+	            //NewsManager manager = new NewsManager();
+	            await newManager.Load();
+	            DateTime oldMonthTime = newManager.LastUpdateMainNewsDateTimeUtc;
+	            DateTime oldDaylyTime = newManager.LastUpdateHotNewsDateTimeUtc;
+
+	            if (utcNow > newManager.LastUpdateMainNewsDateTimeUtc)
+	            {
+	                try
+	                {
+	                    await internetHelper.Download(urlUpdateNews, newManager.FileNameMonths, TypeFolder.Local);
+	                    newManager.LastUpdateMainNewsDateTimeUtc = utcNow;
+	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
+	                }
+	                catch (Exception e)
+	                {
+	                    string message =
+	                        new StringBuilder("News manager download months exception").AppendLine(e.ToString())
+	                            .AppendLine(e.Message)
+	                            .AppendLine(e.StackTrace)
+	                            .ToString();
+	                    Debug.WriteLine(message);
+	                }
+	            }
+
+
+                utcNow = DateTime.Parse(timeShtaps[1]);
+	            if (utcNow > newManager.LastUpdateHotNewsDateTimeUtc)
+	            {
+	                try
+	                {
+	                    await internetHelper.Download(urlUpdateHotNews, newManager.FileNameDays, TypeFolder.Local);
+                        newManager.LastUpdateHotNewsDateTimeUtc = utcNow;
+	                   //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
+	                }
+	                catch (Exception e)
+	                {
+	                    string message =
+	                        new StringBuilder("News manager download days exception").AppendLine(e.ToString())
+	                            .AppendLine(e.Message)
+	                            .AppendLine(e.StackTrace)
+	                            .ToString();
+	                    Debug.WriteLine(message);
+	                }
+	            }
+
+	            DateTime nowTimeUtc = DateTime.UtcNow;
+                //TODO
+	            //var listOfDaylyNews = newManager.NewNews.Where(
+	            //    key => key.PostedUtc > oldMonthTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo));
+
+                //TODO
+	            //var listOfMonthNews = newManager.AllHotNews.Where(key =>
+	            //{
+	            //    if (key.RepairedLineUtc != default(DateTime))
+	            //    {
+	            //        double totalminutes = (nowTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
+	            //        if (totalminutes <= MaxMinsAgo)
+	            //            return true;
+	            //        return false;
+	            //    }
+	            //    return (key.CollectedUtc > oldDaylyTime) &&
+	            //           ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
+	            //});
+	            return true;
+	        }
+	        finally
+	        {
+	            updatingNewsTable = false;
+	        }
+	    }
+
+
+	    private bool updatingTimeTable = false;
+
+	    public async Task<bool> UpdateTimeTableAsync(bool withLightCheck = false)
+	    {
+	        if (updatingTimeTable)
+	            return false;
+	        DateTime utcNow = DateTime.UtcNow;
+            string fileNews = "datesNews_001.dat";
+            try
+	        {
+	            updatingTimeTable = true;
+	            if (withLightCheck)
+	            {
+	                try
+	                {
+	                    await internetHelper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+	                }
+	                catch (Exception e)
+	                {
+
+	                    return false;
+	                }
+	                string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
+
+	                var timeShtaps = resultStr.Split('\n');
+	                
+	                if (timeShtaps.Length > 2)
+	                    utcNow = DateTime.Parse(timeShtaps[2]);
+	                if (utcNow <= LastUpdateDbDateTimeUtc)
+	                {
+	                    return false;
+	                }
+	            }
+	            if (!await updateManager.DownloadUpdate())
+	                return false;
+	            var timeTable = await updateManager.GetTimeTable();
+	            if (await Context.HaveUpdate(timeTable.Routs as IList<Rout>, timeTable.Stops as IList<Stop>, timeTable.Time as IList<Schedule>))
+	            {
+	                await Context.ApplyUpdate(timeTable.Routs as IEnumerable<Rout>, timeTable.Stops as IList<Stop>, timeTable.Time as IList<Schedule>);
+	                Context.AllPropertiesChanged();
+	                await Context.Save(true);
+	            }
+	            LastUpdateDbDateTimeUtc = utcNow;
+	            return true;
+	        }
+	        finally
+	        {
+	            updatingTimeTable = false;
+	        }
+	    }
+	}
 }

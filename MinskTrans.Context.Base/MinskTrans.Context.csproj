@@ -62,6 +62,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MinskTrans.Net">
+      <HintPath>..\MinskTrans.Utilites\bin\Debug\MinskTrans.Net.dll</HintPath>
+    </Reference>
     <Reference Include="MinskTrans.Utilites">
       <HintPath>..\MinskTrans.Utilites\bin\Debug\MinskTrans.Utilites.dll</HintPath>
     </Reference>

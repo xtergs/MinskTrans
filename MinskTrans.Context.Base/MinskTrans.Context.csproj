@@ -52,6 +52,7 @@
     <Compile Include="Base\BaseModel\Time.cs" />
     <Compile Include="Base\BaseModel\Transport.cs" />
     <Compile Include="Base\IContext.cs" />
+    <Compile Include="Base\IGeolocation.cs" />
     <Compile Include="Base\IScheduleRepository.cs" />
     <Compile Include="Base\TimeLineModel.cs" />
     <Compile Include="BussnessLogic.cs" />
@@ -82,6 +83,9 @@
       <Project>{e60c2cb1-cc08-4f78-bd70-d8ada2501e2d}</Project>
       <Name>MinskTrans.Utilites.Base</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fakes\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

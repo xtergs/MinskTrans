@@ -63,21 +63,22 @@ using MinskTrans.DesctopClient.Model;
 			}
 		}
 
-		override public IEnumerable<KeyValuePair<Rout, int>> TimeSchedule
+		override public IEnumerable<TimeLineModel> TimeSchedule
 		{
 			get
 			{
 				if (SelectedGroupStop == null)
 					return null;
-				if (Context.Groups == null || Context.Groups.Count <= 0)
+				if (Context.Context.Groups == null || Context.Context.Groups.Count <= 0)
 					return null;
-				IEnumerable<KeyValuePair<Rout, int>> temp = new List<KeyValuePair<Rout, int>>();
+				IEnumerable<TimeLineModel> temp = new List<TimeLineModel>();
 				foreach (Stop stop in SelectedGroupStop.Stops)
 				{
 					FilteredSelectedStop = stop;
-					temp = temp.Concat(base.TimeSchedule);
+					temp = temp.Concat(Context.GetStopTimeLine(stop, CurDay, CurTime - SettingsModelView.TimeInPast));
 				}
-				return temp.OrderBy(x => x.Value);
+				return temp.OrderBy(x => x.Time);
+				
 			}
 		}
 

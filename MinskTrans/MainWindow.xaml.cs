@@ -67,8 +67,8 @@ namespace MinskTrans.DesctopClient
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
 			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
 			ShedulerModelView = new MainModelView(map);
-			ShedulerModelView.Context.LoadEnded += (sender, args) => { Dispatcher.Invoke(() => { ShedulerModelView.Context.AllPropertiesChanged(); }); };
-			ShedulerModelView.Context.Load();
+			ShedulerModelView.Context.Context.LoadEnded += (sender, args) => { Dispatcher.Invoke(() => { ShedulerModelView.Context.AllPropertiesChanged(); }); };
+			ShedulerModelView.Context.Context.Load();
 
 			//Map model view events
 			ShedulerModelView.MapModelView.StartStopSeted +=
@@ -123,12 +123,12 @@ namespace MinskTrans.DesctopClient
 			{
 				statusMessages.Content = "Data has been downloaded";
 			});
-			ShedulerModelView.Context.LoadStarted += (sender, args) => StopUpdateTimer();
-			ShedulerModelView.Context.LoadEnded += (sender, args) => StartUpdateTimer();
-			ShedulerModelView.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
+			ShedulerModelView.Context.Context.LoadStarted += (sender, args) => StopUpdateTimer();
+			ShedulerModelView.Context.Context.LoadEnded += (sender, args) => StartUpdateTimer();
+			ShedulerModelView.Context.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
 
 			ShedulerModelView.UpdateManager.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
-			ShedulerModelView.Context.Load();
+			ShedulerModelView.Context.Context.Load();
 			//var stop = ShedulerModelView.IContext.Stops.First(x => x.SearchName == "шепичи");
 
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");
@@ -218,7 +218,7 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
-			ListView.ItemsSource = ShedulerModelView.StopMovelView.Context.Stops.Where(
+			ListView.ItemsSource = ShedulerModelView.StopMovelView.Context.Context.Stops.Where(
 				x => Comparer(x.SearchName, ShedulerModelView.StopMovelView.StopNameFilter.ToLower())).Distinct();
 		}
 

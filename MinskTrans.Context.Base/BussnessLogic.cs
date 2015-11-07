@@ -2,9 +2,7 @@
 using System.Linq;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
-using MinskTrans.Utilites.FuzzySearch;
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,10 +52,18 @@ namespace MinskTrans.Context
 
         public DateTime LastUpdateDbDateTimeUtc { get; set; }
 
+		private int countUpdateFail = 0;
+		private int maxCountUpdateFail = 10;
+
 	    public async Task LoadDataBase(LoadType loadType = LoadType.LoadAll)
 	    {
 	        await Context.Load(loadType);
 	    }
+
+		public async Task Save(bool saveAllDB = true)
+		{
+			await Context.Save(saveAllDB);
+		}
 
 
 		public IEnumerable<Stop> FilteredStops(string StopNameFilter, TransportType selectedTransport = TransportType.All, Location location = null,bool FuzzySearch = false)
@@ -107,6 +113,10 @@ namespace MinskTrans.Context
 				.Select(x => x.x)
 				.ToList();
 			return result;
+		}
+
+		public void SetGPS(bool v, object useGPS)
+		{
 		}
 
 		EquirectangularDistance distance = new EquirectangularDistance();
@@ -282,7 +292,7 @@ namespace MinskTrans.Context
 	                }
 	                catch (Exception e)
 	                {
-
+						countUpdateFail++;
 	                    return false;
 	                }
 	                string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
@@ -308,10 +318,30 @@ namespace MinskTrans.Context
 	            LastUpdateDbDateTimeUtc = utcNow;
 	            return true;
 	        }
+			catch(Exception)
+			{
+				countUpdateFail++;
+				throw;
+			}
 	        finally
 	        {
 	            updatingTimeTable = false;
 	        }
 	    }
-	}
+
+		public IEnumerable<Rout> GetDirectionsStop(Stop FilteredSelectedStop)
+		{
+			if (FilteredSelectedStop == null)
+				return null;
+				return Context.Routs.Where(x => x.Stops.Contains(FilteredSelectedStop)).Distinct();
+			
+		}
+
+		public void SetGPS(bool useGPS)
+		{
+			if (useGPS)
+			{ StartGPS(); }
+			else { StopGPS(); }
+		}
+    }
 }

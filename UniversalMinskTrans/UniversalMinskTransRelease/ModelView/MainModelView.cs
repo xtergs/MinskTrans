@@ -182,16 +182,7 @@ namespace MinskTrans.Universal.ModelView
 						updating = true;
 						UpdateDataCommand.RaiseCanExecuteChanged();
 
-						if (await updateManager.DownloadUpdate())
-						{
-							var timeTable = await updateManager.GetTimeTable();
-							if (await Context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
-							{
-								await Context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
-								Context.AllPropertiesChanged();
-								await Context.Save(true);
-							}
-						}
+						await Context.UpdateTimeTableAsync();
 						updating = false;
 						UpdateDataCommand.RaiseCanExecuteChanged();
 					}, () => !updating);

@@ -18,6 +18,7 @@ using MapControl;
 
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context;
 #if (WINDOWS_PHONE_APP || WINDOWS_UAP)
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
@@ -52,9 +53,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		private string resultString;
 		private SettingsModelView settings;
 
-		private Geolocator geolocator;
+		private IGeolocation geolocator;
 
-		public Geolocator  Geolocator
+		public IGeolocation Geolocator
 		{
 			get { return geolocator;}
 		}
@@ -179,6 +180,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			if (statusAccess == GeolocationAccessStatus.Denied)
 				return;
 #endif
+			Context.SetGPS(settings.UseGPS);
 				if (settings.UseGPS)
 				{
 					StartGPS();
@@ -195,10 +197,6 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			try
 			{
-				if (geolocator == null)
-				{
-					geolocator = new Geolocator();
-				}
 				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
 
 				geolocator.ReportInterval = Settings.GPSInterval;

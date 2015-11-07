@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
+using System.Linq;
 using System.Windows.Controls;
 #else
 using Windows.UI.Xaml;

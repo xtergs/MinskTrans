@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <OutputPath>C:\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -191,10 +191,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj">
-      <Project>{33DB7D58-46C8-4756-B7AC-39994422188E}</Project>
-      <Name>MinskTrans.AutoRouting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
       <Name>MinskTrans.Context</Name>

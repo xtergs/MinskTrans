@@ -348,10 +348,6 @@
       <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
       <Name>CommonLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj">
-      <Project>{33db7d58-46c8-4756-b7ac-39994422188e}</Project>
-      <Name>MinskTrans.AutoRouting</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76bfe88d-0563-4897-b242-58ceeba93431}</Project>
       <Name>MinskTrans.Context</Name>

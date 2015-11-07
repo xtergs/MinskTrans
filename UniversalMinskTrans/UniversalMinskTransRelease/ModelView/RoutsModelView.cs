@@ -59,7 +59,7 @@ namespace MinskTrans.Universal.ModelView
 
 		public bool IsFavouriteRout
 		{
-			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
+			get { return Context.Context.IsFavouriteRout(RouteNumSelectedValue); }
 		}
 
 		//public RelayCommand<Rout> ShowRouteMap
@@ -72,8 +72,8 @@ namespace MinskTrans.Universal.ModelView
 			get
 			{
 				//if (String.IsNullOrWhiteSpace(typeTransport))
-				if (Context.Routs != null && Context.Routs.Count() > 0)
-					TypeTransport = Context.Routs.First().Transport;
+				if (Context.Context.Routs != null && Context.Context.Routs.Count() > 0)
+					TypeTransport = Context.Context.Routs.First().Transport;
 				return typeTransport;
 			}
 			set

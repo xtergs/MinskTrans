@@ -73,7 +73,7 @@ using MinskTrans.DesctopClient.Model;
 		{
 			get
 			{
-				return Context.Routs.Where(x => x.Stops.Contains(FilteredSelectedStop)).Distinct();
+				return Context.GetDirectionsStop(FilteredSelectedStop);
 			}
 		} 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,19 +59,22 @@ namespace MinskTrans.Context.Desktop
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Schedule>().HasKey(x => x.RoutId);
+		    modelBuilder.Entity<Schedule>().Property(x => x.RoutId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 			modelBuilder.Entity<Schedule>().Property(x=> x.InicializeString);
 
 			modelBuilder.Entity<Rout>().HasOptional(key => key.Time).WithOptionalDependent(key => key.Rout);
 			modelBuilder.Entity<Rout>().HasMany(key => key.Stops).WithMany(key => key.Routs);
-			
-			modelBuilder.Entity<Stop>().HasMany(t=> t.Stops).WithMany().Map(x=>
+            modelBuilder.Entity<Rout>().Property(x => x.RoutId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+
+            modelBuilder.Entity<Stop>().HasMany(t=> t.Stops).WithMany().Map(x=>
 			{
 				x.MapLeftKey("Stop_ID");
 				x.MapRightKey("Similar_Stop");
 				x.ToTable("Stop_Stops");
 			});
+            modelBuilder.Entity<Stop>().Property(x => x.ID).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
-			modelBuilder.Entity<StopExtentionData>().HasKey(x => x.StopID);
+            modelBuilder.Entity<StopExtentionData>().HasKey(x => x.StopID);
 			modelBuilder.Entity<StopExtentionData>().HasRequired(x => x.Stop);
 
 			modelBuilder.Entity<RoutExtentionData>().HasKey(x => x.RoutID);
@@ -139,15 +143,15 @@ namespace MinskTrans.Context.Desktop
 
 		public IList<Rout> Routs
 		{
-			get { return routsEF.ToList(); }
+			get { return routsEF.Local.ToList(); }
 		}
         
-		public IEnumerable<Stop> Stops{get{return stopsEF;
+		public IList<Stop> Stops{get{return stopsEF.Local;
 
         }
         }
 
-		public IList<Schedule> Times { get { return timesEF.ToList();
+		public IList<Schedule> Times { get { return timesEF.Local.ToList();
 			
 		} }
 
@@ -165,7 +169,7 @@ namespace MinskTrans.Context.Desktop
 
 		public void AllPropertiesChanged()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("AllPropertiesChanged");
 		}
 
 		static protected void Connect(/*[NotNull]*/ IList<Rout> routsl,/* [NotNull]*/ IList<Stop> stopsl,
@@ -224,15 +228,20 @@ namespace MinskTrans.Context.Desktop
 
 		public async Task ApplyUpdate(IEnumerable<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
 		{
-			//Connect(newRoutes, newStops, newSchedule);
-			//routsEF.RemoveRange(Routs);
-			//stopsEF.RemoveRange(stopsEF);
-			//timesEF.RemoveRange(timesEF);
+            //Connect(newRoutes, newStops, newSchedule);
+            //routsEF.RemoveRange(Routs);
+            //stopsEF.RemoveRange(stopsEF);
+            //timesEF.RemoveRange(timesEF);
 
-			routsEF.AddRange(newRoutes);
+            
+
+            routsEF.Local.Clear();
+		    stopsEF.Local.Clear();
+		    timesEF.Local.Clear();
+		    //await SaveChangesAsync();
+            routsEF.AddRange(newRoutes);
 			stopsEF.AddRange(newStops);
 			timesEF.AddRange(newSchedule);
-
 			await SaveChangesAsync();
 		}
 
@@ -271,7 +280,7 @@ namespace MinskTrans.Context.Desktop
 
 		public IEnumerable<string> GetDestinations(Rout rout)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("GetDestinations");
 		}
 
 		public async Task<bool> HaveUpdate(IList<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule)
@@ -310,7 +319,7 @@ namespace MinskTrans.Context.Desktop
 
 		public void Inicialize(IContext cont)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("Inicialize");
 		}
 
 		public async Task Load(LoadType type = LoadType.LoadAll)
@@ -320,7 +329,7 @@ namespace MinskTrans.Context.Desktop
 
 		public Task Recover()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("Recover");
 		}
 
 		public async Task Save(bool saveAllDb = true)
@@ -376,12 +385,12 @@ namespace MinskTrans.Context.Desktop
 
 		public Task AddGroup(GroupStop group)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("AddGroup");
 		}
 
 		public Task RemoveGroup(GroupStop group)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("RemoveGroup");
 		}
 
 		public bool IsFavouriteRout(Rout rout)
@@ -389,14 +398,19 @@ namespace MinskTrans.Context.Desktop
 			return routExtentionData.Any(x => x.Rout.RoutId == rout.RoutId);
 		}
 
+	   
+	    public getDirection GetStopDirectionDelegate { get; protected set; }
+
 	    public Stop GetStop(int id)
 	    {
 	        return ActualStops.FirstOrDefault(x => x.ID == id);
 	    }
 
+	    public getStop GetStopDelegate { get; protected set; }
+
 	    public void Dispose()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("Dispose");
 		}
 	}
 }

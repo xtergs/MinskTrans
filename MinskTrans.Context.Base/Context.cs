@@ -104,6 +104,9 @@ namespace MinskTrans.Context
 			fileHelper = helper;
 			this.internetHelper = internetHelper;
 			Create();
+		    Routs = new List<Rout>();
+		    Stops = new List<Stop>();
+            Times = new List<Schedule>();
 		}
 
 		public void Inicialize(IContext cont)
@@ -844,10 +847,9 @@ namespace MinskTrans.Context
 			return FavouriteRouts.Contains(rout);
 		}
 
-	    public Stop GetStop(int id)
-	    {
-	        return Stops.FirstOrDefault(x => x.ID == id);
-	    }
+	    
+	    public getStop GetStopDelegate { get; protected set; }
+	    public getDirection GetStopDirectionDelegate { get; }
 
 	    protected virtual void OnLoadStarted()
 		{
@@ -935,7 +937,7 @@ namespace MinskTrans.Context
 			get
 			{
 				if (Routs == null)
-					return null;
+					return new List<Rout>();
 				return Routs.Where(x => favouriteRouts.Contains(x.RoutId)).ToList();
 			}
 		}
@@ -953,7 +955,7 @@ namespace MinskTrans.Context
 			}
 		}
 
-		public IEnumerable<Stop> Stops { get; protected set; }
+		public IList<Stop> Stops { get; protected set; }
 
 		public ContextFileSettings Settings
 		{
@@ -997,11 +999,7 @@ namespace MinskTrans.Context
             stopTimeLine = stopTimeLine.OrderBy(x => x.Value);
 	        return stopTimeLine;
 	    }
-
-	    public IQueryable<Stop> GetDirection(int stopID)
-	    {
-	        throw new NotImplementedException();
-	    }
+        
 	}
 
 }

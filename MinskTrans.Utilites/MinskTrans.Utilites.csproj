@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="EventArgs\LogDelegateArgs.cs" />
     <Compile Include="EventArgs\ShowArgs.cs" />
+    <Compile Include="Fake\FakeSettingsModelView.cs" />
     <Compile Include="FuzzySearch\LevenshteinDistance.cs" />
     <Compile Include="FuzzySearch\StopsFilterMaster.cs" />
     <Compile Include="ISettingsModelView.cs" />

@@ -11,6 +11,7 @@ using MyLibrary;
 using MinskTrans.DesctopClient;
 using Autofac;
 using CommonLibrary.IO;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
@@ -65,10 +66,13 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
             builder.RegisterType<NewsManager>().As<NewsManagerBase>();
             //builder.RegisterType<Context>().As<IContext>();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
+		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>();
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
 
             var container = builder.Build();
 
-            context = container.Resolve<IContext>();
+            context = container.Resolve<IBussnessLogics>();
             newsManager = container.Resolve<NewsManagerBase>();
             updateManager = container.Resolve<UpdateManagerBase>();
 

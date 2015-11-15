@@ -19,8 +19,8 @@
         <converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter" />
         <converters:StopsToStr x:Key="StopsToStr" />
         <converters:TransportToImageConverter x:Key="TransportToImageConverter" />
-        <local:MinsLeftConverter x:Key="MinsLeftConverter" />
-        <local:MinsToTimeConverter x:Key="MinsToTimeConverter" />
+        <local:MinsLeftFromTimeSpanConverter x:Key="MinsLeftConverter" />
+        <local:MinsToTimeFromTimeSpanConverter x:Key="MinsToTimeConverter" />
 
         <DataTemplate x:Key="DataTemplate1">
             <Grid x:Name="Grid" Margin="0,5">
@@ -42,7 +42,7 @@
                                         ElementName=StackPanel}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
-                       Source="{Binding Key.Transport,
+                       Source="{Binding Rout.Transport,
                                         Converter={StaticResource TransportToImageConverter}}"
                        Stretch="Uniform" />
                 <StackPanel Grid.Column="1"
@@ -52,17 +52,17 @@
                         <TextBlock Grid.Column="1"
                                    FontSize="28"
                                    Padding="0"
-                                   Text="{Binding Key.RouteNum}" />
+                                   Text="{Binding Rout.RouteNum}" />
                         <TextBlock Grid.Row="1"
                                    Grid.Column="1"
                                    FontSize="14"
                                    Foreground="{StaticResource GreyGroundSolidColorBrush}"
-                                   Text="{Binding Key.StartStop.Name}"
+                                   Text="{Binding Rout.StartStop.Name}"
                                    TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Row="2"
                                    Grid.Column="1"
                                    FontSize="18"
-                                   Text="{Binding Key.DestinationStop.Name}"
+                                   Text="{Binding Rout.DestinationStop.Name}"
                                    TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </StackPanel>
@@ -70,15 +70,15 @@
                     <TextBlock Grid.Column="2"
                                HorizontalAlignment="Right"
                                FontSize="28"
-                               Text="{Binding Value,
+                               Text="{Binding Time,
                                               Converter={StaticResource MinsToTimeConverter}}" />
                     <TextBlock Grid.Row="1"
                                Grid.Column="2"
                                HorizontalAlignment="Right"
                                FontSize="18"
-                               Foreground="{Binding Key.Transport,
+                               Foreground="{Binding Rout.Transport,
                                                     Converter={StaticResource TransportToColor}}"
-                               Text="{Binding Value,
+                               Text="{Binding Time,
                                               Converter={StaticResource MinsLeftConverter}}" />
                 </StackPanel>
             </Grid>
@@ -102,6 +102,7 @@
         <TextBlock FontSize="20" Text="{Binding FilteredSelectedStop.Name, UpdateSourceTrigger=PropertyChanged}" />
         <ListView x:Name="tesstListview"
                   Grid.Row="1"
+                  
                   HorizontalContentAlignment="Stretch"
                   ItemTemplate="{StaticResource DataTemplate1}"
                   ItemsSource="{Binding TimeSchedule,
@@ -205,7 +206,7 @@
                               Icon="Sync"
                               IsCompact="True" />
                 <AppBarToggleButton HorizontalAlignment="Center"
-                                    Command="{Binding AddRemoveFavouriteStop}"
+                                    Command="{Binding Context.Context.AddRemoveFavouriteStop}"
                                     CommandParameter="{Binding FilteredSelectedStop}"
                                     Icon="Favorite"
                                     IsChecked="{Binding IsStopFavourite,
@@ -222,10 +223,14 @@
         </Border>
         <AppBar Grid.Row="3">
             <controls:WrapPanel>
-                <TextBlock Text="День недели: "/>
-                <TextBlock Text="{Binding CurDay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-            <AppBarToggleButton Content="Текущее время" IsEnabled="{Binding AutoDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></AppBarToggleButton>
-                <Slider Minimum="1" Maximum="7" Value="{Binding CurDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></Slider>
+                <TextBlock Text="День недели: " />
+                <TextBlock Text="{Binding CurDay, UpdateSourceTrigger=PropertyChanged}" />
+                <AppBarToggleButton Content="Текущее время" IsEnabled="{Binding AutoDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Slider Maximum="7"
+                        Minimum="1"
+                        Value="{Binding CurDay,
+                                        Mode=TwoWay,
+                                        UpdateSourceTrigger=PropertyChanged}" />
             </controls:WrapPanel>
         </AppBar>
     </Grid>

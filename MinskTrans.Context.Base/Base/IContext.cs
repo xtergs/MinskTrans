@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base.BaseModel;
 
@@ -15,7 +14,7 @@ namespace MinskTrans.Context.Base
 		LoadAll = LoadDB | LoadFavourite
 	}
 
-	public interface IContext
+	public interface IContext : INotifyPropertyChanged
 	{
 		IEnumerable<Stop> ActualStops { get; }
 		IList<Rout> FavouriteRouts { get; }
@@ -23,17 +22,12 @@ namespace MinskTrans.Context.Base
 		IList<GroupStop> Groups { get; }
 		DateTime LastUpdateDataDateTime { get; set; }
 		IList<Rout> Routs { get; }
-		IEnumerable<Stop> Stops { get; }
+		IList<Stop> Stops { get; }
 		IList<Schedule> Times { get; }
 
 		event EventHandler<EventArgs> ApplyUpdateEnded;
 		event EventHandler<EventArgs> ApplyUpdateStarted;
-		event ErrorLoadingDelegate ErrorLoading;
-		event EventHandler<EventArgs> LoadEnded;
-		event EventHandler<EventArgs> LoadStarted;
-		event PropertyChangedEventHandler PropertyChanged;
-		event EventHandler<EventArgs> UpdateEnded;
-		event EventHandler<EventArgs> UpdateStarted;
+		
 
 		bool IsFavouriteStop(Stop stop);
 		void AllPropertiesChanged();
@@ -54,19 +48,11 @@ namespace MinskTrans.Context.Base
 		Task AddGroup(GroupStop group);
 		Task RemoveGroup(GroupStop group);
 		bool IsFavouriteRout(Rout rout);
-		Stop GetStop(int id);
+		getStop GetStopDelegate { get; }
+        getDirection GetStopDirectionDelegate { get; }
+	   
 	}
 
-	public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);
-
-	public class ErrorLoadingDelegateArgs : EventArgs
-	{
-		public enum Errors
-		{
-			NoFileToDeserialize,
-			NoSourceFiles
-		}
-
-		public Errors Error { get; set; }
-	}
+    public delegate Stop getStop(int stopID);
+    public delegate IEnumerable<Stop> getDirection(int stopID);
 }

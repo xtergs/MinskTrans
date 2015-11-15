@@ -5,6 +5,7 @@ using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
@@ -62,12 +63,14 @@ namespace MinskTrans.Universal.ModelView
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			builder.RegisterType<NewsManager>().As<NewsManagerBase>();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
+		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>();
             
 			//builder.RegisterType<Context>().As<IContext>();
 
 			var container = builder.Build();
 
-			context = container.Resolve<IContext>();
+			context = container.Resolve<IBussnessLogics>();
 			newsManager = container.Resolve<NewsManagerBase>();
 			updateManagerBase = container.Resolve<UpdateManagerBase>();
 
@@ -168,12 +171,7 @@ namespace MinskTrans.Universal.ModelView
 					updating = true;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 
-					if (await UpdateManagerBase.DownloadUpdate())
-					{
-						var timeTable = await UpdateManagerBase.GetTimeTable();
-						if (await Context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
-							await Context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
-					}
+				    await Context.UpdateTimeTableAsync(false);
 					updating = false;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 				}, () => !updating);

@@ -7,10 +7,9 @@ using Windows.Devices.Geolocation;
 using Windows.UI.Core;
 #endif
 using GalaSoft.MvvmLight.Command;
-using MapControl;
-using MinskTrans.Context.Base;
+using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
-using MinskTrans.DesctopClient.Model;
+using Location = MapControl.Location;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -28,10 +27,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private Location lastLocation;
 
-		public StopModelViewBase(IContext newContext, SettingsModelView newSettings) : base(newContext)
+		public StopModelViewBase(IBussnessLogics newContext, SettingsModelView newSettings) : base(newContext)
 		{
 			settings = newSettings;
-			newContext.PropertyChanged+= (sender, args) =>
+			newContext.Context.PropertyChanged+= (sender, args) =>
 			{
 				if (args.PropertyName == "ActualStops")
 				Refresh();

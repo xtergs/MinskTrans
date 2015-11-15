@@ -32,6 +32,8 @@
       mc:Ignorable="d">
     <Page.Resources>
 
+        <Converters:TransportFormatedStringConverter x:Key="DateToString" />
+
         <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Converters:WeekdaysToStrConverter x:Key="WeekdaysToStrConverter" />
@@ -300,7 +302,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="GroupTransportList">
-            <Grid Margin="0,2">
+            <Grid MinWidth="130" Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -318,7 +320,8 @@
                            Margin="5,0,0,0"
                            VerticalAlignment="Top"
                            FontSize="35"
-                           Text="{Binding Rout.RouteNum}" />
+                           Text="{Binding Rout.RouteNum,
+                                          Converter={StaticResource DateToString}}" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="DataTemplate3">
@@ -1210,6 +1213,11 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
+                            <AppBarToggleButton Grid.Row="2"
+                                                Content="FavouriteStop"
+                                                IsChecked="{Binding StopModelView.IsShowFavouriteStops,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
 
                         <Grid x:Name="ShowRoutsGrid"
@@ -1220,6 +1228,8 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*" />
@@ -1248,6 +1258,11 @@
                                         <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Controls:WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
                                 <!--<Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:GoToStateAction StateName="RoutsListVisualState" />
@@ -1307,6 +1322,11 @@
                                     </Interactivity:Interaction.Behaviors>-->
                                 </ListView>
                             </Grid>
+                            <AppBarToggleButton Grid.Row="2"
+                                                Content="FavouriteRout"
+                                                IsChecked="{Binding RoutsModelView.IsShowFavouriteRouts,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                         <AppBar Grid.Row="2" DataContext="{Binding StopModelView}">
                             <VariableSizedWrapGrid Orientation="Horizontal">
@@ -1319,6 +1339,9 @@
                                 <CheckBox Content="Тролейбус" IsChecked="{Binding Trol, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                 <CheckBox Content="Трамвай" IsChecked="{Binding Tram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
 
                                 <VariableSizedWrapGrid DataContext="{Binding SettingsModelView}"
                                                        VariableSizedWrapGrid.ColumnSpan="10"
@@ -1361,7 +1384,8 @@
                        BorderBrush="{ThemeResource LightBlueSolidColorBrush}"
                        DataContext="{Binding FavouriteModelView}"
                        Header="Избранное"
-                       Padding="0">
+                       Padding="0"
+                       Visibility="Collapsed">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1406,7 +1430,7 @@
                                       Margin="10,0"
                                       DataContext="{Binding StopModelView}"
                                       ItemTemplate="{StaticResource ListStopsDataTemplate}"
-                                      ItemsSource="{Binding Context.FavouriteStops}"
+                                      ItemsSource="{Binding Context.Context.FavouriteStops}"
                                       SelectedItem="{Binding FilteredSelectedStop,
                                                              Mode=TwoWay,
                                                              UpdateSourceTrigger=PropertyChanged}">
@@ -1514,9 +1538,9 @@
                                                                     <RowDefinition Height="Auto" />
                                                                     <RowDefinition Height="Auto" />
                                                                 </Grid.RowDefinitions>
-                                                                <TextBlock FontSize="15" Text="{Binding DaysStr}" />
+                                                                <TextBlock FontSize="20" Text="{Binding DaysStr}" />
                                                                 <TextBlock Grid.Row="1"
-                                                                           FontSize="13"
+                                                                           FontSize="17"
                                                                            Text="{Binding ToStrTable}" />
                                                             </Grid>
                                                         </DataTemplate>
@@ -1554,7 +1578,7 @@
                                       Grid.ColumnSpan="2"
                                       DataContext="{Binding RoutsModelView}"
                                       ItemTemplate="{StaticResource DataTemplate2}"
-                                      ItemsSource="{Binding Context.FavouriteRouts,
+                                      ItemsSource="{Binding Context.Context.FavouriteRouts,
                                                             UpdateSourceTrigger=PropertyChanged}"
                                       SelectedItem="{Binding RouteNumSelectedValue,
                                                              Mode=TwoWay,
@@ -1562,6 +1586,7 @@
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:GoToStateAction StateName="FavouriteRoutsListVisualState" />
+
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                             </ListView>

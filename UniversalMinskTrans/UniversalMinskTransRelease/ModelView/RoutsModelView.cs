@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
@@ -38,13 +39,14 @@ namespace MinskTrans.Universal.ModelView
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
 		private TransportType typeTransport;
+	    private bool isShowFavouriteRouts;
 
-		//public RoutesModelview()
+	    //public RoutesModelview()
 		//{
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutsModelView(IContext context)
+		public RoutsModelView(IBussnessLogics context)
 			: base(context)
 		{
 			Context.PropertyChanged += (sender, args) =>
@@ -86,13 +88,28 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		#region RouteNums
+	    public bool IsShowFavouriteRouts
+	    {
+	        get { return isShowFavouriteRouts; }
+	        set
+	        {
+	            isShowFavouriteRouts = value;
+	            OnPropertyChanged();
+                OnPropertyChanged("RouteNums");
+	        }
+	    }
+
+	    #region RouteNums
 		public virtual IEnumerable<RoutWithDestinations> RouteNums
 		{
 			get
 			{
 				if (Context.Routs != null)
 				{
+				    if (IsShowFavouriteRouts)
+				    {
+				        return Context.Context.FavouriteRouts.Select(x => new RoutWithDestinations(x, Context));
+				    }
 					IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
 					if (RoutNum != null)
 						temp = temp.Where(x => x.RouteNum.Contains(routNum));
@@ -181,7 +198,7 @@ namespace MinskTrans.Universal.ModelView
 
 		public bool IsRoutFavourite
 		{
-			get { return Context.IsFavouriteRout(RouteNumSelectedValue); }
+			get { return Context.Context.IsFavouriteRout(RouteNumSelectedValue); }
 			set { OnPropertyChanged();}
 		}
 
@@ -347,7 +364,10 @@ namespace MinskTrans.Universal.ModelView
 		{
 			get { return new RelayCommand(() => TypeTransport = TransportType.Tram); }
 		}
-
+public RelayCommand<Rout> AddRemoveFavouriteRout
+        {
+			get { return new RelayCommand<Rout>((x) => Context.AddRemoveFavouriteRoute(x)); }
+		}
 		//public event Show ShowStop;
 		//public event Show ShowRoute;
 		//public delegate void Show(object sender, ShowArgs args);

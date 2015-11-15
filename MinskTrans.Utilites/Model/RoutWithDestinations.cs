@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
@@ -8,7 +9,7 @@ namespace MinskTrans.DesctopClient.Model
 	public class RoutWithDestinations : Rout
 	{
 
-		public RoutWithDestinations(Rout newRout, IContext context)
+		public RoutWithDestinations(Rout newRout, IBussnessLogics context)
 			:base(newRout)
 		{
 

@@ -1,4 +1,5 @@
-﻿using MinskTrans.Context.Base;
+﻿using MinskTrans.Context;
+using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
 
@@ -18,7 +19,7 @@ using GalaSoft.MvvmLight.Command;
 		private bool curTime;
 		private string routNum;
 		//private int routeNamesIndex;
-		private string routeNumSelectedValue;
+		private Rout routeNumSelectedValue;
 		//private IEnumerable<string> routeNums;
 
 		private ObservableCollection<Rout> routeObservableCollection;
@@ -41,7 +42,7 @@ using GalaSoft.MvvmLight.Command;
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutesModelview(IContext context, SettingsModelView settings)
+		public RoutesModelview(IBussnessLogics context, SettingsModelView settings)
 			: base(context)
 		{
 			this.settings = settings;
@@ -53,8 +54,8 @@ using GalaSoft.MvvmLight.Command;
 			get
 			{
 				//if (String.IsNullOrWhiteSpace(typeTransport))
-					if (typeTransport == TransportType.None && Context.Routs != null && Context.Routs.Count > 0) 
-						TypeTransport = Context.Routs[0].Transport;
+					if (typeTransport == TransportType.None && Context.Context.Routs != null && Context.Context.Routs.Count > 0) 
+						TypeTransport = Context.Context.Routs[0].Transport;
 				return typeTransport;
 			}
 			set
@@ -68,25 +69,20 @@ using GalaSoft.MvvmLight.Command;
 		}
 
 		#region RouteNums
-		public IEnumerable<string> RouteNums
+		public IEnumerable<Rout> RouteNums
 		{
 			get
 			{
-				if (Context.Routs != null)
-				{
-					IEnumerable<string> temp = Context.Routs.Where(rout=> rout.Transport == TypeTransport).Select(x => x.RouteNum).Distinct();
-					if (RoutNum != null)
-						temp = temp.Where(x => x.Contains(routNum));
-					if (temp.Any())
-						RouteNumSelectedValue = temp.First();
-					return temp;
-				}
-				//return routeNums;
-				return null;
+			    var temp = Context.GetRouteNums(TypeTransport, RoutNum);
+			    if (temp == null)
+			        return null;
+			    var routeNums = temp as IList<Rout> ?? temp.ToList();
+			    RouteNumSelectedValue = routeNums.FirstOrDefault();
+			    return routeNums;
 			}
 		}
 
-		public string RouteNumSelectedValue
+		public Rout RouteNumSelectedValue
 		{
 			get { return routeNumSelectedValue; }
 			set
@@ -105,10 +101,8 @@ using GalaSoft.MvvmLight.Command;
 		{
 			get
 			{
-				if (Context.Routs != null)
-					routeObservableCollection =
-						new ObservableCollection<Rout>(Context.Routs.Where(x => x.RouteNum == RouteNumSelectedValue && x.Transport == TypeTransport));
-				return routeObservableCollection;
+                routeObservableCollection = new ObservableCollection<Rout>( Context.GetRouteNums(TypeTransport, RouteNumSelectedValue?.RouteNum));
+			    return routeObservableCollection;
 			}
 		}
 
@@ -119,7 +113,7 @@ using GalaSoft.MvvmLight.Command;
 			{
 				//if (Equals(value, routeSelectedValue)) return;
 				routeSelectedValue = value;
-				AddFavouriteRoutCommand.RaiseCanExecuteChanged();
+				//AddFavouriteRoutCommand.RaiseCanExecuteChanged();
 				OnPropertyChanged();
 				OnPropertyChanged("StopsObservableCollection");
 				OnPropertyChanged("StopSelectedIndex");

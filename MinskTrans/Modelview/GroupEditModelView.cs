@@ -1,5 +1,6 @@
 ﻿
 
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
@@ -18,7 +19,7 @@ using MinskTrans.DesctopClient.Model;
 		private GroupStop stop;
 		private Stop selectedStopGroup;
 
-		public GroupEditModelView(IContext newContext, SettingsModelView settings) : base(newContext, settings)
+		public GroupEditModelView(IBussnessLogics newContext, SettingsModelView settings) : base(newContext, settings)
 		{
 		}
 

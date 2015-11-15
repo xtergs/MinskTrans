@@ -1,5 +1,6 @@
 ﻿
 
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
@@ -24,7 +25,7 @@ using MinskTrans.DesctopClient.Model;
 		//{
 		//}
 
-		public GroupStopsModelView(IContext newContext, SettingsModelView settingsModelView)
+		public GroupStopsModelView(IBussnessLogics newContext, SettingsModelView settingsModelView)
 			: base(newContext, settingsModelView)
 		{
 			Bus = Trol = Tram=Metro = true;
@@ -88,9 +89,9 @@ using MinskTrans.DesctopClient.Model;
 			{
 				return new RelayCommand<GroupStop>(x =>
 			{
-				Context.Groups.Add(x);
+				Context.Context.Groups.Add(x);
 				//OnPropertyChanged("Groups");
-			}, p => p != null && !Context.Groups.Contains(p));
+			}, p => p != null && !Context.Context.Groups.Contains(p));
 			}
 		}
 
@@ -100,7 +101,7 @@ using MinskTrans.DesctopClient.Model;
 			{
 				return new RelayCommand<GroupStop>(x =>
 				{
-					Context.Groups.Remove(x);
+					Context.Context.Groups.Remove(x);
 					//OnPropertyChanged("Groups");
 				}, p=> p!= null);
 			}

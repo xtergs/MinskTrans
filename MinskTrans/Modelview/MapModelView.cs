@@ -15,17 +15,21 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using MapControl;
-
+using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context;
+using MinskTrans.Context.AutoRouting;
+using CalculateRout = MinskTrans.Context.AutoRouting.CalculateRout;
+using Location = MapControl.Location;
+using PositionStatus = MinskTrans.Context.Base.PositionStatus;
 #if (WINDOWS_PHONE_APP || WINDOWS_UAP)
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
-
+using MinskTrans.AutoRouting.AutoRouting;
 using Windows.Devices.Geolocation;
 #else
 
@@ -61,7 +65,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 
-		private MapModelView(IContext context)
+		private MapModelView(IBussnessLogics context)
 			:base(context)
 		{
 			
@@ -71,7 +75,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private PushPinBuilder pushBuilder;
 
-		public MapModelView(IContext context, Map map, SettingsModelView newSettigns, PushPinBuilder pushPinBuilder = null)
+		public MapModelView(IBussnessLogics context, Map map, SettingsModelView newSettigns, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;
@@ -175,11 +179,11 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private async void SetGPS()
 		{
-#if WINDOWS_UAP
-			var statusAccess = await Geolocator.RequestAccessAsync();
-			if (statusAccess == GeolocationAccessStatus.Denied)
-				return;
-#endif
+//#if WINDOWS_UAP
+//			var statusAccess = await Geolocator.RequestAccessAsync();
+//			if (statusAccess == GeolocationAccessStatus.Denied)
+//				return;
+//#endif
 			Context.SetGPS(settings.UseGPS);
 				if (settings.UseGPS)
 				{
@@ -201,7 +205,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 				geolocator.ReportInterval = Settings.GPSInterval;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
-				geolocator.StatusChanged += GeolocatorOnStatusChanged;
+				geolocator.StatusChanged  += GeolocatorOnStatusChanged;
 				geolocator.PositionChanged += GeolocatorOnPositionChanged;
 #endif
 			}
@@ -234,7 +238,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
-		private async void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
+		private async void GeolocatorOnStatusChanged(object o, StatusChangedEventArgsArgs args)
 		{
 			if (args.Status == PositionStatus.Ready)
 			{
@@ -253,14 +257,14 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		private async void GeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		private async void GeolocatorOnPositionChanged(object o, PositionChangedEventArgsArgs args)
 		{
 			await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 			{
 				if (Ipushpin == null)
 					return;
 				MapPanel.SetLocation(Ipushpin,
-					new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude));
+					new Location(args.NewLocation.Latitude, args.NewLocation.Longitude));
 				RefreshPushPinsAsync();
 			});
 		}
@@ -420,7 +424,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		public void RefreshPushPinsAsync()
 		{
 
-			if (showAllPushpins && map != null && Context.ActualStops != null)
+			if (showAllPushpins && map != null && Context.Context.ActualStops != null)
 			{
 				double zoomLevel = map.ZoomLevel;
 				Pushpins.Clear();
@@ -439,7 +443,7 @@ namespace MinskTrans.DesctopClient.Modelview
 #endif
 
 				var needShowStops =
-					Context.ActualStops.Where(child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
+					Context.Context.ActualStops.Where(child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
 					                                   child.Lat >= southEast.Latitude && child.Lng <= southEast.Longitude).ToList();
 
 				PreperPushpinsForView(needShowStops);
@@ -463,10 +467,10 @@ namespace MinskTrans.DesctopClient.Modelview
 	    {
 	        get
 	        {
-	            if (string.IsNullOrWhiteSpace(SearchPattern))
-	                return Context.ActualStops;
+	            if (SearchPattern == null)
+	                SearchPattern = "";
 	            string filterPat = SearchPattern.ToLowerInvariant();
-	            return Context.ActualStops.Where(x => x.SearchName.Contains(filterPat)).ToList();
+	            return Context.FilteredStops(filterPat,  location: Context.Geolocation.CurLocation).ToList();
 	        }
 	    }
 
@@ -636,7 +640,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				{
 					calculateCommand = new RelayCommand(() =>
 					{
-						CalculateRout calculator = new CalculateRout(Context);
+						CalculateRout calculator = new CalculateRout(Context.Context);
 						calculator.CreateGraph();
 						if (!calculator.FindPath(StartStop, EndStop))
 							ResultString = "Bad";

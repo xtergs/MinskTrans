@@ -1,12 +1,17 @@
 ﻿using MapControl;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Desktop;
+using MinskTrans.Context.Fakes;
+using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using MinskTrans.Utilites.Desktop;
+using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -35,16 +40,19 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity6_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True");
+			//builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
-			//builder.RegisterType<Context>().As<IContext>();
-			
-			var container = builder.Build();
+            //builder.RegisterType<Context>().As<IContext>();
+            builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
+            builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
+            builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
+            builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>();
+            var container = builder.Build();
 
-			context = container.Resolve<IContext>();
+			context = container.Resolve<IBussnessLogics>();
 			updateManager = container.Resolve<UpdateManagerBase>();
 			//timeTable = container.Resolve<IContext>();
 
@@ -124,12 +132,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					    if (updateing)
 					        return;
 						updateing = true;
-						if (await UpdateManager.DownloadUpdate())
-						{
-							var timeTable = await UpdateManager.GetTimeTable();
-							if (await Context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
-								await Context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
-						}
+					    await Context.UpdateTimeTableAsync(true);
 						updateing = false;
 					}, () => !updateing);
 

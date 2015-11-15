@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Model;
@@ -25,7 +26,7 @@ namespace MinskTrans.DesctopClient
 	public partial class GroupAddWindow : Window
 	{
 		readonly GroupEditModelView groupEditModelView;
-		public GroupAddWindow(IContext newContext, SettingsModelView settings)
+		public GroupAddWindow(IBussnessLogics newContext, SettingsModelView settings)
 		{
 			InitializeComponent();
 			groupEditModelView = new GroupEditModelView(newContext, settings);

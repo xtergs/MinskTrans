@@ -9,14 +9,17 @@ using GalaSoft.MvvmLight.CommandWpf;
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
 using Autofac;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
+using MinskTrans.Context.Fakes;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using MinskTrans.Utilites.Desktop;
+using MyLibrary;
 
 
 namespace PushNotificationServer
@@ -24,7 +27,7 @@ namespace PushNotificationServer
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
-		private IContext context;
+		private IBussnessLogics context;
 		private string fileNameLastNews = "LastNews.txt";
 
 		private Timer timerNewsAutoUpdate;
@@ -47,8 +50,8 @@ namespace PushNotificationServer
 			NewsManager.LastNewsTime = Settings.Default.LastUpdatedNews;
 			NewsManager.LastHotNewstime = Settings.Default.LastUpdatedHotNews;
 			await NewsManager.Load();
-			await Context1.Load(LoadType.LoadDB);
-			Context1.LastUpdateDataDateTime = Settings.Default.DBUpdateTime;
+			await BusnesLogic.LoadDataBase(LoadType.LoadDB);
+			BusnesLogic.LastUpdateDbDateTimeUtc = Settings.Default.DBUpdateTime;
 			OndeDriveController.Inicialize();
 			this.StopChecknews += (sender, args) => UploadAllToOneDrive();
 #if DEBUG
@@ -69,7 +72,7 @@ namespace PushNotificationServer
 		{
 			File.WriteAllText(fileNameLastNews,
 				NewsManager.LastNewsTime + Environment.NewLine + NewsManager.LastHotNewstime +
-				Environment.NewLine + Context1.LastUpdateDataDateTime);
+				Environment.NewLine + BusnesLogic.LastUpdateDbDateTimeUtc);
 		}
 
 		private NewsManagerBase newsManager;
@@ -92,10 +95,13 @@ namespace PushNotificationServer
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
 			builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>();
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
+            builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
+            builder.RegisterType<FakeSettingsModelView>().As<ISettingsModelView>();
 
-			var container = builder.Build();
+            var container = builder.Build();
 
-			context = container.Resolve<IContext>();
+			context = container.Resolve<IBussnessLogics>();
 			newsManager = container.Resolve<NewsManagerBase>();
 			updateManager = container.Resolve<UpdateManagerBase>();
 			CloudController = container.Resolve<ICloudStorageController>();
@@ -223,16 +229,7 @@ namespace PushNotificationServer
 					//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
 				}), Task.Run( (async ()=>
 				{
-					if (await updateManager.DownloadUpdate())
-					{
-						var timeTable = await updateManager.GetTimeTable();
-					    if (await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time))
-					    {
-					        await context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
-					        await context.Save(true);
-					        context.LastUpdateDataDateTime = DateTime.UtcNow;
-					    }
-					}
+				    await context.UpdateTimeTableAsync();
 				})));
 
 			}
@@ -248,7 +245,7 @@ namespace PushNotificationServer
 			}
 			Settings.Default.LastUpdatedNews = newsManager.LastNewsTime;
 			Settings.Default.LastUpdatedHotNews = newsManager.LastHotNewstime;
-			Settings.Default.DBUpdateTime = context.LastUpdateDataDateTime;
+			Settings.Default.DBUpdateTime = context.LastUpdateDbDateTimeUtc;
 			Settings.Default.Save();		
 			SaveTime();
 			Updating = false;
@@ -273,7 +270,7 @@ namespace PushNotificationServer
 			get { return CloudController; }
 		}
 
-		public IContext Context1
+		public IBussnessLogics BusnesLogic
 		{
 			get { return context; }
 		}

@@ -25,4 +25,25 @@ namespace MinskTrans.Universal
 
 		#endregion
 	}
+
+    class MinsToTimeFromTimeSpanConverter : IValueConverter
+    {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var mins = (int)((TimeSpan)value).TotalMinutes;
+            int hour = mins / 60;
+            if (hour >= 24)
+                hour -= 24;
+            return hour.ToString("00") + ":" + (mins - (mins / 60) * 60).ToString("00");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }

@@ -83,8 +83,8 @@
     <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\..\..\..\1bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINDOWS_UAP;CODE_ANALYSIS; BETA</DefineConstants>
+    <OutputPath>1bin\x86\Release\</OutputPath>
+    <DefineConstants>NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINDOWS_UAP;CODE_ANALYSIS; BETA;CODE_ANALYSIS</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -92,8 +92,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
-    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
@@ -146,6 +146,7 @@
     <Compile Include="Converters\MinsToTimeConverter.cs" />
     <Compile Include="Converters\RoutsToNumStrConverter.cs" />
     <Compile Include="Converters\StopsToStr.cs" />
+    <Compile Include="Converters\TransportFormatedStringConverter.cs" />
     <Compile Include="Converters\WeekdaysToStrConverter.cs" />
     <Compile Include="Expander\BooleanToVisibilityConverter.cs" />
     <Compile Include="LocationToVisibilityConverter.cs" />

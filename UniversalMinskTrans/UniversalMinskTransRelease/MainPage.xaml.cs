@@ -120,11 +120,13 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowStopVisualState", true);
 			};
 
-			model.FindModelView.StopModelView.StatusGPSChanged += async (sender, args) =>
-			{
-				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { model.FindModelView.StopModelView.Refresh(); });
+            //TODO
+			//model.FindModelView.StopModelView.StatusGPSChanged += async (sender, args) =>
+			//{
+			//	await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { model.FindModelView.StopModelView.Refresh(); });
 
-			};
+			//};
+            //TODO
 
 			//VisualStateGroup.CurrentStateChanged += (sender, args) =>
 			//{
@@ -166,7 +168,7 @@ namespace MinskTrans.Universal
 			{
 				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ProgressBar.Visibility = Visibility.Collapsed);
 			};
-			model.Context.UpdateStarted += async (sender, args) =>
+			model.Context.UpdateDBStarted += async (sender, args) =>
 			{
 				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 				{
@@ -175,7 +177,7 @@ namespace MinskTrans.Universal
 
 				});
 			};
-			model.Context.UpdateEnded += async (senderr, args) =>
+			model.Context.UpdateDBEnded += async (senderr, args) =>
 			{
 				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 				{
@@ -214,7 +216,7 @@ namespace MinskTrans.Universal
 			{
 				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 				{
-					model.Context.AllPropertiesChanged();
+					model.Context.Context.AllPropertiesChanged();
 					ProgressBar.Visibility = Visibility.Collapsed;
 				});
 			};
@@ -684,7 +686,7 @@ namespace MinskTrans.Universal
 			var file = await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat");
 			//var result = await FileIO.ReadTextAsync(file);
 			//var sizeFile = await file.Properties.GetDocumentPropertiesAsync();
-			await model.Context.Load();
+			await model.Context.LoadDataBase();
 		}
 
 		private async void OnOffLocationServises(object sender, RoutedEventArgs e)

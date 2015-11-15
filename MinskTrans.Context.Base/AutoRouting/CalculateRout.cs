@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.AutoRouting.Comparer;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 
-namespace MinskTrans.AutoRouting.AutoRouting
+namespace MinskTrans.Context.AutoRouting
 {
 	public class CalculateRout
 	{

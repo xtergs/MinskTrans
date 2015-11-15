@@ -4,13 +4,12 @@ using System.Collections.Generic;
 
 using MapControl;
 using System.Threading.Tasks;
-using System.Windows;
-using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.FuzzySearch;
 using Location = MinskTrans.Context.Location;
+using PositionChangedEventArgs = MinskTrans.Context.Base.PositionChangedEventArgs;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
 using GalaSoft.MvvmLight.CommandWpf;
@@ -27,25 +26,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 	public class StopModelView : StopModelViewBase
 	{
-		private struct LocationXX
-		{
-			private static Location loc;
-			private static readonly object o = new object();
-
-			public static Location Get()
-			{
-				lock (o)
-				{
-					if (loc == null)
-						loc = new Location(0, 0);
-				}
-				return loc;
-			}
-		}
-
-	   
-
-	    private ISettingsModelView settingsModelView;
+		private ISettingsModelView settingsModelView;
 		private bool autoDay;
 		private bool autoNowTime;
 		private bool bus;
@@ -57,9 +38,9 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private string destinationStop;
 		//private LocationXX lastLocation;
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
-		private Geolocator geolocator;
-#endif
+
+		private IGeolocation geolocator;
+
 
 		//public StopModelView()
 		//	: this(null)
@@ -69,7 +50,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
 		                                          TransportType.Trol;
 
-		public StopModelView(IContext newContext, SettingsModelView settings, bool UseGPS = false)
+		public StopModelView(IBussnessLogics newContext, SettingsModelView settings, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;
@@ -84,7 +65,7 @@ namespace MinskTrans.DesctopClient.Modelview
 						break;
 					case "UseGPS":
 						await SetGPS();
-						OnStatusGPSChanged();
+						//OnStatusGPSChanged();
 						break;
 					default:
 						break;
@@ -94,99 +75,104 @@ namespace MinskTrans.DesctopClient.Modelview
 #pragma warning disable 4014
 				SetGPS();
 #pragma warning restore 4014
+
+		    IsShowFavouriteStops = false;
 		}
 
 		private async Task SetGPS()
 		{
-#if WINDOWS_PHONE_APP && WINDOWS_AP || WINDOWS_UAP
-				var geolocationStatus = await Geolocator.RequestAccessAsync();
-				if (geolocationStatus == GeolocationAccessStatus.Denied)
-					return;
-			try
-			{
-				if (geolocator == null)
-				{
-					geolocator = new Geolocator();
-					geolocator.StatusChanged += GeolocatorOnStatusChanged;
-				}
-			}
-			catch (Exception ex)
-			{
-				if (unchecked((uint)ex.HResult == 0x80004004))
-				{
-					// the application does not have the right capability or the location master switch is off
-					//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
-					//box.ShowAsync();
-				}
-				//else
-				{
-					// something else happened acquring the location
-				}
-			}
-			if (Settings.UseGPS)
-			{
-					geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+			//	var geolocationStatus = await Geolocator.RequestAccessAsync();
+			//	if (geolocationStatus == GeolocationAccessStatus.Denied)
+			//		return;
+			//try
+			//{
+			//	if (geolocator == null)
+			//	{
+			//		//geolocator = new Geolocator();
+			//		geolocator.StatusChanged += GeolocatorOnStatusChanged;
+			//	}
+			//}
+			//catch (Exception ex)
+			//{
+			//	if (unchecked((uint)ex.HResult == 0x80004004))
+			//	{
+			//		// the application does not have the right capability or the location master switch is off
+			//		//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+			//		//box.ShowAsync();
+			//	}
+			//	//else
+			//	{
+			//		// something else happened acquring the location
+			//	}
+			//}
+			//if (Settings.UseGPS)
+			//{
+			//		geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
 
-					geolocator.ReportInterval = Settings.GPSInterval;
-					geolocator.PositionChanged += OnGeolocatorOnPositionChanged;
+			//		geolocator.ReportInterval = Settings.GPSInterval;
+			//		geolocator.PositionChanged += OnGeolocatorOnPositionChanged;
 				
-			}
-			else
-			{
-				if (geolocator == null)
-					return;
-				geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
-				//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+			//}
+			//else
+			//{
+			//	if (geolocator == null)
+			//		return;
+			//	geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
+			//	//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 
-				//geolocator = null;
+			//	//geolocator = null;
 
-				LocationXX.Get().Latitude = defaultLocation.Latitude;
-				LocationXX.Get().Longitude = defaultLocation.Longitude;
-			}
-#endif
+			//	LocationXX.Get().Latitude = defaultLocation.Latitude;
+			//	LocationXX.Get().Longitude = defaultLocation.Longitude;
+			//}
+
 		}
 
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
-		private void OnGeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
-		{
-			LocationXX.Get().Latitude = args.Position.Coordinate.Latitude;
-			LocationXX.Get().Longitude = args.Position.Coordinate.Longitude;
+		//private void OnGeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		//{
+		//	LocationXX.Get().Latitude = args.Latitude;
+		//	LocationXX.Get().Longitude = args.Position.Coordinate.Longitude;
 
-			OnStatusGPSChanged();
-		}
+		//	OnStatusGPSChanged();
+		//}
 
-		private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
-		{
-			if (args.Status == PositionStatus.Ready)
-			{
-				OnStatusGPSChanged();
-			}
-			else if (args.Status == PositionStatus.Disabled ||
-					 args.Status == PositionStatus.NotAvailable)
-			{
-				LocationXX.Get().Latitude = defaultLocation.Latitude;
-				LocationXX.Get().Longitude = defaultLocation.Longitude;
+		//private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
+		//{
+		//	if (args.Status == PositionStatus.Ready)
+		//	{
+		//		OnStatusGPSChanged();
+		//	}
+		//	else if (args.Status == PositionStatus.Disabled ||
+		//			 args.Status == PositionStatus.NotAvailable)
+		//	{
+		//		LocationXX.Get().Latitude = defaultLocation.Latitude;
+		//		LocationXX.Get().Longitude = defaultLocation.Longitude;
 
-				OnStatusGPSChanged();
-			}
-		}
-#endif
+		//		OnStatusGPSChanged();
+		//	}
+		//}
 
-		public event EventHandler<EventArgs> StatusGPSChanged;
+		//public event EventHandler<EventArgs> StatusGPSChanged;
 
-		public void OnStatusGPSChanged()
-		{
-			var handler = StatusGPSChanged;
-			if (handler != null)
-				handler(this, new EventArgs());
-		}
+		//public void OnStatusGPSChanged()
+		//{
+		//	var handler = StatusGPSChanged;
+		//	if (handler != null)
+		//		handler(this, new EventArgs());
+		//}
 
-		private static readonly Location defaultLocation = new Location(0, 0);
+		
 		public bool fuzzySearch;
+	    private bool isShowFavouriteStops;
 
 	    public override IEnumerable<Stop> FilteredStops
 	    {
-	        get { return context.FilteredStops(StopNameFilter, selectedTransport, LocationXX.Get(), FuzzySearch); }
+	        get
+	        {
+	            if (IsShowFavouriteStops)
+	                return Context.Context.FavouriteStops;
+	            return context.FilteredStops(StopNameFilter, selectedTransport, Context.Geolocation.CurLocation, FuzzySearch);
+	        }
 
 	    }
         
@@ -195,7 +181,18 @@ namespace MinskTrans.DesctopClient.Modelview
 		get { return settingsModelView; }
 	}
 
-		public string DestinationStop
+	    public bool IsShowFavouriteStops
+	    {
+	        get { return isShowFavouriteStops; }
+	        set
+	        {
+	            isShowFavouriteStops = value;
+                OnPropertyChanged();
+                OnPropertyChanged("FilteredStops");
+	        }
+	    }
+
+	    public string DestinationStop
 		{
 			get
 			{
@@ -355,8 +352,12 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
+/*
 		private bool metro;
+*/
+/*
 	    private Visibility showDetailViewStop;
+*/
 
 	    public bool Metro
 		{

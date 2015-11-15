@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using MapControl;
-
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Modelview;
 
 namespace MinskTrans.DesctopClient
 {
-	/// <summary>
-	///     Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window, INotifyPropertyChanged
+    /// <summary>
+    ///     Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		private readonly Timer timerr;
 
@@ -67,8 +65,8 @@ namespace MinskTrans.DesctopClient
 			//TileImageLoader.Cache = new FileDbCache("map", "cache");
 			MapModelView.StylePushpin = (Style) Resources["PushpinStyle1"];
 			ShedulerModelView = new MainModelView(map);
-			ShedulerModelView.Context.Context.LoadEnded += (sender, args) => { Dispatcher.Invoke(() => { ShedulerModelView.Context.AllPropertiesChanged(); }); };
-			ShedulerModelView.Context.Context.Load();
+			ShedulerModelView.Context.LoadEnded += (sender, args) => { Dispatcher.Invoke(() => { ShedulerModelView.Context.Context.AllPropertiesChanged(); }); };
+			ShedulerModelView.Context.LoadDataBase();
 
 			//Map model view events
 			ShedulerModelView.MapModelView.StartStopSeted +=
@@ -123,9 +121,9 @@ namespace MinskTrans.DesctopClient
 			{
 				statusMessages.Content = "Data has been downloaded";
 			});
-			ShedulerModelView.Context.Context.LoadStarted += (sender, args) => StopUpdateTimer();
-			ShedulerModelView.Context.Context.LoadEnded += (sender, args) => StartUpdateTimer();
-			ShedulerModelView.Context.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
+			ShedulerModelView.Context.LoadStarted += (sender, args) => StopUpdateTimer();
+			ShedulerModelView.Context.LoadEnded += (sender, args) => StartUpdateTimer();
+			//ShedulerModelView.Context.ErrorLoading += (sender, args)=> StartUpdateTimer();
 
 			ShedulerModelView.UpdateManager.ErrorDownloading += (sender, args) => MessageBox.Show("Error to download");
 			ShedulerModelView.Context.Context.Load();
@@ -351,71 +349,53 @@ namespace MinskTrans.DesctopClient
 
 		private void Button_Click_7(object sender, RoutedEventArgs e)
 		{
-			CalculateRout calculate = new CalculateRout(ShedulerModelView.Context);
-			calculate.CreateGraph();
-			calculate.FindPath(ShedulerModelView.Context.ActualStops.First(x => x.ID == 15757),
-				ShedulerModelView.Context.ActualStops.First(x => x.ID == 15754));
-		}
-
-		public Stop StartStop { get; set; }
-		public Stop EndStop { get; set; }
-
-
-		private void ContextClickStartStop(object sender, RoutedEventArgs e)
-		{
-			//Pushpin curPopup = (Pushpin)((ContextMenu)((MenuItem)sender).Parent).Parent;
-			StartStop = (Stop) currentPushpin.Tag;
-			currentPushpin.Style = (Style) Resources["PushpinStyleSelected"];
-		}
-
-		private void ContextClickEndStop(object sender, RoutedEventArgs e)
-		{
-			//Pushpin curPopup = (Pushpin)((ContextMenu)((MenuItem)sender).Parent).Parent;
-			EndStop = (Stop) currentPushpin.Tag;
-			currentPushpin.Style = (Style) Resources["PushpinStyleSelected"];
+			//CalculateRout calculate = new CalculateRout(ShedulerModelView.Context);
+			//calculate.CreateGraph();
+			//calculate.FindPath(ShedulerModelView.Context.ActualStops.First(x => x.ID == 15757),
+			//	ShedulerModelView.Context.ActualStops.First(x => x.ID == 15754));
 		}
 
 		private void Button_Click_8(object sender, RoutedEventArgs e)
 		{
-			CalculateRout calculaterout = new CalculateRout(ShedulerModelView.Context);
-			calculaterout.CreateGraph();
-			calculaterout.FindPath(ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15757),
-				ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15628));
+			//CalculateRout calculaterout = new CalculateRout(ShedulerModelView.Context);
+			//calculaterout.CreateGraph();
+			//calculaterout.FindPath(ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15757),
+			//	ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15628));
 		}
 
 		private void Button_Click_2(object sender, RoutedEventArgs e)
 		{
-			CalculateRout calculator = new CalculateRout(ShedulerModelView.Context);
-			string ResultString;
-			calculator.CreateGraph();
-			List<string> reusltList = new List<string>();
-			if (!calculator.FindPath(ShedulerModelView.MapModelView.StartStop, ShedulerModelView.MapModelView.EndStop))
-				reusltList.Add("Bad");
-			else
-			{
-				StringBuilder builder = new StringBuilder();
-				foreach (var keyValuePair in calculator.resultRout)
-				{
-					builder.Append(keyValuePair.Key.Transport);
-					builder.Append(" ");
-					builder.Append(keyValuePair.Key);
-					builder.Append('\n');
-					foreach (var stop in keyValuePair.Value)
-					{
-						builder.Append(stop.Name);
-						builder.Append(", ");
-					}
-					reusltList.Add(builder.ToString());
-					builder.Clear();
+			//CalculateRout calculator = new CalculateRout(ShedulerModelView.Context);
+			//string ResultString;
+			//calculator.CreateGraph();
+			//List<string> reusltList = new List<string>();
+			//if (!calculator.FindPath(ShedulerModelView.MapModelView.StartStop, ShedulerModelView.MapModelView.EndStop))
+			//	reusltList.Add("Bad");
+			//else
+			//{
+			//	StringBuilder builder = new StringBuilder();
+			//	foreach (var keyValuePair in calculator.resultRout)
+			//	{
+			//		builder.Append(keyValuePair.Key.Transport);
+			//		builder.Append(" ");
+			//		builder.Append(keyValuePair.Key);
+			//		builder.Append('\n');
+			//		foreach (var stop in keyValuePair.Value)
+			//		{
+			//			builder.Append(stop.Name);
+			//			builder.Append(", ");
+			//		}
+			//		reusltList.Add(builder.ToString());
+			//		builder.Clear();
 
-				}
-				ResultString = builder.ToString();
-			}
-			ResulTextBox.ItemsSource = reusltList;
-			if (oldStops != null)
-				;
-			oldStops = calculator.resultRout.SelectMany(x => x.Value).Distinct().ToList();
-			MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
+			//	}
+			//	ResultString = builder.ToString();
+			//}
+			//ResulTextBox.ItemsSource = reusltList;
+			//if (oldStops != null)
+			//	;
+			//oldStops = calculator.resultRout.SelectMany(x => x.Value).Distinct().ToList();
+			//MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
 		}
 
 		private List<Stop> oldStops;

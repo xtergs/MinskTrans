@@ -37,7 +37,7 @@
                 <TextBox HorizontalAlignment="Stretch" InputScope="Number" Text="{Binding Engine.DbUpdateMins, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock x:Name="Counter" Text="{Binding Time}"></TextBlock>
         </StackPanel>
-        <TextBlock Grid.Row="0" Text="{Binding Context.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
+        <TextBlock Grid.Row="0" Text="{Binding BusnesLogic.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
 
         </TextBlock>
         <Button Grid.Row="1" Content="TestRawPushNotification" Click="SendRawPushNotification"></Button>

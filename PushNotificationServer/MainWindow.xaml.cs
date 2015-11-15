@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using PushNotificationServer.Properties;
 
@@ -19,9 +20,9 @@ namespace PushNotificationServer
 
 		//private ContextDesctop context;
 		
-		public IContext Context
+		public IBussnessLogics BusnesLogic
 		{
-			get { return ServerEngine.Engine.Context1; }
+			get { return ServerEngine.Engine.BusnesLogic; }
 		}
 
 		private Timer timerNewsAutoUpdate;
@@ -30,7 +31,6 @@ namespace PushNotificationServer
 			InitializeComponent();
 
 			Browser.Navigate(@"https://login.live.com/oauth20_authorize.srf?pretty=false&client_id=0000000040158EFF&scope=wl.basic+wl.signin+wl.skydrive&response_type=code&redirect_uri=");
-			ServerEngine.Engine.Context1.UpdateEnded += (sender, args) => { };
 			NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			HotNewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			AutoUpdateNewsCheckBox.DataContext = ServerEngine.Engine;

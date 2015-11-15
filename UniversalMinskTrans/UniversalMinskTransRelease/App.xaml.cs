@@ -28,6 +28,7 @@ using System.Diagnostics;
 using Windows.UI.Popups;
 using MyLibrary;
 using CommonLibrary.IO;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
@@ -99,7 +100,7 @@ namespace UniversalMinskTrans
 									SettingsModelView.TypeOfUpdate.Db))
 							{
 								await MainModelView.MainModelViewGet.Context.Save(false);
-								await MainModelView.MainModelViewGet.Context.Load(LoadType.LoadAll);
+								await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
 							}
 							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
 								SettingsModelView.TypeOfUpdate.News))
@@ -186,7 +187,7 @@ namespace UniversalMinskTrans
 						}
 					};
 #pragma warning disable 4014
-					model.Context.Load();
+					model.Context.LoadDataBase();
 #pragma warning restore 4014
 
 
@@ -265,7 +266,7 @@ namespace UniversalMinskTrans
 #endif
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
-			await model.Context.Save(saveAllDb: false);
+			await model.Context.Save(saveAllDB: false);
 			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
@@ -388,7 +389,7 @@ namespace UniversalMinskTrans
 				settings.TypeError = SettingsModelView.Error.Repeated;
 			else if (settings.TypeError == SettingsModelView.Error.Repeated)
 			{
-				await MainModelView.MainModelViewGet.Context.Recover();
+				await MainModelView.MainModelViewGet.Context.Context.Recover();
 			}
 			else
 			{
@@ -404,7 +405,7 @@ namespace UniversalMinskTrans
 			Logger.Log("App OnActivated");
 #endif
 			base.OnActivated(args);
-			await MainModelView.MainModelViewGet.Context.Load();
+			await MainModelView.MainModelViewGet.Context.LoadDataBase();
 #if BETA
 			Logger.Log("App OnActivated, context loaded");
 #endif

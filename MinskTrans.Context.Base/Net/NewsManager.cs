@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
+using MyLibrary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -60,8 +61,8 @@ namespace MinskTrans.Net
 
 		private string fileNameMonths = "months.txt";
 		private string fileNameDays = "days.txt";
-		public DateTime LastNewsTime { get; set; }
-		public DateTime LastHotNewstime { get; set; }
+		//public DateTime LastNewsTime { get; set; }
+		//public DateTime LastHotNewstime { get; set; }
 		
 
 		private string pathToSaveData = "";
@@ -92,9 +93,9 @@ namespace MinskTrans.Net
 		}
 
 		//
-		public abstract DateTime LastUpdateMainNewsDateTimeUtc { get; set; }
+		//public abstract DateTime LastUpdateMainNewsDateTimeUtc { get; set; }
 
-		public abstract DateTime LastUpdateHotNewsDateTimeUtc { get; set; }
+		//public abstract DateTime LastUpdateHotNewsDateTimeUtc { get; set; }
 
 		public string FileNameMonths
 		{
@@ -133,16 +134,22 @@ namespace MinskTrans.Net
 		}
 		readonly FileHelperBase fileHelper;
 		protected readonly InternetHelperBase internetHelper;
+	    private readonly ISettingsModelView settings;
 
 		FileHelperBase FileHelper { get { return fileHelper; } }
 
-		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper)
+		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings)
 		{
 			if (helper == null)
 				throw new ArgumentNullException("helper");
 			fileHelper = helper;
+            if (internetHelper  == null)
+                throw new ArgumentNullException("internetHelper");
 			this.internetHelper = internetHelper;
-			LastNewsTime = new DateTime();
+            if (settings == null)
+                throw new ArgumentNullException("settings");
+		    this.settings = settings;
+			//LastNewsTime = new DateTime();
 			newDictionary = new List<NewsEntry>();
 			hotNewsDictionary = new List<NewsEntry>();
 			allHotNewsDictionary = new List<NewsEntry>();
@@ -159,7 +166,7 @@ namespace MinskTrans.Net
 			newDictionary = (await CheckAsync(UriNews, "div/p", "div/dl/div/table/tr/td[1]")).Where(time => time.PostedUtc > new DateTime()).ToList();
 			if (newDictionary.Count <= 0)
 				return;
-			LastNewsTime = newDictionary.Max(key=> key.PostedUtc);
+			settings.LastNewsTimeUtc = newDictionary.Max(key=> key.PostedUtc);
 			foreach (var source in newDictionary)
 			{
 				if (!allNews.Any(key=> key.PostedUtc == source.PostedUtc))

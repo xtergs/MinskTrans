@@ -140,15 +140,15 @@ namespace MinskTrans.Universal
 				
 			//};
 
-			FavouriteVisualStateGroup.CurrentStateChanged += (sender, args) =>
-			{
-				if (args.NewState == FavouriteShowStopVisualState)
-					FavouriteStopsListView.SelectedIndex = -1;
-				else if (args.NewState == FavouriteShowRoutVisualState)
-					ShowFavouriteRoutsListView.SelectedIndex = -1;
-				else if (args.NewState == FavouriteRoutsListVisualState)
-					FavouriteRoutsListView.SelectedIndex = -1;
-			};
+			//FavouriteVisualStateGroup.CurrentStateChanged += (sender, args) =>
+			//{
+			//	if (args.NewState == FavouriteShowStopVisualState)
+			//		FavouriteStopsListView.SelectedIndex = -1;
+			//	else if (args.NewState == FavouriteShowRoutVisualState)
+			//		ShowFavouriteRoutsListView.SelectedIndex = -1;
+			//	else if (args.NewState == FavouriteRoutsListVisualState)
+			//		FavouriteRoutsListView.SelectedIndex = -1;
+			//};
 
 			GroupsVisualStateGroup.CurrentStateChanged += (sender, args) =>
 			{
@@ -221,7 +221,7 @@ namespace MinskTrans.Universal
 				});
 			};
 			
-			ShowFavouriteStop.AddGroup += ShowAddGroup;
+			//ShowFavouriteStop.AddGroup += ShowAddGroup;
 			ShowStop.AddGroup += ShowAddGroup;
 
 			//model.MapModelView = new MapModelView(model.Context, map);
@@ -438,8 +438,8 @@ namespace MinskTrans.Universal
 				}
 #endif
 			model = MainModelView.MainModelViewGet;
-			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical ||
-				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
+			if (model.SettingsModelView.TypeError == Error.Critical ||
+				model.SettingsModelView.TypeError == Error.Repeated)
 			{
 				ShowPopup("Произошла ошибка, отправьте лог разработчику");
 				SendLog();
@@ -461,22 +461,24 @@ namespace MinskTrans.Universal
                 SelectVisualState();
 
 			}
-			else if (Pivot.SelectedItem == FavourPivotItem)
-			{
-				e.Handled = true;
+			else
+   //         if (Pivot.SelectedItem == FavourPivotItem)
+			//{
+			//	e.Handled = true;
 
-				if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-				else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-				else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-						 !FavouriteRoutssHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-				else
-					e.Handled = false;
+			//	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
+			//		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
+			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
+			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
+			//			 !FavouriteRoutssHyperlinkButton.IsEnabled)
+			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+			//	else
+			//		e.Handled = false;
 
-			}
-			else if (Pivot.SelectedItem == GroupsPivtoItem)
+			//}
+			//else
+            if (Pivot.SelectedItem == GroupsPivtoItem)
 			{
 				e.Handled = true;
 				if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
@@ -508,21 +510,23 @@ namespace MinskTrans.Universal
 				}
 
 			}
-			else if (Pivot.SelectedItem == FavourPivotItem)
-			{
-				e.Handled = true;
+			else
+   //         if (Pivot.SelectedItem == FavourPivotItem)
+			//{
+			//	e.Handled = true;
 
-				if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-				else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-				else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-						 !FavouriteRoutssHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-				else
-					e.Handled = false;
+			//	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
+			//		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
+			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
+			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
+			//			 !FavouriteRoutssHyperlinkButton.IsEnabled)
+			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+			//	else
+			//		e.Handled = false;
 
-			}else if (Pivot.SelectedItem == GroupsPivtoItem)
+			//}else 
+            if (Pivot.SelectedItem == GroupsPivtoItem)
 			{
 				e.Handled = true;
 				if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)

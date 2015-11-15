@@ -24,17 +24,9 @@ namespace MinskTrans.Universal.ModelView
 	{
 		private static MainModelView mainModelView;
 		//private readonly IContext context;
-		private readonly GroupStopsModelView groupStopsModelView;
-		private readonly RoutsModelView routesModelview;
-		private readonly SettingsModelView settingsModelView;
-		private readonly StopModelView stopMovelView;
-		private readonly FavouriteModelView favouriteModelView;
-		private readonly FindModelView findModelView;
-		private MapModelView mapMOdelView;
-		private readonly NewsManagerBase newsManager;
-		
-		private readonly UpdateManagerBase updateManagerBase;
-		private bool updating;
+	    private readonly NewsManagerBase newsManager;
+
+	    private bool updating;
 
 		//public static MainModelView Create(Context newContext)
 		//{
@@ -63,8 +55,10 @@ namespace MinskTrans.Universal.ModelView
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			builder.RegisterType<NewsManager>().As<NewsManagerBase>();
-		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
 		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>();
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
+		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
             
 			//builder.RegisterType<Context>().As<IContext>();
 
@@ -72,12 +66,12 @@ namespace MinskTrans.Universal.ModelView
 
 			context = container.Resolve<IBussnessLogics>();
 			newsManager = container.Resolve<NewsManagerBase>();
-			updateManagerBase = container.Resolve<UpdateManagerBase>();
+			UpdateManagerBase = container.Resolve<UpdateManagerBase>();
 
-			settingsModelView = new SettingsModelView();
-			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
-			favouriteModelView = new FavouriteModelView(context, settingsModelView);
-			findModelView = new FindModelView(context, settingsModelView);
+			SettingsModelView = container.Resolve<ISettingsModelView>();
+			GroupStopsModelView = new GroupStopsModelView(context, SettingsModelView);
+			FavouriteModelView = new FavouriteModelView(context, SettingsModelView);
+			FindModelView = new FindModelView(context, SettingsModelView);
 		}
 
 		public NewsManagerBase NewsManager
@@ -85,46 +79,21 @@ namespace MinskTrans.Universal.ModelView
 			get { return newsManager;}
 		}
 
-		public MapModelView MapModelView
-		{
-			get { return mapMOdelView;}
-			set { mapMOdelView = value; }
-		}
+		public MapModelView MapModelView { get; set; }
 
-		public SettingsModelView SettingsModelView
-		{
-			get { return settingsModelView; }
-		}
+	    public ISettingsModelView SettingsModelView { get; }
 
-		public FindModelView FindModelView
-		{
-			get { return findModelView;}
-		}
+	    public FindModelView FindModelView { get; }
 
-		public StopModelView StopMovelView
-		{
-			get { return stopMovelView; }
-		}
+	    public StopModelView StopMovelView { get; }
 
-		public RoutsModelView RoutsModelView
-		{
-			get { return routesModelview; }
-		}
+	    public RoutsModelView RoutsModelView { get; }
 
-		public GroupStopsModelView GroupStopsModelView
-		{
-			get { return groupStopsModelView; }
-		}
+	    public GroupStopsModelView GroupStopsModelView { get; }
 
-		public FavouriteModelView FavouriteModelView
-		{
-			get
-			{
-				return favouriteModelView;
-			}
-		}
+	    public FavouriteModelView FavouriteModelView { get; }
 
-		//public IContext Context { get { return context; } }
+	    //public IContext Context { get { return context; } }
 
 
 		public List<NewsEntry> AllNews
@@ -152,15 +121,9 @@ namespace MinskTrans.Universal.ModelView
 
 		
 
-		public UpdateManagerBase UpdateManagerBase
-		{
-			get
-			{
-				return updateManagerBase;
-			}
-		}
+		public UpdateManagerBase UpdateManagerBase { get; }
 
-		RelayCommand updateDataCommand;
+	    RelayCommand updateDataCommand;
 		public RelayCommand UpdateDataCommand
 		{
 			get

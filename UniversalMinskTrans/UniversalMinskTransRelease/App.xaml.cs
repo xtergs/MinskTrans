@@ -1,33 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using MinskTrans.Universal;
 using Windows.UI.Xaml.Navigation;
 using MinskTrans.Universal.ModelView;
-using CommonLibrary;
 using Windows.ApplicationModel.Background;
 using System.Threading.Tasks;
 using Windows.Storage;
 using System.Text;
-using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.DesctopClient;
 using Windows.UI.Core;
 using System.Diagnostics;
 using Windows.UI.Popups;
 using MyLibrary;
-using CommonLibrary.IO;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 
@@ -97,13 +83,13 @@ namespace UniversalMinskTrans
 						{
 							if (
 								MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-									SettingsModelView.TypeOfUpdate.Db))
+									TypeOfUpdate.Db))
 							{
 								await MainModelView.MainModelViewGet.Context.Save(false);
 								await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
 							}
 							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-								SettingsModelView.TypeOfUpdate.News))
+								TypeOfUpdate.News))
 							{
 								await MainModelView.MainModelViewGet.NewsManager.Load();
 							}
@@ -267,7 +253,7 @@ namespace UniversalMinskTrans
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			await model.Context.Save(saveAllDB: false);
-			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
+			model.SettingsModelView.TypeError = Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
 			deferral.Complete();
@@ -385,15 +371,15 @@ namespace UniversalMinskTrans
 				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
 			await Logger.Log().SaveToFile();
 #endif
-			if (settings.TypeError == SettingsModelView.Error.Critical)
-				settings.TypeError = SettingsModelView.Error.Repeated;
-			else if (settings.TypeError == SettingsModelView.Error.Repeated)
+			if (settings.TypeError == Error.Critical)
+				settings.TypeError = Error.Repeated;
+			else if (settings.TypeError == Error.Repeated)
 			{
 				await MainModelView.MainModelViewGet.Context.Context.Recover();
 			}
 			else
 			{
-				settings.TypeError = SettingsModelView.Error.Critical;
+				settings.TypeError = Error.Critical;
 			}
 		}
 

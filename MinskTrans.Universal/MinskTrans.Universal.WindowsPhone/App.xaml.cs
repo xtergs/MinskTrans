@@ -17,6 +17,7 @@ using MinskTrans.Context.Base;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
+using MyLibrary;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -138,15 +139,15 @@ namespace MinskTrans.Universal
 				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
 			await Logger.Log().SaveToFile();
 #endif
-			if (settings.TypeError == SettingsModelView.Error.Critical)
-				settings.TypeError = SettingsModelView.Error.Repeated;
-			else if (settings.TypeError == SettingsModelView.Error.Repeated)
+			if (settings.TypeError == Error.Critical)
+				settings.TypeError = Error.Repeated;
+			else if (settings.TypeError == Error.Repeated)
 			{
 				MainModelView.MainModelViewGet.Context.Context.Recover();
 			}
 			else
 			{
-				settings.TypeError = SettingsModelView.Error.Critical;
+				settings.TypeError = Error.Critical;
 			}
 		}
 
@@ -217,13 +218,13 @@ namespace MinskTrans.Universal
 						{
 							if (
 								MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-									SettingsModelView.TypeOfUpdate.Db))
+									TypeOfUpdate.Db))
 							{
 								await MainModelView.MainModelViewGet.Context.Save(false);
 								await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
 							}
 							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-								SettingsModelView.TypeOfUpdate.News))
+								TypeOfUpdate.News))
 							{
 								await MainModelView.MainModelViewGet.NewsManager.Load();
 							}
@@ -387,7 +388,7 @@ namespace MinskTrans.Universal
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			await model.Context.Save(saveAllDB:  false);
-			model.SettingsModelView.TypeError = SettingsModelView.Error.None;
+			model.SettingsModelView.TypeError = Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
 			deferral.Complete();

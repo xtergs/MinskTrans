@@ -14,50 +14,16 @@ namespace CommonLibrary
 	{
 		
 
-		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet)
-			:base(fileHelper, internet)
+		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet, ISettingsModelView settings)
+			:base(fileHelper, internet, settings)
 		{
 			
 		}
 
-        private ApplicationSettingsHelper lastUpdateDataDateTimeBack;
-        public override DateTime LastUpdateMainNewsDateTimeUtc
-        {
-            get
-            {
-                if (lastUpdateDataDateTimeBack == null)
-                    lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
-                return lastUpdateDataDateTimeBack.DateTimeSettings;
-            }
+        private ISettingsModelView lastUpdateDataDateTimeBack;
+        
 
-            set
-            {
-                if (lastUpdateDataDateTimeBack == null)
-                    lastUpdateDataDateTimeBack = new ApplicationSettingsHelper();
-                lastUpdateDataDateTimeBack.DateTimeSettings = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ApplicationSettingsHelper lastUpdateHotDataDateTimeBack;
-        public override DateTime LastUpdateHotNewsDateTimeUtc
-        {
-
-			get
-			{
-				if (lastUpdateHotDataDateTimeBack == null)
-					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
-				return lastUpdateHotDataDateTimeBack.DateTimeSettings;
-			}
-
-			set
-			{
-				if (lastUpdateHotDataDateTimeBack == null)
-					lastUpdateHotDataDateTimeBack = new ApplicationSettingsHelper();
-				lastUpdateHotDataDateTimeBack.DateTimeSettings = value;
-				OnPropertyChanged();
-			}
-        }
+       
 
         public override Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
 		{

@@ -259,8 +259,8 @@ namespace MinskTrans.Universal
 				}
 #endif
 			model = MainModelView.MainModelViewGet;
-			if (model.SettingsModelView.TypeError == SettingsModelView.Error.Critical ||
-				model.SettingsModelView.TypeError == SettingsModelView.Error.Repeated)
+			if (model.SettingsModelView.TypeError == Error.Critical ||
+				model.SettingsModelView.TypeError == Error.Repeated)
 			{
 				ShowPopup("Произошла ошибка, отправьте лог разработчику");
 				SendLog();

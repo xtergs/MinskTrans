@@ -30,23 +30,14 @@ namespace MinskTrans.Universal.ModelView
 	{
 		private static MainModelView mainModelView;
 		//private readonly IContext context;
-	    private readonly NewsModelView newsModelView;
-		private readonly GroupStopsModelView groupStopsModelView;
-		private readonly RoutsModelView routesModelview;
-		private readonly SettingsModelView settingsModelView;
-		private readonly StopModelView stopMovelView;
-		private readonly FavouriteModelView favouriteModelView;
-		private FindModelView findModelView;
-		private MapModelView mapMOdelView;
-		private readonly NewsManagerBase newsManager;
-		readonly UpdateManagerBase updateManager;
-		
+	    private FindModelView findModelView;
+	    private readonly NewsManagerBase newsManager;
 
-		public UpdateManagerBase UpdateManager { get { return updateManager; } }		
 
-		
+	    public UpdateManagerBase UpdateManager { get; }
 
-		public static MainModelView MainModelViewGet
+
+	    public static MainModelView MainModelViewGet
 		{
 			get
 			{
@@ -58,35 +49,35 @@ namespace MinskTrans.Universal.ModelView
 		private MainModelView()
 		{
             var builder = new ContainerBuilder();
-            builder.RegisterType<FileHelper>().As<FileHelperBase>();
+            builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
             //builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
             builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
             builder.RegisterType<UpdateManagerBase>();
             builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
             builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
             builder.RegisterType<NewsManager>().As<NewsManagerBase>();
-            //builder.RegisterType<Context>().As<IContext>();
-		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
-		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>();
-		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
+		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
+		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
 
             var container = builder.Build();
 
             context = container.Resolve<IBussnessLogics>();
             newsManager = container.Resolve<NewsManagerBase>();
-            updateManager = container.Resolve<UpdateManagerBase>();
+            UpdateManager = container.Resolve<UpdateManagerBase>();
 
             //var fileHelper = new FileHelper();
             //var internetHelper = new InternetHelperUniversal(fileHelper);
             //context = new UniversalContext(fileHelper, internetHelper);
             //updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
 
-            settingsModelView = new SettingsModelView();
+            SettingsModelView = container.Resolve<ISettingsModelView>();
 			//routesModelview = new RoutsModelView(context);
 			//stopMovelView = new StopModelView(context, settingsModelView, true);
-			groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
-			favouriteModelView = new FavouriteModelView(context, settingsModelView);
-		    newsModelView = new NewsModelView(NewsManager);
+			GroupStopsModelView = new GroupStopsModelView(context, SettingsModelView);
+			FavouriteModelView = new FavouriteModelView(context, SettingsModelView);
+		    NewsModelView = new NewsModelView(NewsManager);
 		}
 
 		//private MainModelView(Context newContext)
@@ -108,51 +99,29 @@ namespace MinskTrans.Universal.ModelView
 			get { return newsManager;}
 		}
 
-		public MapModelView MapModelView
-		{
-			get { return mapMOdelView;}
-			set { mapMOdelView = value; }
-		}
+		public MapModelView MapModelView { get; set; }
 
-		public SettingsModelView SettingsModelView
-		{
-			get { return settingsModelView; }
-		}
+	    public ISettingsModelView SettingsModelView { get; }
 
-		public FindModelView FindModelView
+	    public FindModelView FindModelView
 		{
 			get
 			{
 				if (findModelView == null)
-					findModelView = new FindModelView(context, settingsModelView, true);
+					findModelView = new FindModelView(context, SettingsModelView, true);
 				return findModelView;
 			}
 		}
 
-		public StopModelView StopMovelView
-		{
-			get { return stopMovelView; }
-		}
+		public StopModelView StopMovelView { get; }
 
-		public RoutsModelView RoutsModelView
-		{
-			get { return routesModelview; }
-		}
+	    public RoutsModelView RoutsModelView { get; }
 
-		public GroupStopsModelView GroupStopsModelView
-		{
-			get { return groupStopsModelView; }
-		}
+	    public GroupStopsModelView GroupStopsModelView { get; }
 
-		public FavouriteModelView FavouriteModelView
-		{
-			get
-			{
-				return favouriteModelView;
-			}
-		}
+	    public FavouriteModelView FavouriteModelView { get; }
 
-		//public IContext Context { get { return context; } }
+	    //public IContext Context { get { return context; } }
 
 
 		public List<NewsEntry> AllNews
@@ -187,6 +156,7 @@ namespace MinskTrans.Universal.ModelView
 						UpdateDataCommand.RaiseCanExecuteChanged();
 
 						await Context.UpdateTimeTableAsync();
+					    await Context.UpdateNewsTableAsync();
 						updating = false;
 						UpdateDataCommand.RaiseCanExecuteChanged();
 					}, () => !updating);
@@ -194,35 +164,8 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public RelayCommand<Stop> ShowStopMap
-		{
-			get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-		}
+		
 
-		public RelayCommand<Rout> ShowRouteMap
-		{
-			get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		}
-
-	    public NewsModelView NewsModelView
-        {
-	        get { return newsModelView; }
-	    }
-
-	    public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
-
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
-
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+	    public NewsModelView NewsModelView { get; }
 	}
 }

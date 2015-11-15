@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base;
+using MyLibrary;
 
 namespace MinskTrans.Context
 {
@@ -14,6 +15,8 @@ namespace MinskTrans.Context
         }
 
         #region Overrides of GenericBussnessLogic
+
+        public override ISettingsModelView Settings { get; }
 
         public override Task<bool> UpdateNewsTableAsync()
         {

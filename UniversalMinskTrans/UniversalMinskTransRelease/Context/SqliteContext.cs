@@ -386,25 +386,5 @@ namespace UniversalMinskTransRelease.Context
         }
 
         #endregion
-
-        ApplicationSettingsHelper lastUpdateDataDateTime;
-        public override DateTime LastUpdateDataDateTime
-        {
-            get
-            {
-                if (lastUpdateDataDateTime == null)
-                    lastUpdateDataDateTime = new ApplicationSettingsHelper();
-                return lastUpdateDataDateTime.DateTimeSettings;
-            }
-
-            set
-            {
-                if (lastUpdateDataDateTime == null)
-                    lastUpdateDataDateTime = new ApplicationSettingsHelper();
-                lastUpdateDataDateTime.DateTimeSettings = value;
-                OnPropertyChanged();
-            }
-
         }
-    }
 }

@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-#if WINDOWS_PHONE_APP
-using System.Linq;
-using Windows.UI.Xaml;
-using Windows.Devices.Geolocation;
-using Windows.UI.Core;
-#endif
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
-using Location = MapControl.Location;
+using MyLibrary;
+
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -18,16 +13,16 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Stop filteredSelectedStop;
 		private string stopNameFilter;
 		
-		private SettingsModelView settings;
+		private ISettingsModelView settings;
 
-		public SettingsModelView Settings
+		public ISettingsModelView Settings
 		{
 			get { return settings; }
 		}
 
 		private Location lastLocation;
 
-		public StopModelViewBase(IBussnessLogics newContext, SettingsModelView newSettings) : base(newContext)
+		public StopModelViewBase(IBussnessLogics newContext, ISettingsModelView newSettings) : base(newContext)
 		{
 			settings = newSettings;
 			newContext.Context.PropertyChanged+= (sender, args) =>

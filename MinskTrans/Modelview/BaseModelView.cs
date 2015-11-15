@@ -106,119 +106,119 @@ namespace MinskTrans.DesctopClient.Modelview
 			
 		}
 
-		
 
-		//RelayCommand<Rout> addFavouriteRoutCommandBack;
-		//public RelayCommand<Rout> AddFavouriteRoutCommand
-		//{
-		//	get
-		//	{
-		//		if (addFavouriteRoutCommandBack == null)
-		//			addFavouriteRoutCommandBack = new RelayCommand<Rout>(x =>
-		//		   {
-		//			   Context.AddRemoveFavouriteRoute(x);
-		//		   }, p => p != null && !Context.Context.IsFavouriteRout(p));
-		//		return addFavouriteRoutCommandBack;
-		//	}
-		//}
 
-		//public RelayCommand<Stop> AddFavouriteStopCommand
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<Stop>(async x =>
-		//		{
-		//			await Context.AddFavouriteStop(x);
-		//		}
+        //RelayCommand<Rout> addFavouriteRoutCommandBack;
+        //public RelayCommand<Rout> AddFavouriteRoutCommand
+        //{
+        //	get
+        //	{
+        //		if (addFavouriteRoutCommandBack == null)
+        //			addFavouriteRoutCommandBack = new RelayCommand<Rout>(x =>
+        //		   {
+        //			   Context.AddRemoveFavouriteRoute(x);
+        //		   }, p => p != null && !Context.Context.IsFavouriteRout(p));
+        //		return addFavouriteRoutCommandBack;
+        //	}
+        //}
 
-		//	  , p => p != null && Context.FavouriteStops != null && !Context.FavouriteStops.Contains(p));
-		//	}
-		//}
-		//public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<RoutWithDestinations>(async x =>
-		//		{
-		//			await Context.RemoveFavouriteRout(x);
-		//		}, p => p != null && Context.IsFavouriteRout(p));
-		//	}
-		//}
+        //public RelayCommand<Stop> AddFavouriteStopCommand
+        //{
+        //	get
+        //	{
+        //		return new RelayCommand<Stop>(async x =>
+        //		{
+        //			await Context.AddFavouriteStop(x);
+        //		}
 
-		//public RelayCommand<Stop> RemoveFavouriteStopCommand
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<Stop>(async x =>
-		//		{
-		//			await Context.RemoveFavouriteStop(x);
-		//		}, p => p != null && Context.FavouriteStops.Contains(p));
-		//	}
-		//}
+        //	  , p => p != null && Context.FavouriteStops != null && !Context.FavouriteStops.Contains(p));
+        //	}
+        //}
+        //public RelayCommand<RoutWithDestinations> RemoveFavouriteRoutCommand
+        //{
+        //	get
+        //	{
+        //		return new RelayCommand<RoutWithDestinations>(async x =>
+        //		{
+        //			await Context.RemoveFavouriteRout(x);
+        //		}, p => p != null && Context.IsFavouriteRout(p));
+        //	}
+        //}
 
-		//public RelayCommand<Stop> AddRemoveFavouriteStop
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<Stop>(async x =>
-		//		{
-		//			if (Context.IsFavouriteStop(x))
-		//				await Context.RemoveFavouriteStop(x);
-		//			else
-		//				await Context.AddFavouriteStop(x);
+        //public RelayCommand<Stop> RemoveFavouriteStopCommand
+        //{
+        //	get
+        //	{
+        //		return new RelayCommand<Stop>(async x =>
+        //		{
+        //			await Context.RemoveFavouriteStop(x);
+        //		}, p => p != null && Context.FavouriteStops.Contains(p));
+        //	}
+        //}
 
-		//		}
-		//	  );
-		//	}
-		//}
+        //public RelayCommand<Stop> AddRemoveFavouriteStop
+        //{
+        //	get
+        //	{
+        //		return new RelayCommand<Stop>(async x =>
+        //		{
+        //			if (Context.IsFavouriteStop(x))
+        //				await Context.RemoveFavouriteStop(x);
+        //			else
+        //				await Context.AddFavouriteStop(x);
 
-		//public RelayCommand<RoutWithDestinations> AddRemoveFavouriteRout
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<RoutWithDestinations>(async x =>
-		//		{
-		//			if (Context.IsFavouriteRout(x))
-		//				await Context.RemoveFavouriteRout(x);
-		//			else
-		//				await Context.AddFavouriteRout(x);
+        //		}
+        //	  );
+        //	}
+        //}
 
-		//		}
-		//			);
-		//	}
-		//}
+        //public RelayCommand<RoutWithDestinations> AddRemoveFavouriteRout
+        //{
+        //	get
+        //	{
+        //		return new RelayCommand<RoutWithDestinations>(async x =>
+        //		{
+        //			if (Context.IsFavouriteRout(x))
+        //				await Context.RemoveFavouriteRout(x);
+        //			else
+        //				await Context.AddFavouriteRout(x);
 
-		//public RelayCommand<string> CreateGroup
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<string>(async x =>
-		//		{
-		//			await Context.AddGroup(new GroupStop() { Name = x });
-		//		}, p => !string.IsNullOrWhiteSpace(p));
-		//	}
-		//}
+        //		}
+        //			);
+        //	}
+        //}
 
-		//public RelayCommand<GroupStop> DeleteGroups
-		//{
-		//	get
-		//	{
-		//		return new RelayCommand<GroupStop>(async x =>
-		//		{
-		//			if (x != null)
-		//			{
-		//				await Context.RemoveGroup(x);
-		//			}
-		//		});
-		//	}
-		//}
+        public RelayCommand<string> CreateGroup
+        {
+            get
+            {
+                return new RelayCommand<string>(async x =>
+                {
+                    await Context.Context.AddGroup(new GroupStop() { Name = x });
+                }, p => !string.IsNullOrWhiteSpace(p));
+            }
+        }
 
-		//public ISettingsModelView SettingsModelView
-		//{
-		//	get { return settingsModelView;}
-		//}
+        public RelayCommand<GroupStop> DeleteGroups
+        {
+            get
+            {
+                return new RelayCommand<GroupStop>(async x =>
+                {
+                    if (x != null)
+                    {
+                        await Context.Context.RemoveGroup(x);
+                    }
+                });
+            }
+        }
 
-		public IBussnessLogics Context
+        //public ISettingsModelView SettingsModelView
+        //{
+        //	get { return settingsModelView;}
+        //}
+
+        public IBussnessLogics Context
 		{
 			get { return context; }
 		}

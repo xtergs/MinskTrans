@@ -51,7 +51,7 @@ namespace PushNotificationServer
 			NewsManager.LastHotNewstime = Settings.Default.LastUpdatedHotNews;
 			await NewsManager.Load();
 			await BusnesLogic.LoadDataBase(LoadType.LoadDB);
-			BusnesLogic.LastUpdateDbDateTimeUtc = Settings.Default.DBUpdateTime;
+			BusnesLogic.Settings.LastUpdateDbDateTimeUtc = Settings.Default.DBUpdateTime;
 			OndeDriveController.Inicialize();
 			this.StopChecknews += (sender, args) => UploadAllToOneDrive();
 #if DEBUG

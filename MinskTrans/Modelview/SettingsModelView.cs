@@ -23,64 +23,49 @@ using MinskTrans.Universal.Annotations;
 
 #endif
 
-    public class ApplicationSettingsHelper
+
+
+    public interface IApplicationSettingsHelper
     {
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+        // DateTime DateTimeSettings { get; set; }
+        void SimpleSet<T>(T value, [CallerMemberName] string key = null);
+        T SimpleGet<T>(T defValue = default(T), [CallerMemberName] string key = null);
+        //void SimpleSet(string value, [CallerMemberName] string key = null);
+        //void SimpleSet(bool value, [CallerMemberName] string key = null);
+        //void SimpleSet(int value, [CallerMemberName] string key = null);
+        //string SimleGet(string defValue = null, [CallerMemberName] string key = null);
+        //object SimleGet(object defValue = null, [CallerMemberName] string key = null);
+        //bool SimleGet(bool defValue = true, [CallerMemberName] string key = null);
+        //int SimleGet(int defValue = 0, [CallerMemberName] string key = null);
+        DateTime SimbleGet(DateTime value = default(DateTime), [CallerMemberName] string key = null);
+        void SimpleSet(DateTime value, [CallerMemberName] string key = null);
+    }
 
-        public ApplicationSettingsHelper([CallerMemberName] string member = null)
-        {
-            SettingsMember = member;
-        }
 
-        private string SettingsMember;
-        private DateTime backField;
-        public DateTime DateTimeSettings
+    public class UniversalApplicationSettingsHelper : IApplicationSettingsHelper
+    {
+        readonly Dictionary<string, DateTime> dateTimeDictionary = new Dictionary<string, DateTime>(); 
+        
+        public DateTime SimbleGet(DateTime value = default(DateTime), [CallerMemberName] string key = null)
         {
-            get
-            {
-                if (backField == default(DateTime) && !ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
-                {
-                    ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, backField.ToString());
-                    return backField;
-                }
-                if (backField != default(DateTime))
-                    return backField;
+            if (dateTimeDictionary.ContainsKey(key) )
+                if (dateTimeDictionary[key] != default(DateTime))
+                    return dateTimeDictionary[key];
                 else
                 {
-                    backField = DateTime.Parse(ApplicationData.Current.LocalSettings.Values[SettingsMember].ToString());
-                    return backField;
+                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                    {
+                        var backField =
+                            DateTime.Parse(ApplicationData.Current.LocalSettings.Values[key].ToString());
+                        dateTimeDictionary.Add(key, backField);
+                        return backField;
+                    }
+
                 }
-            }
-
-            set
-            {
-                if (backField == value)
-                    return;
-                if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsMember))
-                    ApplicationData.Current.LocalSettings.Values.Add(SettingsMember, value.ToString());
-                else
-                    ApplicationData.Current.LocalSettings.Values[SettingsMember] = value.ToString();
-                backField = value;
-            }
-
+            return value;
         }
 
-        #region Overrides of Object
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
-        public override string ToString()
-        {
-            return SettingsMember + " : " + DateTimeSettings;
-        }
-
-        #endregion
-
-        static public void SimpleSet(string value, [CallerMemberName]string key = null)
+        public void SimpleSet<T>(T value, [CallerMemberName] string key = null)
         {
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
                 ApplicationData.Current.LocalSettings.Values.Add(key, value);
@@ -88,136 +73,91 @@ using MinskTrans.Universal.Annotations;
                 ApplicationData.Current.LocalSettings.Values[key] = value;
         }
 
-        static public void SimpleSet(bool value, [CallerMemberName]string key = null)
-        {
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-                ApplicationData.Current.LocalSettings.Values.Add(key, value);
-            else
-                ApplicationData.Current.LocalSettings.Values[key] = value;
-        }
-
-        static public void SimpleSet(int value, [CallerMemberName]string key = null)
-        {
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
-                ApplicationData.Current.LocalSettings.Values.Add(key, value);
-            else
-                ApplicationData.Current.LocalSettings.Values[key] = value;
-        }
-
-        static public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
-        {
-
-            return (string)SimleGet((object)defValue, key);
-        }
-
-        static public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
+        public T SimpleGet<T>(T defValue = default(T), [CallerMemberName] string key = null)
         {
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
                 ApplicationData.Current.LocalSettings.Values.Add(key, defValue);
-            return ApplicationData.Current.LocalSettings.Values[key];
+            return (T)ApplicationData.Current.LocalSettings.Values[key];
         }
 
-        static public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
+        public void SimpleSet(DateTime value, [CallerMemberName] string key = null)
         {
-
-            return (bool)SimleGet((object)defValue, key);
+            if (dateTimeDictionary.ContainsKey(key) && dateTimeDictionary[key] == value)
+                return;
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+            {
+                ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
+                dateTimeDictionary.Add(key, value);
+            }
+            else
+            {
+                ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
+                dateTimeDictionary[key] = value;
+            }
         }
 
-        static public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
-        {
-            return (int)SimleGet((object)defValue, key);
-        }
-#else
-		static public void SimpleSet(string value, [CallerMemberName]string key = null)
-		{
-			if (!Settings.Default.SettingsKey.Contains(key))
-				Settings.Default.Properties.Add(new SettingsProperty(key));
-			else
-				Settings.Default[key] = value;
-			Settings.Default.Save();
-		}
+       //public void SimpleSet(string value, [CallerMemberName]string key = null)
+       // {
+       //     if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+       //         ApplicationData.Current.LocalSettings.Values.Add(key, value);
+       //     else
+       //         ApplicationData.Current.LocalSettings.Values[key] = value;
+       // }
 
-		static public void SimpleSet(bool value, [CallerMemberName]string key = null)
-		{
-			try
-			{
-				var x = Settings.Default[key];
-				if (x == null)
-					Settings.Default.Properties.Add(new SettingsProperty(key));
-			}
-			catch
-			{
-				Settings.Default.Properties.Add(new SettingsProperty(key));
-			}
-			finally
-			{
-				//if (!Settings.Default.SettingsKey.Contains(key))
+       // public void SimpleSet(bool value, [CallerMemberName]string key = null)
+       // {
+       //     if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+       //         ApplicationData.Current.LocalSettings.Values.Add(key, value);
+       //     else
+       //         ApplicationData.Current.LocalSettings.Values[key] = value;
+       // }
 
-				//else
-				Settings.Default[key] = value;
-				Settings.Default.Save();
-				Settings.Default.Reload();
-			}
-		}
+       // public void SimpleSet(int value, [CallerMemberName]string key = null)
+       // {
+       //     if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+       //         ApplicationData.Current.LocalSettings.Values.Add(key, value);
+       //     else
+       //         ApplicationData.Current.LocalSettings.Values[key] = value;
+       // }
 
-		static public void SimpleSet(int value, [CallerMemberName]string key = null)
-		{
-			if (!Settings.Default.SettingsKey.Contains(key))
-				Settings.Default.Properties.Add(new SettingsProperty(key));
-			else
-				Settings.Default[key] = value;
-			Settings.Default.Save();
-		}
+       // public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
+       // {
 
-		static public string SimleGet(string defValue = null, [CallerMemberName]string key = null)
-		{
+       //     return (string)SimleGet((object)defValue, key);
+       // }
 
-			return (string)SimleGet((object)defValue, key);
-		}
+       // public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
+       // {
+       //     if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+       //         ApplicationData.Current.LocalSettings.Values.Add(key, defValue);
+       //     return ApplicationData.Current.LocalSettings.Values[key];
+       // }
 
-		static public object SimleGet(object defValue = null, [CallerMemberName]string key = null)
-		{
-			if (!Settings.Default.SettingsKey.Contains(key))
-				return defValue;
-			return Settings.Default[key];
-		}
+       // public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
+       // {
 
-		static public bool SimleGet(bool defValue = true, [CallerMemberName]string key = null)
-		{
+       //     return (bool)SimleGet((object)defValue, key);
+       // }
 
-			return (bool)SimleGet((object)defValue, key);
-		}
+       // public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
+       // {
+       //     return (int)SimleGet((object)defValue, key);
+       // }
 
-		static public int SimleGet(int defValue = 0, [CallerMemberName]string key = null)
-		{
-			return (int)SimleGet((object)defValue, key);
-		}
-#endif
     }
 
     public class SettingsModelView : ISettingsModelView
-	{
+    {
+        private readonly IApplicationSettingsHelper helper;
 
+		
 
-		public enum Error
-		{
-			None = 0,
-			Critical = 1,
-			Repeated = 2
-		}
-
-		[Flags]
-		public enum TypeOfUpdate
-		{
-			None = 0,
-			Db = 0x00000001,
-			News = 0x00000002
-		}
-
-		public SettingsModelView()
+		public SettingsModelView(IApplicationSettingsHelper helper)
 			: base()
 		{
-
+            if (helper == null)
+                throw new ArgumentNullException("helper");
+		    this.helper = helper;
 		}
 
 		static string SettingsToStr([CallerMemberName] string propertyName = null)
@@ -229,29 +169,27 @@ using MinskTrans.Universal.Annotations;
 		{
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(false);
+				return helper.SimpleGet<bool>(false);
 			}
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+				helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 		}
-
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
 		public bool HaveConnection()
 		{
 			
 			return InternetHelperBase.Is_Connected && (InternetHelperBase.Is_InternetAvailable ||
 												   InternetHelperBase.Is_Wifi_Connected == UpdateOnWiFi);
 		}
-#endif
 
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 		public TypeOfUpdate LastUpdatedDataInBackground
 		{
 			get
 			{
+			    return (TypeOfUpdate)helper.SimpleGet(TypeOfUpdate.None);
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
 					LastUpdatedDataInBackground = TypeOfUpdate.None;
 				return (TypeOfUpdate)Enum.Parse(typeof(TypeOfUpdate),ApplicationData.Current.LocalSettings.Values[SettingsToStr()].ToString());
@@ -259,37 +197,35 @@ using MinskTrans.Universal.Annotations;
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
+			    helper.SimpleSet((int) value);
+				//if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+				//	ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
+				//else
+				//	ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
 				OnPropertyChanged();
 			}
 		}
-#endif
 
-		ApplicationSettingsHelper lastUpdateDBDateTimeback;
+		//ApplicationSettingsHelper lastUpdateDBDateTimeback;
 		public DateTime LastUpdateDBDatetime
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
-				if (lastUpdateDBDateTimeback == null)
-					lastUpdateDBDateTimeback = new ApplicationSettingsHelper();
-				return lastUpdateDBDateTimeback.DateTimeSettings;
+			    return helper.SimbleGet();
+				//if (lastUpdateDBDateTimeback == null)
+				//	lastUpdateDBDateTimeback = new ApplicationSettingsHelper();
+				//return lastUpdateDBDateTimeback.DateTimeSettings;
             }
 
 			set
 			{
-				if (lastUpdateDBDateTimeback == null)
-					lastUpdateDBDateTimeback = new ApplicationSettingsHelper();
-				lastUpdateDBDateTimeback.DateTimeSettings = value;
+				//if (lastUpdateDBDateTimeback == null)
+				//	lastUpdateDBDateTimeback = new ApplicationSettingsHelper();
+				//lastUpdateDBDateTimeback.DateTimeSettings = value;
+			    helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
-#else
-			get { return new DateTime(); }
-			set {  }
-#endif
 		}
 
 		public string LastUnhandeledException
@@ -297,12 +233,12 @@ using MinskTrans.Universal.Annotations;
 
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet("");
+				return helper.SimpleGet("");
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+				helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 
@@ -312,29 +248,29 @@ using MinskTrans.Universal.Annotations;
 		{
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(true);
+				return helper.SimpleGet(true);
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 
 		}
-        List<int> predefMins = new List<int>() {5,10,15,20,30,60};
-        public List<int> PreDefMins { get { return predefMins; } }
 
-		public int TimeInPast
+        public List<int> PreDefMins { get; } = new List<int>() {5,10,15,20,30,60};
+
+        public int TimeInPast
 		{
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(15);
+				return helper.SimpleGet(15);
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
@@ -346,12 +282,12 @@ using MinskTrans.Universal.Annotations;
 
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(true);
+				return helper.SimpleGet(true);
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 
@@ -367,12 +303,12 @@ using MinskTrans.Universal.Annotations;
 
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(true);
+				return helper.SimpleGet(true);
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 
@@ -388,9 +324,10 @@ using MinskTrans.Universal.Annotations;
 		}
 		public TimeSpan InvervalAutoUpdateTimeSpan
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
+			    return helper.SimpleGet(new TimeSpan(0, 1, 0, 0, 0));
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
 					InvervalAutoUpdateTimeSpan = new TimeSpan(0, 1, 0, 0, 0);
 				return (TimeSpan)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
@@ -398,23 +335,21 @@ using MinskTrans.Universal.Annotations;
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+			    helper.SimpleSet(value);
+				//if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+				//	ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				//else
+				//	ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#else
-			get { return new TimeSpan(0, 1, 0, 0, 0); }
-			set {  }
-#endif
 		}
 
 		public Error TypeError
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 			get
 			{
+			    return helper.SimpleGet(Error.None);
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
 					TypeError = Error.None;
 				return (Error)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
@@ -422,23 +357,20 @@ using MinskTrans.Universal.Annotations;
 
 			set
 			{
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
+			    helper.SimpleSet(value);
+				//if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+				//	ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
+				//else
+				//	ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = (int)value;
 				OnPropertyChanged();
 			}
-#else
-			get { return Error.None; }
-			set {  }
-#endif
 		}
 
 		public int VariantConnect
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			get
 			{
+			    return helper.SimpleGet(2);
 				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
 					VariantConnect = 2;
 				return (int)ApplicationData.Current.LocalSettings.Values[SettingsToStr()];
@@ -447,16 +379,13 @@ using MinskTrans.Universal.Annotations;
 			{
 				if (value < 0)
 					return;
-				if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
-					ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
-				else
-					ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
+			    helper.SimpleSet(value);
+				//if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
+				//	ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), value);
+				//else
+				//	ApplicationData.Current.LocalSettings.Values[SettingsToStr()] = value;
 				OnPropertyChanged();
 			}
-#else
-			get { return 0; }
-			set {  }
-#endif
 		}
 
 		public double IntervalAutoUpdate
@@ -482,12 +411,12 @@ using MinskTrans.Universal.Annotations;
         public bool CurrentDate {
             get
             {
-                return ApplicationSettingsHelper.SimleGet(true);
+                return helper.SimpleGet(true);
             }
 
             set
             {
-                ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
                 OnPropertyChanged();
             }
         }
@@ -497,12 +426,12 @@ using MinskTrans.Universal.Annotations;
 
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(true);
+				return helper.SimpleGet(true);
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 		}
@@ -512,12 +441,12 @@ using MinskTrans.Universal.Annotations;
 
             get
             {
-                return ApplicationSettingsHelper.SimleGet(true);
+                return helper.SimpleGet(true);
             }
 
             set
             {
-                ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
                 OnPropertyChanged();
             }
         }
@@ -527,18 +456,52 @@ using MinskTrans.Universal.Annotations;
 
 			get
 			{
-				return ApplicationSettingsHelper.SimleGet(true);
+				return helper.SimpleGet(true);
 			}
 
 			set
 			{
-				ApplicationSettingsHelper.SimpleSet(value);
+                helper.SimpleSet(value);
 				OnPropertyChanged();
 			}
 
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        
+        public DateTime LastUpdateDbDateTimeUtc
+        {
+            get
+            {
+                return helper.SimbleGet();
+            }
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime LastNewsTimeUtc
+        {
+            get { return helper.SimbleGet(); }
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime LastUpdateHotNewsDateTimeUtc {
+            get { return helper.SimbleGet(); }
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+       
+        public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

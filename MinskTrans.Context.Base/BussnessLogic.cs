@@ -62,6 +62,11 @@ namespace MinskTrans.Context
 
 	    Queue<ErrorMessage> MessageToShow { get; set; }
 
+	    public override ISettingsModelView Settings
+	    {
+	        get { return settings; }
+	    }
+
 	    private int countUpdateFail = 0;
 		private int maxCountUpdateFail = 10;
 
@@ -114,16 +119,16 @@ namespace MinskTrans.Context
 	            var timeShtaps = resultStr.Split('\n');
                 utcNow = DateTime.Parse(timeShtaps[0]);
 	            //NewsManager manager = new NewsManager();
-	            await newManager.Load();
-	            DateTime oldMonthTime = newManager.LastUpdateMainNewsDateTimeUtc;
-	            DateTime oldDaylyTime = newManager.LastUpdateHotNewsDateTimeUtc;
+	            //await newManager.Load();
+	            DateTime oldMonthTime = settings.LastNewsTimeUtc;
+	            DateTime oldDaylyTime = settings.LastUpdateHotNewsDateTimeUtc;
 
-	            if (utcNow > newManager.LastUpdateMainNewsDateTimeUtc)
+	            if (utcNow > oldMonthTime)
 	            {
 	                try
 	                {
 	                    await internetHelper.Download(urlUpdateNews, newManager.FileNameMonths, TypeFolder.Local);
-	                    newManager.LastUpdateMainNewsDateTimeUtc = utcNow;
+	                    settings.LastNewsTimeUtc = utcNow;
 	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
 	                catch (Exception e)
@@ -139,12 +144,12 @@ namespace MinskTrans.Context
 
 
                 utcNow = DateTime.Parse(timeShtaps[1]);
-	            if (utcNow > newManager.LastUpdateHotNewsDateTimeUtc)
+	            if (utcNow > oldDaylyTime)
 	            {
 	                try
 	                {
 	                    await internetHelper.Download(urlUpdateHotNews, newManager.FileNameDays, TypeFolder.Local);
-                        newManager.LastUpdateHotNewsDateTimeUtc = utcNow;
+                        settings.LastUpdateHotNewsDateTimeUtc = utcNow;
 	                   //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
 	                catch (Exception e)
@@ -191,6 +196,7 @@ namespace MinskTrans.Context
 	    {
 	        if (updatingTimeTable)
 	            return false;
+            OnUpdateDbStarted();
 	        DateTime utcNow = DateTime.UtcNow;
             string fileNews = "datesNews_001.dat";
             try
@@ -213,7 +219,7 @@ namespace MinskTrans.Context
 	                
 	                if (timeShtaps.Length > 2)
 	                    utcNow = DateTime.Parse(timeShtaps[2]);
-	                if (utcNow <= LastUpdateDbDateTimeUtc)
+	                if (utcNow <= Settings.LastUpdateDbDateTimeUtc)
 	                {
 	                    return false;
 	                }
@@ -227,7 +233,8 @@ namespace MinskTrans.Context
 	                Context.AllPropertiesChanged();
 	                await Context.Save(true);
 	            }
-	            LastUpdateDbDateTimeUtc = utcNow;
+	            Settings.LastUpdateDbDateTimeUtc = utcNow;
+               
 	            return true;
 	        }
 			catch(Exception)
@@ -237,6 +244,7 @@ namespace MinskTrans.Context
 			}
 	        finally
 	        {
+                OnUpdateDbEnded();
 	            updatingTimeTable = false;
 	        }
 	    }

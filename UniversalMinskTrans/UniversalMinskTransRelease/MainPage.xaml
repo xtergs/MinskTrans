@@ -1213,11 +1213,14 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
-                            <AppBarToggleButton HorizontalAlignment="Right" Grid.Row="2" Icon="Favorite" IsCompact="True"
+                            <AppBarToggleButton Grid.Row="2"
+                                                HorizontalAlignment="Right"
                                                 Content="FavouriteStop"
+                                                Icon="Favorite"
                                                 IsChecked="{Binding StopModelView.IsShowFavouriteStops,
                                                                     Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}" />
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                IsCompact="True" />
                         </Grid>
 
                         <Grid x:Name="ShowRoutsGrid"
@@ -1358,18 +1361,6 @@
                                               IsChecked="{Binding FuzzySearch,
                                                                   Mode=TwoWay,
                                                                   UpdateSourceTrigger=PropertyChanged}" />
-                                    <!--<CheckBox x:Name="CurDateCheckBox"
-                                              Content="Текущее время"
-                                              DataContext="{Binding ElementName=ShowStop,
-                                                                    Path=DataContext}"
-                                              IsChecked="{Binding AutoDay,
-                                                                  Mode=TwoWay,
-                                                                  UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock Text="{Binding DayOfWeek, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Slider Maximum="6"
-                                            Minimum="0"
-                                            Visibility="{Binding CurrentDate,
-                                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />-->
                                 </VariableSizedWrapGrid>
                             </VariableSizedWrapGrid>
                         </AppBar>
@@ -1379,7 +1370,7 @@
                 </Border>
 
             </PivotItem>
-            <PivotItem x:Name="FavourPivotItem"
+            <!--<PivotItem x:Name="FavourPivotItem"
                        Margin="0"
                        BorderBrush="{ThemeResource LightBlueSolidColorBrush}"
                        DataContext="{Binding FavouriteModelView}"
@@ -1611,13 +1602,13 @@
                     </Grid>
                 </Border>
 
-            </PivotItem>
+            </PivotItem>-->
 
             <PivotItem Name="TestNewsView"
                        Margin="0"
                        BorderBrush="{StaticResource LightBlueSolidColorBrush}"
                        DataContext="{Binding NewsModelView}"
-                       Header="Тест_Новости"
+                       Header="Новости"
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <view:NewsView DataContext="{Binding}" />
@@ -1644,7 +1635,7 @@
                                  FontSize="18"
                                  Foreground="White"
                                  IsDoubleTapEnabled="False"
-                                 ItemsSource="{Binding Context.Groups,
+                                 ItemsSource="{Binding Context.Context.Groups,
                                                        UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedGroupStop,
                                                         Mode=TwoWay,
@@ -1689,7 +1680,7 @@
                                             <StackPanel>
                                                 <TextBlock FontSize="18" Text="Название группы" />
                                                 <local:MyTextBox Name="NameTextBox" />
-                                                <Button Command="{Binding Context.CreateGroup}"
+                                                <Button Command="{Binding CreateGroup}"
                                                         CommandParameter="{Binding ElementName=NameTextBox,
                                                                                    Path=Text,
                                                                                    Mode=TwoWay,
@@ -1701,7 +1692,7 @@
                                 </AppBarButton>
                                 <AppBarButton x:Name="appBarButton"
                                               HorizontalAlignment="Center"
-                                              Command="{Binding Context.DeleteGroups}"
+                                              Command="{Binding DeleteGroups}"
                                               CommandParameter="{Binding SelectedGroupStop,
                                                                          UpdateSourceTrigger=PropertyChanged}"
                                               Icon="Delete"
@@ -1832,7 +1823,7 @@
                 </Border>
             </PivotItem>
 
-            <PivotItem GotFocus="PivotItem_GotFocus"
+            <!--<PivotItem GotFocus="PivotItem_GotFocus"
                        Header="Новости"
                        Loaded="PivotItem_Loaded">
                 <ListView ItemsSource="{Binding AllNews}">
@@ -1844,7 +1835,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-            </PivotItem>
+            </PivotItem>-->
 
 
             <PivotItem x:Name="SettingsPivotItem"
@@ -1886,11 +1877,7 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="Дата обновления расписания" />
-                            <TextBlock Grid.Row="1"
-                                       DataContext="{Binding DataContext,
-                                                             ElementName=mainPage}"
-                                       Text="{Binding Context.LastUpdateDataDateTime,
-                                                      UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="1" Text="{Binding LastUpdateDbDateTimeUtc, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -1916,18 +1903,6 @@
                                                               Mode=TwoWay,
                                                               UpdateSourceTrigger=Default}" />
                         </Grid>
-                        <!--<Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Интервал автообновления "/>
-                            <TextBlock Grid.Column="1" Text="{Binding  InvervalAutoUpdateTimeSpan, Mode=OneWay, UpdateSourceTrigger=Default}"></TextBlock>
-
-                        </Grid>
-                        <Slider Minimum="1" Maximum="1000" Value="{Binding IntervalAutoUpdate, Mode=TwoWay, UpdateSourceTrigger=Default}" IsThumbToolTipEnabled="True"/>-->
                         <Button Click="ShowInStore" Content="Оставить отзыв" />
                         <Button Name="ChatWithDeveloper"
                                 Click="StartEmailToDeveloper"
@@ -1940,25 +1915,6 @@
                     </ListView>
                 </Border>
             </PivotItem>
-
-            <!--<PivotItem Header="Избранное">
-			<Grid>
-
-
-			</Grid>
-		</PivotItem>-->
-            <!--<PivotItem Header="Debug" Visibility="Collapsed" >
-				<Grid Loaded="Grid_Loaded">
-					<Button Content="Button" HorizontalAlignment="Left" Margin="98,72,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-					<Button Content="Button" HorizontalAlignment="Left" Margin="98,128,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
-					<ListBox x:Name="listBox" HorizontalAlignment="Left" Height="134" Margin="10,228,0,0" VerticalAlignment="Top" Width="380"/>
-					<Button Content="Button" HorizontalAlignment="Left" Margin="252,176,0,0" VerticalAlignment="Top" Click="Button_Click_2"/>
-					<ListBox x:Name="listview" ItemsSource="{Binding Context.Routs, UpdateSourceTrigger=PropertyChanged}"
-						DisplayMemberPath="RouteName"
-						HorizontalAlignment="Left" Height="263" Margin="10,367,0,0" VerticalAlignment="Top" Width="380"/>
-
-				</Grid>
-			</PivotItem>-->
         </Pivot>
 
 

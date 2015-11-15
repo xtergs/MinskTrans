@@ -3,6 +3,7 @@ using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
+using MyLibrary;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -29,34 +30,19 @@ namespace MinskTrans.Universal.ModelView
             }
         }
 
-        private readonly StopModelView stopModelView;
-		private readonly RoutsModelView routsModelview;
+	    public StopModelView StopModelView { get; }
+	    public RoutsModelView RoutsModelView { get; }
 
-		public StopModelView StopModelView
-		{
-			get
-			{
-				return stopModelView;
-			}
-		}
-
-		public RoutsModelView RoutsModelView
-		{
-			get { return routsModelview;
-			}
-		}
-
-	    private SettingsModelView mainSettings;
 	    private bool isShowStopsView;
-	    public SettingsModelView MainSettings { get { return mainSettings; } private set { mainSettings = value; } }
+	    public ISettingsModelView MainSettings { get; private set; }
 
-        public FindModelView(IBussnessLogics newContext, SettingsModelView settingsModelView, bool UseGps = false) : base(newContext)
+	    public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, bool UseGps = false) : base(newContext)
         {
             IsShowTransportsView = false;
             IsShowStopsView = true;
-            mainSettings = settingsModelView;
-			stopModelView = new StopModelView(newContext, settingsModelView, UseGps);
-			routsModelview = new RoutsModelView(newContext);
+            MainSettings = settingsModelView;
+			StopModelView = new StopModelView(newContext, settingsModelView, UseGps);
+			RoutsModelView = new RoutsModelView(newContext);
 		}
 
 	    private RelayCommand toggleFindViewCommanBack;

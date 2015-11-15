@@ -7,6 +7,7 @@ using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.Comparer;
+using MyLibrary;
 
 
 namespace MinskTrans.Context
@@ -35,10 +36,9 @@ namespace MinskTrans.Context
         
 
         public IContext Context { get; }
+        public abstract ISettingsModelView Settings { get; }
 
         Queue<ErrorMessage> MessageToShow { get; set; }
-
-        public DateTime LastUpdateDbDateTimeUtc { get; set; }
 
         public IGeolocation Geolocation { get; set; }
         public IEnumerable<Rout> Routs { get { return Context.Routs; } }

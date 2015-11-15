@@ -8,7 +8,9 @@ using Windows.UI.Notifications;
 using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
+using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Fakes;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
@@ -17,6 +19,7 @@ using MinskTrans.Universal;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
+using MyLibrary;
 
 namespace MinskTrans.BackgroundUpdateTask
 {
@@ -46,158 +49,184 @@ namespace MinskTrans.BackgroundUpdateTask
 		    builder.RegisterType<NewsManager>().As<NewsManagerBase>();
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
+		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
+		    builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
 			var container = builder.Build();
 
-			var fileHelper = new FileHelper();
+			//var fileHelper = new FileHelper();
 			//InternetHelperBase internetHelper = new InternetHelperUniversal(fileHelper);
-			SettingsModelView settings = new SettingsModelView();
+			ISettingsModelView settings = container.Resolve<ISettingsModelView>();
 
-			var context = container.Resolve<IContext>();
+			var context = container.Resolve<IBussnessLogics>();
 			InternetHelperBase helper = container.Resolve<InternetHelperBase>();
 			//UpdateManagerBase updateManager = new UpdateManagerBase(fileHelper, internetHelper, new ShedulerParser());
 
-			settings.LastUpdatedDataInBackground = SettingsModelView.TypeOfUpdate.None;
+			settings.LastUpdatedDataInBackground = TypeOfUpdate.None;
 			helper.UpdateNetworkInformation();
 			if (!settings.HaveConnection())
 				_deferral.Complete();
 			MaxDaysAgo = 30;
 			MaxMinsAgo = 20;
 
-		    try
+
+		    var oldDaylyTime = settings.LastUpdateHotNewsDateTimeUtc;
+		    var oldMonthTime = settings.LastNewsTimeUtc;
+            try
 		    {
-		        await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+		        if (await context.UpdateTimeTableAsync(true))
+		        {
+		            settings.LastUpdatedDataInBackground |= TypeOfUpdate.Db;
+		        }
+
+		        if (await context.UpdateNewsTableAsync())
+		        {
+		            settings.LastUpdatedDataInBackground |= TypeOfUpdate.News;
+		        }
 		    }
 		    catch (Exception e)
 		    {
-                _deferral.Complete();
-		        return;
-		    }
-		    string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
-
-			var timeShtaps = resultStr.Split('\n');
-			DateTime time = new DateTime();
-			if (timeShtaps.Length > 2)
-				time = DateTime.Parse(timeShtaps[2]);
-			//IContext context = container.Resolve<IContext>();
-
-			UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
-			if (context.LastUpdateDataDateTime < time)
-			{
-				try
-				{
-					if (await updateManager.DownloadUpdate())
-					{
-						var timeTable = await updateManager.GetTimeTable();
-						await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
-						await context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
-						context.LastUpdateDataDateTime = time;
-						settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.Db;
-					}
-					//await context.Save(false);
-				}
-				catch (Exception)
-				{
-					Logger.Log("BackgroundUpdate, updateDb Exception");
-				}
-			}
-		    updateManager = null;
-
-			if (timeShtaps.Length < 1)
-			{
-				_deferral.Complete();
-				return;
-			}
-
-			NewsManagerBase manager = container.Resolve<NewsManagerBase>();
-		    try
-		    {
-		        time = DateTime.Parse(timeShtaps[0]);
-		        //NewsManager manager = new NewsManager();
-		        await manager.Load();
-		        DateTime oldMonthTime = manager.LastUpdateMainNewsDateTimeUtc;
-		        DateTime oldDaylyTime = manager.LastUpdateHotNewsDateTimeUtc;
-
-		        if (time > manager.LastUpdateMainNewsDateTimeUtc)
-		        {
-		            try
-		            {
-		                await helper.Download(urlUpdateNews, manager.FileNameMonths, TypeFolder.Local);
-		                manager.LastUpdateMainNewsDateTimeUtc = time;
-		                settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-		            }
-		            catch (Exception e)
-		            {
-		                string message =
-		                    new StringBuilder("News manager download months exception").AppendLine(e.ToString())
-		                        .AppendLine(e.Message)
-		                        .AppendLine(e.StackTrace)
-		                        .ToString();
-		                Debug.WriteLine(message);
-		            }
-		        }
-
-
-		        time = DateTime.Parse(timeShtaps[1]);
-		        if (time > manager.LastUpdateHotNewsDateTimeUtc)
-		        {
-		            try
-		            {
-		                await helper.Download(urlUpdateHotNews, manager.FileNameDays, TypeFolder.Local);
-		                manager.LastUpdateHotNewsDateTimeUtc = time;
-		                settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;  
-		            }
-		            catch (Exception e)
-		            {
-		                string message =
-		                    new StringBuilder("News manager download days exception").AppendLine(e.ToString())
-		                        .AppendLine(e.Message)
-		                        .AppendLine(e.StackTrace)
-		                        .ToString();
-		                Debug.WriteLine(message);
-		            }
-		        }
-
-		        DateTime nowTimeUtc = DateTime.UtcNow;
-		        var listOfDaylyNews = manager.NewNews.Where(
-		            key => key.PostedUtc > oldMonthTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo));
-
-		        var listOfMonthNews = manager.AllHotNews.Where(key =>
-		        {
-		            if (key.RepairedLineUtc != default(DateTime))
-		            {
-		                double totalminutes = (nowTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
-		                if (totalminutes <= MaxMinsAgo)
-		                    return true;
-		                return false;
-		            }
-		            return (key.CollectedUtc > oldDaylyTime) &&
-		                   ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
-		        });
-
-
-		        foreach (var source in listOfDaylyNews.Concat(listOfMonthNews))
-		        {
-		            ShowNotification(source.Message);
-		        }
-
-
-
-		    }
-		    catch (Exception e)
-		    {
-		        string message =
-		            new StringBuilder("Background task exception").AppendLine(e.ToString())
-		                .AppendLine(e.Message)
-		                .AppendLine(e.StackTrace)
-		                .ToString();
-		        Debug.WriteLine(message);
-
+                Debug.WriteLine("Background: " + e.Message);
 		        throw;
 		    }
-            manager = null;
 
-            Debug.WriteLine("Background task ended");
-            Logger.Log("Background task ended");
+            //   try
+            //   {
+            //       await helper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+            //   }
+            //   catch (Exception e)
+            //   {
+            //             _deferral.Complete();
+            //       return;
+            //   }
+            //   string resultStr = await FileIO.ReadTextAsync(await ApplicationData.Current.TemporaryFolder.GetFileAsync(fileNews));
+
+            //var timeShtaps = resultStr.Split('\n');
+            //DateTime time = new DateTime();
+            //if (timeShtaps.Length > 2)
+            //	time = DateTime.Parse(timeShtaps[2]);
+            ////IContext context = container.Resolve<IContext>();
+
+            //UpdateManagerBase updateManager = container.Resolve<UpdateManagerBase>();
+            //if (context.LastUpdateDataDateTime < time)
+            //{
+            //	try
+            //	{
+            //		if (await updateManager.DownloadUpdate())
+            //		{
+            //			var timeTable = await updateManager.GetTimeTable();
+            //			await context.HaveUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+            //			await context.ApplyUpdate(timeTable.Routs, timeTable.Stops, timeTable.Time);
+            //			context.LastUpdateDataDateTime = time;
+            //			settings.LastUpdatedDataInBackground |= TypeOfUpdate.Db;
+            //		}
+            //		//await context.Save(false);
+            //	}
+            //	catch (Exception)
+            //	{
+            //		Logger.Log("BackgroundUpdate, updateDb Exception");
+            //	}
+            //}
+            //   updateManager = null;
+
+            //if (timeShtaps.Length < 1)
+            //{
+            //	_deferral.Complete();
+            //	return;
+            //}
+
+            //NewsManagerBase manager = container.Resolve<NewsManagerBase>();
+            //   try
+            //   {
+            //       time = DateTime.Parse(timeShtaps[0]);
+            //       //NewsManager manager = new NewsManager();
+            //       await manager.Load();
+            //       DateTime oldMonthTime = manager.LastUpdateMainNewsDateTimeUtc;
+            //       DateTime oldDaylyTime = manager.LastUpdateHotNewsDateTimeUtc;
+
+            //       if (time > manager.LastUpdateMainNewsDateTimeUtc)
+            //       {
+            //           try
+            //           {
+            //               await helper.Download(urlUpdateNews, manager.FileNameMonths, TypeFolder.Local);
+            //               manager.LastUpdateMainNewsDateTimeUtc = time;
+            //               settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
+            //           }
+            //           catch (Exception e)
+            //           {
+            //               string message =
+            //                   new StringBuilder("News manager download months exception").AppendLine(e.ToString())
+            //                       .AppendLine(e.Message)
+            //                       .AppendLine(e.StackTrace)
+            //                       .ToString();
+            //               Debug.WriteLine(message);
+            //           }
+            //       }
+
+
+            //       time = DateTime.Parse(timeShtaps[1]);
+            //       if (time > manager.LastUpdateHotNewsDateTimeUtc)
+            //       {
+            //           try
+            //           {
+            //               await helper.Download(urlUpdateHotNews, manager.FileNameDays, TypeFolder.Local);
+            //               manager.LastUpdateHotNewsDateTimeUtc = time;
+            //               settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;  
+            //           }
+            //           catch (Exception e)
+            //           {
+            //               string message =
+            //                   new StringBuilder("News manager download days exception").AppendLine(e.ToString())
+            //                       .AppendLine(e.Message)
+            //                       .AppendLine(e.StackTrace)
+            //                       .ToString();
+            //               Debug.WriteLine(message);
+            //           }
+            //       }
+
+            //       DateTime nowTimeUtc = DateTime.UtcNow;
+		    var manager = container.Resolve<NewsManagerBase>();
+		    var nowTimeUtc = DateTime.UtcNow;
+                  var listOfDaylyNews = manager.NewNews.Where(
+                      key => key.PostedUtc > oldMonthTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo));
+            var listOfMonthNews = manager.AllHotNews.Where(key =>
+            {
+                if (key.RepairedLineUtc != default(DateTime))
+                {
+                    double totalminutes = (nowTimeUtc.ToLocalTime() - key.RepairedLineLocal).TotalMinutes;
+                    if (totalminutes <= MaxMinsAgo)
+                        return true;
+                    return false;
+                }
+                return (key.CollectedUtc > oldDaylyTime) &&
+                       ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
+            });
+
+
+            foreach (var source in listOfDaylyNews.Concat(listOfMonthNews))
+            {
+                ShowNotification(source.Message);
+            }
+
+
+
+            //   }
+            //   catch (Exception e)
+            //   {
+            //       string message =
+            //           new StringBuilder("Background task exception").AppendLine(e.ToString())
+            //               .AppendLine(e.Message)
+            //               .AppendLine(e.StackTrace)
+            //               .ToString();
+            //       Debug.WriteLine(message);
+
+            //       throw;
+            //   }
+            //         manager = null;
+
+            //         Debug.WriteLine("Background task ended");
+            //         Logger.Log("Background task ended");
             _deferral.Complete();
 			
 		}

@@ -135,7 +135,7 @@
                     <AppBarButton.Flyout>
                         <Flyout>
                             <Interactivity:Interaction.Behaviors>
-                                <Core:DataTriggerBehavior Binding="{Binding Path=Context.Groups.Count,
+                                <Core:DataTriggerBehavior Binding="{Binding Path=Context.Context.Groups.Count,
                                                                             Mode=OneWay,
                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                           ComparisonCondition="LessThan"
@@ -151,7 +151,7 @@
                                         </Core:ChangePropertyAction.Value>
                                     </Core:ChangePropertyAction>
                                 </Core:DataTriggerBehavior>
-                                <Core:DataTriggerBehavior Binding="{Binding Path=Context.Groups.Count,
+                                <Core:DataTriggerBehavior Binding="{Binding Path=Context.Context.Groups.Count,
                                                                             Mode=OneWay,
                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                           ComparisonCondition="GreaterThan"
@@ -176,7 +176,7 @@
                                              DisplayMemberPath="Name"
                                              FontSize="15"
                                              Foreground="White"
-                                             ItemsSource="{Binding Context.Groups}"
+                                             ItemsSource="{Binding Context.Context.Groups}"
                                              SelectedItem="{Binding SelectedGroup,
                                                                     Mode=TwoWay,
                                                                     UpdateSourceTrigger=PropertyChanged}" />
@@ -226,7 +226,8 @@
                 <TextBlock Text="День недели: " />
                 <TextBlock Text="{Binding CurDay, UpdateSourceTrigger=PropertyChanged}" />
                 <AppBarToggleButton Content="Текущее время" IsEnabled="{Binding AutoDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Slider Maximum="7"
+                <Slider MinWidth="100"
+                        Maximum="7"
                         Minimum="1"
                         Value="{Binding CurDay,
                                         Mode=TwoWay,

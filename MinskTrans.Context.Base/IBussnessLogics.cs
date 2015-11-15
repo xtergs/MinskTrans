@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MyLibrary;
 
 namespace MinskTrans.Context
 {
     public interface IBussnessLogics : INotifyPropertyChanged
     {
         IContext Context { get; }
-        DateTime LastUpdateDbDateTimeUtc { get; set; }
+        ISettingsModelView Settings { get; }
         IGeolocation Geolocation { get; }
         IEnumerable<Rout> Routs { get; }
         Task LoadDataBase(LoadType loadType = LoadType.LoadAll);

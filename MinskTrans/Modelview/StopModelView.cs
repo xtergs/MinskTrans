@@ -50,7 +50,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
 		                                          TransportType.Trol;
 
-		public StopModelView(IBussnessLogics newContext, SettingsModelView settings, bool UseGPS = false)
+		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;

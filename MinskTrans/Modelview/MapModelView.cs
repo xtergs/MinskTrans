@@ -55,7 +55,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Pushpin startStopPushpin;
 		private Pushpin endStopPushpin;
 		private string resultString;
-		private SettingsModelView settings;
+		private ISettingsModelView settings;
 
 		private IGeolocation geolocator;
 
@@ -75,7 +75,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private PushPinBuilder pushBuilder;
 
-		public MapModelView(IBussnessLogics context, Map map, SettingsModelView newSettigns, PushPinBuilder pushPinBuilder = null)
+		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;
@@ -153,7 +153,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			map.TargetZoomLevel += 1;
 		}
 #endif
-		public SettingsModelView Settings
+		public ISettingsModelView Settings
 		{
 			get { return settings; }
 			set

@@ -59,18 +59,6 @@
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
       <Name>MinskTrans.Context</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Net\MinskTrans.Net.csproj">
-      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
-      <Name>MinskTrans.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
-      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
-      <Name>MinskTrans.Utilites.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Utilites\MinskTrans.Utilites.csproj">
-      <Project>{0DD1F107-07BA-4455-A9A9-827C8FD8B255}</Project>
-      <Name>MinskTrans.Utilites</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

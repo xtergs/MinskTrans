@@ -53,13 +53,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MinskTrans.Net\MinskTrans.Net.csproj">
-      <Project>{0B59FB24-E9A6-4B59-AFF0-DF537AB5270B}</Project>
-      <Name>MinskTrans.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
-      <Project>{E60C2CB1-CC08-4F78-BD70-D8ADA2501E2D}</Project>
-      <Name>MinskTrans.Utilites.Base</Name>
+    <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
+      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
+      <Name>MinskTrans.Context</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

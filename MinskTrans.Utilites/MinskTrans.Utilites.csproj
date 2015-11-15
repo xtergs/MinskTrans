@@ -49,19 +49,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventArgs\LogDelegateArgs.cs" />
-    <Compile Include="EventArgs\ShowArgs.cs" />
-    <Compile Include="Fake\FakeSettingsModelView.cs" />
-    <Compile Include="FuzzySearch\LevenshteinDistance.cs" />
-    <Compile Include="FuzzySearch\StopsFilterMaster.cs" />
-    <Compile Include="ISettingsModelView.cs" />
-    <Compile Include="Model\GroupIdExt.cs" />
-    <Compile Include="Model\RoutEx.cs" />
-    <Compile Include="Model\RoutWithDestinations.cs" />
-    <Compile Include="Model\StopEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShedulerParser.cs" />
-    <Compile Include="Tools.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1213,7 +1213,7 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
-                            <AppBarToggleButton Grid.Row="2"
+                            <AppBarToggleButton HorizontalAlignment="Right" Grid.Row="2" Icon="Favorite" IsCompact="True"
                                                 Content="FavouriteStop"
                                                 IsChecked="{Binding StopModelView.IsShowFavouriteStops,
                                                                     Mode=TwoWay,

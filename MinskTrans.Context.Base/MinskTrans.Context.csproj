@@ -63,16 +63,29 @@
     <Compile Include="Fakes\FakeGeolocation.cs" />
     <Compile Include="GenericBussnessLogic.cs" />
     <Compile Include="IBussnessLogics.cs" />
+    <Compile Include="Net\Base\ITimeTableParser.cs" />
+    <Compile Include="Net\Base\UpdateManagerBase.cs" />
+    <Compile Include="Net\NewsEntry.cs" />
+    <Compile Include="Net\NewsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilites\Base\IO\FileHelperBase.cs" />
+    <Compile Include="Utilites\Base\Net\ICloudStorageController.cs" />
+    <Compile Include="Utilites\Base\Net\InternetHelperBase.cs" />
+    <Compile Include="Utilites\EventArgs\LogDelegateArgs.cs" />
+    <Compile Include="Utilites\EventArgs\ShowArgs.cs" />
+    <Compile Include="Utilites\Fake\FakeSettingsModelView.cs" />
+    <Compile Include="Utilites\FuzzySearch\LevenshteinDistance.cs" />
+    <Compile Include="Utilites\FuzzySearch\StopsFilterMaster.cs" />
+    <Compile Include="Utilites\ISettingsModelView.cs" />
+    <Compile Include="Utilites\Model\GroupIdExt.cs" />
+    <Compile Include="Utilites\Model\RoutEx.cs" />
+    <Compile Include="Utilites\Model\RoutWithDestinations.cs" />
+    <Compile Include="Utilites\Model\StopEx.cs" />
+    <Compile Include="Utilites\ShedulerParser.cs" />
+    <Compile Include="Utilites\Tools.cs" />
     <Compile Include="WebBussnessLogic.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MinskTrans.Net">
-      <HintPath>..\MinskTrans.AutoRouting\bin\Debug\MinskTrans.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="MinskTrans.Utilites">
-      <HintPath>..\MinskTrans.AutoRouting\bin\Debug\MinskTrans.Utilites.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -81,12 +94,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MinskTrans.Utilites.Interfaces\MinskTrans.Utilites.Base.csproj">
-      <Project>{e60c2cb1-cc08-4f78-bd70-d8ada2501e2d}</Project>
-      <Name>MinskTrans.Utilites.Base</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

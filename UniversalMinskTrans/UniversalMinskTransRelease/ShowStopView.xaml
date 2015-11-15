@@ -10,6 +10,7 @@
              xmlns:local="using:MinskTrans.Universal"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
+             d:DataContext="{d:DesignInstance modelview:StopModelView}"
              d:DesignHeight="300"
              d:DesignWidth="400"
              mc:Ignorable="d">
@@ -102,7 +103,6 @@
         <TextBlock FontSize="20" Text="{Binding FilteredSelectedStop.Name, UpdateSourceTrigger=PropertyChanged}" />
         <ListView x:Name="tesstListview"
                   Grid.Row="1"
-                  
                   HorizontalContentAlignment="Stretch"
                   ItemTemplate="{StaticResource DataTemplate1}"
                   ItemsSource="{Binding TimeSchedule,
@@ -206,7 +206,7 @@
                               Icon="Sync"
                               IsCompact="True" />
                 <AppBarToggleButton HorizontalAlignment="Center"
-                                    Command="{Binding Context.Context.AddRemoveFavouriteStop}"
+                                    Command="{Binding AddRemoveFavouriteStop}"
                                     CommandParameter="{Binding FilteredSelectedStop}"
                                     Icon="Favorite"
                                     IsChecked="{Binding IsStopFavourite,

@@ -384,7 +384,10 @@ namespace MinskTrans.DesctopClient.Modelview
 	        }
 	    }
 
-
+	    public RelayCommand<Stop> AddRemoveFavouriteStop
+	    {
+            get { return new RelayCommand<Stop>((x)=> Context.AddRemoveFavouriteStop(x));}
+	    }
 
 	    public RelayCommand RefreshTimeSchedule
 		{

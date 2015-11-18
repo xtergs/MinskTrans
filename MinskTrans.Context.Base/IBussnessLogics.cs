@@ -34,7 +34,9 @@ namespace MinskTrans.Context
         event EventHandler<EventArgs> UpdateDBStarted;
         event EventHandler<EventArgs> UpdateDBEnded;
         IEnumerable<Rout> GetRouteNums(TransportType typeTransport, string routNum);
-         event ErrorLoadingDelegate ErrorLoading;
-        
+         event EventHandler<EventArgs> NeedUpdadteDB;
+
+        DateTime LastUpdateDbDateTimeUtc { get; }
+
     }
 }

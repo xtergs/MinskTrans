@@ -58,5 +58,7 @@ namespace MinskTrans.DesctopClient.Properties {
                 this["UpdateOnMobileData"] = value;
             }
         }
+
+        public bool Develop { get; set; }
     }
 }

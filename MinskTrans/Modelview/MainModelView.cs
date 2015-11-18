@@ -1,10 +1,12 @@
-﻿using MapControl;
+﻿using System.Configuration;
+using MapControl;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
 using MinskTrans.Context.Fakes;
+using MinskTrans.DesctopClient.ViewModel;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
@@ -18,15 +20,8 @@ namespace MinskTrans.DesctopClient.Modelview
 	public class MainModelView : BaseModelView
 	{
 		//private readonly IContext context;
-		private readonly GroupStopsModelView groupStopsModelView;
-		private readonly RoutesModelview routesModelview;
-		private readonly SettingsModelView settingsModelView;
-		private readonly StopModelView stopMovelView;
-		private readonly FavouriteModelView favouriteModelView;
-		private readonly FindModelView findModelView;
 		private readonly MapModelView mapModelView;
 		//private readonly IContext timeTable;
-		readonly UpdateManagerBase updateManager;
 		static MainModelView model;
 
 		public static MainModelView Get()
@@ -36,40 +31,45 @@ namespace MinskTrans.DesctopClient.Modelview
 			return model;
 		}
 
+	    private readonly IContainer container;
+
 		private MainModelView()
 		{
 			var builder = new ContainerBuilder();
-			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-			builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity6_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True");
-			//builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerBase>();
-			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
-			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
+			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
+			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity6_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True").SingleInstance();
+			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>().SingleInstance();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>().SingleInstance();
+			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
             //builder.RegisterType<Context>().As<IContext>();
-            builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
-            builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
-            builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
-            builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>();
-            var container = builder.Build();
+            builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
+            builder.RegisterType<FakeGeolocation>().As<IGeolocation>().SingleInstance();
+            builder.RegisterType<DesktopApplicationHelper>().As<IApplicationSettingsHelper>().SingleInstance().WithParameter("settingsBase", Properties.Settings.Default);
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
+            builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>().SingleInstance();
+		    builder.RegisterType<RoutesModelview>();
+            builder.RegisterType<StopModelView>();
+            builder.RegisterType<StopModelView>();
+            builder.RegisterType<GroupStopsModelView>();
+            builder.RegisterType<FindModelView>();
+		    //builder.As<ApplicationSettingsBase>();
+                       
+
+            container = builder.Build();
 
 			context = container.Resolve<IBussnessLogics>();
-			updateManager = container.Resolve<UpdateManagerBase>();
 			//timeTable = container.Resolve<IContext>();
 
-			settingsModelView = new SettingsModelView();
-			routesModelview = new RoutesModelview(Context, SettingsModelView);
-			stopMovelView = new StopModelView(Context, settingsModelView, true);
-			groupStopsModelView = new GroupStopsModelView(Context, settingsModelView);
-			favouriteModelView = new FavouriteModelView(Context);
-			findModelView = new FindModelView(Context, settingsModelView);
+		    
 
-			
+
 		}
 
 		public MainModelView(Map map)
 			: this()
 		{
-			mapModelView = new MapModelView(Context, map, settingsModelView);
+			mapModelView = new MapModelView(Context, map, SettingsModelView);
 			model = this;
 		}
 
@@ -83,29 +83,29 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public FindModelView FindModelView
 		{
-			get { return findModelView; }
+			get { return container.Resolve<FindModelView>(); }
 		}
 
 		public StopModelView StopMovelView
 		{
-			get { return stopMovelView; }
+			get { return container.Resolve<StopModelView>(); }
 		}
 
 		public RoutesModelview RoutesModelview
 		{
-			get { return routesModelview; }
+			get { return container.Resolve<RoutesModelview>(); }
 		}
 
 		public GroupStopsModelView GroupStopsModelView
 		{
-			get { return groupStopsModelView; }
+			get { return container.Resolve<GroupStopsModelView>(); }
 		}
 
 		public FavouriteModelView FavouriteModelView
 		{
 			get
 			{
-				return favouriteModelView;
+				return container.Resolve<FavouriteModelView>();
 			}
 		}
 
@@ -115,7 +115,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				return updateManager;
+				return container.Resolve<UpdateManagerBase>();
 			}
 		}
 
@@ -132,7 +132,8 @@ namespace MinskTrans.DesctopClient.Modelview
 					    if (updateing)
 					        return;
 						updateing = true;
-					    await Context.UpdateTimeTableAsync(true);
+					    await Context.UpdateTimeTableAsync();
+					    await Context.UpdateNewsTableAsync();
 						updateing = false;
 					}, () => !updateing);
 
@@ -140,11 +141,11 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public SettingsModelView SettingsModelView
+		public ISettingsModelView SettingsModelView
 		{
 			get
 			{
-				return settingsModelView;
+				return container.Resolve<ISettingsModelView>();
 			}
 		}
 

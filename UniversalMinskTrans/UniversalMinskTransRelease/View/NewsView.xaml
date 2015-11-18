@@ -8,6 +8,7 @@
              xmlns:modelView="using:UniversalMinskTransRelease.ModelView"
              DataContext="{Binding}"
              d:DesignHeight="300"
+             d:DesignSource="{d:DesignInstance modelView:NewsModelView}"
              d:DesignWidth="400"
              mc:Ignorable="d">
 

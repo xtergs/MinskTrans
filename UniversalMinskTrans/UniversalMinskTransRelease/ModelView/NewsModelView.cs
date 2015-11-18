@@ -48,7 +48,7 @@ namespace UniversalMinskTransRelease.ModelView
                        return "Сегодня";
                    if (val.Date == DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)).Date)
                        return "Вчера";
-                   return val.DayOfWeek + " " + val.Date;
+                   return val.ToString("D");
                }
                    ).ToList();
            }

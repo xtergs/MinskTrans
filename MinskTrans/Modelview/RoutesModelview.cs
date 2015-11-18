@@ -1,7 +1,6 @@
 ﻿using MinskTrans.Context;
-using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
-using MinskTrans.DesctopClient.Model;
+using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -35,14 +34,14 @@ using GalaSoft.MvvmLight.Command;
 		//private List<Time> timesObservableCollection;
 		private TransportType typeTransport = TransportType.Bus;
 
-		private readonly SettingsModelView settings;
+		private readonly ISettingsModelView settings;
 
 		//public RoutesModelview()
 		//{
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutesModelview(IBussnessLogics context, SettingsModelView settings)
+		public RoutesModelview(IBussnessLogics context, ISettingsModelView settings)
 			: base(context)
 		{
 			this.settings = settings;
@@ -178,7 +177,7 @@ using GalaSoft.MvvmLight.Command;
 				int curTime;
 					curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #if DEBUG
-				CurTime = Settings.CurrentTimeRouts;
+				//CurTime = Settings.CurrentTimeRouts;
 #endif
 				//TODO заменяет сущь-е время
 				if (CurTime)
@@ -286,7 +285,7 @@ using GalaSoft.MvvmLight.Command;
 		//	get { return new RelayCommand(() => OnShowRoute(new ShowArgs() { SelectedRoute = RouteSelectedValue }), () => RouteSelectedValue != null); }
 		//}
 
-		public SettingsModelView Settings
+		public ISettingsModelView Settings
 		{
 			get { return settings; }
 		}

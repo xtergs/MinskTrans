@@ -87,6 +87,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
@@ -130,7 +131,6 @@
     <Compile Include="Modelview\MainModelView.cs" />
     <Compile Include="Modelview\MapModelView.cs" />
     <Compile Include="Modelview\RoutesModelview.cs" />
-    <Compile Include="Modelview\SettingsModelView.cs" />
     <Compile Include="Modelview\StopModelView.cs" />
     <Compile Include="Modelview\StopModelViewBase.cs" />
     <Compile Include="Modelview\StopsModelView.cs" />
@@ -142,6 +142,7 @@
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\DesktopApplicationHelper.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Dictionary1.xaml">
       <SubType>Designer</SubType>

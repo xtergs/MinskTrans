@@ -28,9 +28,14 @@ namespace MinskTrans.Context
             if (cont == null)
                 throw new ArgumentNullException("cont");
             Context = cont;
-           // this.updateManager = updateManager;
-           // this.settings = settings;
-           
+            Context.ErrorLoading += (sender, args) =>
+            {
+                if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
+                    OnNeedUpdadteDB();
+            };
+            // this.updateManager = updateManager;
+            // this.settings = settings;
+
         }
 
         
@@ -231,7 +236,13 @@ namespace MinskTrans.Context
             //return routeNums;
         }
 
-        public event ErrorLoadingDelegate ErrorLoading;
+        public event EventHandler<EventArgs> NeedUpdadteDB;
+
+        public DateTime LastUpdateDbDateTimeUtc
+        {
+            get { return Settings.LastUpdateDbDateTimeUtc; }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnLoadEnded()
@@ -250,9 +261,9 @@ namespace MinskTrans.Context
         }
 
         
-        protected virtual void OnErrorLoading(ErrorLoadingDelegateArgs args)
+        protected virtual void OnNeedUpdadteDB()
         {
-            ErrorLoading?.Invoke(this, args);
+            NeedUpdadteDB?.Invoke(this, new EventArgs());
         }
 
         public Stop GetStop(int stopId)

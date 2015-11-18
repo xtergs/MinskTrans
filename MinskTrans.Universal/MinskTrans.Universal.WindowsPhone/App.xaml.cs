@@ -282,12 +282,10 @@ namespace MinskTrans.Universal
 #if BETA
 					Logger.Log("Prev state != Running");
 #endif
-					model.Context.ErrorLoading += async (sender, args) =>
+					model.Context.NeedUpdadteDB += async (sender, args) =>
 					{
 
-						if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
-						{
-							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+						await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
 								  {
 									  MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
 									  {
@@ -303,7 +301,7 @@ namespace MinskTrans.Universal
 									  await dialog.ShowAsync();
 
 								  });
-						}
+						
 					};
 					model.Context.LoadDataBase();
 

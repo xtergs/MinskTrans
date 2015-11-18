@@ -29,6 +29,8 @@ namespace MyLibrary
         public uint GPSInterval { get; }
         public bool UseGPS { get; set; }
         public bool KeepTracking { get; set; }
+        public DateTime LastSeenMainNewsDateTimeUtc { get; set; }
+        public DateTime LastSeenHotNewsDateTimeUtc { get; set; }
 
         public bool HaveConnection()
         {

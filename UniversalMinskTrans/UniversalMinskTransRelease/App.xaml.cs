@@ -147,11 +147,10 @@ namespace UniversalMinskTrans
 #if BETA
 					Logger.Log("Prev state != Running");
 #endif
-					model.Context.ErrorLoading += async (sender, args) =>
+					model.Context.NeedUpdadteDB += async (sender, args) =>
 					{
 
-						if (args.Error == ErrorLoadingDelegateArgs.Errors.NoSourceFiles)
-						{
+						
 							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
 								  {
 
@@ -170,7 +169,7 @@ namespace UniversalMinskTrans
 									  await dialog.ShowAsync();
 
 								  });
-						}
+						
 					};
 #pragma warning disable 4014
 					model.Context.LoadDataBase();

@@ -43,12 +43,10 @@ namespace PushNotificationServer
 			}
 		}
 
-		private readonly ICloudStorageController CloudController;
-
-		async public Task InicializeAsync()
+	    async public Task InicializeAsync()
 		{
-			NewsManager.LastNewsTime = Settings.Default.LastUpdatedNews;
-			NewsManager.LastHotNewstime = Settings.Default.LastUpdatedHotNews;
+			//NewsManager.LastNewsTime = Settings.Default.LastUpdatedNews;
+			//NewsManager.LastHotNewstime = Settings.Default.LastUpdatedHotNews;
 			await NewsManager.Load();
 			await BusnesLogic.LoadDataBase(LoadType.LoadDB);
 			BusnesLogic.Settings.LastUpdateDbDateTimeUtc = Settings.Default.DBUpdateTime;
@@ -71,7 +69,7 @@ namespace PushNotificationServer
 		void SaveTime()
 		{
 			File.WriteAllText(fileNameLastNews,
-				NewsManager.LastNewsTime + Environment.NewLine + NewsManager.LastHotNewstime +
+				NewsManager.LastUpdateMainNewsDateTimeUtc + Environment.NewLine + NewsManager.LastUpdateHotNewsDateTimeUtc +
 				Environment.NewLine + BusnesLogic.LastUpdateDbDateTimeUtc);
 		}
 
@@ -104,7 +102,7 @@ namespace PushNotificationServer
 			context = container.Resolve<IBussnessLogics>();
 			newsManager = container.Resolve<NewsManagerBase>();
 			updateManager = container.Resolve<UpdateManagerBase>();
-			CloudController = container.Resolve<ICloudStorageController>();
+			OndeDriveController = container.Resolve<ICloudStorageController>();
 
 			NewsManager.FileNameDays = "daysDebug.txt";
 			NewsManager.FileNameMonths = "monthDebug.txt";
@@ -240,11 +238,11 @@ namespace PushNotificationServer
 				//throw;
 			}
 			catch (Exception)
-			{
+			{ 
 				throw;
 			}
-			Settings.Default.LastUpdatedNews = newsManager.LastNewsTime;
-			Settings.Default.LastUpdatedHotNews = newsManager.LastHotNewstime;
+			Settings.Default.LastUpdatedNews = newsManager.LastUpdateMainNewsDateTimeUtc;
+			Settings.Default.LastUpdatedHotNews = newsManager.LastUpdateMainNewsDateTimeUtc;
 			Settings.Default.DBUpdateTime = context.LastUpdateDbDateTimeUtc;
 			Settings.Default.Save();		
 			SaveTime();
@@ -257,20 +255,17 @@ namespace PushNotificationServer
 		{
 			get { return new RelayCommand(() =>
 			{
-				NewsManager.LastHotNewstime = new DateTime();
-				NewsManager.LastHotNewstime = new DateTime();
+				NewsManager.LastUpdateMainNewsDateTimeUtc = new DateTime();
+				NewsManager.LastUpdateHotNewsDateTimeUtc = new DateTime();
 				Settings.Default.LastUpdatedHotNews = new DateTime();
 				Settings.Default.LastUpdatedNews = new DateTime();
 				Settings.Default.Save();
 			});}
 		}
 
-		public ICloudStorageController OndeDriveController
-		{
-			get { return CloudController; }
-		}
+		public ICloudStorageController OndeDriveController { get; }
 
-		public IBussnessLogics BusnesLogic
+	    public IBussnessLogics BusnesLogic
 		{
 			get { return context; }
 		}

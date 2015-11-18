@@ -100,6 +100,7 @@ namespace MinskTrans.Context
 	    {
 	        if (updatingNewsTable)
 	            return false;
+            OnUpdateDbStarted();
 	        DateTime utcNow = DateTime.UtcNow;
 	        string fileNews = "datesNews_002.dat";
 	        try
@@ -185,6 +186,7 @@ namespace MinskTrans.Context
 	        }
 	        finally
 	        {
+                OnUpdateDbEnded();
 	            updatingNewsTable = false;
 	        }
 	    }
@@ -267,16 +269,5 @@ namespace MinskTrans.Context
         
 	}
 
-    public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);
-
-    public class ErrorLoadingDelegateArgs : EventArgs
-    {
-        public enum Errors
-        {
-            NoFileToDeserialize,
-            NoSourceFiles
-        }
-
-        public Errors Error { get; set; }
-    }
+   
 }

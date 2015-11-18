@@ -3,6 +3,7 @@
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -19,7 +20,7 @@ using MinskTrans.DesctopClient.Model;
 		private GroupStop stop;
 		private Stop selectedStopGroup;
 
-		public GroupEditModelView(IBussnessLogics newContext, SettingsModelView settings) : base(newContext, settings)
+		public GroupEditModelView(IBussnessLogics newContext, ISettingsModelView settings) : base(newContext, settings)
 		{
 		}
 

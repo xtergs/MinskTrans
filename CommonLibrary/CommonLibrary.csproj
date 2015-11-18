@@ -40,13 +40,11 @@
     <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\MinskTrans\Modelview\SettingsModelView.cs">
-      <Link>ModelView\SettingsModelView.cs</Link>
-    </Compile>
     <Compile Include="Comparer\RoutsComparer.cs" />
     <Compile Include="InternetHelperUniversal.cs" />
     <Compile Include="IO\FileHelper.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="ModelView\UniversalSettings.cs" />
     <Compile Include="NewsManager.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

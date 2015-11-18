@@ -42,15 +42,15 @@ namespace MinskTrans.BackgroundUpdateTask
 
 			BackgroundTaskDeferral _deferral = taskInstance.GetDeferral();
 			var builder = new ContainerBuilder();
-			builder.RegisterType<FileHelper>().As<FileHelperBase>();
+			builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerBase>();
-		    builder.RegisterType<NewsManager>().As<NewsManagerBase>();
-			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
-			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
+			builder.RegisterType<UpdateManagerBase>().SingleInstance();
+		    builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
+			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>().SingleInstance();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>().SingleInstance();
 		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
-		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
 		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
 		    builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
 			var container = builder.Build();
@@ -71,8 +71,8 @@ namespace MinskTrans.BackgroundUpdateTask
 			MaxMinsAgo = 20;
 
 
-		    var oldDaylyTime = settings.LastUpdateHotNewsDateTimeUtc;
-		    var oldMonthTime = settings.LastNewsTimeUtc;
+		    var oldDaylyTime = settings.LastSeenHotNewsDateTimeUtc;
+		    var oldMonthTime = settings.LastSeenMainNewsDateTimeUtc;
             try
 		    {
 		        if (await context.UpdateTimeTableAsync(true))
@@ -187,6 +187,7 @@ namespace MinskTrans.BackgroundUpdateTask
 
             //       DateTime nowTimeUtc = DateTime.UtcNow;
 		    var manager = container.Resolve<NewsManagerBase>();
+		    await manager.Load();
 		    var nowTimeUtc = DateTime.UtcNow;
                   var listOfDaylyNews = manager.NewNews.Where(
                       key => key.PostedUtc > oldMonthTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo));
@@ -209,6 +210,7 @@ namespace MinskTrans.BackgroundUpdateTask
                 ShowNotification(source.Message);
             }
 
+		    settings.LastSeenMainNewsDateTimeUtc = settings.LastSeenHotNewsDateTimeUtc = nowTimeUtc;
 
 
             //   }

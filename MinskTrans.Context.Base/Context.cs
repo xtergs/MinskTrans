@@ -615,14 +615,14 @@ namespace MinskTrans.Context
 		//public event EmptyDelegate DataBaseDownloadStarted;
 		//public event EmptyDelegate DataBaseDownloadEnded;
 		public event EventHandler<EventArgs> ApplyUpdateStarted;
-		public event EventHandler<EventArgs> ApplyUpdateEnded;
+	    public event EventHandler<EventArgs> UpdateStarted;
+	    public event EventHandler<EventArgs> UpdateEnded;
+	    public event EventHandler<EventArgs> LoadStarted;
+	    public event EventHandler<EventArgs> LoadEnded;
+	    public event ErrorLoadingDelegate ErrorLoading;
+	    public event EventHandler<EventArgs> ApplyUpdateEnded;
 
-		public event EventHandler<EventArgs> UpdateStarted;
-		public event EventHandler<EventArgs> UpdateEnded;
-		public event EventHandler<EventArgs> LoadStarted;
-		public event EventHandler<EventArgs> LoadEnded;
-		public event ErrorLoadingDelegate ErrorLoading;
-
+		
 		#region Invokators
 
 		protected virtual void OnApplyUpdateStarted()

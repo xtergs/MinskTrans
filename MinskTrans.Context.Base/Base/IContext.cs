@@ -27,9 +27,15 @@ namespace MinskTrans.Context.Base
 
 		event EventHandler<EventArgs> ApplyUpdateEnded;
 		event EventHandler<EventArgs> ApplyUpdateStarted;
-		
+        event EventHandler<EventArgs> UpdateStarted;
+        event EventHandler<EventArgs> UpdateEnded;
+        event EventHandler<EventArgs> LoadStarted;
+        event EventHandler<EventArgs> LoadEnded;
+        event ErrorLoadingDelegate ErrorLoading;
 
-		bool IsFavouriteStop(Stop stop);
+
+
+        bool IsFavouriteStop(Stop stop);
 		void AllPropertiesChanged();
 		Task ApplyUpdate(IEnumerable<Rout> newRoutes, IList<Stop> newStops, IList<Schedule> newSchedule);
 		void Create(bool AutoUpdate = true);
@@ -53,6 +59,19 @@ namespace MinskTrans.Context.Base
 	   
 	}
 
+    public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);
+
     public delegate Stop getStop(int stopID);
     public delegate IEnumerable<Stop> getDirection(int stopID);
+
+    public class ErrorLoadingDelegateArgs : EventArgs
+    {
+        public enum Errors
+        {
+            NoFileToDeserialize,
+            NoSourceFiles
+        }
+
+        public Errors Error { get; set; }
+    }
 }

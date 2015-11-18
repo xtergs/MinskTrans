@@ -134,7 +134,7 @@ namespace MinskTrans.Net
 		}
 		readonly FileHelperBase fileHelper;
 		protected readonly InternetHelperBase internetHelper;
-	    private readonly ISettingsModelView settings;
+	    protected readonly ISettingsModelView settings;
 
 		FileHelperBase FileHelper { get { return fileHelper; } }
 
@@ -230,5 +230,16 @@ namespace MinskTrans.Net
 			var handler = PropertyChanged;
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));	
 		}
-	}
+
+        public DateTime LastUpdateMainNewsDateTimeUtc { get { return settings.LastNewsTimeUtc; } set { settings.LastNewsTimeUtc = value; } }
+        public DateTime LastUpdateHotNewsDateTimeUtc
+        {
+            get { return settings.LastUpdateHotNewsDateTimeUtc; }
+            set
+            {
+                settings.LastUpdateHotNewsDateTimeUtc = value;
+            }
+        }
+
+    }
 }

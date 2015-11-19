@@ -216,6 +216,7 @@
                 <AppBarButton HorizontalAlignment="Center"
                               Command="{Binding ShowStopMap}"
                               CommandParameter="{Binding FilteredSelectedStop}"
+                              DataContext="{Binding}"
                               Icon="Map"
                               IsCompact="True"
                               Label="" />

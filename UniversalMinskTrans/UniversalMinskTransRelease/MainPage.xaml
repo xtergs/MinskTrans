@@ -1915,6 +1915,9 @@
                     </ListView>
                 </Border>
             </PivotItem>
+            <PivotItem Header="Logs" GotFocus="PivotItem_GotFocus_1" >
+                <ListView Name="logsListView"></ListView>
+            </PivotItem>
         </Pivot>
 
 

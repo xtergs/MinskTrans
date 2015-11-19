@@ -1,4 +1,6 @@
 ﻿using System;
+using MetroLog;
+using MetroLog.Targets;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -342,7 +344,9 @@ namespace UniversalMinskTrans
 			this.InitializeComponent();
 			this.Suspending += this.OnSuspending;
 
-			this.UnhandledException += OnUnhandledException;
+            GlobalCrashHandler.Configure();
+
+            this.UnhandledException += OnUnhandledException;
 
 
 

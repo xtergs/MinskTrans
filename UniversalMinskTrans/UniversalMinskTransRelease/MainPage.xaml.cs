@@ -120,6 +120,8 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowStopVisualState", true);
 			};
 
+		    model.FindModelView.StopModelView.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
+
             //TODO
 			//model.FindModelView.StopModelView.StatusGPSChanged += async (sender, args) =>
 			//{
@@ -855,6 +857,11 @@ namespace MinskTrans.Universal
 
             //    }
             //}
+        }
+
+        private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -2,6 +2,7 @@
   "dependencies": {
     "AdaptiveTriggerLibrary": "1.0.4",
     "Autofac": "3.5.2",
+    "MetroLog": "0.9.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "MvvmLightLibs": "5.1.1",
     "Newtonsoft.Json": "6.0.7",

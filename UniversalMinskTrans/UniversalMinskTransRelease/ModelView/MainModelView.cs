@@ -28,7 +28,8 @@ namespace MinskTrans.Universal.ModelView
 
 	public class MainModelView : BaseModelView, INotifyPropertyChanged
 	{
-		private static MainModelView mainModelView;
+	    private IContainer container;
+        private static MainModelView mainModelView;
 		//private readonly IContext context;
 	    private FindModelView findModelView;
 	    private readonly NewsManagerBase newsManager;
@@ -60,8 +61,12 @@ namespace MinskTrans.Universal.ModelView
 		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
 		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
 		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
+		    builder.RegisterType<GroupStopsModelView>().SingleInstance();
+            builder.RegisterType<FavouriteModelView>().SingleInstance();
+            builder.RegisterType<NewsModelView>().SingleInstance();
+		    builder.RegisterType<FindModelView>().SingleInstance().WithParameter("UseGPS", true);
 
-            var container = builder.Build();
+            container = builder.Build();
 
             context = container.Resolve<IBussnessLogics>();
             newsManager = container.Resolve<NewsManagerBase>();
@@ -72,12 +77,11 @@ namespace MinskTrans.Universal.ModelView
             //context = new UniversalContext(fileHelper, internetHelper);
             //updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
 
-            SettingsModelView = container.Resolve<ISettingsModelView>();
+            //SettingsModelView = container.Resolve<ISettingsModelView>();
 			//routesModelview = new RoutsModelView(context);
 			//stopMovelView = new StopModelView(context, settingsModelView, true);
-			GroupStopsModelView = new GroupStopsModelView(context, SettingsModelView);
-			FavouriteModelView = new FavouriteModelView(context, SettingsModelView);
-		    NewsModelView = new NewsModelView(NewsManager);
+			
+		    //NewsModelView = new NewsModelView(NewsManager);
 		}
 
 		//private MainModelView(Context newContext)
@@ -96,30 +100,25 @@ namespace MinskTrans.Universal.ModelView
 
 		public NewsManagerBase NewsManager
 		{
-			get { return newsManager;}
+			get { return container.Resolve<NewsManagerBase>();}
 		}
 
 		public MapModelView MapModelView { get; set; }
 
-	    public ISettingsModelView SettingsModelView { get; }
+	    public ISettingsModelView SettingsModelView { get { return container.Resolve<ISettingsModelView>(); } }
 
 	    public FindModelView FindModelView
 		{
-			get
-			{
-				if (findModelView == null)
-					findModelView = new FindModelView(context, SettingsModelView, true);
-				return findModelView;
-			}
+			get { return container.Resolve<FindModelView>(); }
 		}
 
 		public StopModelView StopMovelView { get; }
 
 	    public RoutsModelView RoutsModelView { get; }
 
-	    public GroupStopsModelView GroupStopsModelView { get; }
+	    public GroupStopsModelView GroupStopsModelView { get { return container.Resolve<GroupStopsModelView>(); } }
 
-	    public FavouriteModelView FavouriteModelView { get; }
+	    public FavouriteModelView FavouriteModelView { get { return container.Resolve<FavouriteModelView>(); } }
 
 	    //public IContext Context { get { return context; } }
 
@@ -166,6 +165,6 @@ namespace MinskTrans.Universal.ModelView
 
 		
 
-	    public NewsModelView NewsModelView { get; }
+	    public NewsModelView NewsModelView { get { return container.Resolve<NewsModelView>(); } }
 	}
 }

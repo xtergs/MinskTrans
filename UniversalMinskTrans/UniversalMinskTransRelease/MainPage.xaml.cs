@@ -423,6 +423,27 @@ namespace MinskTrans.Universal
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
 				Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
 			SystemNavigationManager.GetForCurrentView().BackRequested += NavigationManagerBackRequsted;
+		    model.ExternalCommands.BackPressed +=
+		        (o, args) =>
+		        {
+		            if (Pivot.SelectedItem == SearchPivotItem)
+		            {
+		                BackVisualState();
+		                SelectVisualState();
+
+		            }
+		            else if (Pivot.SelectedItem == GroupsPivtoItem)
+		            {
+		                if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+		                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+		                else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+		                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+		                else
+		                {
+		                    return;
+		                }
+		            }
+		        };
 
 			//  ToDo:
 

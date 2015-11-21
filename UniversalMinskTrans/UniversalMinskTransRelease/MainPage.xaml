@@ -1126,6 +1126,10 @@
                                     VerticalAlignment="Bottom"
                                     Background="#FF5D5959">
                                 <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <AppBarButton x:Name="SoftBackButton"
+                                                  Command="{Binding BackCommand}"
+                                                  Icon="Back"
+                                                  IsCompact="True" />
                                     <AppBarToggleButton HorizontalAlignment="Center"
                                                         Command="{Binding AddRemoveFavouriteRout}"
                                                         CommandParameter="{Binding RouteNumSelectedValue}"
@@ -1326,7 +1330,9 @@
                                 </ListView>
                             </Grid>
                             <AppBarToggleButton Grid.Row="2"
+                                                HorizontalAlignment="Right"
                                                 Content="FavouriteRout"
+                                                Icon="Favorite"
                                                 IsChecked="{Binding RoutsModelView.IsShowFavouriteRouts,
                                                                     Mode=TwoWay,
                                                                     UpdateSourceTrigger=PropertyChanged}" />
@@ -1342,8 +1348,8 @@
                                 <CheckBox Content="Тролейбус" IsChecked="{Binding Trol, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                 <CheckBox Content="Трамвай" IsChecked="{Binding Tram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <!--<CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
 
 
                                 <VariableSizedWrapGrid DataContext="{Binding SettingsModelView}"

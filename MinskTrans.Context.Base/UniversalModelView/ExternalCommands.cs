@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System;
+using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 
@@ -8,6 +9,7 @@ namespace MinskTrans.Context.UniversalModelView
     {
         public event Show ShowStop;
         public event Show ShowRoute;
+        public event EventHandler BackPressed;
 
         public RelayCommand<Stop> ShowStopMap
         {
@@ -17,6 +19,11 @@ namespace MinskTrans.Context.UniversalModelView
         public RelayCommand<Rout> ShowRouteMap
         {
             get { return new RelayCommand<Rout>((rout) => OnShowRoute(new ShowArgs() { SelectedRoute = rout }), (rout) => rout != null); }
+        }
+
+        public RelayCommand BackPressedCommand
+        {
+            get { return new RelayCommand(OnBackPressed); }
         }
 
         protected virtual void OnShowStop(ShowArgs args)
@@ -29,6 +36,11 @@ namespace MinskTrans.Context.UniversalModelView
         {
             var handler = ShowRoute;
             if (handler != null) handler(this, args);
+        }
+
+        protected virtual void OnBackPressed()
+        {
+            BackPressed?.Invoke(this, EventArgs.Empty);
         }
     }
 }

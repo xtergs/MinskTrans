@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Data;
 
 namespace MinskTrans.Universal.Converters
 {
-    class RoutsToNumStrConverter:IValueConverter
+    public class RoutsToNumStrConverter:IValueConverter
     {
 	    #region Implementation of IValueConverter
 

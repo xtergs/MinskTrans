@@ -220,6 +220,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (value.Equals(autoDay)) return;
 				autoDay = value;
 				OnPropertyChanged();
+                //OnPropertyChanged("CurDay");
 				OnPropertyChanged("TimeSchedule");
 			}
 		}
@@ -243,6 +244,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (value <= 0 || value > 7)
 					return;
 				curDay = value;
+			    AutoDay = false;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
@@ -415,6 +417,11 @@ namespace MinskTrans.DesctopClient.Modelview
         {
 			get { return commands.ShowStopMap; }
 		}
+
+	    public RelayCommand BackCommand
+	    {
+	        get { return commands.BackPressedCommand; }
+	    }
 		public bool FuzzySearch
 		{
 			get { return fuzzySearch; }

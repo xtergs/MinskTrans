@@ -379,6 +379,11 @@ public RelayCommand<Rout> AddRemoveFavouriteRout
             get { return commands.ShowRouteMap; }
         }
 
+	    public RelayCommand BackCommand
+	    {
+            get { return commands.BackPressedCommand; }
+	    }
+
         #region Overrides of BaseModelView
 
         public override void RefreshView()

@@ -160,21 +160,24 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-
-	    public string AllLogs
+        string resultString = "11111";
+        public string AllLogs
 	    {
 	        get
 	        {
-	            var xx = new FileStreamingTarget();
-                
-                var configuration = new LoggingConfiguration();
-                configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
-                configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, xx);
-                configuration.IsEnabled = true;
-
 	            var fileHelper = container.Resolve<FileHelperBase>();
+	            var strings = fileHelper.GetNamesFiles(TypeFolder.Local, "metroLogs").ContinueWith( async x =>
+	            {
+	                var fileNames = await x;
+	                
+	                foreach (var fileName  in fileNames)
+	                {
+	                    resultString += await fileHelper.ReadAllTextAsync(TypeFolder.Local, "metroLogs\\" + fileName);
+	                }
+	                OnPropertyChanged("AllLogs");
+	            });
                 //fileHelper.ReadAllTextAsync(TypeFolder.Local, )
-	            return "";
+	            return resultString;
 	        }
 	    }
 

@@ -15,6 +15,7 @@
              d:DesignWidth="400"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <converters:IntToStringDayOfWeek x:Key="IntToStringDayOfWeekdaysToStrConverter" />
         <!--  d:DataContext="{d:DesignInstance modelview:StopModelView}"  -->
         <converters:TransportToColor x:Key="TransportToColor" />
         <converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter" />
@@ -90,7 +91,7 @@
           Grid.Row="1"
           Grid.Column="0"
           Grid.ColumnSpan="2"
-          Margin="10,0"
+          Margin="0,0"
           Visibility="Visible">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -121,6 +122,7 @@
             <controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <AppBarButton x:Name="SoftBackButton"
                               Click="BackButtonClick"
+                              Command="{Binding BackCommand}"
                               Icon="Back"
                               IsCompact="True">
                     <Interactivity:Interaction.Behaviors>
@@ -223,17 +225,38 @@
             </controls:WrapPanel>
         </Border>
         <AppBar Grid.Row="3">
-            <controls:WrapPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
                 <TextBlock Text="День недели: " />
-                <TextBlock Text="{Binding CurDay, UpdateSourceTrigger=PropertyChanged}" />
-                <AppBarToggleButton Content="Текущее время" IsEnabled="{Binding AutoDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Slider MinWidth="100"
-                        Maximum="7"
-                        Minimum="1"
-                        Value="{Binding CurDay,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-            </controls:WrapPanel>
+                <TextBlock Grid.Column="1" Text="{Binding CurDay, Converter={StaticResource IntToStringDayOfWeekdaysToStrConverter}}" />
+                <controls:WrapPanel Grid.Row="1" Grid.ColumnSpan="10">
+                    <Slider Grid.Row="1"
+                            MinWidth="200"
+                            Margin="5,0"
+                            Maximum="7"
+                            Minimum="1"
+                            Value="{Binding CurDay,
+                                            Mode=TwoWay}" />
+                    <CheckBox Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="5,0"
+                              Content="Автоматически"
+                              IsChecked="{Binding AutoDay,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
+
+                </controls:WrapPanel>
+            </Grid>
         </AppBar>
     </Grid>
 </UserControl>

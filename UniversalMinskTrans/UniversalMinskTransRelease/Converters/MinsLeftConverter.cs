@@ -30,7 +30,7 @@ namespace MinskTrans.Universal
 		#endregion
 	}
 
-    class MinsLeftFromTimeSpanConverter : IValueConverter
+    public class MinsLeftFromTimeSpanConverter : IValueConverter
     {
         #region Implementation of IValueConverter
 

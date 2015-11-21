@@ -26,7 +26,7 @@ namespace MinskTrans.Universal
 		#endregion
 	}
 
-    class MinsToTimeFromTimeSpanConverter : IValueConverter
+    public class MinsToTimeFromTimeSpanConverter : IValueConverter
     {
         #region Implementation of IValueConverter
 

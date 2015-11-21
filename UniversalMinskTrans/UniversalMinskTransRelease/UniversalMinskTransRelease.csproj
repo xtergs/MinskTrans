@@ -143,6 +143,7 @@
     <Compile Include="Class2.cs" />
     <Compile Include="Context\SqliteContext.cs" />
     <Compile Include="Converters\DateToString.cs" />
+    <Compile Include="Converters\IntToStringDayOfWeek.cs" />
     <Compile Include="Converters\IntToVisibleConverter.cs" />
     <Compile Include="Converters\MinsLeftConverter.cs" />
     <Compile Include="Converters\MinsToTimeConverter.cs" />

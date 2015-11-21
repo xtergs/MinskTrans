@@ -49,7 +49,6 @@ namespace MinskTrans.BackgroundUpdateTask
             LogManagerFactory.DefaultConfiguration = configuration;
             ILogger Log = LogManagerFactory.DefaultLogManager.GetLogger("Log");
             
-            Log.Trace("Background task started");
 		    try
 		    {
 		        //Debug.WriteLine("Background task started");
@@ -67,11 +66,13 @@ namespace MinskTrans.BackgroundUpdateTask
 		        builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
 		        builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
 		        builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
-		        var container = builder.Build();
-
-		        //var fileHelper = new FileHelper();
-		        //InternetHelperBase internetHelper = new InternetHelperUniversal(fileHelper);
-		        ISettingsModelView settings = container.Resolve<ISettingsModelView>();
+                builder.RegisterInstance<ILogger>(Log).SingleInstance();
+                var container = builder.Build();
+		        //Log = container.Resolve<ILogger>();
+                Log.Trace("Background task started");
+                //var fileHelper = new FileHelper();
+                //InternetHelperBase internetHelper = new InternetHelperUniversal(fileHelper);
+                ISettingsModelView settings = container.Resolve<ISettingsModelView>();
 
 		        var context = container.Resolve<IBussnessLogics>();
 		        InternetHelperBase helper = container.Resolve<InternetHelperBase>();

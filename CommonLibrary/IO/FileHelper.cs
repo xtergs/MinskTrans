@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using MinskTrans.Utilites.Base.IO;
@@ -87,7 +88,12 @@ namespace CommonLibrary.IO
 			}
 		}
 
-		public override string GetPath(TypeFolder folder)
+	    public override async Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder)
+	    {
+	        return (await Folders[folder].GetFolderAsync(subFolder).GetResults().GetFilesAsync()).Select(file => file.Name).ToList();
+	    }
+
+	    public override string GetPath(TypeFolder folder)
 		{
 			return Folders[folder].Path;
 		}

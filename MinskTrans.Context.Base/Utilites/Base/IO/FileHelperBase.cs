@@ -34,7 +34,7 @@ namespace MinskTrans.Utilites.Base.IO
 		public abstract Task WriteTextAsync(TypeFolder folder, string file, string text);
 		public abstract Task DeleteFile(TypeFolder folder, string file);
 
-
+	    public abstract Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder);
 
 		public abstract Task<Stream> OpenStream(TypeFolder folder, string file);
 

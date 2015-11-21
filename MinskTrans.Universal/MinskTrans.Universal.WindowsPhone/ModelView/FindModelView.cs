@@ -1,5 +1,6 @@
 ﻿using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
@@ -25,9 +26,9 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView) : base(newContext)
+		public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands) : base(newContext)
 		{
-			stopModelView = new StopModelView(newContext, settingsModelView, true);
+			stopModelView = new StopModelView(newContext, settingsModelView, commands, true);
 			routsModelview = new RoutsModelView(newContext);
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿using MinskTrans.Context;
+using MinskTrans.Context.UniversalModelView;
 using MyLibrary;
 
 namespace MinskTrans.Universal.ModelView
@@ -6,7 +7,7 @@ namespace MinskTrans.Universal.ModelView
 	public class FavouriteModelView:FindModelView
 	{
 		
-		public FavouriteModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView) : base(newContext, settingsModelView)
+		public FavouriteModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands) : base(newContext, settingsModelView, commands)
 		{
 			
 		}

@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
@@ -20,7 +21,7 @@ namespace MinskTrans.Universal.ModelView
 	public class RoutsModelView:BaseModelView
 	{
 
-		
+	    private IExternalCommands commands;
 		private bool curTime;
 		private string routNum;
 		//private int routeNamesIndex;
@@ -46,9 +47,12 @@ namespace MinskTrans.Universal.ModelView
 		//	OnPropertyChanged("RouteNums");
 		//}
 
-		public RoutsModelView(IBussnessLogics context)
+		public RoutsModelView(IBussnessLogics context, IExternalCommands commands)
 			: base(context)
 		{
+		    if (commands == null)
+		        throw new ArgumentNullException("commands");
+		    this.commands = commands;
 			Context.Context.PropertyChanged += (sender, args) =>
 			{
 				if (args.PropertyName == "Routs")
@@ -368,35 +372,16 @@ public RelayCommand<Rout> AddRemoveFavouriteRout
         {
 			get { return new RelayCommand<Rout>((x) => Context.AddRemoveFavouriteRoute(x)); }
 		}
-		//public event Show ShowStop;
-		//public event Show ShowRoute;
-		//public delegate void Show(object sender, ShowArgs args);
+		
+        
+        public RelayCommand<Rout> ShowRouteMap
+        {
+            get { return commands.ShowRouteMap; }
+        }
 
-		//public RelayCommand ShowStopMap
-		//{
-		//	get { return new RelayCommand(() => OnShowStop(new ShowArgs() { SelectedStop = StopSelectedValue }), () => StopSelectedValue != null); }
-		//}
+        #region Overrides of BaseModelView
 
-		//public RelayCommand ShowRouteMap
-		//{
-		//	get { return new RelayCommand(() => OnShowRoute(new ShowArgs() { SelectedRoute = RouteSelectedValue }), () => RouteSelectedValue != null); }
-		//}
-
-		//protected virtual void OnShowStop(ShowArgs args)
-		//{
-		//	var handler = ShowStop;
-		//	if (handler != null) handler(this, args);
-		//}
-
-		//protected virtual void OnShowRoute(ShowArgs args)
-		//{
-		//	var handler = ShowRoute;
-		//	if (handler != null) handler(this, args);
-		//}
-
-		#region Overrides of BaseModelView
-
-		public override void RefreshView()
+        public override void RefreshView()
 		{
 			base.RefreshView();
 			OnPropertyChanged("RouteNums");

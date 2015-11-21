@@ -1915,8 +1915,8 @@
                     </ListView>
                 </Border>
             </PivotItem>
-            <PivotItem Header="Logs" GotFocus="PivotItem_GotFocus_1" >
-                <ListView Name="logsListView"></ListView>
+            <PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
+                <TextBlock Text="{Binding AllLogs, UpdateSourceTrigger=PropertyChanged}" />
             </PivotItem>
         </Pivot>
 

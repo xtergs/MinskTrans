@@ -3,6 +3,7 @@
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.UniversalModelView;
 using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
@@ -26,8 +27,8 @@ using MinskTrans.DesctopClient.Model;
 		//{
 		//}
 
-		public GroupStopsModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView)
-			: base(newContext, settingsModelView)
+		public GroupStopsModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands)
+			: base(newContext, settingsModelView, commands)
 		{
 			Bus = Trol = Tram=Metro = true;
 		}

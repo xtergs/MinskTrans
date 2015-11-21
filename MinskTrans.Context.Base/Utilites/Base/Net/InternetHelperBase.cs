@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MetroLog;
 using MinskTrans.Utilites.Base.IO;
 
 namespace MinskTrans.Utilites.Base.Net
@@ -8,10 +9,14 @@ namespace MinskTrans.Utilites.Base.Net
 	public abstract class  InternetHelperBase
 	{
 		public readonly FileHelperBase FileHelper;
-		public InternetHelperBase(FileHelperBase fileHelper)
+	    private readonly ILogger logger;
+		public InternetHelperBase(FileHelperBase fileHelper, ILogger logger)
 		{
 			if (fileHelper == null)
 				throw new ArgumentNullException("fileHelper");
+		    if (logger == null)
+		        throw new ArgumentNullException("logger");
+		    this.logger = logger;
 			FileHelper = fileHelper;
 		}
 
@@ -47,26 +52,20 @@ namespace MinskTrans.Utilites.Base.Net
 			        return await response.Content.ReadAsStringAsync();
 			    }
 			}
-            catch (TimeoutException)
+            catch (TimeoutException e)
             {
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
+                logger.Error("InternetHelperBase Download: can't download " + uri,e);
                 throw;
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException e)
             {
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
+                logger.Error("InternetHelperBase Download: can't download " + uri, e);
                 throw;
             }
             catch (Exception e)
 			{
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
-				throw new TaskCanceledException(e.Message, e);
+                logger.Error("InternetHelperBase Download: can't download " + uri, e);
+                throw new TaskCanceledException(e.Message, e);
 			}
 		}
 
@@ -88,28 +87,22 @@ namespace MinskTrans.Utilites.Base.Net
 		            await FileHelper.WriteTextAsync(folder, file, await response.Content.ReadAsStringAsync());
 		        }
 		    }
-		    catch (TimeoutException)
-		    {
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
+            catch (TimeoutException e)
+            {
+                logger.Error("InternetHelperBase Download: can't download " + uri, e);
                 throw;
-		    }
-		    catch (HttpRequestException)
-		    {
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
+            }
+            catch (HttpRequestException e)
+            {
+                logger.Error("InternetHelperBase Download: can't download " + uri, e);
                 throw;
-		    }
-		    catch (Exception e)
-		    {
-#if BETA
-				Logger.Log().WriteLineTime("Can't download " + uri).WriteLine(e.Message).WriteLine(e.StackTrace);
-#endif
-		        throw new TaskCanceledException(e.Message, e);
-		    }
-		}
+            }
+            catch (Exception e)
+            {
+                logger.Error("InternetHelperBase Download: can't download " + uri, e);
+                throw new TaskCanceledException(e.Message, e);
+            }
+        }
 
 	}
 }

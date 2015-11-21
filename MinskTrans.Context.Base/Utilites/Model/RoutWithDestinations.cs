@@ -20,6 +20,7 @@ namespace MinskTrans.DesctopClient.Model
 						x.Stops.Count > 0 && x.RouteNum == newRout.RouteNum && x.Transport == newRout.Transport &&
 						(x.RoutType.Contains("A>B") || x.RoutType.Contains("B>A")))
 					.Select(x => Trim(x.StartStop.Name) + " - " + Trim(x.DestinationStop.Name)).Distinct();
+		    this.Stops = newRout.Stops;
 		}
 
 		public RoutWithDestinations()

@@ -8,12 +8,14 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
-using MinskTrans.DesctopClient;
 using Autofac;
 using CommonLibrary.IO;
+using MetroLog;
+using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
@@ -49,6 +51,14 @@ namespace MinskTrans.Universal.ModelView
 
 		private MainModelView()
 		{
+            var configuration = new LoggingConfiguration();
+
+            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
+
+            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+            configuration.IsEnabled = true;
+
+            LogManagerFactory.DefaultConfiguration = configuration;
             var builder = new ContainerBuilder();
             builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
             //builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
@@ -65,6 +75,8 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterType<FavouriteModelView>().SingleInstance();
             builder.RegisterType<NewsModelView>().SingleInstance();
 		    builder.RegisterType<FindModelView>().SingleInstance().WithParameter("UseGPS", true);
+		    builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
+		    builder.RegisterInstance<ILogger>(LogManagerFactory.DefaultLogManager.GetLogger("Log")).SingleInstance();
 
             container = builder.Build();
 
@@ -72,15 +84,19 @@ namespace MinskTrans.Universal.ModelView
             newsManager = container.Resolve<NewsManagerBase>();
             UpdateManager = container.Resolve<UpdateManagerBase>();
 
-            //var fileHelper = new FileHelper();
-            //var internetHelper = new InternetHelperUniversal(fileHelper);
-            //context = new UniversalContext(fileHelper, internetHelper);
-            //updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
+		    ExternalCommands = container.Resolve<IExternalCommands>();
+		    
 
-            //SettingsModelView = container.Resolve<ISettingsModelView>();
-			//routesModelview = new RoutsModelView(context);
-			//stopMovelView = new StopModelView(context, settingsModelView, true);
-			
+
+		    //var fileHelper = new FileHelper();
+		    //var internetHelper = new InternetHelperUniversal(fileHelper);
+		    //context = new UniversalContext(fileHelper, internetHelper);
+		    //updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
+
+		    //SettingsModelView = container.Resolve<ISettingsModelView>();
+		    //routesModelview = new RoutsModelView(context);
+		    //stopMovelView = new StopModelView(context, settingsModelView, true);
+
 		    //NewsModelView = new NewsModelView(NewsManager);
 		}
 
@@ -104,6 +120,7 @@ namespace MinskTrans.Universal.ModelView
 		}
 
 		public MapModelView MapModelView { get; set; }
+        public IExternalCommands ExternalCommands { get; }
 
 	    public ISettingsModelView SettingsModelView { get { return container.Resolve<ISettingsModelView>(); } }
 
@@ -142,6 +159,25 @@ namespace MinskTrans.Universal.ModelView
 				OnPropertyChanged("AllNews");
 			}
 		}
+
+
+	    public string AllLogs
+	    {
+	        get
+	        {
+	            var xx = new FileStreamingTarget();
+                
+                var configuration = new LoggingConfiguration();
+                configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
+                configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, xx);
+                configuration.IsEnabled = true;
+
+	            var fileHelper = container.Resolve<FileHelperBase>();
+                //fileHelper.ReadAllTextAsync(TypeFolder.Local, )
+	            return "";
+	        }
+	    }
+
 		bool updating = false;
 		RelayCommand updateDataCommand;
 		public RelayCommand UpdateDataCommand
@@ -163,8 +199,19 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		
+	    public event Show ShowStop
+	    {
+	        add { ExternalCommands.ShowStop += value; }
+	        remove { ExternalCommands.ShowStop -= value; }
+	    }
 
-	    public NewsModelView NewsModelView { get { return container.Resolve<NewsModelView>(); } }
+	    public event Show ShowRoute {
+            add { ExternalCommands.ShowRoute += value; }
+            remove { ExternalCommands.ShowRoute -= value; }
+        }
+
+
+
+        public NewsModelView NewsModelView { get { return container.Resolve<NewsModelView>(); } }
 	}
 }

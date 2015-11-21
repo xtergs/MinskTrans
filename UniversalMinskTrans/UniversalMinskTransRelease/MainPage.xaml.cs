@@ -120,7 +120,7 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowStopVisualState", true);
 			};
 
-		    model.FindModelView.StopModelView.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
+		    //model.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
 
             //TODO
 			//model.FindModelView.StopModelView.StatusGPSChanged += async (sender, args) =>

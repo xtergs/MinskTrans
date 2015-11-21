@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Utilites.FuzzySearch;
 using Location = MinskTrans.Context.Location;
 using PositionChangedEventArgs = MinskTrans.Context.Base.PositionChangedEventArgs;
@@ -16,9 +17,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using MinskTrans.DesctopClient.Properties;
 
 #else
-using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
-using Windows.Devices.Geolocation;
 
 #endif
 
@@ -27,6 +26,7 @@ namespace MinskTrans.DesctopClient.Modelview
 	public class StopModelView : StopModelViewBase
 	{
 		private ISettingsModelView settingsModelView;
+	    private IExternalCommands commands;
 		private bool autoDay;
 		private bool autoNowTime;
 		private bool bus;
@@ -50,11 +50,14 @@ namespace MinskTrans.DesctopClient.Modelview
 		private TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
 		                                          TransportType.Trol;
 
-		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, bool UseGPS = false)
+		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;
+		    if (commands == null)
+		        throw new ArgumentNullException("commands");
 			settingsModelView = settings;
+		    this.commands = commands;
 
 			settingsModelView.PropertyChanged += async (sender, args) =>
 			{
@@ -408,7 +411,10 @@ namespace MinskTrans.DesctopClient.Modelview
 				RefreshTimeSchedule.Execute(null);
 			});}
 		}
-
+        public RelayCommand<Stop> ShowStopMap
+        {
+			get { return commands.ShowStopMap; }
+		}
 		public bool FuzzySearch
 		{
 			get { return fuzzySearch; }

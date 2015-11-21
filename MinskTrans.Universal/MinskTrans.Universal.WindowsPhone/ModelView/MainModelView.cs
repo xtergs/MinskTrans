@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
@@ -22,6 +23,7 @@ namespace MinskTrans.Universal.ModelView
 
 	public class MainModelView : BaseModelView, INotifyPropertyChanged
 	{
+	    private IContainer container;
 		private static MainModelView mainModelView;
 		//private readonly IContext context;
 	    private readonly NewsManagerBase newsManager;
@@ -48,50 +50,42 @@ namespace MinskTrans.Universal.ModelView
 		private MainModelView()
 		{
 			var builder = new ContainerBuilder();
-			builder.RegisterType<FileHelper>().As<FileHelperBase>();
+			builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerBase>();
-			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
-			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
-			builder.RegisterType<NewsManager>().As<NewsManagerBase>();
+			builder.RegisterType<UpdateManagerBase>().SingleInstance();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>().SingleInstance();
+			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>().SingleInstance();
+			builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
 		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
 		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>();
-		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>();
-		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
-            
-			//builder.RegisterType<Context>().As<IContext>();
+		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
+		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>().SingleInstance();
+		    builder.RegisterType<FindModelView>().SingleInstance();
+            builder.RegisterType<GroupStopsModelView>().SingleInstance();
+            builder.RegisterType<FavouriteModelView>().SingleInstance();
 
-			var container = builder.Build();
+            //builder.RegisterType<Context>().As<IContext>();
+
+            container = builder.Build();
 
 			context = container.Resolve<IBussnessLogics>();
-			newsManager = container.Resolve<NewsManagerBase>();
-			UpdateManagerBase = container.Resolve<UpdateManagerBase>();
-
-			SettingsModelView = container.Resolve<ISettingsModelView>();
-			GroupStopsModelView = new GroupStopsModelView(context, SettingsModelView);
-			FavouriteModelView = new FavouriteModelView(context, SettingsModelView);
-			FindModelView = new FindModelView(context, SettingsModelView);
 		}
 
 		public NewsManagerBase NewsManager
 		{
-			get { return newsManager;}
-		}
+            get { return container.Resolve<NewsManagerBase>(); }
+        }
 
 		public MapModelView MapModelView { get; set; }
 
-	    public ISettingsModelView SettingsModelView { get; }
+	    public ISettingsModelView SettingsModelView { get { return container.Resolve<ISettingsModelView>(); } }
 
-	    public FindModelView FindModelView { get; }
+	    public FindModelView FindModelView { get { return container.Resolve<FindModelView>(); } }
 
-	    public StopModelView StopMovelView { get; }
+	    public GroupStopsModelView GroupStopsModelView { get { return container.Resolve<GroupStopsModelView>(); } }
 
-	    public RoutsModelView RoutsModelView { get; }
-
-	    public GroupStopsModelView GroupStopsModelView { get; }
-
-	    public FavouriteModelView FavouriteModelView { get; }
+	    public FavouriteModelView FavouriteModelView { get { return container.Resolve<FavouriteModelView>(); } }
 
 	    //public IContext Context { get { return context; } }
 
@@ -121,7 +115,7 @@ namespace MinskTrans.Universal.ModelView
 
 		
 
-		public UpdateManagerBase UpdateManagerBase { get; }
+		public UpdateManagerBase UpdateManagerBase { get { return container.Resolve<UpdateManagerBase>(); } }
 
 	    RelayCommand updateDataCommand;
 		public RelayCommand UpdateDataCommand
@@ -142,29 +136,41 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		//public RelayCommand<Stop> ShowStopMap
-		//{
-		//	get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-		//}
+        //public RelayCommand<Stop> ShowStopMap
+        //{
+        //	get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+        //}
 
-		//public RelayCommand<Rout> ShowRouteMap
-		//{
-		//	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		//}
-		//public event Show ShowStop;
-		//public event Show ShowRoute;
-		//public delegate void Show(object sender, ShowArgs args);
+        //public RelayCommand<Rout> ShowRouteMap
+        //{
+        //	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+        //}
+        //public event Show ShowStop;
+        //public event Show ShowRoute;
+        //public delegate void Show(object sender, ShowArgs args);
 
-		//protected virtual void OnShowStop(ShowArgs args)
-		//{
-		//	var handler = ShowStop;
-		//	if (handler != null) handler(this, args);
-		//}
+        //protected virtual void OnShowStop(ShowArgs args)
+        //{
+        //	var handler = ShowStop;
+        //	if (handler != null) handler(this, args);
+        //}
 
-		//protected virtual void OnShowRoute(ShowArgs args)
-		//{
-		//	var handler = ShowRoute;
-		//	if (handler != null) handler(this, args);
-		//}
-	}
+        //protected virtual void OnShowRoute(ShowArgs args)
+        //{
+        //	var handler = ShowRoute;
+        //	if (handler != null) handler(this, args);
+        //}
+        private IExternalCommands ExternalCommands { get; }
+        public event Show ShowStop
+        {
+            add { ExternalCommands.ShowStop += value; }
+            remove { ExternalCommands.ShowStop -= value; }
+        }
+
+        public event Show ShowRoute
+        {
+            add { ExternalCommands.ShowRoute += value; }
+            remove { ExternalCommands.ShowRoute -= value; }
+        }
+    }
 }

@@ -6,6 +6,7 @@ using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
 using MinskTrans.Context.Fakes;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient.ViewModel;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
@@ -149,37 +150,49 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		//public GalaSoft.MvvmLight.Command.RelayCommand<Stop> ShowStopMap
-		//{
-		//	get { return new GalaSoft.MvvmLight.Command.RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-		//}
+        //public GalaSoft.MvvmLight.Command.RelayCommand<Stop> ShowStopMap
+        //{
+        //	get { return new GalaSoft.MvvmLight.Command.RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
+        //}
 
-		//public GalaSoft.MvvmLight.Command.RelayCommand<Rout> ShowRouteMap
-		//{
-		//	get { return new GalaSoft.MvvmLight.Command.RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		//}
-		//public event Show ShowStop;
-		//public event Show ShowRoute;
-		//public delegate void Show(object sender, ShowArgs args);
+        //public GalaSoft.MvvmLight.Command.RelayCommand<Rout> ShowRouteMap
+        //{
+        //	get { return new GalaSoft.MvvmLight.Command.RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+        //}
+        //public event Show ShowStop;
+        //public event Show ShowRoute;
+        //public delegate void Show(object sender, ShowArgs args);
 
-		//protected virtual void OnShowStop(ShowArgs args)
-		//{
-		//	var handler = ShowStop;
-		//	if (handler != null) handler(this, args);
-		//}
+        //protected virtual void OnShowStop(ShowArgs args)
+        //{
+        //	var handler = ShowStop;
+        //	if (handler != null) handler(this, args);
+        //}
 
-		//protected virtual void OnShowRoute(ShowArgs args)
-		//{
-		//	var handler = ShowRoute;
-		//	if (handler != null) handler(this, args);
-		//}
+        //protected virtual void OnShowRoute(ShowArgs args)
+        //{
+        //	var handler = ShowRoute;
+        //	if (handler != null) handler(this, args);
+        //}
 
-		//public IContext TimeTable
-		//{
-		//	get
-		//	{
-		//		return timeTable;
-		//	}
-		//}
-	}
+        //public IContext TimeTable
+        //{
+        //	get
+        //	{
+        //		return timeTable;
+        //	}
+        //}
+        private IExternalCommands ExternalCommands { get; }
+        public event Show ShowStop
+        {
+            add { ExternalCommands.ShowStop += value; }
+            remove { ExternalCommands.ShowStop -= value; }
+        }
+
+        public event Show ShowRoute
+        {
+            add { ExternalCommands.ShowRoute += value; }
+            remove { ExternalCommands.ShowRoute -= value; }
+        }
+    }
 }

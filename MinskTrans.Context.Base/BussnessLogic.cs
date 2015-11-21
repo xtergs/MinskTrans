@@ -5,6 +5,7 @@ using MinskTrans.Context.Base.BaseModel;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using MinskTrans.AutoRouting.AutoRouting;
@@ -118,7 +119,7 @@ namespace MinskTrans.Context
 	            string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
 
 	            var timeShtaps = resultStr.Split('\n');
-                utcNow = DateTime.Parse(timeShtaps[0]);
+                utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
 	            //NewsManager manager = new NewsManager();
 	            //await newManager.Load();
 	            DateTime oldMonthTime = settings.LastNewsTimeUtc;
@@ -144,7 +145,7 @@ namespace MinskTrans.Context
 	            }
 
 
-                utcNow = DateTime.Parse(timeShtaps[1]);
+                utcNow = DateTime.Parse(timeShtaps[1], CultureInfo.InvariantCulture);
 	            if (utcNow > oldDaylyTime)
 	            {
 	                try
@@ -220,7 +221,7 @@ namespace MinskTrans.Context
 	                var timeShtaps = resultStr.Split('\n');
 	                
 	                if (timeShtaps.Length > 2)
-	                    utcNow = DateTime.Parse(timeShtaps[2]);
+	                    utcNow = DateTime.Parse(timeShtaps[2], CultureInfo.InvariantCulture);
 	                if (utcNow <= Settings.LastUpdateDbDateTimeUtc)
 	                {
 	                    return false;

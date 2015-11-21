@@ -13,7 +13,6 @@ namespace MinskTrans.DesctopClient.Modelview
 	using MinskTrans.DesctopClient.Annotations;
 	using System.Linq;
 #else
-    using System.Linq;
 	using MinskTrans.Universal.Annotations;
 	using GalaSoft.MvvmLight.Command;
 #endif
@@ -242,31 +241,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 
 
-		public event Show ShowStop;
-		public event Show ShowRoute;
-		public delegate void Show(object sender, ShowArgs args);
-
-		public RelayCommand<Stop> ShowStopMap
-		{
-			get { return new RelayCommand<Stop>((stop) => OnShowStop(new ShowArgs() { SelectedStop = stop }), (stop) => stop != null); }
-		}
-
-		public RelayCommand<Rout> ShowRouteMap
-		{
-			get { return new RelayCommand<Rout>((rout) => OnShowRoute(new ShowArgs() { SelectedRoute = rout }), (rout) => rout != null); }
-		}
-
-		protected virtual void OnShowStop(ShowArgs args)
-		{
-			var handler = ShowStop;
-			if (handler != null) handler(this, args);
-		}
-
-		protected virtual void OnShowRoute(ShowArgs args)
-		{
-			var handler = ShowRoute;
-			if (handler != null) handler(this, args);
-		}
+		
 		
 	}
 }

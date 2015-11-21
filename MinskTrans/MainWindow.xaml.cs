@@ -172,7 +172,7 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.MapModelView.ShowRoutCommand.Execute(args.SelectedRoute);
 		}
 
-		private MainModelView ShedulerModelView { get; set; }
+		private MainModelView ShedulerModelView { get; }
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{

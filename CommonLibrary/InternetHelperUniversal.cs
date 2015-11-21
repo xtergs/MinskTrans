@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
+using MetroLog;
 using MinskTrans.Universal;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
@@ -12,8 +13,8 @@ namespace CommonLibrary
 {
 	public class InternetHelperUniversal:InternetHelperBase
 	{
-		public InternetHelperUniversal(FileHelperBase fileHelper)
-			:base(fileHelper)
+		public InternetHelperUniversal(FileHelperBase fileHelper, ILogger logger)
+			:base(fileHelper, logger)
 		{ }
 		override public void UpdateNetworkInformation()
 		{

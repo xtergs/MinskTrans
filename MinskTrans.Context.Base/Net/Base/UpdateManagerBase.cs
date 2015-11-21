@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MetroLog;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
@@ -31,6 +32,7 @@ namespace MinskTrans.Net.Base
 		public async Task<bool> DownloadUpdate()
 		{
 			OnDataBaseDownloadStarted();
+            Logger.Info("UpdadteManagerBase.DownloadUpdadte started");
 			var folder = Folder;
 			try
 			{
@@ -56,19 +58,22 @@ namespace MinskTrans.Net.Base
 				fileHelper.DeleteFiels(folder, list.Select(x => x.Key + FileHelperBase.NewExt));
 				return false;
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				OnErrorDownloading();
-				/*await*/
-				fileHelper.DeleteFiels(folder, list.Select(x => x.Key + FileHelperBase.NewExt));
+                Logger.Info("UpdadteManagerBase.DownloadUpdadte error");
+                Logger.Fatal("UpdadteManagerBase.DownloadUpdadte", e);
+                /*await*/
+                fileHelper.DeleteFiels(folder, list.Select(x => x.Key + FileHelperBase.NewExt));
 				throw;
 			}
 			await fileHelper.SafeMoveFilesAsync(folder, list.Select(x => x.Key + FileHelperBase.NewExt), list.Select(x => x.Key));
-			//await Task.WhenAll(
-			//fileHelper.SafeMoveAsync(folder, list[0].Key + FileHelperBase.NewExt, list[0].Key),
-			//fileHelper.SafeMoveAsync(folder, list[1].Key + FileHelperBase.NewExt, list[1].Key),
-			//fileHelper.SafeMoveAsync(folder, list[2].Key + FileHelperBase.NewExt, list[2].Key));
-			return true;
+            //await Task.WhenAll(
+            //fileHelper.SafeMoveAsync(folder, list[0].Key + FileHelperBase.NewExt, list[0].Key),
+            //fileHelper.SafeMoveAsync(folder, list[1].Key + FileHelperBase.NewExt, list[1].Key),
+            //fileHelper.SafeMoveAsync(folder, list[2].Key + FileHelperBase.NewExt, list[2].Key));
+            Logger.Info("UpdadteManagerBase.DownloadUpdadte ended");
+            return true;
 		}
 
 		protected IList<Rout> Routs { get; set; }
@@ -78,7 +83,8 @@ namespace MinskTrans.Net.Base
 		protected readonly FileHelperBase fileHelper;
 		protected readonly InternetHelperBase internetHelper;
 		protected readonly ITimeTableParser timeTableParser;
-		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser)
+	    protected readonly ILogger Logger;
+		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser, ILogger logger)
 		{
 			if (helper == null)
 				throw new ArgumentNullException("helper");
@@ -86,16 +92,19 @@ namespace MinskTrans.Net.Base
 				throw new ArgumentNullException("internet");
 			if (parser == null)
 				throw new ArgumentNullException("parser");
-			
+		    if (logger == null)
+		        throw new ArgumentNullException("logger");
 			fileHelper = helper;
 			internetHelper = internet;
 			Folder = TypeFolder.Temp;
 			timeTableParser = parser;
+		    this.Logger = logger;
 		}
 
 		public async Task<TimeTable> GetTimeTable()
 		{
-			IList<Stop> newStops = null;
+            Logger.Info("UpdadteManagerBase.GetTimeTable started");
+            IList<Stop> newStops = null;
 			IList<Rout> newRoutes = null;
 			IList<Schedule> newSchedule = null;
 			try
@@ -109,9 +118,10 @@ namespace MinskTrans.Net.Base
 					try {
 						newStops = new List<Stop>(timeTableParser.ParsStops(await fileHelper.ReadAllTextAsync(Folder, list[0].Key)));
 					}
-					catch(Exception)
+					catch(Exception e)
 					{
-						throw;
+                        Logger.Fatal("UpdadteManagerBase: ParseStops", e);
+                        throw;
 					}
 				}),
 					Task.Run(async () =>
@@ -120,9 +130,10 @@ namespace MinskTrans.Net.Base
 						try {
 							newRoutes = new List<Rout>(timeTableParser.ParsRout(await fileHelper.ReadAllTextAsync(Folder, list[1].Key)));
 						}
-						catch(Exception)
+						catch(Exception e)
 						{
-							throw;
+                            Logger.Fatal("UpdadteManagerBase: ParseStops",e);
+                            throw;
 						}
 
 					}),
@@ -132,25 +143,31 @@ namespace MinskTrans.Net.Base
 						try {
 							newSchedule = new List<Schedule>(timeTableParser.ParsTime(await fileHelper.ReadAllTextAsync(Folder, list[2].Key)));
 						}
-						catch(Exception)
+						catch(Exception e)
 						{
-							throw;
+                            Logger.Fatal("UpdadteManagerBase: ParseStops", e);
+                            throw;
 						}
 
 					}));
-				Debug.WriteLine("All threads ended");
-				//OnLogMessage("All threads ended");
-			}
-			catch (FileNotFoundException)
+                Logger.Info("UpdadteManagerBase: All threads ended");
+                //Debug.WriteLine("All threads ended");
+                //OnLogMessage("All threads ended");
+            }
+			catch (FileNotFoundException e)
 			{
-				throw;
+                Logger.Fatal("UpdadteManagerBase.GetTimeTable", e);
+                throw;
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				throw;
+                Logger.Fatal("UpdadteManagerBase.GetTimeTable started", e);
+                throw;
 			}
 
-			return new TimeTable()
+            Logger.Info("UpdadteManagerBase.GetTimeTable ended");
+
+            return new TimeTable()
 			{
 				Routs = newRoutes,
 				Stops = newStops,

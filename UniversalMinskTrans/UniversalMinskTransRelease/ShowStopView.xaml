@@ -101,7 +101,17 @@
 
 
         </Grid.RowDefinitions>
-        <TextBlock FontSize="20" Text="{Binding FilteredSelectedStop.Name, UpdateSourceTrigger=PropertyChanged}" />
+        <controls:WrapPanel>
+            <TextBlock Grid.Column="1"
+                       Margin="5,0"
+                       FontSize="20"
+                       Text="{Binding CurDay,
+                                      Converter={StaticResource IntToStringDayOfWeekdaysToStrConverter}}" />
+            <TextBlock Margin="5,0"
+                       FontSize="20"
+                       Text="{Binding FilteredSelectedStop.Name,
+                                      UpdateSourceTrigger=PropertyChanged}" />
+        </controls:WrapPanel>
         <ListView x:Name="tesstListview"
                   Grid.Row="1"
                   HorizontalContentAlignment="Stretch"
@@ -237,8 +247,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="День недели: " />
-                <TextBlock Grid.Column="1" Text="{Binding CurDay, Converter={StaticResource IntToStringDayOfWeekdaysToStrConverter}}" />
+                <!--<TextBlock Text="День недели: " />-->
+
                 <controls:WrapPanel Grid.Row="1" Grid.ColumnSpan="10">
                     <Slider Grid.Row="1"
                             MinWidth="200"

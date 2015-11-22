@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -69,8 +70,8 @@ namespace PushNotificationServer
 		void SaveTime()
 		{
 			File.WriteAllText(fileNameLastNews,
-				NewsManager.LastUpdateMainNewsDateTimeUtc + Environment.NewLine + NewsManager.LastUpdateHotNewsDateTimeUtc +
-				Environment.NewLine + BusnesLogic.LastUpdateDbDateTimeUtc);
+				NewsManager.LastUpdateMainNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) + Environment.NewLine + NewsManager.LastUpdateHotNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) +
+				Environment.NewLine + BusnesLogic.LastUpdateDbDateTimeUtc.ToString(CultureInfo.InvariantCulture));
 		}
 
 		private NewsManagerBase newsManager;

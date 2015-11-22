@@ -220,7 +220,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (value.Equals(autoDay)) return;
 				autoDay = value;
 				OnPropertyChanged();
-                //OnPropertyChanged("CurDay");
+                OnPropertyChanged("CurDay");
 				OnPropertyChanged("TimeSchedule");
 			}
 		}

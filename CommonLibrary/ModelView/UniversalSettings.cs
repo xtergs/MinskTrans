@@ -17,6 +17,14 @@ namespace MinskTrans.DesctopClient.Modelview
     {
         readonly Dictionary<string, DateTime> dateTimeDictionary = new Dictionary<string, DateTime>();
 
+        public void SimpleSet<T>(Error value, string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, (int)value);
+            else
+                ApplicationData.Current.LocalSettings.Values[key] = (int)value;
+        }
+
         public DateTime SimbleGet(DateTime value = default(DateTime), [CallerMemberName] string key = null)
         {
             if (dateTimeDictionary.ContainsKey(key))

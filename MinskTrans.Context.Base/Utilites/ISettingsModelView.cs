@@ -12,6 +12,7 @@ namespace MyLibrary
         void SimpleSet<T>(T value, [CallerMemberName] string key = null);
         T SimpleGet<T>(T defValue = default(T), [CallerMemberName] string key = null);
         Error SimpleGet(Error defValue = default(Error), [CallerMemberName] string key = null);
+        void SimpleSet<T>(Error value, [CallerMemberName] string key = null);
         //void SimpleSet(string value, [CallerMemberName] string key = null);
         //void SimpleSet(bool value, [CallerMemberName] string key = null);
         //void SimpleSet(int value, [CallerMemberName] string key = null);
@@ -276,7 +277,7 @@ namespace MyLibrary
 
             set
             {
-                helper.SimpleSet(value);
+                helper.SimpleSet((Error)value);
                 //if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SettingsToStr()))
                 //	ApplicationData.Current.LocalSettings.Values.Add(SettingsToStr(), (int)value);
                 //else

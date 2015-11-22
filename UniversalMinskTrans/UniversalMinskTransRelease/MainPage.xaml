@@ -345,6 +345,8 @@
                         <Setter Target="ShowStop.(Grid.Column)" Value="1" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="secondColumn.Width" Value="1*" />
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Visible" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -386,6 +388,8 @@
                         <Setter Target="ShowStop.Visibility" Value="Collapsed" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="secondColumn.Width" Value="Auto" />
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Visible" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -415,6 +419,8 @@
                         <Setter Target="ShowStop.Visibility" Value="Visible" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="secondColumn.Width" Value="Auto" />
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Collapsed" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -441,6 +447,8 @@
                         <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible" />
                         <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible" />
                         <Setter Target="RoutViews.(Grid.Column)" Value="1" />
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="appBarToggleButton1.(UIElement.Visibility)" Value="Visible" />
                     </VisualState.Setters>
 
 
@@ -455,6 +463,8 @@
                             </Setter.Value>
                         </Setter>
                         <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="appBarToggleButton1.(UIElement.Visibility)" Value="Visible" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
@@ -495,6 +505,10 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="RoutsListVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="appBarToggleButton1.(UIElement.Visibility)" Value="Collapsed" />
+                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutsListGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -562,6 +576,9 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="ShowRoutVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
+                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutsListGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -1217,7 +1234,8 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
-                            <AppBarToggleButton Grid.Row="2"
+                            <AppBarToggleButton x:Name="appBarToggleButton"
+                                                Grid.Row="2"
                                                 HorizontalAlignment="Right"
                                                 Content="FavouriteStop"
                                                 Icon="Favorite"
@@ -1259,10 +1277,19 @@
                                       SelectedItem="{Binding RouteNumSelectedValue,
                                                              Mode=TwoWay,
                                                              UpdateSourceTrigger=PropertyChanged}">
+                                <FlyoutBase.AttachedFlyout>
+                                    <MenuFlyout >
+                                        <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </MenuFlyout>
+                                </FlyoutBase.AttachedFlyout>
+
 
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                    </Core:EventTriggerBehavior>
+                                    <Core:EventTriggerBehavior EventName="RightTapped">
+                                        <local:OpenFlyoutAction/>
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                                 <ListView.ItemsPanel>
@@ -1329,15 +1356,19 @@
                                     </Interactivity:Interaction.Behaviors>-->
                                 </ListView>
                             </Grid>
-                            <AppBarToggleButton Grid.Row="2"
+                            <AppBarToggleButton x:Name="appBarToggleButton1"
+                                                Grid.Row="2"
                                                 HorizontalAlignment="Right"
                                                 Content="FavouriteRout"
                                                 Icon="Favorite"
                                                 IsChecked="{Binding RoutsModelView.IsShowFavouriteRouts,
                                                                     Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}" />
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                IsCompact="True" />
                         </Grid>
-                        <AppBar Grid.Row="2" DataContext="{Binding StopModelView}">
+                        <AppBar x:Name="appBar"
+                                Grid.Row="2"
+                                DataContext="{Binding StopModelView}">
                             <VariableSizedWrapGrid Orientation="Horizontal">
                                 <CheckBox Content="Автобус"
                                           IsChecked="{Binding Bus,
@@ -1922,7 +1953,14 @@
                 </Border>
             </PivotItem>
             <PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
-                <TextBlock Text="{Binding AllLogs, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Обновить" Command="{Binding RefreshLogsCommand}"/>
+                <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
+                </Grid>
             </PivotItem>
         </Pivot>
 

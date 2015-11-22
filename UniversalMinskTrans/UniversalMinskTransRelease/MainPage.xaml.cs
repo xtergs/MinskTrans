@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Windows.ApplicationModel.Email;
 using Windows.Devices.Geolocation;
 using Windows.Phone.UI.Input;
@@ -18,6 +19,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using AdaptiveTriggerLibrary.Triggers.LogicalTriggers;
 using MapControl;
+using Microsoft.Xaml.Interactivity;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
@@ -734,7 +736,16 @@ namespace MinskTrans.Universal
 
 		async void SendLog()
 		{
-			string message = await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException;
+			string message = "";
+            //= await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException;
+            var list= (await model.GetLogsAsync());
+		    list.Reverse();
+		    StringBuilder builder = new StringBuilder();
+            foreach (var line in list)
+            {
+                builder.Append(line);
+            }
+		    message = builder.ToString();
             SendEmailToDeveloper(message);
 		}
 
@@ -883,6 +894,16 @@ namespace MinskTrans.Universal
         private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
         {
 
+        }
+    }
+
+    public class OpenFlyoutAction : DependencyObject, IAction
+    {
+        public object Execute(object sender, object parameter)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+
+            return null;
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using CommonLibrary;
 using GalaSoft.MvvmLight;
@@ -160,26 +163,9 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-        string resultString = "11111";
-        public string AllLogs
-	    {
-	        get
-	        {
-	            var fileHelper = container.Resolve<FileHelperBase>();
-	            var strings = fileHelper.GetNamesFiles(TypeFolder.Local, "metroLogs").ContinueWith( async x =>
-	            {
-	                var fileNames = await x;
-	                
-	                foreach (var fileName  in fileNames)
-	                {
-	                    resultString += await fileHelper.ReadAllTextAsync(TypeFolder.Local, "metroLogs\\" + fileName);
-	                }
-	                OnPropertyChanged("AllLogs");
-	            });
-                //fileHelper.ReadAllTextAsync(TypeFolder.Local, )
-	            return resultString;
-	        }
-	    }
+        ObservableCollection<string> resultString = new ObservableCollection<string>();
+        public ObservableCollection<string> AllLogs { get
+            ; set; }
 
 		bool updating = false;
 		RelayCommand updateDataCommand;
@@ -201,6 +187,52 @@ namespace MinskTrans.Universal.ModelView
 				return updateDataCommand;
 			}
 		}
+
+	    public async Task< List<string>> GetLogsAsync()
+	    {
+            var fileHelper = container.Resolve<FileHelperBase>();
+            var fileNames = await fileHelper.GetNamesFiles(TypeFolder.Local, "metroLogs");
+	        List<string> resultList = new List<string>();
+            foreach (var fileName in fileNames)
+            {
+                resultList.AddRange((await fileHelper.ReadAllTextAsync(TypeFolder.Local, "metroLogs\\" + fileName)).Split('\n'));
+                resultList.Add(Environment.NewLine);
+            }
+	        return resultList;
+	    }
+
+	    private bool logsWork = false;
+	    public RelayCommand RefreshLogsCommand
+	    {
+	        get
+	        {
+	            return new RelayCommand(async () =>
+	            {
+	                if (logsWork)
+	                    return;
+	                try
+	                {
+	                    logsWork = true;
+	                    resultString.Clear();
+	                    (await GetLogsAsync()).Aggregate((x,y)=> { resultString.Add(x);
+	                                                                 return "";
+	                    });
+	                    // OnPropertyChanged("AllLogs");
+	                    OnPropertyChanged("AllLogs");
+	                }
+	                catch(Exception e)
+	                {
+	                    throw;
+	                }
+	                finally
+	                {
+	                    logsWork = false;
+	                }
+	            }, ()=> !logsWork);
+
+
+	        }
+	    }
 
 	    public event Show ShowStop
 	    {

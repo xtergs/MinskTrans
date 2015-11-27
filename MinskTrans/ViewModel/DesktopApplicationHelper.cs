@@ -23,15 +23,7 @@ namespace MinskTrans.DesctopClient.ViewModel
 
         public void SimpleSet<T>(T value, string key = null)
         {
-            Configuration conf = ConfigurationManager.OpenExeConfiguration(
-         ConfigurationUserLevel.None);
-            Console.WriteLine(conf.FilePath);
-            conf = ConfigurationManager.OpenExeConfiguration(
-                  ConfigurationUserLevel.PerUserRoaming);
-            Console.WriteLine(conf.FilePath);
-            conf = ConfigurationManager.OpenExeConfiguration(
-                  ConfigurationUserLevel.PerUserRoamingAndLocal);
-            Console.WriteLine(conf.FilePath);
+           
             var prop = settings.Properties[key];
             if (prop == null)
                 settings.Properties.Add(new SettingsProperty(key, typeof (T), settingsProvider, false, default(T),
@@ -59,6 +51,16 @@ namespace MinskTrans.DesctopClient.ViewModel
         public Error SimpleGet(Error defValue = Error.None, string key = null)
         {
             return SimpleGet<Error>(defValue, key);
+        }
+
+        public void SimpleSet<T>(Error value, string key = null)
+        {
+            var prop = settings.Properties[key];
+            if (prop == null)
+                settings.Properties.Add(new SettingsProperty(key, typeof(Error), settingsProvider, false, default(Error),
+                    SettingsSerializeAs.Xml, SettingsmAttributeDictionary, true, true));
+            settings[key] = (Error)value;
+            settings.Save();
         }
 
         public DateTime SimbleGet(DateTime value = new DateTime(), string key = null)

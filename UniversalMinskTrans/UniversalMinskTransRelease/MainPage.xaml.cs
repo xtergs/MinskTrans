@@ -327,6 +327,46 @@ namespace MinskTrans.Universal
                     }
                 }
 	        }
+            else if (Pivot.SelectedItem == MapPivotItem)
+            {
+                var curState = VisualStateGroup.CurrentState;
+                if (this.ActualWidth >= 800)
+                {
+                    if (curState != ShowNormalMapWideVisualState )
+                    {
+                        VisualStateManager.GoToState(mainPage, nameof(ShowNormalMapWideVisualState), true);
+                        
+                    }
+                }
+                else
+                {
+                    if (curState != ShowNormalMapVisualState)
+                    {
+                        VisualStateManager.GoToState(mainPage, nameof(ShowNormalMapVisualState), true);
+                    }
+                }
+            }
+            //else if (Pivot.SelectedItem == GroupsPivtoItem)
+            //{
+            //    var curState = VisualStateGroup.CurrentState;
+            //    if (this.ActualWidth >= 800)
+            //    {
+            //        if (curState != ShowGroupWideVisualState)
+            //        {
+            //            VisualStateManager.GoToState(mainPage, nameof(ShowGroupWideVisualState), true);
+
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (curState != ShowGroupVisualState && model.GroupStopsModelView.SelectedGroup != null)
+            //        {
+            //            VisualStateManager.GoToState(mainPage, nameof(ShowGroupVisualState), true);
+            //        }
+            //        else
+            //            VisualStateManager.GoToState(mainPage, nameof(ListGroupsVisualState), true);
+            //    }
+            //}
 	    }
 
 	    bool BackVisualState()
@@ -894,6 +934,11 @@ namespace MinskTrans.Universal
         private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SelectVisualState();
         }
     }
 

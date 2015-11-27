@@ -895,9 +895,48 @@
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
+                <VisualState x:Name="ShowGroupWideVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="GroupsListView.(Grid.ColumnSpan)" Value="1"/>
+                    </VisualState.Setters>
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GroupsListView" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="showStopView" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RefreshCurGroupShow" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddGroupAppBarButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="MapVisualStates">
                 <VisualState x:Name="ShowMinskTransRoutingVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2"/>
+                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -943,8 +982,26 @@
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
-                <VisualState x:Name="ShowNormalMapVisualState" />
+                <VisualState x:Name="ShowNormalMapVisualState" >
+                    
+                    <VisualState.Setters>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="map.(Grid.ColumnSpan)" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ShowNormalMapWideVisualState" >
+                    
+                    <VisualState.Setters>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="1"/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="ShowVirtualTableVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowVirtualTable" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -992,7 +1049,7 @@
                VerticalContentAlignment="Stretch"
                Background="{ThemeResource BackGroundSolidColorBrush}"
                Padding="0"
-               PointerWheelChanged="Pivot_PointerWheelChanged">
+               PointerWheelChanged="Pivot_PointerWheelChanged" SelectionChanged="Pivot_SelectionChanged">
 
             <PivotItem x:Name="SearchPivotItem"
                        Margin="0"
@@ -1666,6 +1723,10 @@
                             <RowDefinition />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
                         <ListBox Name="GroupsListView"
                                  Background="{x:Null}"
                                  DisplayMemberPath="Name"
@@ -1677,7 +1738,7 @@
                                  SelectedItem="{Binding SelectedGroupStop,
                                                         Mode=TwoWay,
                                                         UpdateSourceTrigger=PropertyChanged}"
-                                 SelectionChanged="GroupSelectedListView">
+                                 SelectionChanged="GroupSelectedListView" Grid.ColumnSpan="2">
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="Holding">
                                     <Core:GoToStateAction StateName="SelectToDeleteVisualState" />
@@ -1693,10 +1754,10 @@
                         </ListBox>
 
                         <!--<ListView DataContext="{Binding ElementName=GroupsListView, Path=SelectedItem}" DisplayMemberPath="Stops" Visibility="Collapsed"/>-->
-                        <local:ShowStopView x:Name="showStopView"
+                        <local:ShowStopView Grid.Column="1" x:Name="showStopView"
                                             DataContext="{Binding}"
                                             ShowStatusBar="Collapsed"
-                                            Visibility="Collapsed" />
+                                            Visibility="Collapsed" Grid.ColumnSpan="2" />
                         <Border Grid.Row="1"
                                 Margin="-10,0"
                                 VerticalAlignment="Bottom"
@@ -1751,8 +1812,8 @@
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="0.3*" />
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="0.3*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -1760,15 +1821,13 @@
                         </Grid.RowDefinitions>
 
                         <mapControl1:Map x:Name="map"
-                                         Location="{Binding Location,
-                                                            Mode=TwoWay,
-                                                            UpdateSourceTrigger=PropertyChanged}"
+                                         mapControl1:MapPanel.Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          ZoomLevel="19" />
 
                         <WebView x:Name="WebViewMap"
                                  PermissionRequested="WebViewMap_PermissionRequested"
                                  Visibility="Collapsed" />
-                        <Grid Grid.Column="1">
+                        <Grid x:Name="grid" Grid.Column="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition />
@@ -1779,12 +1838,8 @@
                                       DataContext="{Binding}"
                                       IsSynchronizedWithCurrentItem="False"
                                       ItemTemplate="{StaticResource ListStopsDataTemplate}"
-                                      ItemsSource="{Binding FilteredStops,
-                                                            Mode=OneWay,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding CurrentStop,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding FilteredStops, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding CurrentStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:InvokeCommandAction Command="{Binding ShowStopMap}" />
@@ -1795,7 +1850,7 @@
                         <Border Grid.Row="1"
                                 Margin="0,0"
                                 VerticalAlignment="Bottom"
-                                Background="#FF5D5959">
+                                Background="#FF5D5959" Grid.ColumnSpan="2">
                             <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <AppBarButton x:Name="ButtonIMap"
                                               Command="{Binding ShowICommand}"
@@ -1814,12 +1869,12 @@
                                         <FontIcon Glyph="Я" />
                                     </AppBarButton.Icon>
                                 </AppBarButton>
-                                <AppBarButton Name="ShowAllPushPins"
+                                <AppBarButton x:Name="ShowAllPushPins"
                                               Click="ButtonBase_OnClick"
                                               Icon="ViewAll"
                                               IsCompact="True"
                                               Visibility="Collapsed" />
-                                <AppBarButton Name="ShowRoutingMinskTrans"
+                                <AppBarButton x:Name="ShowRoutingMinskTrans"
                                               Click="ShowWebViewRouting"
                                               Icon="MapDrive"
                                               IsCompact="True"
@@ -1831,7 +1886,7 @@
                                         </Core:EventTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
                                 </AppBarButton>
-                                <AppBarButton Name="ShowNormalMap"
+                                <AppBarButton x:Name="ShowNormalMap"
                                               Click="ShowNormalMapClick"
                                               Icon="Map"
                                               IsCompact="True"
@@ -1842,7 +1897,7 @@
                                         </Core:EventTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
                                 </AppBarButton>
-                                <AppBarButton Name="ShowVirtualTable"
+                                <AppBarButton x:Name="ShowVirtualTable"
                                               Click="ShowVirtualTableClick"
                                               Icon="Tag"
                                               IsCompact="True"
@@ -1959,7 +2014,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Button Content="Обновить" Command="{Binding RefreshLogsCommand}"/>
-                <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
+                    <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
                 </Grid>
             </PivotItem>
         </Pivot>

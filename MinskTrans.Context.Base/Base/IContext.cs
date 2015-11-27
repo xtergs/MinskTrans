@@ -62,7 +62,7 @@ namespace MinskTrans.Context.Base
     public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);
 
     public delegate Stop getStop(int stopID);
-    public delegate IEnumerable<Stop> getDirection(int stopID);
+    public delegate IEnumerable<Stop> getDirection(int stopID, int count);
 
     public class ErrorLoadingDelegateArgs : EventArgs
     {

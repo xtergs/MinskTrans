@@ -22,7 +22,7 @@ namespace MinskTrans.Context
         IEnumerable<TimeLineModel> GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
             int endTime = int.MaxValue);
         Stop GetStop(int stopId);
-        IEnumerable<Stop> GetDirection(int stopID);
+        IEnumerable<Stop> GetDirection(int stopID, int count);
         void AddRemoveFavouriteStop(Stop stop);
         void AddRemoveFavouriteRoute(Rout route);
         Task<bool> UpdateNewsTableAsync();

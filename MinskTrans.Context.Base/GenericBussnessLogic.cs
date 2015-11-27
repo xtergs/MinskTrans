@@ -155,14 +155,20 @@ namespace MinskTrans.Context
 
         }
 
-
-        public IEnumerable<Stop> GetDirection(int stopID)
+        Dictionary<int, IEnumerable<Stop>> GetDirectionCache = new Dictionary<int, IEnumerable<Stop>>();
+        public IEnumerable<Stop> GetDirection(int stopID, int count)
         {
+            if (GetDirectionCache.Keys.Contains(stopID))
+                return GetDirectionCache[stopID];
+            IList<Stop> tempList;
             if (Context.GetStopDirectionDelegate != null)
-                return Context.GetStopDirectionDelegate.Invoke(stopID);
-            return Context.Stops.Select(x => new { x.ID, x.Routs }).First(s => s.ID == stopID).Routs.Select(
+                tempList =  Context.GetStopDirectionDelegate.Invoke(stopID, count).ToList();
+            else
+            tempList =  Context.Routs.AsParallel().Where(x => x.Stops.AsParallel().Contains(Context.Stops.First(s => s.ID == stopID))).Select(
                 r =>
-                    r.Stops.Last()).AsQueryable();
+                    r.Stops.Last()).Take(count).ToList();
+            GetDirectionCache.Add(stopID, tempList);
+            return tempList;
         }
 
         public void AddRemoveFavouriteStop(Stop stop)

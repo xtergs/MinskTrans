@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base;
@@ -53,25 +55,38 @@ namespace MinskTrans.Context.Desktop
 		public SqlEFContext(string connectionString)
 			:base(connectionString)
 		{
+		    this.Configuration.LazyLoadingEnabled = false;
 
-		}
+           
 
-		protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        }
+
+	    private IEnumerable<Stop> GetStopDirectionDelegatee(int stopId, int count)
+	    {
+	        using (SqlEFContext context = new SqlEFContext(this.Database.Connection.ConnectionString))
+	        {
+                SqlParameter param = new SqlParameter("@StopID", stopId);
+                SqlParameter param1 = new SqlParameter("@Count", stopId);
+                return context.Database.SqlQuery<Stop>("dbo.GetStopDirections @StopID, @Count", param, param1).ToList();
+	        }
+	    }
+
+	    protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Schedule>().HasKey(x => x.RoutId);
+            GetStopDirectionDelegate = (stopId, count) => GetStopDirectionDelegatee(stopId, count);
+
+            
+
+            modelBuilder.Entity<Schedule>().HasKey(x => x.RoutId);
 		    modelBuilder.Entity<Schedule>().Property(x => x.RoutId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 			modelBuilder.Entity<Schedule>().Property(x=> x.InicializeString);
+            
 
-			modelBuilder.Entity<Rout>().HasOptional(key => key.Time).WithOptionalDependent(key => key.Rout);
-			modelBuilder.Entity<Rout>().HasMany(key => key.Stops).WithMany(key => key.Routs);
+			modelBuilder.Entity<Rout>().HasOptional(key => key.Time).WithOptionalDependent(key => key.Rout).WillCascadeOnDelete();
+			modelBuilder.Entity<Rout>().HasMany(key => key.Stops).WithMany(key => key.Routs).MapToStoredProcedures();
             modelBuilder.Entity<Rout>().Property(x => x.RoutId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
-            modelBuilder.Entity<Stop>().HasMany(t=> t.Stops).WithMany().Map(x=>
-			{
-				x.MapLeftKey("Stop_ID");
-				x.MapRightKey("Similar_Stop");
-				x.ToTable("Stop_Stops");
-			});
+            modelBuilder.Entity<Stop>().HasMany(t=> t.Stops).WithMany().MapToStoredProcedures();
             modelBuilder.Entity<Stop>().Property(x => x.ID).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
             modelBuilder.Entity<StopExtentionData>().HasKey(x => x.StopID);
@@ -90,7 +105,7 @@ namespace MinskTrans.Context.Desktop
 		{
 			get
 			{
-				return stopsEF;
+				return Stops;
 			}
 		}
 
@@ -143,15 +158,31 @@ namespace MinskTrans.Context.Desktop
 
 		public IList<Rout> Routs
 		{
-			get { return routsEF.Local.ToList(); }
+		    get
+		    {
+		        if (routsEF.Local.Count == 0)
+		            routsEF.Load();
+		        return routsEF.Local.ToList();
+		    }
 		}
         
-		public IList<Stop> Stops{get{return stopsEF.Local;
+		public IList<Stop> Stops{get
+		{
+		    if (stopsEF.Local.Count == 0)
+		    {
+		        stopsEF.Include(x => x.Routs).Load();
+		        timesEF.Load();
+		    }
+		    return stopsEF.Local;
 
         }
         }
 
-		public IList<Schedule> Times { get { return timesEF.Local.ToList();
+		public IList<Schedule> Times { get
+		{
+		    if (timesEF.Local.Count == 0)
+		        timesEF.Load();
+            return timesEF.Local.ToList();
 			
 		} }
 
@@ -169,7 +200,7 @@ namespace MinskTrans.Context.Desktop
 
 		public void AllPropertiesChanged()
 		{
-			throw new NotImplementedException("AllPropertiesChanged");
+			//throw new NotImplementedException("AllPropertiesChanged");
 		}
 
 		static protected void Connect(/*[NotNull]*/ IList<Rout> routsl,/* [NotNull]*/ IList<Stop> stopsl,
@@ -233,16 +264,20 @@ namespace MinskTrans.Context.Desktop
             //stopsEF.RemoveRange(stopsEF);
             //timesEF.RemoveRange(timesEF);
 
-            
+		    using (var trans = this.Database.BeginTransaction())
+		    {
 
-            routsEF.Local.Clear();
-		    stopsEF.Local.Clear();
-		    timesEF.Local.Clear();
+		        timesEF.RemoveRange(timesEF.ToList());
+		        routsEF.RemoveRange(routsEF.ToList());
+		        stopsEF.RemoveRange(stopsEF.ToList());
 		    //await SaveChangesAsync();
-            routsEF.AddRange(newRoutes);
-			stopsEF.AddRange(newStops);
-			timesEF.AddRange(newSchedule);
-			await SaveChangesAsync();
+            routsEF.AddRange(newRoutes.AsParallel());
+			stopsEF.AddRange(newStops.AsParallel());
+			timesEF.AddRange(newSchedule.AsParallel());
+			//SaveChanges();
+		        SaveChanges();
+                trans.Commit();
+		    }
 		}
 
 		StopExtentionData GetExtDataFromStop(Stop stop)
@@ -408,9 +443,6 @@ namespace MinskTrans.Context.Desktop
 
 	    public getStop GetStopDelegate { get; protected set; }
 
-	    public void Dispose()
-		{
-			throw new NotImplementedException("Dispose");
-		}
+	    
 	}
 }

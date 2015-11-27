@@ -102,7 +102,7 @@ namespace MinskTrans.BackgroundUpdateTask
 		        }
 		        catch (Exception e)
 		        {
-		            Log.Error("Background: " + e.Message + Environment.NewLine + e.StackTrace, e);
+		            Log.Error("Background: " + e.Message, e);
 		            throw;
 		        }
 

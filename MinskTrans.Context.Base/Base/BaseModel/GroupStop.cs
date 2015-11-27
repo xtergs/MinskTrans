@@ -24,13 +24,13 @@ namespace MinskTrans.Context.Base.BaseModel
 			}
 		}
 
-		public List<Stop> Stops
+		public IList<Stop> Stops
 		{
 			get
 			{
 				if (stops == null)
 					stops = new List<Stop>();
-				return stops.ToList();
+				return stops;
 			}
 			set
 			{

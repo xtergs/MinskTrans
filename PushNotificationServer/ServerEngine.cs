@@ -10,10 +10,12 @@ using GalaSoft.MvvmLight.CommandWpf;
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
 using Autofac;
+using MetroLog;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
 using MinskTrans.Context.Fakes;
+using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
@@ -86,17 +88,19 @@ namespace PushNotificationServer
 
 			var builder = new ContainerBuilder();
 
-			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>();
-            //builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
-            builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", "default");
-			builder.RegisterType<UpdateManagerBase>();
-			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>();
-			builder.RegisterType<OneDriveController>().As<ICloudStorageController>();
-			builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>();
-			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
-		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
-            builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
-            builder.RegisterType<FakeSettingsModelView>().As<ISettingsModelView>();
+			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
+           builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
+           // builder.RegisterType<Context>().As<IContext>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>().SingleInstance();
+			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
+			builder.RegisterType<OneDriveController>().As<ICloudStorageController>().SingleInstance();
+			builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>().SingleInstance();
+			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>().SingleInstance();
+		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
+            builder.RegisterType<FakeGeolocation>().As<IGeolocation>().SingleInstance();
+            builder.RegisterType<FakeSettingsModelView>().As<ISettingsModelView>().SingleInstance();
+            builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
+            builder.RegisterInstance<ILogger>(LogManagerFactory.DefaultLogManager.GetLogger("Log")).SingleInstance();
 
             var container = builder.Build();
 

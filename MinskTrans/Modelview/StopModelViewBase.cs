@@ -139,7 +139,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public RelayCommand AddStopToGroup
 		{
-			get { return new RelayCommand(()=>SelectedGroup.Stops.Add(FilteredSelectedStop) );}
+			get { return new RelayCommand(() =>
+			{
+			    SelectedGroup.Stops.Add(FilteredSelectedStop);
+			} );}
 		}
 
 		//public event Show ShowStop;

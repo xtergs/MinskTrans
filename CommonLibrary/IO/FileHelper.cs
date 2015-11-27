@@ -90,7 +90,9 @@ namespace CommonLibrary.IO
 
 	    public override async Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder)
 	    {
-	        return (await Folders[folder].GetFolderAsync(subFolder).GetResults().GetFilesAsync()).Select(file => file.Name).ToList();
+	        var folderr = (await Folders[folder].GetFolderAsync(subFolder));
+            var files = (await folderr.GetFilesAsync());
+	        return files.Select(file => file.Name).ToList();
 	    }
 
 	    public override string GetPath(TypeFolder folder)

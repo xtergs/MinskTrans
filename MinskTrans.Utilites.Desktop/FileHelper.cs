@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using MinskTrans.Utilites.Base.IO;
@@ -105,7 +106,13 @@ namespace MinskTrans.Utilites.Desktop
 				File.Delete(Path.Combine(path, file));
 		}
 
-		public async override Task<Stream> OpenStream(TypeFolder folder, string file)
+	    public override async Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder)
+	    {
+            string path = Path.Combine(Folders[folder], subFolder);
+	        return Directory.GetFiles(path).ToList();
+	    }
+
+	    public async override Task<Stream> OpenStream(TypeFolder folder, string file)
 		{
 			string path = Folders[folder];
 			return File.Open(path, FileMode.Open);

@@ -10,7 +10,7 @@ namespace PushNotificationServer
 	{
 		private void Application_LoadCompleted(object sender, NavigationEventArgs e)
 		{
-			ServerEngine.Engine.InicializeAsync();
+			//ServerEngine.Engine.InicializeAsync();
 		}
 
 		async private void Application_Startup(object sender, StartupEventArgs e)

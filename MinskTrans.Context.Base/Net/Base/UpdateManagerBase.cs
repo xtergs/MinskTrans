@@ -84,21 +84,21 @@ namespace MinskTrans.Net.Base
 		protected readonly InternetHelperBase internetHelper;
 		protected readonly ITimeTableParser timeTableParser;
 	    protected readonly ILogger Logger;
-		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser, ILogger logger)
+		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser, ILogManager logger)
 		{
 			if (helper == null)
-				throw new ArgumentNullException("helper");
+				throw new ArgumentNullException(nameof(helper));
 			if (internet == null)
-				throw new ArgumentNullException("internet");
+				throw new ArgumentNullException(nameof(internet));
 			if (parser == null)
-				throw new ArgumentNullException("parser");
+				throw new ArgumentNullException(nameof(parser));
 		    if (logger == null)
-		        throw new ArgumentNullException("logger");
+		        throw new ArgumentNullException(nameof(logger));
 			fileHelper = helper;
 			internetHelper = internet;
 			Folder = TypeFolder.Temp;
 			timeTableParser = parser;
-		    this.Logger = logger;
+		    this.Logger = logger.GetLogger<UpdateManagerBase>();
 		}
 
 		public async Task<TimeTable> GetTimeTable()
@@ -181,16 +181,19 @@ namespace MinskTrans.Net.Base
 
 		protected virtual void OnDataBaseDownloadStarted()
 		{
+			Logger.Debug("OnDBDownloadStarted");
 			var handler = DataBaseDownloadStarted;
 			if (handler != null) handler(this, EventArgs.Empty);
 		}
 		protected virtual void OnDataBaseDownloadEnded()
 		{
+			Logger.Debug("OnDBDownloadEnded");
 			var handler = DataBaseDownloadEnded;
 			if (handler != null) handler(this, EventArgs.Empty);
 		}
 		protected virtual void OnErrorDownloading()
 		{
+			Logger.Debug("OnErrorDonloading");
 			var handler = ErrorDownloading;
 			if (handler != null) handler(this, EventArgs.Empty);
 		}

@@ -7,7 +7,7 @@ namespace MinskTrans.Utilites.Desktop
 {
 	public class InternetHelperDesktop:InternetHelperBase
 	{
-		public InternetHelperDesktop(FileHelperBase fileHelper, ILogger logger)
+		public InternetHelperDesktop(FileHelperBase fileHelper, ILogManager logger)
 			:base(fileHelper, logger)
 		{
 

@@ -62,6 +62,7 @@ namespace MinskTrans.Net
 
 		private string fileNameMonths = "months.txt";
 		private string fileNameDays = "days.txt";
+		private ILogger log;
 		//public DateTime LastNewsTime { get; set; }
 		//public DateTime LastHotNewstime { get; set; }
 		
@@ -142,13 +143,16 @@ namespace MinskTrans.Net
 		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager)
 		{
 			if (helper == null)
-				throw new ArgumentNullException("helper");
+				throw new ArgumentNullException(nameof(helper));
 			fileHelper = helper;
             if (internetHelper  == null)
-                throw new ArgumentNullException("internetHelper");
+                throw new ArgumentNullException(nameof(internetHelper));
 			this.internetHelper = internetHelper;
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
+			if (logManager == null)
+				throw new ArgumentNullException(nameof(logManager));
+			log = logManager.GetLogger<NewsManagerBase>();
 		    this.settings = settings;
 			//LastNewsTime = new DateTime();
 			newDictionary = new List<NewsEntry>();
@@ -159,19 +163,28 @@ namespace MinskTrans.Net
 			fileNameMonths = "monthsDebug.txt";
 			fileNameDays = "daysDebug.txt";
 #endif
+			log.Trace($"{nameof(NewsManagerBase)} is created");
 		}
 
 		public abstract Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate);
 		public async Task CheckMainNewsAsync()
 		{
+			log.Trace("CheckMainNewsAsync is started");
 			newDictionary = (await CheckAsync(UriNews, "div/p", "div/dl/div/table/tr/td[1]")).Where(time => time.PostedUtc > new DateTime()).ToList();
 			if (newDictionary.Count <= 0)
+			{
+				log.Trace("CheckMainNewsAsync:new Main news have not been found");
 				return;
+			}
 			settings.LastNewsTimeUtc = newDictionary.Max(key=> key.PostedUtc);
+			log.Trace($"CheckMainNewsAsync: {nameof(settings.LastNewsTimeUtc)} is {settings.LastNewsTimeUtc}");
 			foreach (var source in newDictionary)
 			{
-				if (!allNews.Any(key=> key.PostedUtc == source.PostedUtc))
+				if (!allNews.Any(key => key.PostedUtc == source.PostedUtc))
+				{
 					allNews.Add(source);
+					log.Debug($"CheckMainNewsAsync: main news has been found: {source.CollectedUtc} {source.Message}");
+				}
 			}
 			NewNews = null;
 		}
@@ -186,16 +199,20 @@ namespace MinskTrans.Net
 
 			if (await FileHelper.FileExistAsync(TypeFolder.Local, FileNameMonths))
 			{
+				log.Trace($"Load: read file for months {FileHelper.GetPath(TypeFolder.Local)} + {FileNameMonths}");
 				allLines = await FileHelper.ReadAllTextAsync(TypeFolder.Local, FileNameMonths);
 				allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() }));
+				log.Trace($"Load: has been readed {allNews.Count} news");
 			}
 			NewNews = null;
 
 			AllHotNews.Clear();
 			if (await FileHelper.FileExistAsync(TypeFolder.Local, FileNameDays))
 			{
+				log.Trace($"read hot news");
 				allLines = await FileHelper.ReadAllTextAsync(TypeFolder.Local, FileNameDays);
 				allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() }));
+				log.Trace($"Load: has been readed {allHotNewsDictionary.Count} hot news");
 			}
 
 			hotNewsDictionary = null;
@@ -208,7 +225,9 @@ namespace MinskTrans.Net
 				return;
 
 			string jsonString = JsonConvert.SerializeObject(listToWrite, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() });
+			log.Trace($"SaveToFile {filePath}, JSON: {jsonString}");
 			await FileHelper.WriteTextAsync(TypeFolder.Local, filePath, jsonString);
+			log.Trace($"SaveToFile successfully done");
 		}
 
 		public async Task SaveToFile()
@@ -232,13 +251,26 @@ namespace MinskTrans.Net
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));	
 		}
 
-        public DateTime LastUpdateMainNewsDateTimeUtc { get { return settings.LastNewsTimeUtc; } set { settings.LastNewsTimeUtc = value; } }
-        public DateTime LastUpdateHotNewsDateTimeUtc
+		public DateTime LastUpdateMainNewsDateTimeUtc
+		{
+			get
+			{
+				return settings.LastNewsTimeUtc;
+			}
+			set
+			{
+				settings.LastNewsTimeUtc = value;
+				log.Debug($"{nameof(LastUpdateMainNewsDateTimeUtc)} has seted to {settings.LastNewsTimeUtc}");
+			}
+		}
+
+		public DateTime LastUpdateHotNewsDateTimeUtc
         {
             get { return settings.LastUpdateHotNewsDateTimeUtc; }
             set
             {
                 settings.LastUpdateHotNewsDateTimeUtc = value;
+				log.Debug($"{nameof(LastUpdateHotNewsDateTimeUtc)} has seted to {settings.LastUpdateHotNewsDateTimeUtc}");
             }
         }
 

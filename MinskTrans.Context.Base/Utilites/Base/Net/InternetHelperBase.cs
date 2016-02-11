@@ -10,13 +10,13 @@ namespace MinskTrans.Utilites.Base.Net
 	{
 		public readonly FileHelperBase FileHelper;
 	    private readonly ILogger logger;
-		public InternetHelperBase(FileHelperBase fileHelper, ILogger logger)
+		public InternetHelperBase(FileHelperBase fileHelper, ILogManager logger)
 		{
 			if (fileHelper == null)
-				throw new ArgumentNullException("fileHelper");
+				throw new ArgumentNullException(nameof(fileHelper));
 		    if (logger == null)
-		        throw new ArgumentNullException("logger");
-		    this.logger = logger;
+		        throw new ArgumentNullException(nameof(logger));
+		    this.logger = logger.GetLogger<InternetHelperBase>();
 			FileHelper = fileHelper;
 		}
 
@@ -40,7 +40,7 @@ namespace MinskTrans.Utilites.Base.Net
 			    using (var httpClient = new HttpClient())
 			    {
 			        // Increase the max buffer size for the response so we don't get an exception with so many web sites
-
+					logger.Debug($"Download: HttpClient creted, uri: {uri}");
 			        httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
 			        httpClient.MaxResponseContentBufferSize = 256000000;
 			        httpClient.DefaultRequestHeaders.Add("user-agent",
@@ -48,18 +48,21 @@ namespace MinskTrans.Utilites.Base.Net
 
 			        HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
 			        response.EnsureSuccessStatusCode();
+					logger.Debug($"Download: get response, uri: {uri}");
+			        var res =  await response.Content.ReadAsStringAsync();
+				    logger.Debug("Downlaod: Responsesuccessfuly readed");
+				    return res;
 
-			        return await response.Content.ReadAsStringAsync();
 			    }
 			}
             catch (TimeoutException e)
             {
-                logger.Error("InternetHelperBase Download: can't download " + uri,e);
+                logger.Error("InternetHelperBase Download: Timeout, can't download " + uri,e);
                 throw;
             }
             catch (HttpRequestException e)
             {
-                logger.Error("InternetHelperBase Download: can't download " + uri, e);
+                logger.Error("InternetHelperBase Download: Request, can't download " + uri, e);
                 throw;
             }
             catch (Exception e)
@@ -76,7 +79,7 @@ namespace MinskTrans.Utilites.Base.Net
 		        using (var httpClient = new HttpClient())
 		        {
 		            // Increase the max buffer size for the response so we don't get an exception with so many web sites
-
+					logger.Debug($"Download: httpClient created, uri: {uri}, file:{file}, TypeFolder: {folder}");
 		            httpClient.Timeout = new TimeSpan(0, 0, 10, 0);
 		            httpClient.MaxResponseContentBufferSize = 256000000;
 		            httpClient.DefaultRequestHeaders.Add("user-agent",
@@ -84,22 +87,24 @@ namespace MinskTrans.Utilites.Base.Net
 
 		            HttpResponseMessage response = await httpClient.GetAsync(new Uri(uri));
 		            response.EnsureSuccessStatusCode();
+					logger.Debug($"Download: Get response, uri:{uri}");
 		            await FileHelper.WriteTextAsync(folder, file, await response.Content.ReadAsStringAsync());
+					logger.Debug($"Download: uri {uri} successfuly writed to file {file}");
 		        }
 		    }
             catch (TimeoutException e)
             {
-                logger.Error("InternetHelperBase Download: can't download " + uri, e);
+                logger.Error("InternetHelperBase Download: timeout can't download " + uri, e);
                 throw;
             }
             catch (HttpRequestException e)
             {
-                logger.Error("InternetHelperBase Download: can't download " + uri, e);
+                logger.Error("InternetHelperBase Download: request can't download " + uri, e);
                 throw;
             }
             catch (Exception e)
             {
-                logger.Error("InternetHelperBase Download: can't download " + uri, e);
+                logger.Error($"InternetHelperBase Download: can't download uri:{uri}, file:{file}", e);
                 throw new TaskCanceledException(e.Message, e);
             }
         }

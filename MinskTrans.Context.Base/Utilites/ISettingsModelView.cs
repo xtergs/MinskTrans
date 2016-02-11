@@ -72,7 +72,7 @@ namespace MyLibrary
             : base()
         {
             if (helper == null)
-                throw new ArgumentNullException("helper");
+                throw new ArgumentNullException(nameof(helper));
             this.helper = helper;
         }
 

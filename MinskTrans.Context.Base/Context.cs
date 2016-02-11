@@ -538,9 +538,9 @@ namespace MinskTrans.Context
 			Stopwatch watch = new Stopwatch();
 			watch.Start();
 
-			if (routsl == null) throw new ArgumentNullException("routsl");
-			if (stopsl == null) throw new ArgumentNullException("stopsl");
-			if (timesl == null) throw new ArgumentNullException("timesl");
+			if (routsl == null) throw new ArgumentNullException(nameof(routsl));
+			if (stopsl == null) throw new ArgumentNullException(nameof(stopsl));
+			if (timesl == null) throw new ArgumentNullException(nameof(timesl));
 
 			//Parallel.ForEach(routsl, (rout) =>
 
@@ -968,7 +968,7 @@ namespace MinskTrans.Context
 			set
 			{
 				if (value == null)
-					throw new ArgumentNullException("value");
+					throw new ArgumentNullException(nameof(value));
 				settings = value;
 			}
 		}

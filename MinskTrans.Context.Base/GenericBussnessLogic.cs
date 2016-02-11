@@ -26,7 +26,7 @@ namespace MinskTrans.Context
         public GenericBussnessLogic(IContext cont)
         {
             if (cont == null)
-                throw new ArgumentNullException("cont");
+                throw new ArgumentNullException(nameof(cont));
             Context = cont;
             Context.ErrorLoading += (sender, args) =>
             {

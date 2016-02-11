@@ -100,7 +100,7 @@ namespace PushNotificationServer
             builder.RegisterType<FakeGeolocation>().As<IGeolocation>().SingleInstance();
             builder.RegisterType<FakeSettingsModelView>().As<ISettingsModelView>().SingleInstance();
             builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
-            builder.RegisterInstance<ILogger>(LogManagerFactory.DefaultLogManager.GetLogger("Log")).SingleInstance();
+            builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 
             var container = builder.Build();
 

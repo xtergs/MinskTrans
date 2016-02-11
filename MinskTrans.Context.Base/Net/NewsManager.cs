@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using MetroLog;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using MyLibrary;
@@ -138,7 +139,7 @@ namespace MinskTrans.Net
 
 		FileHelperBase FileHelper { get { return fileHelper; } }
 
-		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings)
+		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager)
 		{
 			if (helper == null)
 				throw new ArgumentNullException("helper");
@@ -147,7 +148,7 @@ namespace MinskTrans.Net
                 throw new ArgumentNullException("internetHelper");
 			this.internetHelper = internetHelper;
             if (settings == null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 		    this.settings = settings;
 			//LastNewsTime = new DateTime();
 			newDictionary = new List<NewsEntry>();

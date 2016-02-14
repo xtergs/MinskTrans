@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MetroLog;
 using MetroLog.Targets;
 using Windows.ApplicationModel;
@@ -15,6 +16,7 @@ using System.Text;
 using Windows.UI.Core;
 using System.Diagnostics;
 using Windows.UI.Popups;
+using GalaSoft.MvvmLight.Command;
 using MyLibrary;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
@@ -155,20 +157,20 @@ namespace UniversalMinskTrans
 						
 							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
 								  {
+                                      await model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных", new List<KeyValuePair<string, RelayCommand>> {model.NotifyHelper.CreateCommand("Обновить", model.UpdateDataCommand, null) });
+									 // Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+									 // {
+										//  Commands =
+										//	  {
+										//new UICommand("Обновить", command =>
+										//{
+										//	if (model.UpdateDataCommand.CanExecute(null))
+										//		model.UpdateDataCommand.Execute(null);
 
-									  Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
-									  {
-										  Commands =
-											  {
-										new UICommand("Обновить", command =>
-										{
-											if (model.UpdateDataCommand.CanExecute(null))
-												model.UpdateDataCommand.Execute(null);
-
-										})
-											  }
-									  };
-									  await dialog.ShowAsync();
+										//})
+										//	  }
+									 // };
+									 // await dialog.ShowAsync();
 
 								  });
 						

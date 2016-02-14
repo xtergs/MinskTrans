@@ -13,7 +13,7 @@ namespace CommonLibrary
 {
 	public class InternetHelperUniversal:InternetHelperBase
 	{
-		public InternetHelperUniversal(FileHelperBase fileHelper, ILogger logger)
+		public InternetHelperUniversal(FileHelperBase fileHelper, ILogManager logger)
 			:base(fileHelper, logger)
 		{ }
 		override public void UpdateNetworkInformation()

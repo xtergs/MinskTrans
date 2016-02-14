@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
 using MyLibrary;
@@ -93,5 +94,6 @@ namespace UniversalMinskTransRelease.ModelView
                 OnPropertyChanged("FilteredStops");
             }
         }
+
     }
 }

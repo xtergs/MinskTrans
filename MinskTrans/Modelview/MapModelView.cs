@@ -681,6 +681,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+        public bool ShowStopsList { get; set; }
+
+	    public RelayCommand ChangeShowStopList
+	    {
+	        get { return new RelayCommand(() => ShowStopsList = ShowStopsList); }
+	    }
+
 #region events
 
 		public event EventHandler MapInicialized;

@@ -166,6 +166,7 @@
       <DependentUpon>MyTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="NoFilesToRestoreDataException.cs" />
+    <Compile Include="Nofity\NotifyHelperUniversal.cs" />
     <Compile Include="NotDataToDeserialize.cs" />
     <Compile Include="OrientedSize.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

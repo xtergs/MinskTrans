@@ -13,6 +13,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
 using Autofac;
 using CommonLibrary.IO;
+using CommonLibrary.Notify;
 using MetroLog;
 using MetroLog.Targets;
 using MinskTrans.Context;
@@ -27,6 +28,7 @@ using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using UniversalMinskTransRelease.Context;
 using UniversalMinskTransRelease.ModelView;
+using UniversalMinskTransRelease.Nofity;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -38,6 +40,7 @@ namespace MinskTrans.Universal.ModelView
 		//private readonly IContext context;
 	    private FindModelView findModelView;
 	    private readonly NewsManagerBase newsManager;
+	    private INotifyHelper notifyHelper;
 
 
 	    public UpdateManagerBase UpdateManager { get; }
@@ -79,13 +82,15 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterType<NewsModelView>().SingleInstance();
 		    builder.RegisterType<FindModelView>().SingleInstance().WithParameter("UseGPS", true);
 		    builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
-		    builder.RegisterInstance<ILogger>(LogManagerFactory.DefaultLogManager.GetLogger("Log")).SingleInstance();
+		    builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
+		    builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
 
             container = builder.Build();
 
             context = container.Resolve<IBussnessLogics>();
             newsManager = container.Resolve<NewsManagerBase>();
             UpdateManager = container.Resolve<UpdateManagerBase>();
+		    notifyHelper = container.Resolve<INotifyHelper>();
 
 		    ExternalCommands = container.Resolve<IExternalCommands>();
 		    
@@ -177,12 +182,22 @@ namespace MinskTrans.Universal.ModelView
 					updateDataCommand = new RelayCommand(async () =>
 					{
 						updating = true;
-						UpdateDataCommand.RaiseCanExecuteChanged();
+					    try
+					    {
+					        UpdateDataCommand.RaiseCanExecuteChanged();
 
-						await Context.UpdateTimeTableAsync();
-					    await Context.UpdateNewsTableAsync();
-						updating = false;
-						UpdateDataCommand.RaiseCanExecuteChanged();
+					        await Context.UpdateTimeTableAsync();
+					        await Context.UpdateNewsTableAsync();
+					    }
+					    catch (Exception e)
+					    {
+					        NotifyHelper.ReportErrorAsync("Во время обновления произошла ошибка попробуйте позже");
+					    }
+					    finally
+					    {
+					        updating = false;
+					    }
+					    UpdateDataCommand.RaiseCanExecuteChanged();
 					}, () => !updating);
 				return updateDataCommand;
 			}
@@ -248,5 +263,10 @@ namespace MinskTrans.Universal.ModelView
 
 
         public NewsModelView NewsModelView { get { return container.Resolve<NewsModelView>(); } }
+
+	    public INotifyHelper NotifyHelper
+	    {
+	        get { return notifyHelper; }
+	    }
 	}
 }

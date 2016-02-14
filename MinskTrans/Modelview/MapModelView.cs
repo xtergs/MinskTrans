@@ -33,10 +33,10 @@ using MinskTrans.AutoRouting.AutoRouting;
 using Windows.Devices.Geolocation;
 #else
 
-using MinskTrans.DesctopClient.Properties;
-using System.Windows.Controls;
-using GalaSoft.MvvmLight.CommandWpf;
-using System.Windows;
+//using MinskTrans.DesctopClient.Properties;
+//using System.Windows.Controls;
+//using GalaSoft.MvvmLight.CommandWpf;
+//using System.Windows;
 #endif
 //using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
@@ -75,14 +75,16 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private PushPinBuilder pushBuilder;
 
-		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, PushPinBuilder pushPinBuilder = null)
+		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
 			this.map = map;
 			pushBuilder = pushPinBuilder;
 			Settings = newSettigns;
 			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
-			
+		    if (geolocation == null)
+		        throw new ArgumentNullException(nameof(geolocation));
+		    this.geolocator = geolocation;
 
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;

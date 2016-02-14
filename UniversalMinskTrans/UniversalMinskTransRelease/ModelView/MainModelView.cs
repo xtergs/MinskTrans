@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using CommonLibrary;
@@ -41,6 +43,7 @@ namespace MinskTrans.Universal.ModelView
 	    private FindModelView findModelView;
 	    private readonly NewsManagerBase newsManager;
 	    private INotifyHelper notifyHelper;
+	    private ILogger log;
 
 
 	    public UpdateManagerBase UpdateManager { get; }
@@ -57,7 +60,7 @@ namespace MinskTrans.Universal.ModelView
 
 		private MainModelView()
 		{
-            var configuration = new LoggingConfiguration();
+		    var configuration = new LoggingConfiguration();
 
             configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
 
@@ -72,7 +75,7 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterType<UpdateManagerBase>();
             builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
             builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
-            builder.RegisterType<NewsManager>().As<NewsManagerBase>();
+            builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
 		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
 		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
 		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
@@ -91,9 +94,9 @@ namespace MinskTrans.Universal.ModelView
             newsManager = container.Resolve<NewsManagerBase>();
             UpdateManager = container.Resolve<UpdateManagerBase>();
 		    notifyHelper = container.Resolve<INotifyHelper>();
+		    log = container.Resolve<ILogManager>().GetLogger<MainModelView>();
 
 		    ExternalCommands = container.Resolve<IExternalCommands>();
-		    
 
 
 		    //var fileHelper = new FileHelper();
@@ -122,7 +125,10 @@ namespace MinskTrans.Universal.ModelView
 			
 		//}
 
-		public NewsManagerBase NewsManager
+            public IGeolocation Geolocation
+        { get { return container.Resolve<IGeolocation>(); } }
+
+        public NewsManagerBase NewsManager
 		{
 			get { return container.Resolve<NewsManagerBase>();}
 		}
@@ -169,8 +175,9 @@ namespace MinskTrans.Universal.ModelView
 		}
 
         ObservableCollection<string> resultString = new ObservableCollection<string>();
-        public ObservableCollection<string> AllLogs { get
-            ; set; }
+
+	    public ObservableCollection<string> AllLogs { get
+	        ; set; }
 
 		bool updating = false;
 		RelayCommand updateDataCommand;
@@ -188,6 +195,7 @@ namespace MinskTrans.Universal.ModelView
 
 					        await Context.UpdateTimeTableAsync();
 					        await Context.UpdateNewsTableAsync();
+					        await NewsManager.Load();
 					    }
 					    catch (Exception e)
 					    {

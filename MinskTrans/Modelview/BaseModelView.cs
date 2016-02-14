@@ -9,15 +9,17 @@ namespace MinskTrans.DesctopClient.Modelview
 	using System.Text;
     using System.Linq;
 #if !WINDOWS_PHONE_APP && !WINDOWS_UAP
-    using GalaSoft.MvvmLight.CommandWpf;
-	using MinskTrans.DesctopClient.Annotations;
-	using System.Linq;
+ //   using GalaSoft.MvvmLight.CommandWpf;
+	//using MinskTrans.DesctopClient.Annotations;
+	//using System.Linq;
 #else
-	using MinskTrans.Universal.Annotations;
-	using GalaSoft.MvvmLight.Command;
+    using MinskTrans.Universal.Annotations;
+    using GalaSoft.MvvmLight.Command;
 #endif
+
     public class BaseModelView : INotifyPropertyChanged
 	{
+
 		protected IBussnessLogics context;
 		//protected readonly ISettingsModelView settingsModelView;
 

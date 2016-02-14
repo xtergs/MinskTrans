@@ -100,7 +100,7 @@ namespace MinskTrans.Universal
 				await menu.ShowAsync(push.RenderTransformOrigin);
 			};
 			
-			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
+			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, model.Geolocation, builder);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.ShowRoute += OnShowRoute;
 			model.ShowStop += OnShowStop;

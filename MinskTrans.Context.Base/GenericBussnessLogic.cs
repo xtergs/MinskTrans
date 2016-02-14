@@ -86,7 +86,7 @@ namespace MinskTrans.Context
                     ;
                 else
                     temp = returnList.Where(
-                        x => x.SearchName.Contains(tempSt)).OrderBy(x => x.SearchName.StartsWith(tempSt));
+                        x => x.SearchName.Contains(tempSt) || x.Routs.Any(r=> r.RouteNum.Contains(tempSt))).OrderBy(x => x.SearchName.StartsWith(tempSt));
                 if (location != null)
                     return
                         SmartSort(temp, location);

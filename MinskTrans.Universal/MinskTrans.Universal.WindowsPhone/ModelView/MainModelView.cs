@@ -4,7 +4,9 @@ using System.Linq;
 using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
+using CommonLibrary.Notify;
 using GalaSoft.MvvmLight.Command;
+using MetroLog;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -16,7 +18,9 @@ using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
+using UniversalMinskTransRelease.Nofity;
 using MyLibrary;
+using UniversalMinskTransRelease.ModelView;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -51,28 +55,45 @@ namespace MinskTrans.Universal.ModelView
 		{
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
-			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerBase>().SingleInstance();
-			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>().SingleInstance();
-			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>().SingleInstance();
-			builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
-		    builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
-		    builder.RegisterType<UniversalGeolocator>().As<IGeolocation>();
-		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
-		    builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>().SingleInstance();
-		    builder.RegisterType<FindModelView>().SingleInstance();
+            //builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+            builder.RegisterType<UpdateManagerBase>();
+            builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
+            builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
+            builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
+            builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
+            builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
+            builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
+            builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
             builder.RegisterType<GroupStopsModelView>().SingleInstance();
             builder.RegisterType<FavouriteModelView>().SingleInstance();
+            builder.RegisterType<NewsModelView>().SingleInstance();
+            builder.RegisterType<FindModelView>().SingleInstance().WithParameter("UseGPS", true);
+            builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
+            builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
+            builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
 
             //builder.RegisterType<Context>().As<IContext>();
 
             container = builder.Build();
 
-			context = container.Resolve<IBussnessLogics>();
-		}
+            context = container.Resolve<IBussnessLogics>();
+            newsManager = container.Resolve<NewsManagerBase>();
+            UpdateManager = container.Resolve<UpdateManagerBase>();
+            notifyHelper = container.Resolve<INotifyHelper>();
+            log = container.Resolve<ILogManager>().GetLogger<MainModelView>();
 
-		public NewsManagerBase NewsManager
+            ExternalCommands = container.Resolve<IExternalCommands>();
+        }
+
+	    public ILogger log { get; set; }
+
+	    public UpdateManagerBase UpdateManager { get; set; }
+
+	    public IGeolocation Geolocation
+        { get { return container.Resolve<IGeolocation>(); } }
+
+        public NewsManagerBase NewsManager
 		{
             get { return container.Resolve<NewsManagerBase>(); }
         }
@@ -118,7 +139,9 @@ namespace MinskTrans.Universal.ModelView
 		public UpdateManagerBase UpdateManagerBase { get { return container.Resolve<UpdateManagerBase>(); } }
 
 	    RelayCommand updateDataCommand;
-		public RelayCommand UpdateDataCommand
+	    private INotifyHelper notifyHelper;
+
+	    public RelayCommand UpdateDataCommand
 		{
 			get
 			{

@@ -256,6 +256,7 @@ namespace UniversalMinskTrans
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			await model.Context.Save(saveAllDB: false);
+		    await model.NewsManager.SaveToFile();
 			model.SettingsModelView.TypeError = Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
@@ -366,11 +367,13 @@ namespace UniversalMinskTrans
 
 		private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
 		{
+		    ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
 			var settings = MainModelView.MainModelViewGet.SettingsModelView;
 			StringBuilder builder = new StringBuilder(DateTime.Now.ToString());
 			builder.Append(": ").Append(unhandledExceptionEventArgs.Exception.ToString()).
 				AppendLine(unhandledExceptionEventArgs.Message).AppendLine(unhandledExceptionEventArgs.Exception.StackTrace);
 			settings.LastUnhandeledException = builder.ToString();
+		    log.Fatal("UnhandledException", unhandledExceptionEventArgs.Exception);
 #if BETA
 			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
 				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);

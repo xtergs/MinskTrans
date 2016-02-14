@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 #if !WINDOWS_PHONE_APP && WINDOWS_AP
-using GalaSoft.MvvmLight.CommandWpf;
+//using GalaSoft.MvvmLight.CommandWpf;
 #else
 using GalaSoft.MvvmLight.Command;
 #endif

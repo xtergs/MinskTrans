@@ -1703,9 +1703,10 @@
                        BorderBrush="{StaticResource LightBlueSolidColorBrush}"
                        DataContext="{Binding NewsModelView}"
                        Header="Новости"
+                        GotFocus="PivotItem_GotFocus_1"
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <view:NewsView DataContext="{Binding}" />
+                    <view:NewsView DataContext="{Binding  UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                 </Border>
             </PivotItem>
 

@@ -18,7 +18,8 @@ namespace MinskTrans.Universal.Converters
                 return "Сегодня";
             if (val.Date == DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)).Date)
                 return "Вчера";
-            return val.DayOfWeek + " " + val.Date;
+            var data =  val.Date.ToString("M");
+            return data;
         } 
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

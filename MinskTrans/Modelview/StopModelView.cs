@@ -13,8 +13,8 @@ using Location = MinskTrans.Context.Location;
 using PositionChangedEventArgs = MinskTrans.Context.Base.PositionChangedEventArgs;
 #if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
 
-using GalaSoft.MvvmLight.CommandWpf;
-using MinskTrans.DesctopClient.Properties;
+//using GalaSoft.MvvmLight.CommandWpf;
+//using MinskTrans.DesctopClient.Properties;
 
 #else
 using GalaSoft.MvvmLight.Command;

@@ -22,7 +22,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <ListBox ItemsSource="{Binding ListOfDatesStrings}" SelectedIndex="{Binding SelectedDateIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <ListBox Grid.Column="1" ItemsSource="{Binding FilteredStops}">
+        <ListBox Grid.Column="1" ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Margin="5,5"

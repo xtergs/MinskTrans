@@ -111,7 +111,7 @@ namespace MinskTrans.Universal
 				await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
 			};
 			
-			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, builder);
+			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView,model.Geolocation , builder);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.ShowRoute += OnShowRoute;
 			model.ShowStop += OnShowStop;
@@ -510,7 +510,7 @@ namespace MinskTrans.Universal
 				SendLog();
 			}
 
-			await model.NewsManager.Load();
+			//await model.NewsManager.Load();
 			MainModelView.MainModelViewGet.AllNews = null;
 			
 #if BETA
@@ -518,93 +518,101 @@ namespace MinskTrans.Universal
 #endif
 		}
 
-		private void NavigationManagerBackRequsted(object sender, BackRequestedEventArgs e)
-		{
-			if (Pivot.SelectedItem == SearchPivotItem)
-			{
-			    e.Handled = BackVisualState();
+	    public bool BackButton()
+	    {
+	        bool res = false;
+            if (Pivot.SelectedItem == SearchPivotItem)
+            {
+                res = BackVisualState();
                 SelectVisualState();
 
-			}
-			else
-   //         if (Pivot.SelectedItem == FavourPivotItem)
-			//{
-			//	e.Handled = true;
+            }
+            else
+            //         if (Pivot.SelectedItem == FavourPivotItem)
+            //{
+            //	e.Handled = true;
 
-			//	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-			//		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-			//			 !FavouriteRoutssHyperlinkButton.IsEnabled)
-			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-			//	else
-			//		e.Handled = false;
+            //	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
+            //		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
+            //	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+            //		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
+            //	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
+            //			 !FavouriteRoutssHyperlinkButton.IsEnabled)
+            //		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+            //	else
+            //		e.Handled = false;
 
-			//}
-			//else
+            //}
+            //else
             if (Pivot.SelectedItem == GroupsPivtoItem)
-			{
-				e.Handled = true;
-				if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
-					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-				else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
-					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-				else
-				{
-					e.Handled = false;
-				}
-			}
+            {
+                res = true;
+                if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+                else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+                else
+                {
+                    res = false;
+                }
+            }
+	        return res;
+	    }
+
+		private void NavigationManagerBackRequsted(object sender, BackRequestedEventArgs e)
+		{
+		    e.Handled = BackButton();
 		}
 
 #if WINDOWS_UAP
 		private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
 		{
-			if (Pivot.SelectedItem == SearchPivotItem)
-			{
-				e.Handled = true;
-				if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
-				else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
-				else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
-					VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
-				else
-				{
-					e.Handled = false;
-				}
+            e.Handled = BackButton();
+            //if (Pivot.SelectedItem == SearchPivotItem)
+            //{
+            //	e.Handled = true;
+            //	if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
+            //		VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
+            //	else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
+            //		VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
+            //	else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
+            //		VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
+            //	else
+            //	{
+            //		e.Handled = false;
+            //	}
 
-			}
-			else
-   //         if (Pivot.SelectedItem == FavourPivotItem)
-			//{
-			//	e.Handled = true;
+            //}
+            //else
+            ////         if (Pivot.SelectedItem == FavourPivotItem)
+            ////{
+            ////	e.Handled = true;
 
-			//	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-			//		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-			//	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-			//			 !FavouriteRoutssHyperlinkButton.IsEnabled)
-			//		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-			//	else
-			//		e.Handled = false;
+            ////	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
+            ////		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
+            ////	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
+            ////		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
+            ////	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
+            ////			 !FavouriteRoutssHyperlinkButton.IsEnabled)
+            ////		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
+            ////	else
+            ////		e.Handled = false;
 
-			//}else 
-            if (Pivot.SelectedItem == GroupsPivtoItem)
-			{
-				e.Handled = true;
-				if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
-					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-				else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
-					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-				else
-				{
-					e.Handled = false;
-				}
-			}
-			
-		}
+            ////}else 
+            //         if (Pivot.SelectedItem == GroupsPivtoItem)
+            //{
+            //	e.Handled = true;
+            //	if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+            //		VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+            //	else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+            //		VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+            //	else
+            //	{
+            //		e.Handled = false;
+            //	}
+            //}
+
+        }
 #endif
 	
 
@@ -798,7 +806,7 @@ namespace MinskTrans.Universal
 
 		private void PivotItem_GotFocus(object sender, RoutedEventArgs e)
 		{
-			MainModelView.MainModelViewGet.AllNews = null;
+			MainModelView.MainModelViewGet.NewsModelView.FilteredStops = null;
 		}
 
 		private void Pivot_PointerWheelChanged(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -933,7 +941,7 @@ namespace MinskTrans.Universal
 
         private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
         {
-
+            MainModelView.MainModelViewGet.NewsModelView.FilteredStops = null;
         }
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)

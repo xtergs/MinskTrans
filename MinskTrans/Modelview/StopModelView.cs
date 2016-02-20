@@ -11,10 +11,10 @@ using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Utilites.FuzzySearch;
 using Location = MinskTrans.Context.Location;
 using PositionChangedEventArgs = MinskTrans.Context.Base.PositionChangedEventArgs;
-#if !WINDOWS_PHONE_APP && !WINDOWS_AP && !WINDOWS_UAP
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
 
-//using GalaSoft.MvvmLight.CommandWpf;
-//using MinskTrans.DesctopClient.Properties;
+using GalaSoft.MvvmLight.CommandWpf;
+using MinskTrans.DesctopClient.Properties;
 
 #else
 using GalaSoft.MvvmLight.Command;
@@ -29,17 +29,25 @@ namespace MinskTrans.DesctopClient.Modelview
 	    private IExternalCommands commands;
 		private bool autoDay;
 		private bool autoNowTime;
+/*
 		private bool bus;
+*/
 		private int curDay;
 		private int nowTimeHour;
 		private int nowTimeMin;
+/*
 		private bool tram;
+*/
+/*
 		private bool trol;
+*/
 
 		private string destinationStop;
 		//private LocationXX lastLocation;
 
+/*
 		private IGeolocation geolocator;
+*/
 
 
 		//public StopModelView()

@@ -1,6 +1,8 @@
-﻿using MinskTrans.Context;
-using MinskTrans.Context.Base;
+﻿
+using MinskTrans.Context;
+
 using MinskTrans.Context.Base.BaseModel;
+
 
 namespace MinskTrans.DesctopClient.Modelview
 {
@@ -8,7 +10,7 @@ namespace MinskTrans.DesctopClient.Modelview
 	using System.Runtime.CompilerServices;
 	using System.Text;
     using System.Linq;
-#if !WINDOWS_PHONE_APP && !WINDOWS_UAP
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
  //   using GalaSoft.MvvmLight.CommandWpf;
 	//using MinskTrans.DesctopClient.Annotations;
 	//using System.Linq;

@@ -1,4 +1,5 @@
 ﻿using Windows.Devices.Geolocation;
+using Windows.Foundation;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using PositionChangedEventArgs = MinskTrans.Context.Base.PositionChangedEventArgs;
@@ -28,7 +29,7 @@ namespace CommonLibrary
             
             geolocator.PositionChanged += (sender, args) =>
             {
-                Location newLoc = new Location(args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude);
+                Location newLoc = new Location( args.Position.Coordinate.Latitude, args.Position.Coordinate.Longitude);
                 OnPositionChanged(new PositionChangedEventArgsArgs()
                 {
                     NewLocation = newLoc,

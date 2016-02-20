@@ -1,20 +1,18 @@
 ﻿
 
 using MinskTrans.Context;
-using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MyLibrary;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
 using System.Collections.Generic;
-using System.Linq;
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
-using GalaSoft.MvvmLight.Command;
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+    //using GalaSoft.MvvmLight.CommandWpf;
 #else
-	//using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Command;
 #endif
-using MinskTrans.DesctopClient.Model;
+    using MinskTrans.DesctopClient.Model;
 	public class GroupEditModelView : StopModelViewBase
 	{
 		private GroupStop stop;

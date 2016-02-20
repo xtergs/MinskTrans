@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base;
@@ -189,9 +190,9 @@ namespace MinskTrans.Context
                 Context.AddFavouriteRout(route);
         }
         
-        public abstract Task<bool> UpdateNewsTableAsync();
+        public abstract Task<bool> UpdateNewsTableAsync(CancellationToken token);
 
-        public abstract Task<bool> UpdateTimeTableAsync(bool withLightCheck = false);
+        public abstract Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false);
 
         public IEnumerable<Rout> GetDirectionsStop(Stop FilteredSelectedStop)
         {

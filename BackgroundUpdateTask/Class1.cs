@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using Windows.ApplicationModel.Background;
-using Windows.Storage;
 using Windows.UI.Notifications;
 using Autofac;
 using CommonLibrary;
@@ -13,11 +12,9 @@ using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Fakes;
-using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
-using MinskTrans.Universal;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
@@ -28,11 +25,22 @@ namespace MinskTrans.BackgroundUpdateTask
 	public sealed class UpdateBackgroundTask : IBackgroundTask
 	{
 
+/*
 		private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
+*/
+/*
 		private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
+*/
+/*
 		private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
+*/
+/*
 		private string fileNews = "datesNews.dat";
-		int MaxDaysAgo { get; set; }
+*/
+	    private bool _cancelRequested;
+	    private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private BackgroundTaskCancellationReason _cancelReason;
+	    int MaxDaysAgo { get; set; }
 		int MaxMinsAgo { get; set; }
 
 		//Dictionary<int, string> DaysLinks 
@@ -47,7 +55,6 @@ namespace MinskTrans.BackgroundUpdateTask
             configuration.IsEnabled = true;
 
             LogManagerFactory.DefaultConfiguration = configuration;
-            ILogger Log = LogManagerFactory.DefaultLogManager.GetLogger("Log");
             
 		    try
 		    {
@@ -66,9 +73,10 @@ namespace MinskTrans.BackgroundUpdateTask
 		        builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
 		        builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
 		        builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
-                builder.RegisterInstance<ILogger>(Log).SingleInstance();
+                builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
                 var container = builder.Build();
 		        //Log = container.Resolve<ILogger>();
+		        ILogger Log = container.Resolve<ILogManager>().GetLogger<UpdateBackgroundTask>();
                 Log.Trace("Background task started");
                 //var fileHelper = new FileHelper();
                 //InternetHelperBase internetHelper = new InternetHelperUniversal(fileHelper);
@@ -90,12 +98,13 @@ namespace MinskTrans.BackgroundUpdateTask
 		        var oldMonthTime = settings.LastSeenMainNewsDateTimeUtc;
 		        try
 		        {
-		            if (await context.UpdateTimeTableAsync(true))
+		            
+		            if (await context.UpdateTimeTableAsync(cancellationTokenSource.Token, true))
 		            {
 		                settings.LastUpdatedDataInBackground |= TypeOfUpdate.Db;
 		            }
 
-		            if (await context.UpdateNewsTableAsync())
+		            if (await context.UpdateNewsTableAsync(cancellationTokenSource.Token))
 		            {
 		                settings.LastUpdatedDataInBackground |= TypeOfUpdate.News;
 		            }
@@ -144,25 +153,40 @@ namespace MinskTrans.BackgroundUpdateTask
                 Log.Error("Background ended " );
                 _deferral.Complete();
 		    }
-		    catch (Exception e)
+		    catch (Exception)
 		    {
-		        Log.Error("Background: " + e.Message, e);
+		        //Log.Error("Background: " + e.Message, e);
                 
 		    }
 
 		}
 
-		void ShowNotification(string text)
+        private void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            // 
+            // Indicate that the background task is canceled. 
+            // 
+            _cancelRequested = true;
+            _cancelReason = reason;
+            cancellationTokenSource.Cancel();
+
+            Debug.WriteLine("Background " + sender.Task.Name + " Cancel Requested...");
+        }
+
+
+        void ShowNotification(string text)
 		{
 			var notifi = ToastNotificationManager.CreateToastNotifier();
 
 			var xaml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText04);
 			var textNode = xaml.GetElementsByTagName("text");
-			textNode.Item(0).AppendChild(xaml.CreateTextNode(text));
+			textNode.Item(0)?.AppendChild(xaml.CreateTextNode(text));
 			//value.appendChild(toastXml.createTextNode(text));
 			ToastNotification notification = new ToastNotification(xaml);
 			notifi.Show(notification);
 		}
+
+
 	}
 }
 

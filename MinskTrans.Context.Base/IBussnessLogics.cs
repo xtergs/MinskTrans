@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -25,8 +26,8 @@ namespace MinskTrans.Context
         IEnumerable<Stop> GetDirection(int stopID, int count);
         void AddRemoveFavouriteStop(Stop stop);
         void AddRemoveFavouriteRoute(Rout route);
-        Task<bool> UpdateNewsTableAsync();
-        Task<bool> UpdateTimeTableAsync(bool withLightCheck = false);
+        Task<bool> UpdateNewsTableAsync(CancellationToken token);
+        Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false);
         IEnumerable<Rout> GetDirectionsStop(Stop FilteredSelectedStop);
         void SetGPS(bool useGPS);
         event EventHandler<EventArgs> LoadEnded;

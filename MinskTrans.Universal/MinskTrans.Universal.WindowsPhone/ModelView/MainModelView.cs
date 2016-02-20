@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
@@ -140,6 +141,7 @@ namespace MinskTrans.Universal.ModelView
 
 	    RelayCommand updateDataCommand;
 	    private INotifyHelper notifyHelper;
+	    private CancellationTokenSource cancelSource;
 
 	    public RelayCommand UpdateDataCommand
 		{
@@ -150,9 +152,11 @@ namespace MinskTrans.Universal.ModelView
 				{
 					updating = true;
 					UpdateDataCommand.RaiseCanExecuteChanged();
-
-				    await Context.UpdateTimeTableAsync(false);
-					updating = false;
+				    using (cancelSource = new CancellationTokenSource())
+				    {
+				        await Context.UpdateTimeTableAsync(cancelSource.Token, false);
+				    }
+				    updating = false;
 					UpdateDataCommand.RaiseCanExecuteChanged();
 				}, () => !updating);
 				return updateDataCommand;

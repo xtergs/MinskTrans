@@ -1,14 +1,14 @@
 ﻿{
   "dependencies": {
-    "AdaptiveTriggerLibrary": "1.0.4",
+    "AdaptiveTriggerLibrary": "1.2.1",
     "Autofac": "3.5.2",
     "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "MvvmLight": "5.2.0",
     "MvvmLightLibs": "5.2.0",
-    "Newtonsoft.Json": "6.0.7",
-    "sqlite-net": "1.0.8",
-    "WindowsStateTriggers": "1.0.2"
+    "Newtonsoft.Json": "8.0.2",
+    "WindowsStateTriggers": "1.1.0",
+    "XAML.MapControl": "2.7.1"
   },
   "frameworks": {
     "uap10.0": {}

@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using CommonLibrary;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
 using Autofac;
@@ -20,15 +16,12 @@ using MetroLog;
 using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
-using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.UniversalModelView;
-using MinskTrans.DesctopClient.Model;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
-using UniversalMinskTransRelease.Context;
 using UniversalMinskTransRelease.ModelView;
 using UniversalMinskTransRelease.Nofity;
 
@@ -37,28 +30,24 @@ namespace MinskTrans.Universal.ModelView
 
 	public class MainModelView : BaseModelView, INotifyPropertyChanged
 	{
-	    private IContainer container;
+	    private readonly IContainer container;
         private static MainModelView mainModelView;
 		//private readonly IContext context;
+/*
 	    private FindModelView findModelView;
+*/
 	    private readonly NewsManagerBase newsManager;
-	    private INotifyHelper notifyHelper;
+	    private readonly INotifyHelper notifyHelper;
 	    private ILogger log;
 
 
 	    public UpdateManagerBase UpdateManager { get; }
 
 
-	    public static MainModelView MainModelViewGet
-		{
-			get
-			{
-				if (mainModelView == null)
-					mainModelView = new MainModelView();
-				return mainModelView;}
-		}
+	    public static MainModelView MainModelViewGet => 
+            mainModelView ?? (mainModelView = new MainModelView());
 
-		private MainModelView()
+	    private MainModelView()
 		{
 		    var configuration = new LoggingConfiguration();
 
@@ -98,32 +87,7 @@ namespace MinskTrans.Universal.ModelView
 
 		    ExternalCommands = container.Resolve<IExternalCommands>();
 
-
-		    //var fileHelper = new FileHelper();
-		    //var internetHelper = new InternetHelperUniversal(fileHelper);
-		    //context = new UniversalContext(fileHelper, internetHelper);
-		    //updateManager = new UpdateManagerUniversal(fileHelper, internetHelper);
-
-		    //SettingsModelView = container.Resolve<ISettingsModelView>();
-		    //routesModelview = new RoutsModelView(context);
-		    //stopMovelView = new StopModelView(context, settingsModelView, true);
-
-		    //NewsModelView = new NewsModelView(NewsManager);
 		}
-
-		//private MainModelView(Context newContext)
-		//{
-		//	context = newContext;
-		//	settingsModelView = new SettingsModelView();
-		//	//routesModelview = new RoutsModelView(context);
-		//	//stopMovelView = new StopModelView(context, settingsModelView, true);
-		//	groupStopsModelView = new GroupStopsModelView(context, settingsModelView);
-		//	favouriteModelView = new FavouriteModelView(context, settingsModelView);
-			
-		//	newsManager = new NewsManager();
-		//	//Context.VariantLoad = SettingsModelView.VariantConnect;
-			
-		//}
 
             public IGeolocation Geolocation
         { get { return container.Resolve<IGeolocation>(); } }
@@ -138,18 +102,15 @@ namespace MinskTrans.Universal.ModelView
 
 	    public ISettingsModelView SettingsModelView { get { return container.Resolve<ISettingsModelView>(); } }
 
-	    public FindModelView FindModelView
-		{
-			get { return container.Resolve<FindModelView>(); }
-		}
+	    public FindModelView FindModelView => container.Resolve<FindModelView>();
 
-		public StopModelView StopMovelView { get; }
+	    public StopModelView StopMovelView { get; }
 
 	    public RoutsModelView RoutsModelView { get; }
 
-	    public GroupStopsModelView GroupStopsModelView { get { return container.Resolve<GroupStopsModelView>(); } }
+	    public GroupStopsModelView GroupStopsModelView => container.Resolve<GroupStopsModelView>();
 
-	    public FavouriteModelView FavouriteModelView { get { return container.Resolve<FavouriteModelView>(); } }
+	    public FavouriteModelView FavouriteModelView => container.Resolve<FavouriteModelView>();
 
 	    //public IContext Context { get { return context; } }
 
@@ -158,56 +119,52 @@ namespace MinskTrans.Universal.ModelView
 		{
 			get
 			{
-				if (NewsManager != null)
-				{
 #if DEBUG
-					var xxx = NewsManager.AllHotNews.Concat(newsManager.NewNews).ToList();
+			    var xxx = NewsManager?.AllHotNews.Concat(newsManager.NewNews).ToList();
 #endif
-					return NewsManager.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.PostedUtc).ThenByDescending(key=> key.RepairedLineUtc).ToList();
-				}
-				return null;
+			    return NewsManager?.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.PostedUtc).ThenByDescending(key=> key.RepairedLineUtc).ToList();
 			}
 			set
 			{
 
-				OnPropertyChanged("AllNews");
+				OnPropertyChanged();
 			}
 		}
 
-        ObservableCollection<string> resultString = new ObservableCollection<string>();
+	    readonly ObservableCollection<string> resultString = new ObservableCollection<string>();
 
 	    public ObservableCollection<string> AllLogs { get
 	        ; set; }
 
 		bool updating = false;
-		RelayCommand updateDataCommand;
+        private CancellationTokenSource cancelSource;
+        RelayCommand updateDataCommand;
 		public RelayCommand UpdateDataCommand
 		{
 			get
 			{
-				if (updateDataCommand == null)
-					updateDataCommand = new RelayCommand(async () =>
-					{
-						updating = true;
-					    try
-					    {
-					        UpdateDataCommand.RaiseCanExecuteChanged();
-
-					        await Context.UpdateTimeTableAsync();
-					        await Context.UpdateNewsTableAsync();
-					        await NewsManager.Load();
-					    }
-					    catch (Exception e)
-					    {
-					        NotifyHelper.ReportErrorAsync("Во время обновления произошла ошибка попробуйте позже");
-					    }
-					    finally
-					    {
-					        updating = false;
-					    }
-					    UpdateDataCommand.RaiseCanExecuteChanged();
-					}, () => !updating);
-				return updateDataCommand;
+			    return updateDataCommand ?? (updateDataCommand = new RelayCommand(async () =>
+			    {
+			        updating = true;
+			        try
+			        {
+			            UpdateDataCommand.RaiseCanExecuteChanged();
+			            using (cancelSource = new CancellationTokenSource())
+			            {
+			                await Context.UpdateTimeTableAsync(cancelSource.Token);
+			                await NewsManager.Load();
+			            }
+			        }
+			        catch (Exception e)
+			        {
+			            NotifyHelper.ReportErrorAsync("Во время обновления произошла ошибка попробуйте позже");
+			        }
+			        finally
+			        {
+			            updating = false;
+			        }
+			        UpdateDataCommand.RaiseCanExecuteChanged();
+			    }, () => !updating));
 			}
 		}
 
@@ -243,10 +200,6 @@ namespace MinskTrans.Universal.ModelView
 	                    // OnPropertyChanged("AllLogs");
 	                    OnPropertyChanged("AllLogs");
 	                }
-	                catch(Exception e)
-	                {
-	                    throw;
-	                }
 	                finally
 	                {
 	                    logsWork = false;
@@ -270,11 +223,8 @@ namespace MinskTrans.Universal.ModelView
 
 
 
-        public NewsModelView NewsModelView { get { return container.Resolve<NewsModelView>(); } }
+        public NewsModelView NewsModelView => container.Resolve<NewsModelView>();
 
-	    public INotifyHelper NotifyHelper
-	    {
-	        get { return notifyHelper; }
-	    }
+	    public INotifyHelper NotifyHelper => notifyHelper;
 	}
 }

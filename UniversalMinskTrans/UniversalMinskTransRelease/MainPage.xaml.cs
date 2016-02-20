@@ -1,30 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Windows.ApplicationModel.Email;
-using Windows.Devices.Geolocation;
 using Windows.Phone.UI.Input;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
-using AdaptiveTriggerLibrary.Triggers.LogicalTriggers;
 using MapControl;
 using Microsoft.Xaml.Interactivity;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
-using MinskTrans.Universal.Annotations;
 using MinskTrans.Universal.ModelView;
 using MyLibrary;
 
@@ -459,11 +451,12 @@ namespace MinskTrans.Universal
 
 #if WINDOWS_PHONE_APP
 			HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-#elif WINDOWS_UAP
+#elif WINDOWS_UWP
             //Windows.Devices.HumanInterfaceDevice.
-            
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-				Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+
+		    if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+		        //Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+		        ;
 			SystemNavigationManager.GetForCurrentView().BackRequested += NavigationManagerBackRequsted;
 		    model.ExternalCommands.BackPressed +=
 		        (o, args) =>
@@ -639,11 +632,12 @@ namespace MinskTrans.Universal
 		{
 #if WINDOWS_PHONE_APP
 			HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
-#elif WINDOWS_UAP
+#elif WINDOWS_UWP
 
-			if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-				Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
-			//TODO
+		    if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+		        //Windows.Phone.UI.Input.HardwareButtons.BackPressed -=  ;
+		        ;
+		    //TODO
 
 
 #else
@@ -652,7 +646,7 @@ namespace MinskTrans.Universal
 				Window.Current.CoreWindow.PointerPressed -=
 					this.CoreWindow_PointerPressed;
 #endif
-			//model.Context.Save();
+		    //model.Context.Save();
 		}
 
 		private void AppBarButton_Click(object sender, RoutedEventArgs e)
@@ -669,8 +663,12 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowGroupVisualState", true);
 		}
 
+/*
 		private Pushpin ipushpin;
+*/
+/*
 		private ObservableCollection<Pushpin> pushpins1;
+*/
 
 		//public Pushpin Ipushpin
 		//{
@@ -727,12 +725,14 @@ namespace MinskTrans.Universal
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+/*
 		[NotifyPropertyChangedInvocator]
 		private void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;
 			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
 		}
+*/
 
 		private void StartEmailToDeveloper(object sender, RoutedEventArgs e)
 		{
@@ -757,6 +757,7 @@ namespace MinskTrans.Universal
 			await Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
 		}
 
+/*
 		private async void Test(object sender, RoutedEventArgs e)
 		{
 			await model.Context.Save();
@@ -765,6 +766,7 @@ namespace MinskTrans.Universal
 			//var sizeFile = await file.Properties.GetDocumentPropertiesAsync();
 			await model.Context.LoadDataBase();
 		}
+*/
 
 		private async void OnOffLocationServises(object sender, RoutedEventArgs e)
 		{

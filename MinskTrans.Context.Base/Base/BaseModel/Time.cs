@@ -84,7 +84,7 @@ namespace MinskTrans.Context.Base.BaseModel
 				StringBuilder builder = new StringBuilder();
 				foreach (var dictionary in DictionaryTime)
 				{
-					builder.Append(dictionary.Key + ":");
+					builder.Append(dictionary.Key.ToString("D2") + ":");
 					foreach (var i in dictionary.Value)
 					{
 						builder.Append(i + ", ");

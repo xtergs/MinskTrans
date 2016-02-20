@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
-using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.UniversalModelView;
-using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
 
@@ -132,19 +127,13 @@ namespace MinskTrans.Universal.ModelView
 	    {
             get
             {
-                if (Context.Routs != null)
-                {
-                    IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
-                    if (RoutNum != null)
-                        temp = temp.Where(x => x.RouteNum.Contains(routNum));
-                    List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
-                    foreach (var item in temp)
-                    {
-                        returnEnumerable.Add(new RoutWithDestinations(item, Context));
-                    }
-                    return returnEnumerable.GroupBy(x => x.Transport);
-                }
-                return null;
+                if (Context.Routs == null) return null;
+                IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
+                if (RoutNum != null)
+                    temp = temp.Where(x => x.RouteNum.Contains(routNum));
+                List<RoutWithDestinations> returnEnumerable = 
+                    temp.Select(item => new RoutWithDestinations(item, Context)).ToList();
+                return returnEnumerable.GroupBy(x => x.Transport);
             }
         }
 
@@ -194,6 +183,7 @@ namespace MinskTrans.Universal.ModelView
 				routeSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimesObservableCollection");
+                OnPropertyChanged(nameof(RoutStopsTimeTable));
 				OnPropertyChanged("StopSelectedIndex");
 				OnPropertyChanged("IsRoutFavourite");
 			}
@@ -217,17 +207,9 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public Stop StopSelectedValue
-		{
-			get
-			{
-				if (RouteSelectedValue != null)
-					return RouteSelectedValue.Stops[StopSelectedIndex];
-				return null;
-			}
-		}
+		public Stop StopSelectedValue => RouteSelectedValue?.Stops[StopSelectedIndex];
 
-		public int StopSelectedIndex
+	    public int StopSelectedIndex
 		{
 			get { return stopsIndex; }
 			set
@@ -246,11 +228,7 @@ namespace MinskTrans.Universal.ModelView
 
 		List<Time> GetTimeCollection(Rout rout, int stopIndex)
 		{
-			if (rout == null)
-			{
-				return null;
-			}
-			Schedule tempList = rout.Time;
+		    Schedule tempList = rout?.Time;
 			if (tempList == null)
 				return null;
 			//получить 
@@ -264,16 +242,51 @@ namespace MinskTrans.Universal.ModelView
 				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #endif
 			//TODO заменяет сущь-е время
-			if (CurTime)
-				foreach (var x in timesObservableCollection)
-				{
-					x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
-				}
+		    if (!CurTime)
+                return timesObservableCollection;
+		    foreach (var x in timesObservableCollection)
+		    {
+		        x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
+		    }
 
-			return timesObservableCollection;
+		    return timesObservableCollection;
 		}
-		
-		public List<KeyValuePair<Stop, List<Time>>> TimesObservableCollection
+
+	    public struct StopTimeTable
+	    {
+	        public StopTimeTable(Stop stop, List<Time> timeTable)
+	        {
+	            Stop = stop;
+	            TimeTable = timeTable;
+	        }
+
+	        public Stop Stop { get; set; }
+            public List<Time> TimeTable { get; set; }
+	    }
+
+	    public class RouteStopsTimeTableList : List<StopTimeTable>
+	    {
+	        public RouteStopsTimeTableList(int coutn)
+	            : base(coutn)
+            { }
+	    }
+
+        public RouteStopsTimeTableList RoutStopsTimeTable
+        {
+            get
+            {
+                if (RouteSelectedValue == null)
+                {
+                    return null;
+                }
+                var returnValue = new RouteStopsTimeTableList(RouteSelectedValue.Stops.Count);
+                returnValue.AddRange(RouteSelectedValue.Stops.Select((t, i) =>
+                    new StopTimeTable(t, GetTimeCollection(RouteSelectedValue, i))));
+                return returnValue;
+            }
+        }
+
+        public List<KeyValuePair<Stop, List<Time>>> TimesObservableCollection
 		{
 			get
 			{
@@ -281,10 +294,10 @@ namespace MinskTrans.Universal.ModelView
 				{
 					return null;
 				}
-				var returnValue = new List<KeyValuePair<Stop, List<Time>>>(RouteSelectedValue.Stops.Count);
-				for (int i = 0; i < RouteSelectedValue.Stops.Count; i++)
-					returnValue.Add(new KeyValuePair<Stop, List<Time>>(RouteSelectedValue.Stops[i], GetTimeCollection(RouteSelectedValue, i)));
-				return returnValue;
+                var returnValue = new List<KeyValuePair<Stop, List<Time>>>(RouteSelectedValue.Stops.Count);
+			    returnValue.AddRange(RouteSelectedValue.Stops.Select(
+                    (t, i) => new KeyValuePair<Stop, List<Time>>(t, GetTimeCollection(RouteSelectedValue, i))));
+			    return returnValue;
 			}
 		}
 
@@ -299,6 +312,7 @@ namespace MinskTrans.Universal.ModelView
 				curTime = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimesObservableCollection");
+                OnPropertyChanged(nameof(RoutStopsTimeTable));
 			}
 		}
 
@@ -374,17 +388,11 @@ public RelayCommand<Rout> AddRemoveFavouriteRout
 		}
 		
         
-        public RelayCommand<Rout> ShowRouteMap
-        {
-            get { return commands.ShowRouteMap; }
-        }
+        public RelayCommand<Rout> ShowRouteMap => commands.ShowRouteMap;
 
-	    public RelayCommand BackCommand
-	    {
-            get { return commands.BackPressedCommand; }
-	    }
+	    public RelayCommand BackCommand => commands.BackPressedCommand;
 
-        #region Overrides of BaseModelView
+	    #region Overrides of BaseModelView
 
         public override void RefreshView()
 		{

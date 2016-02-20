@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Net;
@@ -36,13 +37,12 @@ namespace MinskTrans.Context
 
 	public class BussnessLogic : GenericBussnessLogic
 	{
-        private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
-        private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
-        private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
+	    private const string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
+	    private const string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
+	    private const string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
 
 
-
-        private readonly UpdateManagerBase updateManager;
+	    private readonly UpdateManagerBase updateManager;
 	    private readonly InternetHelperBase internetHelper;
 	    private readonly FileHelperBase fileHelper;
 	    private readonly NewsManagerBase newManager;
@@ -64,13 +64,12 @@ namespace MinskTrans.Context
 
 	    Queue<ErrorMessage> MessageToShow { get; set; }
 
-	    public override ISettingsModelView Settings
-	    {
-	        get { return settings; }
-	    }
+	    public override ISettingsModelView Settings => settings;
 
 	    private int countUpdateFail = 0;
+/*
 		private int maxCountUpdateFail = 10;
+*/
 
 	   
 
@@ -98,12 +97,11 @@ namespace MinskTrans.Context
 
 		private bool updatingNewsTable = false;
 
-	    public override async Task<bool> UpdateNewsTableAsync()
+	    public override async Task<bool> UpdateNewsTableAsync(CancellationToken token)
 	    {
-	        if (updatingNewsTable)
+	        if (updatingNewsTable || token.IsCancellationRequested)
 	            return false;
             OnUpdateDbStarted();
-	        DateTime utcNow = DateTime.UtcNow;
 	        string fileNews = "datesNews_002.dat";
 	        try
 	        {
@@ -112,15 +110,19 @@ namespace MinskTrans.Context
 	            {
 	                await internetHelper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
 	            }
-	            catch (Exception e)
+	            catch (Exception)
 	            {
 
 	                return false;
 	            }
+
+	            if (token.IsCancellationRequested)
+	                return false;
+
 	            string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
 
 	            var timeShtaps = resultStr.Split('\n');
-                utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
+                var utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
 	            //NewsManager manager = new NewsManager();
 	            //await newManager.Load();
 	            DateTime oldMonthTime = settings.LastNewsTimeUtc;
@@ -145,6 +147,8 @@ namespace MinskTrans.Context
 	                }
 	            }
 
+	            if (token.IsCancellationRequested)
+	                return false;
 
                 utcNow = DateTime.Parse(timeShtaps[1], CultureInfo.InvariantCulture);
 	            if (utcNow > oldDaylyTime)
@@ -165,6 +169,9 @@ namespace MinskTrans.Context
 	                    Debug.WriteLine(message);
 	                }
 	            }
+
+	            if (token.IsCancellationRequested)
+	                return false;
 
 	            DateTime nowTimeUtc = DateTime.UtcNow;
                 //TODO
@@ -196,9 +203,9 @@ namespace MinskTrans.Context
 
 	    private bool updatingTimeTable = false;
 
-	    public override async Task<bool> UpdateTimeTableAsync(bool withLightCheck = false)
+	    public override async Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false)
 	    {
-	        if (updatingTimeTable)
+	        if (updatingTimeTable || token.IsCancellationRequested)
 	            return false;
             OnUpdateDbStarted();
 	        DateTime utcNow = DateTime.UtcNow;
@@ -217,6 +224,8 @@ namespace MinskTrans.Context
 						countUpdateFail++;
 	                    return false;
 	                }
+	                if (token.IsCancellationRequested)
+	                    return false;
 	                string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
 
 	                var timeShtaps = resultStr.Split('\n');
@@ -228,9 +237,13 @@ namespace MinskTrans.Context
 	                    return false;
 	                }
 	            }
-	            if (!await updateManager.DownloadUpdate())
+	            if (!await updateManager.DownloadUpdate() || token.IsCancellationRequested)
 	                return false;
 	            var timeTable = await updateManager.GetTimeTable();
+
+	            if (token.IsCancellationRequested)
+	                return false;
+
 	            if (await Context.HaveUpdate(timeTable.Routs as IList<Rout>, timeTable.Stops as IList<Stop>, timeTable.Time as IList<Schedule>))
 	            {
 	                await Context.ApplyUpdate(timeTable.Routs as IEnumerable<Rout>, timeTable.Stops as IList<Stop>, timeTable.Time as IList<Schedule>);

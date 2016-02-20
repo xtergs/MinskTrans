@@ -216,7 +216,7 @@ namespace MinskTrans.Net
 			}
 
 			hotNewsDictionary = null;
-			AllHotNews = null;
+			//AllHotNews = null;
 		}
 
 		async Task SaveToFile(string filePath, IEnumerable<NewsEntry> listToWrite)

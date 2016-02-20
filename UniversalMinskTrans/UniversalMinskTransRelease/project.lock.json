@@ -3,7 +3,7 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -255,15 +255,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -1599,17 +1598,25 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -1904,15 +1911,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -3295,17 +3301,25 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -3586,15 +3600,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -4963,17 +4976,25 @@
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -5273,15 +5294,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -6664,17 +6684,25 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -6955,15 +6983,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -8332,17 +8359,25 @@
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -8642,15 +8677,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -10033,17 +10067,25 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
-      "AdaptiveTriggerLibrary/1.0.4": {
+      "AdaptiveTriggerLibrary/1.2.1": {
         "compile": {
           "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll": {}
         },
@@ -10324,15 +10366,14 @@
           "lib/windows81/GalaSoft.MvvmLight.Platform.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.7": {
+      "Newtonsoft.Json/8.0.2": {
         "compile": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/netcore45/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
-      "sqlite-net/1.0.8": {},
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -11701,19 +11742,27 @@
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "WindowsStateTriggers/1.0.2": {
+      "WindowsStateTriggers/1.1.0": {
         "compile": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         },
         "runtime": {
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
+      },
+      "XAML.MapControl/2.7.1": {
+        "compile": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        },
+        "runtime": {
+          "lib/netcore451/MapControl.WinRT.dll": {}
+        }
       }
     }
   },
   "libraries": {
-    "AdaptiveTriggerLibrary/1.0.4": {
-      "sha512": "D/STVJkB32BBxrGEfOTCsne9/Iu1UdzQMXTFCsGvtffkFHah++Jw2DGNEPaHXGV/OpO8uTauGZRTAwudIC2+1Q==",
+    "AdaptiveTriggerLibrary/1.2.1": {
+      "sha512": "lVRCPM11BGDAKXpsrNRYb717tDWLIowDg9yv7zEvqjO7A7FxJp9lxVm9lLAqKyY/ZOUUFfrdxYDPAb2V5LirkA==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
@@ -11721,7 +11770,7 @@
         "AdaptiveTriggerLibrary.nuspec",
         "lib/uap10.0/AdaptiveTriggerLibrary.dll",
         "lib/uap10.0/AdaptiveTriggerLibrary.xml",
-        "package/services/metadata/core-properties/05098eaba921489bbde4141564a6b3f2.psmdcp",
+        "package/services/metadata/core-properties/08873abab63b4275b91fb1ce32553ba8.psmdcp",
         "runtimes/win10-arm/lib/uap10.0/AdaptiveTriggerLibrary.dll",
         "runtimes/win10-x64/lib/uap10.0/AdaptiveTriggerLibrary.dll",
         "runtimes/win10-x86/lib/uap10.0/AdaptiveTriggerLibrary.dll"
@@ -12592,8 +12641,8 @@
         "package/services/metadata/core-properties/2416d2969a834c638aba3851d652cc13.psmdcp"
       ]
     },
-    "Newtonsoft.Json/6.0.7": {
-      "sha512": "fMUkl3jeQlLn1pVwCvKLRYkeQ4d2hVuE7eyUyW46b7ZZgHIeHUIcsmhLrQs5mXQQv5MUp2Ql0qqaeHiFQcCHnQ==",
+    "Newtonsoft.Json/8.0.2": {
+      "sha512": "e5yWmEfu68rmtG431zl9N/7PlNKQDIuiDW5MHlEFAZcecakcxrIGnKqrPAtWNILzK2oNanRB5cD150MYhECK3g==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
@@ -12606,27 +12655,13 @@
         "lib/net40/Newtonsoft.Json.xml",
         "lib/net45/Newtonsoft.Json.dll",
         "lib/net45/Newtonsoft.Json.xml",
-        "lib/netcore45/Newtonsoft.Json.dll",
-        "lib/netcore45/Newtonsoft.Json.xml",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.xml",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
         "Newtonsoft.Json.nuspec",
-        "package/services/metadata/core-properties/7bd81f63ed434f8eb6458981b8a7d5a8.psmdcp",
+        "package/services/metadata/core-properties/cc8c591d554640789c6a6ef6456f7772.psmdcp",
         "tools/install.ps1"
-      ]
-    },
-    "sqlite-net/1.0.8": {
-      "sha512": "gJXHCj1gSTPTYzL9oJevih+JwF9EUnt/EO2ccnTLDBtYeVDCIRXPdTSBokSWL7mjNIDnOcpB1zAuC9Qg9YAgAg==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "content/SQLite.cs",
-        "content/SQLiteAsync.cs",
-        "package/services/metadata/core-properties/261ed628192946e8a72777c551360e85.psmdcp",
-        "sqlite-net.nuspec"
       ]
     },
     "System.AppContext/4.0.0": {
@@ -15324,8 +15359,8 @@
         "System.Xml.XmlSerializer.nuspec"
       ]
     },
-    "WindowsStateTriggers/1.0.2": {
-      "sha512": "p15cFsOKxRrzSxXMZ/yNpPxra3HaGTBttFzjXUiDpEvyo8Ujm3hOcqWUsDa/9rz7HfUcJ4ZOqFREo0cIZojGhQ==",
+    "WindowsStateTriggers/1.1.0": {
+      "sha512": "63CKlow5uM8/WnhqX8dGMabUZlg3CKKdkao++BuXffTXqPfUyoMfI8vcc9qKcH1TL9dDEj7jWLAqcwkdObhIqQ==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
@@ -15335,11 +15370,14 @@
         "lib/uap10.0/WindowsStateTriggers.pri",
         "lib/uap10.0/WindowsStateTriggers.xml",
         "lib/uap10.0/WindowsStateTriggers/Properties/WindowsStateTriggers.rd.xml",
-        "package/services/metadata/core-properties/2f267b14e65f42b78af535f2513ee898.psmdcp",
+        "package/services/metadata/core-properties/213c5cc4ac7f48458ee3303b7ccd3557.psmdcp",
+        "src/AdaptiveTrigger.cs",
         "src/CompareStateTrigger.cs",
         "src/CompositeStateTrigger.cs",
         "src/DeviceFamilyStateTrigger.cs",
         "src/EqualsStateTrigger.cs",
+        "src/FullScreenModeTrigger.cs",
+        "src/HostedStateTrigger.cs",
         "src/InputTypeTrigger.cs",
         "src/IsFalseStateTrigger.cs",
         "src/IsNullOrEmptyStateTrigger.cs",
@@ -15358,19 +15396,43 @@
         "src/WeakEventListener.cs",
         "WindowsStateTriggers.nuspec"
       ]
+    },
+    "XAML.MapControl/2.7.1": {
+      "sha512": "UCmUa0bETUXOiw02avroMpr3WS8ImJtPsZAGp4JEgfIlXiFC+al1ku1U2U6DjzA2CLOhEP0DMc8lGUyGqMIQMw==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "lib/net45/FileDb.dll",
+        "lib/net45/FileDb.xml",
+        "lib/net45/FileDbCache.WPF.dll",
+        "lib/net45/ImageFileCache.WPF.dll",
+        "lib/net45/MapControl.WPF.dll",
+        "lib/netcore451/MapControl.WinRT.dll",
+        "lib/netcore451/MapControl.WinRT.pri",
+        "lib/netcore451/MapControl.WinRT/MapControl.WinRT.xr.xml",
+        "lib/netcore451/MapControl.WinRT/Themes/Generic.xbf",
+        "lib/sl50/MapControl.Silverlight.dll",
+        "lib/wpa81/MapControl.WinRT.dll",
+        "lib/wpa81/MapControl.WinRT.pri",
+        "lib/wpa81/MapControl.WinRT/MapControl.WinRT.xr.xml",
+        "lib/wpa81/MapControl.WinRT/Themes/Generic.xbf",
+        "package/services/metadata/core-properties/99996157f61643eeb283cca778cc59eb.psmdcp",
+        "XAML.MapControl.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "AdaptiveTriggerLibrary >= 1.0.4",
+      "AdaptiveTriggerLibrary >= 1.2.1",
       "Autofac >= 3.5.2",
       "MetroLog >= 1.0.1",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
       "MvvmLight >= 5.2.0",
       "MvvmLightLibs >= 5.2.0",
-      "Newtonsoft.Json >= 6.0.7",
-      "sqlite-net >= 1.0.8",
-      "WindowsStateTriggers >= 1.0.2"
+      "Newtonsoft.Json >= 8.0.2",
+      "WindowsStateTriggers >= 1.1.0",
+      "XAML.MapControl >= 2.7.1"
     ],
     "UAP,Version=v10.0": []
   }

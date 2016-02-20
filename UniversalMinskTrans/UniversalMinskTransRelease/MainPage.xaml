@@ -1060,13 +1060,6 @@
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <Grid>
-
-                        <!--<Interactivity:Interaction.Behaviors>
-                            <Core:DataTriggerBehavior Binding="{Binding IsShowStopsView, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                <Core:GoToStateAction StateName="StopsCompactVisualState" />
-                                <Core:GoToStateAction StateName="StopsVisualState" />
-                            </Core:DataTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>-->
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
@@ -1149,52 +1142,7 @@
                                                           Mode=TwoWay,
                                                           UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
-                            <ListView Grid.Row="2"
-                                      ItemContainerStyle="{StaticResource FullListViewItem}"
-                                      ItemsSource="{Binding TimesObservableCollection,
-                                                            UpdateSourceTrigger=PropertyChanged}">
-
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <ToggleButton x:Name="ToggleButton"
-                                                          HorizontalAlignment="Stretch"
-                                                          Content="{Binding Key.Name}"
-                                                          FontSize="17"
-                                                          Style="{ThemeResource ToggleButtonStyle1}" />
-                                            <ListView Grid.Row="1"
-                                                      ItemsSource="{Binding Value}"
-                                                      Visibility="{Binding IsChecked,
-                                                                           Converter={StaticResource BooleanToVisibilityConverter},
-                                                                           ElementName=ToggleButton}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <Controls:WrapPanel />
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                                <ListView.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid Margin="5,0">
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="Auto" />
-                                                                <RowDefinition Height="Auto" />
-                                                            </Grid.RowDefinitions>
-                                                            <TextBlock FontSize="15" Text="{Binding DaysStr}" />
-                                                            <TextBlock Grid.Row="1"
-                                                                       FontSize="13"
-                                                                       Text="{Binding ToStrTable}" />
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ListView.ItemTemplate>
-                                            </ListView>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                            <view:RoutStopsTimeTableView Grid.Row="2" DataContext="{Binding RoutStopsTimeTable, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                             <Border Grid.Row="3"
                                     Margin="-10,0"
                                     VerticalAlignment="Bottom"
@@ -1292,7 +1240,8 @@
                                 </ListView.ItemContainerStyle>
                             </ListView>
                             <AppBarToggleButton x:Name="appBarToggleButton"
-                                                Grid.Row="2"
+                                                Grid.Row="1"
+                                                VerticalAlignment="Bottom"
                                                 HorizontalAlignment="Right"
                                                 Content="FavouriteStop"
                                                 Icon="Favorite"
@@ -1354,11 +1303,6 @@
                                         <Controls:WrapPanel />
                                     </ItemsPanelTemplate>
                                 </ListView.ItemsPanel>
-                                <!--<Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:GoToStateAction StateName="RoutsListVisualState" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>-->
                             </ListView>
 
 
@@ -1464,240 +1408,6 @@
                 </Border>
 
             </PivotItem>
-            <!--<PivotItem x:Name="FavourPivotItem"
-                       Margin="0"
-                       BorderBrush="{ThemeResource LightBlueSolidColorBrush}"
-                       DataContext="{Binding FavouriteModelView}"
-                       Header="Избранное"
-                       Padding="0"
-                       Visibility="Collapsed">
-                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <HyperlinkButton x:Name="FavouriteStopsHyperlinkButton"
-                                         Margin="10,0,0,0"
-                                         Content="Остановки"
-                                         IsEnabled="False">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="Click">
-                                    <Core:GoToStateAction StateName="FavouriteStopsVisualState" />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </HyperlinkButton>
-                        <HyperlinkButton x:Name="FavouriteRoutssHyperlinkButton"
-                                         Grid.Column="1"
-                                         Margin="0,0,10,0"
-                                         Content="Транспорт">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="Click">
-                                    <Core:GoToStateAction StateName="FavouriteRoutsVisualState" />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </HyperlinkButton>
-                        <Grid x:Name="ShowFavouriteStopsGrid"
-                              Grid.Row="1"
-                              Grid.ColumnSpan="2"
-                              Margin="10,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <ListView x:Name="FavouriteStopsListView"
-                                      Grid.Row="1"
-                                      Grid.ColumnSpan="2"
-                                      Margin="10,0"
-                                      DataContext="{Binding StopModelView}"
-                                      ItemTemplate="{StaticResource ListStopsDataTemplate}"
-                                      ItemsSource="{Binding Context.Context.FavouriteStops}"
-                                      SelectedItem="{Binding FilteredSelectedStop,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:GoToStateAction StateName="FavouriteShowStopVisualState" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                            </ListView>
-
-                            <local:ShowStopView x:Name="ShowFavouriteStop"
-                                                Grid.Row="1"
-                                                Grid.Column="0"
-                                                Grid.ColumnSpan="2"
-                                                DataContext="{Binding StopModelView}"
-                                                Visibility="Collapsed" />
-                        </Grid>
-                        <Grid x:Name="ShowFavouriteRoutsGrid"
-                              Grid.Row="1"
-                              Grid.ColumnSpan="2"
-                              Margin="10,0"
-                              Visibility="Collapsed">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid x:Name="RoutViews1"
-                                  Grid.Row="0"
-                                  Grid.RowSpan="3"
-                                  Grid.ColumnSpan="3"
-                                  Width="380"
-                                  Height="549"
-                                  DataContext="{Binding RoutsModelView}"
-                                  Visibility="Collapsed">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Grid Grid.Row="1" Margin="0,5,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-
-                                    </Grid.ColumnDefinitions>
-                                    <Image Height="{Binding ActualHeight,
-                                                            ElementName=RouteNameTextBlock}"
-                                           MinHeight="15"
-                                           Source="{Binding RouteSelectedValue.Transport,
-                                                            Converter={StaticResource TransportToImageConverter},
-                                                            UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock Grid.Column="1"
-                                               Margin="5,0,0,0"
-                                               FontSize="25"
-                                               Text="{Binding RouteSelectedValue.RouteNum,
-                                                              Mode=TwoWay,
-                                                              UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock x:Name="RouteNameTextBlock1"
-                                               Grid.Column="2"
-                                               Margin="5,0,0,0"
-                                               FontSize="25"
-                                               Text="{Binding RouteSelectedValue.RouteName,
-                                                              Mode=TwoWay,
-                                                              UpdateSourceTrigger=PropertyChanged}" />
-                                </Grid>
-                                <ListView Grid.Row="2"
-                                          ItemContainerStyle="{StaticResource FullListViewItem}"
-                                          ItemsSource="{Binding TimesObservableCollection,
-                                                                UpdateSourceTrigger=PropertyChanged}">
-
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition />
-                                                </Grid.RowDefinitions>
-                                                <ToggleButton x:Name="ToggleButton"
-                                                              HorizontalAlignment="Stretch"
-                                                              Content="{Binding Key.Name}"
-                                                              FontSize="17"
-                                                              Style="{ThemeResource ToggleButtonStyle1}" />
-                                                <ListView Grid.Row="1"
-                                                          ItemsSource="{Binding Value}"
-                                                          Visibility="{Binding IsChecked,
-                                                                               Converter={StaticResource BooleanToVisibilityConverter},
-                                                                               ElementName=ToggleButton}">
-                                                    <ListView.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Controls:WrapPanel />
-                                                        </ItemsPanelTemplate>
-                                                    </ListView.ItemsPanel>
-                                                    <ListView.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Grid Margin="5,0">
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition Height="Auto" />
-                                                                    <RowDefinition Height="Auto" />
-                                                                </Grid.RowDefinitions>
-                                                                <TextBlock FontSize="20" Text="{Binding DaysStr}" />
-                                                                <TextBlock Grid.Row="1"
-                                                                           FontSize="17"
-                                                                           Text="{Binding ToStrTable}" />
-                                                            </Grid>
-                                                        </DataTemplate>
-                                                    </ListView.ItemTemplate>
-                                                </ListView>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                                <Border Grid.Row="3"
-                                        Margin="-10,0"
-                                        VerticalAlignment="Bottom"
-                                        Background="#FF5D5959">
-                                    <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                        <AppBarToggleButton HorizontalAlignment="Center"
-                                                            Command="{Binding AddRemoveFavouriteRout}"
-                                                            CommandParameter="{Binding RouteNumSelectedValue}"
-                                                            Icon="Favorite"
-                                                            IsChecked="{Binding IsRoutFavourite,
-                                                                                Mode=TwoWay,
-                                                                                UpdateSourceTrigger=PropertyChanged}"
-                                                            IsCompact="True" />
-                                        <AppBarButton HorizontalAlignment="Center"
-                                                      Command="{Binding ShowRouteMap}"
-                                                      CommandParameter="{Binding RouteNumSelectedValue.Rout}"
-                                                      Icon="Map"
-                                                      IsCompact="True"
-                                                      Label="" />
-                                    </Controls:WrapPanel>
-                                </Border>
-                            </Grid>
-
-                            <ListView x:Name="FavouriteRoutsListView"
-                                      Grid.Row="1"
-                                      Grid.ColumnSpan="2"
-                                      DataContext="{Binding RoutsModelView}"
-                                      ItemTemplate="{StaticResource DataTemplate2}"
-                                      ItemsSource="{Binding Context.Context.FavouriteRouts,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding RouteNumSelectedValue,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:GoToStateAction StateName="FavouriteRoutsListVisualState" />
-
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                            </ListView>
-                            <ListView x:Name="ShowFavouriteRoutsListView"
-                                      Grid.Row="1"
-                                      Grid.ColumnSpan="2"
-                                      DataContext="{Binding RoutsModelView}"
-                                      ItemTemplate="{StaticResource DataTemplate3}"
-                                      ItemsSource="{Binding RouteNames,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding RouteSelectedValue,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}"
-                                      Visibility="Collapsed">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:GoToStateAction StateName="FavouriteShowRoutVisualState" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                            </ListView>
-                        </Grid>
-                    </Grid>
-                </Border>
-
-            </PivotItem>-->
-
             <PivotItem Name="TestNewsView"
                        Margin="0"
                        BorderBrush="{StaticResource LightBlueSolidColorBrush}"
@@ -1932,21 +1642,6 @@
                     </Grid>
                 </Border>
             </PivotItem>
-
-            <!--<PivotItem GotFocus="PivotItem_GotFocus"
-                       Header="Новости"
-                       Loaded="PivotItem_Loaded">
-                <ListView ItemsSource="{Binding AllNews}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="5,5"
-                                       Text="{Binding}"
-                                       TextWrapping="Wrap" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </PivotItem>-->
-
 
             <PivotItem x:Name="SettingsPivotItem"
                        Margin="0"

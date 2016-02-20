@@ -1,42 +1,28 @@
-﻿
-
-
-
-
-
-
-using MyLibrary;
+﻿using MyLibrary;
 using System.Text;
 using System.ComponentModel;
 using System;
-
-using MinskTrans.DesctopClient.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using MapControl;
-using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context;
-using MinskTrans.Context.AutoRouting;
 using CalculateRout = MinskTrans.Context.AutoRouting.CalculateRout;
 using Location = MapControl.Location;
 using PositionStatus = MinskTrans.Context.Base.PositionStatus;
-#if (WINDOWS_PHONE_APP || WINDOWS_UAP)
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+using MinskTrans.DesctopClient.Properties;
+using System.Windows.Controls;
+using GalaSoft.MvvmLight.CommandWpf;
+using System.Windows;
+#else
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
-using MinskTrans.AutoRouting.AutoRouting;
-using Windows.Devices.Geolocation;
-#else
-
-//using MinskTrans.DesctopClient.Properties;
-//using System.Windows.Controls;
-//using GalaSoft.MvvmLight.CommandWpf;
-//using System.Windows;
 #endif
 //using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
@@ -59,13 +45,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private IGeolocation geolocator;
 
-		public IGeolocation Geolocator
-		{
-			get { return geolocator;}
-		}
+		public IGeolocation Geolocator => geolocator;
 
 
-		private MapModelView(IBussnessLogics context)
+	    private MapModelView(IBussnessLogics context)
 			:base(context)
 		{
 			
@@ -73,7 +56,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public static Style StylePushpin { get; set; }
 
-		private PushPinBuilder pushBuilder;
+		private readonly PushPinBuilder pushBuilder;
 
 		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, PushPinBuilder pushPinBuilder = null)
 			: base(context)
@@ -278,7 +261,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			set
 			{
 				startStopPushpin = value;
-				OnPropertyChanged("StartStop");
+				OnPropertyChanged(nameof(StartStop));
 			}
 		}
 
@@ -288,63 +271,39 @@ namespace MinskTrans.DesctopClient.Modelview
 			set
 			{
 				endStopPushpin = value; 
-				OnPropertyChanged("EndStop");
+				OnPropertyChanged(nameof(EndStop));
 			}
 		}
 
-		public Stop StartStop
-		{
-			get
-			{
-				if (StartStopPushpin!= null)
-					return (Stop) StartStopPushpin.Tag;
-				return null;
-			}
-		}
+		public Stop StartStop => (Stop) StartStopPushpin?.Tag;
 
-		public Stop EndStop
-		{
-			get
-			{
-				if (EndStopPushpin != null)
-					return (Stop) EndStopPushpin.Tag;
-				return null;
-			}
-		}
+	    public Stop EndStop => (Stop) EndStopPushpin?.Tag;
 
-		void ShowOnMap()
+	    void ShowOnMap()
 		{
 			var temp = map.Children.OfType<Pushpin>();
-			var except =  temp.Except(Pushpins).ToList();
+	        var enumerable = temp as Pushpin[] ?? temp.ToArray();
+	        var except =  enumerable.Except(Pushpins).ToList();
 			foreach (var pushpin in except)
 			{
 				map.Children.Remove(pushpin);
 			}
 					//map.Children.RemoveAt(i);
-			except = Pushpins.Except(temp).ToList();
+			except = Pushpins.Except(enumerable).ToList();
 			
 			foreach (var pushpin in except)
 			{
-				try
-				{
-					map.Children.Add(pushpin);
-				}
-				catch (System.Exception)
-				{
-					throw;
-				}
+			    map.Children.Add(pushpin);
 			}
 		}
 
 		public ObservableCollection<Pushpin> Pushpins
 		{
-			get
-			{
-				if (pushpins1 == null)
-					pushpins1 = new ObservableCollection<Pushpin>();
-				return pushpins1;
-			}
-			set
+		    get
+		    {
+		        return pushpins1 ?? (pushpins1 = new ObservableCollection<Pushpin>());
+		    }
+		    set
 			{
 				if (Equals(value, pushpins1)) return;
 				pushpins1 = value;
@@ -362,19 +321,9 @@ namespace MinskTrans.DesctopClient.Modelview
 				Stop = st,
 				
 			};
-			//var pushpin = new Pushpin { Tag = st, Content = st.Name };
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
-			if (pushBuilder != null)
-			{
-				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
-				tempPushPin.Pushpin.Tag = st;
-				tempPushPin.Pushpin.Content = st.Name;
-#if DEBUG
-			    tempPushPin.Pushpin.Content += string.Format("\n {0} \n {1} ", st.ID, st.SearchName);
-#endif
-			}
-#else
-					tempPushPin.Pushpin.ContextMenu = new ContextMenu();
+            //var pushpin = new Pushpin { Tag = st, Content = st.Name };
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+            tempPushPin.Pushpin.ContextMenu = new ContextMenu();
 					var menuItem = new MenuItem();
 					menuItem.Command = SetStartStop;
 					menuItem.CommandParameter = tempPushPin.Pushpin;
@@ -391,6 +340,16 @@ namespace MinskTrans.DesctopClient.Modelview
 					{
 						((Pushpin)senderr).BringToFront();
 					};
+#else
+			if (pushBuilder != null)
+			{
+				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
+				tempPushPin.Pushpin.Tag = st;
+				tempPushPin.Pushpin.Content = st.Name;
+#if DEBUG
+			    tempPushPin.Pushpin.Content += string.Format("\n {0} \n {1} ", st.ID, st.SearchName);
+#endif
+			}
 #endif
 			//tempPushPin.Pushpin.MouseLeftButtonDown += (o, argsr) =>
 			//{
@@ -435,12 +394,12 @@ namespace MinskTrans.DesctopClient.Modelview
 					ShowOnMap();
 					return;
 				}
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+                var northWest = map.ViewportPointToLocation(new Point(0, 0));
+				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
+#else
 				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
 				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
-#else
-				var northWest = map.ViewportPointToLocation(new Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
 				
 #endif
 
@@ -461,7 +420,7 @@ namespace MinskTrans.DesctopClient.Modelview
 	        set
 	        {
 	            searchPattern = value;
-	            OnPropertyChanged("FilteredStops");
+	            OnPropertyChanged(nameof(FilteredStops));
 	        }
 	    }
 
@@ -547,12 +506,11 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-				if (showICommand == null)
-					showICommand = new RelayCommand(() =>
-					{
-						ShowPushpin(Ipushpin);
-					}, () => Ipushpin != null);
-				return showICommand;
+			    return showICommand ?? 
+                    (showICommand = new RelayCommand(() =>
+                    {
+                        ShowPushpin(Ipushpin);
+                    }, () => Ipushpin != null));
 			}
 		}
 
@@ -637,36 +595,30 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
-
-				if (calculateCommand == null)
-				{
-					calculateCommand = new RelayCommand(() =>
-					{
-						CalculateRout calculator = new CalculateRout(Context.Context);
-						calculator.CreateGraph();
-						if (!calculator.FindPath(StartStop, EndStop))
-							ResultString = "Bad";
-						else
-						{
-							StringBuilder builder = new StringBuilder();
-							foreach (var keyValuePair in calculator.resultRout)
-							{
-								builder.Append(keyValuePair.Key.Transport);
-								builder.Append(" ");
-								builder.Append(keyValuePair.Key);
-								builder.Append('\n');
-								foreach (var stop in keyValuePair.Value)
-								{
-									builder.Append(stop.Name);
-									builder.Append(", ");
-								}
-								builder.Append("\n\n");
-
-							}
-						}
-					});
-				}
-				return calculateCommand;
+			    return calculateCommand ?? (calculateCommand = new RelayCommand(() =>
+			    {
+			        CalculateRout calculator = new CalculateRout(Context.Context);
+			        calculator.CreateGraph();
+			        if (!calculator.FindPath(StartStop, EndStop))
+			            ResultString = "Bad";
+			        else
+			        {
+			            StringBuilder builder = new StringBuilder();
+			            foreach (var keyValuePair in calculator.resultRout)
+			            {
+			                builder.Append(keyValuePair.Key.Transport);
+			                builder.Append(" ");
+			                builder.Append(keyValuePair.Key);
+			                builder.Append('\n');
+			                foreach (var stop in keyValuePair.Value)
+			                {
+			                    builder.Append(stop.Name);
+			                    builder.Append(", ");
+			                }
+			                builder.Append("\n\n");
+			            }
+			        }
+			    }));
 			}
 		}
 
@@ -701,19 +653,19 @@ namespace MinskTrans.DesctopClient.Modelview
 		protected virtual void OnMapInicialized()
 		{
 			var handler = MapInicialized;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 
 		protected virtual void OnStartStopSeted()
 		{
 			var handler = StartStopSeted;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 
 		protected virtual void OnEndStopSeted()
 		{
 			var handler = EndStopSeted;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 	}
 }

@@ -21,7 +21,9 @@ namespace CommonLibrary
 			
 		}
 
+/*
         private ISettingsModelView lastUpdateDataDateTimeBack;
+*/
         
 
        

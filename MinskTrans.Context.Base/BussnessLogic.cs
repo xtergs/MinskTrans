@@ -37,9 +37,9 @@ namespace MinskTrans.Context
 
 	public class BussnessLogic : GenericBussnessLogic
 	{
-	    private const string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
-	    private const string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
-	    private const string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
+	    //private const string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
+	    //private const string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
+	    //private const string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
 
 
 	    private readonly UpdateManagerBase updateManager;
@@ -47,8 +47,9 @@ namespace MinskTrans.Context
 	    private readonly FileHelperBase fileHelper;
 	    private readonly NewsManagerBase newManager;
 	    private readonly ISettingsModelView settings;
+	    private readonly FilePathsSettings files;
 
-	    public BussnessLogic(IContext cont, UpdateManagerBase updateManager, InternetHelperBase internetHelper, FileHelperBase fileHelper, NewsManagerBase newManager, ISettingsModelView settings, IGeolocation geolocation)
+	    public BussnessLogic(IContext cont, UpdateManagerBase updateManager, InternetHelperBase internetHelper, FileHelperBase fileHelper, NewsManagerBase newManager, ISettingsModelView settings, IGeolocation geolocation, FilePathsSettings files)
             :base(cont)
 	    {
 	        
@@ -57,6 +58,7 @@ namespace MinskTrans.Context
 	        this.fileHelper = fileHelper;
 	        this.newManager = newManager;
 	        this.settings = settings;
+	        this.files = files;
 	        this.Geolocation = geolocation;
 	    }
 
@@ -102,13 +104,13 @@ namespace MinskTrans.Context
 	        if (updatingNewsTable || token.IsCancellationRequested)
 	            return false;
             OnUpdateDbStarted();
-	        string fileNews = "datesNews_002.dat";
 	        try
 	        {
 	            updatingNewsTable = true;
 	            try
 	            {
-	                await internetHelper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
+	                await fileHelper.DeleteFile(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
+	                await internetHelper.Download(files.LastUpdatedFile.SecondFormatedLink, files.LastUpdatedFile.NewFileName, files.LastUpdatedFile.Folder);
 	            }
 	            catch (Exception)
 	            {
@@ -119,7 +121,7 @@ namespace MinskTrans.Context
 	            if (token.IsCancellationRequested)
 	                return false;
 
-	            string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
+	            string resultStr = await fileHelper.ReadAllTextAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
 
 	            var timeShtaps = resultStr.Split('\n');
                 var utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
@@ -132,7 +134,12 @@ namespace MinskTrans.Context
 	            {
 	                try
 	                {
-	                    await internetHelper.Download(urlUpdateNews, newManager.FileNameMonths, TypeFolder.Local);
+	                    await fileHelper.DeleteFile(files.MainNewsFile.Folder, files.MainNewsFile.NewFileName);
+	                    await internetHelper.Download(files.MainNewsFile.SecondFormatedLink, files.MainNewsFile.NewFileName, files.MainNewsFile.Folder);
+	                    await
+	                        fileHelper.SafeMoveAsync(files.MainNewsFile.Folder,
+                            from: files.MainNewsFile.NewFileName,
+	                            to: files.MainNewsFile.FileName);
 	                    settings.LastNewsTimeUtc = utcNow;
 	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
@@ -155,7 +162,12 @@ namespace MinskTrans.Context
 	            {
 	                try
 	                {
-	                    await internetHelper.Download(urlUpdateHotNews, newManager.FileNameDays, TypeFolder.Local);
+                        await fileHelper.DeleteFile(files.HotNewsFile.Folder, files.HotNewsFile.NewFileName);
+                        await internetHelper.Download(files.HotNewsFile.SecondFormatedLink, files.HotNewsFile.NewFileName, files.HotNewsFile.Folder);
+                        await
+                           fileHelper.SafeMoveAsync(files.HotNewsFile.Folder,
+                           from: files.HotNewsFile.NewFileName,
+                               to: files.HotNewsFile.FileName);
                         settings.LastUpdateHotNewsDateTimeUtc = utcNow;
 	                   //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
@@ -203,30 +215,34 @@ namespace MinskTrans.Context
 
 	    private bool updatingTimeTable = false;
 
-	    public override async Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false)
+	    public override async Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false, bool tryOnlyOriginalLink = false)
 	    {
 	        if (updatingTimeTable || token.IsCancellationRequested)
 	            return false;
             OnUpdateDbStarted();
 	        DateTime utcNow = DateTime.UtcNow;
-            string fileNews = "datesNews_001.dat";
-            try
+	        try
 	        {
 	            updatingTimeTable = true;
 	            if (withLightCheck)
 	            {
 	                try
 	                {
-	                    await internetHelper.Download(urlUpdateDates, fileNews, TypeFolder.Temp);
-	                }
-	                catch (Exception e)
+	                    await fileHelper.DeleteFile(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
+	                    await internetHelper.Download(files.LastUpdatedFile.SecondFormatedLink, files.LastUpdatedFile.NewFileName, files.LastUpdatedFile.Folder);
+                        await
+                          fileHelper.SafeMoveAsync(files.LastUpdatedFile.Folder,
+                          from: files.LastUpdatedFile.NewFileName,
+                              to: files.LastUpdatedFile.FileName);
+                    }
+	                catch (Exception)
 	                {
 						countUpdateFail++;
 	                    return false;
 	                }
 	                if (token.IsCancellationRequested)
 	                    return false;
-	                string resultStr = await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileNews);
+	                string resultStr = await fileHelper.ReadAllTextAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName);
 
 	                var timeShtaps = resultStr.Split('\n');
 	                
@@ -237,9 +253,14 @@ namespace MinskTrans.Context
 	                    return false;
 	                }
 	            }
-	            if (!await updateManager.DownloadUpdate() || token.IsCancellationRequested)
-	                return false;
-	            var timeTable = await updateManager.GetTimeTable();
+	            if (tryOnlyOriginalLink || !await updateManager.DownloadFormatedUpdateAsync(token))
+	            {
+	                if (token.IsCancellationRequested)
+	                    return false;
+	                if (!await updateManager.DownloadOriginalUpdateAsync(token))
+	                    return false;
+	            }
+	            var timeTable = await updateManager.GetTimeTable(token);
 
 	            if (token.IsCancellationRequested)
 	                return false;

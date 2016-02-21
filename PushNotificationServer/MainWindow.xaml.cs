@@ -20,12 +20,9 @@ namespace PushNotificationServer
 
 		//private ContextDesctop context;
 		
-		public IBussnessLogics BusnesLogic
-		{
-			get { return ServerEngine.Engine.BusnesLogic; }
-		}
+		public IBussnessLogics BusnesLogic => ServerEngine.Engine.BusnesLogic;
 
-		private Timer timerNewsAutoUpdate;
+	    private Timer timerNewsAutoUpdate;
 		public MainWindow()
 		{
 			InitializeComponent();

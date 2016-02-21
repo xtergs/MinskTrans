@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using MetroLog;
+using MinskTrans.Context;
 using MinskTrans.Net;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
@@ -29,7 +30,7 @@ namespace MinskTrans.Utilites.Desktop
 		{
 			log.Debug("CheckHotNewsAsync started");
 			List<NewsEntry> returnDictionary = new List<NewsEntry>();
-			string text = await internetHelper.Download(UriHotNews);
+			string text = await internetHelper.Download(Files.HotNewsFile.OriginalLink);
 			HtmlDocument document = new HtmlDocument();
 			document.LoadHtml(text);
 			log.Debug($"html downloaded and loaded");
@@ -180,7 +181,7 @@ namespace MinskTrans.Utilites.Desktop
 			return returnDictionary;
 		}
 
-		public NewsManagerDesktop(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager) : base(helper, internetHelper, settings, logManager)
+		public NewsManagerDesktop(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files) : base(helper, internetHelper, settings, logManager, files)
 		{
 			log = logManager.GetLogger<NewsManagerDesktop>();
 		}

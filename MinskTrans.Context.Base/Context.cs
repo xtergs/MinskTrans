@@ -21,9 +21,11 @@ namespace MinskTrans.Context
 	public class Context : INotifyPropertyChanged, IContext
 	{
 
+/*
 		private ContextFileSettings settings;
+*/
 		protected Dictionary<int, uint> counterViewStops = new Dictionary<int, uint>();
-
+	    private readonly FilePathsSettings files;
 		
 		
 
@@ -46,29 +48,7 @@ namespace MinskTrans.Context
 			return 0;
 		}
 
-
-		public string TempExt
-		{
-			get { return FileHelperBase.TempExt; }
-		}
-
-		public string OldExt
-		{
-			get { return FileHelperBase.OldExt; }
-		}
-
-		public string NewExt
-		{
-			get { return FileHelperBase.NewExt; }
-		}
-
-		public string GetTempFileName(string filename)
-		{
-			return filename + TempExt;
-		}
-
-		
-
+        
 		//private ObservableCollection<Rout> routs;
 		private int variantLoad;
 		//private ObservableCollection<Stop> stops;
@@ -76,7 +56,7 @@ namespace MinskTrans.Context
 		//private ObservableCollection<GroupStop> groups;
 		//private ObservableCollection<RoutWithDestinations> favouriteRouts;
 		//private ObservableCollection<Stop> favouriteStops;
-		private DateTime lastUpdateDataDateTime;
+		//private DateTime lastUpdateDataDateTime;
 
 		public int VariantLoad
 		{
@@ -84,26 +64,27 @@ namespace MinskTrans.Context
 			set { variantLoad = value; }
 		}
 
-		public virtual DateTime LastUpdateDataDateTime
-		{
-			get { return lastUpdateDataDateTime; }
-			set
-			{
-				lastUpdateDataDateTime = value;
-				OnPropertyChanged();
-			}
-		}
+		//public virtual DateTime LastUpdateDataDateTime
+		//{
+		//	get { return lastUpdateDataDateTime; }
+		//	set
+		//	{
+		//		lastUpdateDataDateTime = value;
+		//		OnPropertyChanged();
+		//	}
+		//}
 
 
 
 		private readonly FileHelperBase fileHelper;
 		protected readonly InternetHelperBase internetHelper;
 
-		public Context(FileHelperBase helper, InternetHelperBase internetHelper)
+		public Context(FileHelperBase helper, InternetHelperBase internetHelper, FilePathsSettings files)
 		{
 			fileHelper = helper;
 			this.internetHelper = internetHelper;
-			Create();
+		    this.files = files;
+		    Create();
 		    Routs = new List<Rout>();
 		    Stops = new List<Stop>();
             Times = new List<Schedule>();
@@ -117,7 +98,7 @@ namespace MinskTrans.Context
 			Times = cont.Times;
 			//favouriteRouts = cont.favouriteRouts;
 			//favouriteStops = cont.favouriteStops;
-			LastUpdateDataDateTime = cont.LastUpdateDataDateTime;
+			//LastUpdateDataDateTime = cont.LastUpdateDataDateTime;
 			Groups = cont.Groups;
 		}
 
@@ -140,13 +121,7 @@ namespace MinskTrans.Context
 				Stops = newStops;
 			    Routs = newRoutes.ToList();
 				Times = newSchedule;
-				//ActualStops = Stops;
-
-				LastUpdateDataDateTime = DateTime.UtcNow;
-
-				newStops = null;
-				newRoutes = null;
-				newSchedule = null;
+				
                 await Save(true);
 			}
 			catch (Exception e)
@@ -192,19 +167,16 @@ namespace MinskTrans.Context
 			//await FileIO.WriteTextAsync(stream, favouriteString);
 			//await stream.MoveAsync(storage, NameFileFavourite, NameCollisionOption.ReplaceExisting);
 
-			await FileHelper.WriteTextAsync(storage, Settings.NameFileFavourite + TempExt, favouriteString);
-			await FileHelper.SafeMoveAsync(storage, Settings.NameFileFavourite + TempExt, Settings.NameFileFavourite);
+		    await (await FileHelper.WriteTextAsync(files.FavouriteFile.Folder, files.FavouriteFile.TempFileName, favouriteString))
+		        .SafeMoveTo(files.FavouriteFile.FileName);
+			
 		}
 
 	    protected async Task SaveStatistics(JsonSerializerSettings jsonSettings, TypeFolder storage)
-		{
-			string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
-			//var counterFile = await storage.CreateFileAsync(NameFileCounter + TempExt, CreationCollisionOption.ReplaceExisting);
-			//await FileIO.WriteTextAsync(counterFile, counter);
-			//await counterFile.RenameAsync(NameFileCounter, NameCollisionOption.ReplaceExisting);
-
-			await FileHelper.WriteTextAsync(storage, Settings.NameFileCounter + TempExt, counter);
-			await FileHelper.SafeMoveAsync(storage, Settings.NameFileCounter + TempExt, Settings.NameFileCounter);
+	    {
+	        string counter = JsonConvert.SerializeObject(counterViewStops, jsonSettings);
+	        await (await FileHelper.WriteTextAsync(files.StatisticFile.Folder, files.StatisticFile.TempFileName, counter))
+	                .SafeMoveTo(files.StatisticFile.FileName);
 		}
 
 		public virtual async Task Save(bool saveAllDb = true)
@@ -212,32 +184,34 @@ namespace MinskTrans.Context
 			try
 			{
 
-				await SaveFavourite(Settings.folders[TypeSaveData.Favourite]);
+				await SaveFavourite(files.FavouriteFile.Folder);
 
 				var jsonSettings = new JsonSerializerSettings() {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
 
-				await SaveStatistics(jsonSettings, Settings.folders[TypeSaveData.Statisticks]);
+				await SaveStatistics(jsonSettings, files.StatisticFile.Folder);
 				if (saveAllDb)
 					await Task.WhenAll(Task.Run(async () =>
 					{
 						string routs = JsonConvert.SerializeObject(Routs, jsonSettings);
-						await FileHelper.WriteTextAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileRouts + TempExt, routs);
-						await FileHelper.SafeMoveAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileRouts + TempExt, Settings.NameFileRouts);
-
+					    await
+					        (await FileHelper.WriteTextAsync(files.RouteFile.Folder, files.RouteFile.TempFileName, routs)).SafeMoveTo(
+					            files.RouteFile.FileName);
 					}),
 						Task.Run(async () =>
 						{
 							string stopsString = JsonConvert.SerializeObject(ActualStops, jsonSettings);
 
-							await FileHelper.WriteTextAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileStops + TempExt, stopsString);
-							await FileHelper.SafeMoveAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileStops + TempExt, Settings.NameFileStops);
+						    await
+						        (await FileHelper.WriteTextAsync(files.StopsFile.Folder, files.StopsFile.TempFileName, stopsString))
+						            .SafeMoveTo(files.StopsFile.FileName);
 
 						}), Task.Run(async () =>
 						{
 							string routs = JsonConvert.SerializeObject(Times, jsonSettings);
 
-							await FileHelper.WriteTextAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileTimes + TempExt, routs);
-							await FileHelper.SafeMoveAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileTimes + TempExt, Settings.NameFileTimes);
+						    await
+						        (await FileHelper.WriteTextAsync(files.TimeFile.Folder, files.TimeFile.TempFileName, routs)).SafeMoveTo(
+						            files.TimeFile.FileName);
 
 						}));
 			}
@@ -279,7 +253,7 @@ namespace MinskTrans.Context
 
 						//var routsFile = await folders[TypeSaveData.Statisticks].GetFileAsync(NameFileCounter);
 						//var routs = await FileIO.ReadTextAsync(routsFile);
-						string routs = await FileHelper.ReadAllTextAsync(Settings.folders[TypeSaveData.Statisticks], Settings.NameFileCounter);
+						string routs = await FileHelper.ReadAllTextAsync(files.StatisticFile.Folder, files.StatisticFile.FileName);
 						counterViewStops = JsonConvert.DeserializeObject<Dictionary<int, uint>>(routs);
 					}
 
@@ -294,7 +268,7 @@ namespace MinskTrans.Context
 						{
 							try
 							{
-								var routs = await FileHelper.ReadAllTextAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileRouts);
+								var routs = await FileHelper.ReadAllTextAsync(files.RouteFile.Folder,files.RouteFile.FileName);
 								tpRouts = JsonConvert.DeserializeObject<ObservableCollection<Rout>>(routs);
 							}
 
@@ -306,7 +280,7 @@ namespace MinskTrans.Context
 						{
 							try
 							{
-								string stops = await FileHelper.ReadAllTextAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileStops);
+								string stops = await FileHelper.ReadAllTextAsync(files.StopsFile.Folder, files.StopsFile.FileName);
 								tpStops = JsonConvert.DeserializeObject<ObservableCollection<Stop>>(stops);
 							}
 							catch (FileNotFoundException e)
@@ -317,7 +291,7 @@ namespace MinskTrans.Context
 						{
 							try
 							{
-								string times = await FileHelper.ReadAllTextAsync(Settings.folders[TypeSaveData.DB], Settings.NameFileTimes);
+								string times = await FileHelper.ReadAllTextAsync(files.TimeFile.Folder, files.TimeFile.FileName);
 
 								tpTimes = JsonConvert.DeserializeObject<ObservableCollection<Schedule>>(times);
 							}
@@ -377,11 +351,11 @@ namespace MinskTrans.Context
 			//await Task.Delay(new TimeSpan(0, 0, 0, 10));
 			Debug.WriteLine("UniversalContext loadfavourite started");
 			if (type.HasFlag(LoadType.LoadFavourite) &&
-				await FileHelper.FileExistAsync(Settings.folders[TypeSaveData.Favourite], Settings.NameFileFavourite))
+				await FileHelper.FileExistAsync(files.FavouriteFile.Folder, files.FavouriteFile.FileName))
 			{
 				try
 				{
-					var textFavourite = await FileHelper.ReadAllTextAsync(Settings.folders[TypeSaveData.Favourite], Settings.NameFileFavourite);
+					var textFavourite = await FileHelper.ReadAllTextAsync(files.FavouriteFile.Folder, files.FavouriteFile.FileName);
 					try
 					{
 						var desFavourite = JsonConvert.DeserializeAnonymousType(textFavourite, new
@@ -504,9 +478,9 @@ namespace MinskTrans.Context
 #if BETA
 			Logger.Log().WriteLineTime("Recover started");
 #endif
-			await FileHelper.DeleteFile(TypeFolder.Roaming, Settings.NameFileRouts);
-			await FileHelper.DeleteFile(TypeFolder.Roaming, Settings.NameFileStops);
-			await FileHelper.DeleteFile(TypeFolder.Roaming, Settings.NameFileTimes);
+			await FileHelper.DeleteFile(files.RouteFile.Folder, files.RouteFile.FileName);
+			await FileHelper.DeleteFile(files.StopsFile.Folder, files.StopsFile.FileName);
+			await FileHelper.DeleteFile(files.TimeFile.Folder, files.TimeFile.FileName);
 #if BETA
 			Logger.Log().WriteLineTime("Recover ended");
 #endif
@@ -787,7 +761,9 @@ namespace MinskTrans.Context
 
 		#region commands
 
+/*
 		private bool updating = false;
+*/
 		
 
 //		public RelayCommand UpdateDataCommand
@@ -823,14 +799,13 @@ namespace MinskTrans.Context
 		protected virtual void OnUpdateStarted()
 		{
 			var handler = UpdateStarted;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 
 		protected virtual void OnUpdateEnded()
 		{
 			var handler = UpdateEnded;
-			if (handler != null)
-				handler.Invoke(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 
 		public bool IsFavouriteStop(Stop stop)
@@ -854,19 +829,19 @@ namespace MinskTrans.Context
 	    protected virtual void OnLoadStarted()
 		{
 			var handler = LoadStarted;
-			if (handler != null) handler(this, EventArgs.Empty);
+	        handler?.Invoke(this, EventArgs.Empty);
 		}
 
 		protected virtual void OnLoadEnded()
 		{
 			var handler = LoadEnded;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 
 		protected virtual void OnErrorLoading(ErrorLoadingDelegateArgs args)
 		{
 			var handler = ErrorLoading;
-			if (handler != null) handler(this, args);
+		    handler?.Invoke(this, args);
 		}
 
 		public async Task AddFavouriteRout(Rout rout)
@@ -916,18 +891,12 @@ namespace MinskTrans.Context
 
 		
 
-		public FileHelperBase FileHelper
-		{
-			get { return fileHelper; }
-		}
+		public FileHelperBase FileHelper => fileHelper;
 
-		public IList<Rout> Routs { get; protected set; }
+	    public IList<Rout> Routs { get; protected set; }
 		public IList<Schedule> Times { get; protected set; }
 
-		public IEnumerable<Stop> ActualStops
-		{
-			get { return Stops; }
-		}
+		public IEnumerable<Stop> ActualStops => Stops;
 
 	    protected IList<int> favouriteRouts { get; set; }
 
@@ -957,21 +926,21 @@ namespace MinskTrans.Context
 
 		public IList<Stop> Stops { get; protected set; }
 
-		public ContextFileSettings Settings
-		{
-			get
-			{
-				if (settings == null)
-					settings = new ContextFileSettings();
-				return settings;
-			}
-			set
-			{
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				settings = value;
-			}
-		}
+		//public ContextFileSettings Settings
+		//{
+		//	get
+		//	{
+		//		if (settings == null)
+		//			settings = new ContextFileSettings();
+		//		return settings;
+		//	}
+		//	set
+		//	{
+		//		if (value == null)
+		//			throw new ArgumentNullException(nameof(value));
+		//		settings = value;
+		//	}
+		//}
 
 		#region Implementation of INotifyPropertyChanged
 

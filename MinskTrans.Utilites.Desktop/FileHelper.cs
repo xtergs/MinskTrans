@@ -87,12 +87,13 @@ namespace MinskTrans.Utilites.Desktop
 
 		#region Overrides of FileHelperBase
 
-		public override async Task WriteTextAsync(TypeFolder folder, string file, string text)
+		public override async Task<FluentFileHelperBase> WriteTextAsync(TypeFolder folder, string file, string text)
 		{
 			string path = Folders[folder];
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
             File.WriteAllText(Path.Combine(Folders[folder], file), text);
+		    return new FluentFileHelperBase(this, folder, file);
 		}
 
 		#endregion

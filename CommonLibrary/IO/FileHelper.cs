@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using MetroLog;
 using MinskTrans.Utilites.Base.IO;
 using MyLibrary;
 //#if WINDOWS_PHONE_APP || WINDOWS_UAPWINDOWS_UAP
@@ -15,7 +16,7 @@ namespace CommonLibrary.IO
 {
 	public class FileHelper: FileHelperBase
 	{
-		
+	    private ILogger log;
 		public static readonly Dictionary<TypeFolder, IStorageFolder> Folders = new Dictionary<TypeFolder, IStorageFolder>()
 		{
 			{TypeFolder.Local, ApplicationData.Current.LocalFolder},
@@ -24,7 +25,13 @@ namespace CommonLibrary.IO
 			{TypeFolder.Current, ApplicationData.Current.LocalFolder }
 		};
 
-		#region Overrides of FileHelperBase
+	    public ILogger Log
+	    {
+	        get { return log; }
+	        set { log = value; }
+	    }
+
+	    #region Overrides of FileHelperBase
 
 		public override async Task<bool> FileExistAsync(TypeFolder folder, string file)
 		{
@@ -35,6 +42,7 @@ namespace CommonLibrary.IO
 			}
 			catch (FileNotFoundException)
 			{
+                log?.Debug($"{nameof(FileExistAsync)}: fileNotFound, file: {file}, folder:{folder}");
 				return false;
 			}
 		}
@@ -69,11 +77,12 @@ namespace CommonLibrary.IO
 			return await FileIO.ReadTextAsync(await Folders[folder].GetFileAsync(file));
 		}
 
-		public override async Task WriteTextAsync(TypeFolder folder, string file, string text)
+		public override async Task<FluentFileHelperBase> WriteTextAsync(TypeFolder folder, string file, string text)
 		{
 			if (text == null)
 				throw new ArgumentNullException(file);
 			await FileIO.WriteTextAsync(await Folders[folder].CreateFileAsync(file, CreationCollisionOption.ReplaceExisting), text);
+		    return new FluentFileHelperBase(this, folder, file);
 		}
 
 		public override async Task DeleteFile(TypeFolder folder, string file)

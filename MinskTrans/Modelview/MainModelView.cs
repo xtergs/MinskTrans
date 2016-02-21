@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Threading;
 using MapControl;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
@@ -54,6 +55,7 @@ namespace MinskTrans.DesctopClient.Modelview
             builder.RegisterType<StopModelView>();
             builder.RegisterType<GroupStopsModelView>();
             builder.RegisterType<FindModelView>();
+            
 		    //builder.As<ApplicationSettingsBase>();
                        
 
@@ -70,7 +72,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		public MainModelView(Map map)
 			: this()
 		{
-			mapModelView = new MapModelView(Context, map, SettingsModelView);
+			mapModelView = new MapModelView(Context, map, SettingsModelView, container.Resolve<IGeolocation>());
 			model = this;
 		}
 
@@ -123,6 +125,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		object lockObject = new object();
 		bool updateing = false;
 		RelayCommand updateDataCommand;
+	    private CancellationTokenSource soruce;
 		public RelayCommand UpdateDataCommand
 		{
 			get
@@ -133,9 +136,12 @@ namespace MinskTrans.DesctopClient.Modelview
 					    if (updateing)
 					        return;
 						updateing = true;
-					    await Context.UpdateTimeTableAsync();
-					    await Context.UpdateNewsTableAsync();
-						updateing = false;
+					    using (soruce = new CancellationTokenSource())
+					    {
+					        await Context.UpdateTimeTableAsync(soruce.Token);
+					        await Context.UpdateNewsTableAsync(soruce.Token);
+					    }
+					    updateing = false;
 					}, () => !updateing);
 
 				return updateDataCommand;

@@ -27,7 +27,7 @@ namespace MinskTrans.Context
         void AddRemoveFavouriteStop(Stop stop);
         void AddRemoveFavouriteRoute(Rout route);
         Task<bool> UpdateNewsTableAsync(CancellationToken token);
-        Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false);
+        Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false, bool tryOnlyOriginalLink = false);
         IEnumerable<Rout> GetDirectionsStop(Stop FilteredSelectedStop);
         void SetGPS(bool useGPS);
         event EventHandler<EventArgs> LoadEnded;

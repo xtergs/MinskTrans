@@ -8,7 +8,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
 using System.Collections.Generic;
 #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
-    //using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.CommandWpf;
 #else
 using GalaSoft.MvvmLight.Command;
 #endif

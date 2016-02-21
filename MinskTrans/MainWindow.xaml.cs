@@ -55,7 +55,9 @@ namespace MinskTrans.DesctopClient
 		}
 
 		private TimeSpan updateTimerInterval = new TimeSpan(0, 1, 0, 0, 0);
+/*
 		private Timer checkUpdateTimer;
+*/
 		DispatcherTimer updateTime = new DispatcherTimer();
 		
 
@@ -398,7 +400,9 @@ namespace MinskTrans.DesctopClient
 			//MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
 		}
 
+/*
 		private List<Stop> oldStops;
+*/
 
 
 	}

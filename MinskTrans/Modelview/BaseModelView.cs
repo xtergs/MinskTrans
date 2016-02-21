@@ -1,19 +1,17 @@
 ﻿
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using MinskTrans.Context;
-
 using MinskTrans.Context.Base.BaseModel;
-
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-	using System.ComponentModel;
-	using System.Runtime.CompilerServices;
-	using System.Text;
-    using System.Linq;
-#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
- //   using GalaSoft.MvvmLight.CommandWpf;
-	//using MinskTrans.DesctopClient.Annotations;
-	//using System.Linq;
+    #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+    using GalaSoft.MvvmLight.CommandWpf;
+	using Annotations;
+
 #else
     using MinskTrans.Universal.Annotations;
     using GalaSoft.MvvmLight.Command;

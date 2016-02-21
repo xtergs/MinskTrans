@@ -12,7 +12,30 @@ namespace MinskTrans.Utilites.Base.IO
 		Temp,
 		Current
 	}
-	public abstract class FileHelperBase
+
+    public class FluentFileHelperBase
+    {
+        public FluentFileHelperBase(FileHelperBase fileHelper, TypeFolder folder, string fileName)
+        {
+            this.fileHelper = fileHelper;
+            this.folder = folder;
+            this.fileName = fileName;
+        }
+
+        private FileHelperBase fileHelper;
+        private TypeFolder folder;
+        private string fileName;
+
+        public async Task<FluentFileHelperBase> SafeMoveTo(string newFileName)
+        {
+            await fileHelper.SafeMoveAsync(folder, fileName, newFileName);
+            fileName = newFileName;
+            return this;
+        }
+
+    }
+
+    public abstract class FileHelperBase
 	{
 		public static string TempExt
 		{
@@ -31,7 +54,7 @@ namespace MinskTrans.Utilites.Base.IO
 		public abstract Task SafeMoveAsync(TypeFolder folder, string from, string to);
 
 		public abstract Task<string> ReadAllTextAsync(TypeFolder folder, string file);
-		public abstract Task WriteTextAsync(TypeFolder folder, string file, string text);
+		public abstract Task<FluentFileHelperBase> WriteTextAsync(TypeFolder folder, string file, string text);
 		public abstract Task DeleteFile(TypeFolder folder, string file);
 
 	    public abstract Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder);

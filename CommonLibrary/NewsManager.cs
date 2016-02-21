@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MetroLog;
+using MinskTrans.Context;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
 using MinskTrans.Utilites.Base.IO;
@@ -15,8 +16,8 @@ namespace CommonLibrary
 	{
 		
 
-		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet, ISettingsModelView settings, ILogManager logManager)
-			:base(fileHelper, internet, settings, logManager)
+		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files)
+			:base(fileHelper, internet, settings, logManager, files)
 		{
 			
 		}

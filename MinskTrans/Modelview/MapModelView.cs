@@ -9,10 +9,11 @@ using MapControl;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context;
+using MinskTrans.DesctopClient.Model;
 using CalculateRout = MinskTrans.Context.AutoRouting.CalculateRout;
 using Location = MapControl.Location;
-using PositionStatus = MinskTrans.Context.Base.PositionStatus;
 #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+using PositionStatus = MinskTrans.Context.Base.PositionStatus;
 using MinskTrans.DesctopClient.Properties;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -69,6 +70,8 @@ namespace MinskTrans.DesctopClient.Modelview
 		        throw new ArgumentNullException(nameof(geolocation));
 		    this.geolocator = geolocation;
 
+		    map.MinZoomLevel = 11;
+		    map.MaxZoomLevel = 19; 
 			MaxZoomLevel = 14;
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.898532, 27.562501);
@@ -281,17 +284,16 @@ namespace MinskTrans.DesctopClient.Modelview
 
 	    void ShowOnMap()
 		{
-			var temp = map.Children.OfType<Pushpin>();
-	        var enumerable = temp as Pushpin[] ?? temp.ToArray();
-	        var except =  enumerable.Except(Pushpins).ToList();
-			foreach (var pushpin in except)
+            var temp = map.Children.OfType<Pushpin>();
+            var except = temp.Except(Pushpins).ToList();
+            foreach (var pushpin in except)
 			{
 				map.Children.Remove(pushpin);
 			}
-					//map.Children.RemoveAt(i);
-			except = Pushpins.Except(enumerable).ToList();
-			
-			foreach (var pushpin in except)
+            //map.Children.RemoveAt(i);
+            except = Pushpins.Except(temp).ToList();
+
+            foreach (var pushpin in except)
 			{
 			    map.Children.Add(pushpin);
 			}
@@ -336,10 +338,10 @@ namespace MinskTrans.DesctopClient.Modelview
 					//menuItem.Click += ContextClickEndStop;
 					menuItem.Header = "End";
 					tempPushPin.Pushpin.ContextMenu.Items.Add(menuItem);
-					tempPushPin.Pushpin.MouseMove += (senderr, argsr) =>
-					{
-						((Pushpin)senderr).BringToFront();
-					};
+					//tempPushPin.Pushpin.MouseMove += (senderr, argsr) =>
+					//{
+					//	((Pushpin)senderr).BringToFront();
+					//};
 #else
 			if (pushBuilder != null)
 			{

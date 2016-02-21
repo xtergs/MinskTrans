@@ -1,5 +1,8 @@
 ﻿using System.Windows;
 using MapControl;
+using MinskTrans.Context;
+using Location = MapControl.Location;
+
 #if WINDOWS_PHONE_APP
 using Windows.UI.Xaml;
 #else

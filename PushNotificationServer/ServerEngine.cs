@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -43,8 +44,8 @@ namespace PushNotificationServer
 	{
 		private static ServerEngine engine;
 		private IBussnessLogics context;
-		private string fileNameLastNews = "LastNews.txt";
 	    private ILogger log;
+	    private FilePathsSettings files;
 
 		private Timer timerNewsAutoUpdate;
 		readonly UpdateManagerBase updateManager;
@@ -68,24 +69,24 @@ namespace PushNotificationServer
 			BusnesLogic.Settings.LastUpdateDbDateTimeUtc = Settings.Default.DBUpdateTime;
 			OndeDriveController.Inicialize();
 			this.StopChecknews += (sender, args) => UploadAllToOneDrive();
-#if DEBUG
-			fileNameLastNews = "LastNewsDebug.txt";
-#endif
 		}
 
 		void UploadAllToOneDrive()
 		{
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-			OndeDriveController.UploadFileAsync(TypeFolder.Local, NewsManager.FileNameDays);
-			OndeDriveController.UploadFileAsync(TypeFolder.Local, NewsManager.FileNameMonths);
-			OndeDriveController.UploadFileAsync(TypeFolder.Local, fileNameLastNews);
+			OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName);
+			OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName);
+			OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName);
+            OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName);
+            OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName);
+            OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-		}
+        }
 
 		void SaveTime()
 		{
 		    var helper = container.Resolve<FileHelperBase>();
-			File.WriteAllText(Path.Combine(helper.GetPath(TypeFolder.Local), fileNameLastNews),
+			File.WriteAllText(Path.Combine(helper.GetPath(files.LastUpdatedFile.Folder), files.LastUpdatedFile.FileName),
 				NewsManager.LastUpdateMainNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) + Environment.NewLine + NewsManager.LastUpdateHotNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) +
 				Environment.NewLine + BusnesLogic.LastUpdateDbDateTimeUtc.ToString(CultureInfo.InvariantCulture));
 		}
@@ -93,20 +94,17 @@ namespace PushNotificationServer
 		private NewsManagerBase newsManager;
         IContainer container ;
 
-        public NewsManagerBase NewsManager { get { return newsManager; } }
+        public NewsManagerBase NewsManager => container.Resolve<NewsManagerBase>();
 
-		ServerEngine()
+	    ServerEngine()
 		{
-			//newsManager = new NewsManager(new FileHelper());
 			SetAutoUpdateTimer(NewsAutoUpdate);
-			//CloudController = cloudStorageController;
-
-			var builder = new ContainerBuilder();
+            var builder = new ContainerBuilder();
 
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
           // builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
             builder.RegisterType<Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<UpdateManagerBase>().SingleInstance();
+			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>().SingleInstance();
 			builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>().SingleInstance();
@@ -117,7 +115,7 @@ namespace PushNotificationServer
             builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
             builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 		    builder.RegisterType<NotifyHelperDesctop>().As<INotifyHelper>().SingleInstance();
-            
+		    builder.RegisterType<FilePathsSettings>().SingleInstance();
             container = builder.Build();
 
 			context = container.Resolve<IBussnessLogics>();
@@ -125,12 +123,8 @@ namespace PushNotificationServer
 			updateManager = container.Resolve<UpdateManagerBase>();
 			OndeDriveController = container.Resolve<ICloudStorageController>();
 		    log = container.Resolve<ILogManager>().GetLogger<ServerEngine>();
-#if DEBUG
-            NewsManager.FileNameDays = "daysDebug.txt";
-			NewsManager.FileNameMonths = "monthDebug.txt";
-			fileNameLastNews = "lastNewsDebug.txt";
-#endif
-        }
+		    files = container.Resolve<FilePathsSettings>();
+		}
 
         public class OneDriveController : ICloudStorageController
         {
@@ -339,6 +333,7 @@ namespace PushNotificationServer
 
 		private static object o = new object();
 		private static object a = new object();
+	    private CancellationTokenSource tokenSource;
 
 		public async Task CheckNews()
 		{
@@ -349,59 +344,60 @@ namespace PushNotificationServer
 			OnStartCheckNews();
 			try
 			{
-				await Task.WhenAll(Task.Run(async () =>
-				{
-				    try
-				    {
-				        await newsManager.CheckMainNewsAsync();
-				        lock (a)
-				        {
-				            newsManager.SaveToFile();
-				        }
-				        //OndeDriveController.UploadFile(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
-				    }
-				    catch (HttpRequestException ex)
-				    {
-                        log.Error("Bad request while donloading file");
-				        container.Resolve<INotifyHelper>().ReportErrorAsync("Bad request, try another time");
-				    }
-					catch (Exception e)
-					{
-					    log.Error(e.Message, e);
-						throw;
-					}
-				}), Task.Run(async () =>
-				{
-				    try
-				    {
-				        await newsManager.CheckHotNewsAsync();
+			    using (tokenSource = new CancellationTokenSource())
+			    {
+			        await Task.WhenAll(Task.Run(async () =>
+			        {
+			            try
+			            {
+			                await newsManager.CheckMainNewsAsync();
+			                    await newsManager.SaveToFile();
+			               
+			                //OndeDriveController.UploadFile(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
+			            }
+			            catch (HttpRequestException ex)
+			            {
+			                log.Error("Bad request while donloading file");
+			                container.Resolve<INotifyHelper>().ReportErrorAsync("Bad request, try another time");
+			            }
+			            catch (Exception e)
+			            {
+			                log.Error(e.Message, e);
+			                throw;
+			            }
+			        }), Task.Run(async () =>
+			        {
+			            try
+			            {
+			                await newsManager.CheckHotNewsAsync();
 
-				        lock (o)
-				        {
-				            newsManager.SaveToFileHotNews();
-				        }
-				    }
-				    catch (HttpRequestException ex)
-				    {
-                        container.Resolve<INotifyHelper>().ReportErrorAsync("Bad request, try another time");
-                    }
-					catch
-					{
-						throw;
-					}
-					//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
-				}), Task.Run( (async ()=>
-				{
-				    try
-				    {
-				        await context.UpdateTimeTableAsync(TODO);
-				    }
-				    catch (Exception e)
-				    {
-                        log.Error("Error while updating timetable");
-                        container.Resolve<INotifyHelper>().ReportErrorAsync(DateTime.Now + ": Error while updating timetable");
-                    }
-				})));
+
+			                    await newsManager.SaveToFileHotNews();
+
+			            }
+			            catch (HttpRequestException ex)
+			            {
+			                container.Resolve<INotifyHelper>().ReportErrorAsync("Bad request, try another time");
+			            }
+			            catch
+			            {
+			                throw;
+			            }
+			            //OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
+			        }), Task.Run((async () =>
+			        {
+			            try
+			            {
+			                await context.UpdateTimeTableAsync(tokenSource.Token, false, true);
+			            }
+			            catch (Exception e)
+			            {
+			                log.Error("Error while updating timetable");
+			                await container.Resolve<INotifyHelper>()
+			                    .ReportErrorAsync(DateTime.Now + ": Error while updating timetable");
+			            }
+			        }), tokenSource.Token));
+			    }
 
 			}
 			catch (TaskCanceledException e)
@@ -440,12 +436,11 @@ namespace PushNotificationServer
 
 		public ICloudStorageController OndeDriveController { get; }
 
-	    public IBussnessLogics BusnesLogic
-		{
-			get { return context; }
-		}
+	    public IBussnessLogics BusnesLogic => context;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+	    public FilePathsSettings Files => container.Resolve<FilePathsSettings>();
+
+	    public event PropertyChangedEventHandler PropertyChanged;
 
 		
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

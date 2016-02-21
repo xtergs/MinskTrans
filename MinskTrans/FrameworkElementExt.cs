@@ -1,6 +1,7 @@
-﻿#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
-using System.Linq;
+﻿using System.Linq;
+#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
 using System.Windows.Controls;
+using System.Windows;
 #else
 using Windows.UI.Xaml;
 #endif

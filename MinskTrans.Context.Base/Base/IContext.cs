@@ -20,7 +20,7 @@ namespace MinskTrans.Context.Base
 		IList<Rout> FavouriteRouts { get; }
 		IList<Stop> FavouriteStops { get; }
 		IList<GroupStop> Groups { get; }
-		DateTime LastUpdateDataDateTime { get; set; }
+		//DateTime LastUpdateDataDateTime { get; set; }
 		IList<Rout> Routs { get; }
 		IList<Stop> Stops { get; }
 		IList<Schedule> Times { get; }

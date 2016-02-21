@@ -64,7 +64,7 @@ namespace MinskTrans.BackgroundUpdateTask
 		        var builder = new ContainerBuilder();
 		        builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
 		        //builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-		        builder.RegisterType<UniversalContext>().As<IContext>().SingleInstance();
+		        builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
 		        builder.RegisterType<UpdateManagerBase>().SingleInstance();
 		        builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
 		        builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>().SingleInstance();
@@ -74,6 +74,7 @@ namespace MinskTrans.BackgroundUpdateTask
 		        builder.RegisterType<BussnessLogic>().As<IBussnessLogics>();
 		        builder.RegisterType<FakeGeolocation>().As<IGeolocation>();
                 builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
+		        builder.RegisterType<FilePathsSettings>();
                 var container = builder.Build();
 		        //Log = container.Resolve<ILogger>();
 		        ILogger Log = container.Resolve<ILogManager>().GetLogger<UpdateBackgroundTask>();

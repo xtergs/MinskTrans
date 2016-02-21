@@ -20,7 +20,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return settings; }
 		}
 
+/*
 		private Location lastLocation;
+*/
 
 		public StopModelViewBase(IBussnessLogics newContext, ISettingsModelView newSettings) : base(newContext)
 		{
@@ -121,7 +123,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+/*
 		private RelayCommand showStopMap;
+*/
 		private GroupStop selectedGroup;
 	    private bool showDetailViewStop;
 

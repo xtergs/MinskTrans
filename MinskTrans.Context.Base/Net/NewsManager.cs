@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MetroLog;
+using MetroLog.Layouts;
+using MinskTrans.Context;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using MyLibrary;
@@ -57,20 +59,9 @@ namespace MinskTrans.Net
 
 	public abstract class NewsManagerBase : INotifyPropertyChanged
 	{
-		private string uriNews = @"http://www.minsktrans.by/ru/newsall/news/newscity.html";
-		private string uriHotNews = @"http://www.minsktrans.by/ru/newsall/news/operativnaya-informatsiya.html";
-
-		private string fileNameMonths = "months.txt";
-		private string fileNameDays = "days.txt";
 		private ILogger log;
-		//public DateTime LastNewsTime { get; set; }
-		//public DateTime LastHotNewstime { get; set; }
-		
 
-		private string pathToSaveData = "";
-		private string pathToSaveHotData = "";
-
-		private List<NewsEntry> newDictionary;
+	    private List<NewsEntry> newDictionary;
 		protected List<NewsEntry> hotNewsDictionary;
 
 		private List<NewsEntry> allNews;
@@ -94,53 +85,14 @@ namespace MinskTrans.Net
 			set { OnPropertyChanged(); }
 		}
 
-		//
-		//public abstract DateTime LastUpdateMainNewsDateTimeUtc { get; set; }
 
-		//public abstract DateTime LastUpdateHotNewsDateTimeUtc { get; set; }
-
-		public string FileNameMonths
-		{
-			get { return fileNameMonths; }
-			set { fileNameMonths = value; }
-		}
-
-		public string FileNameDays
-		{
-			get { return fileNameDays; }
-			set { fileNameDays = value; }
-		}
-
-		public string UriNews
-		{
-			get { return uriNews; }
-			set { uriNews = value; }
-		}
-
-		public string UriHotNews
-		{
-			get { return uriHotNews; }
-			set { uriHotNews = value; }
-		}
-
-		public string PathToSaveData
-		{
-			get { return pathToSaveData; }
-			set { pathToSaveData = value; }
-		}
-
-		public string PathToSaveHotData
-		{
-			get { return pathToSaveHotData; }
-			set { pathToSaveHotData = value; }
-		}
 		readonly FileHelperBase fileHelper;
 		protected readonly InternetHelperBase internetHelper;
 	    protected readonly ISettingsModelView settings;
 
 		FileHelperBase FileHelper { get { return fileHelper; } }
 
-		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager)
+		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files)
 		{
 			if (helper == null)
 				throw new ArgumentNullException(nameof(helper));
@@ -154,15 +106,12 @@ namespace MinskTrans.Net
 				throw new ArgumentNullException(nameof(logManager));
 			log = logManager.GetLogger<NewsManagerBase>();
 		    this.settings = settings;
-			//LastNewsTime = new DateTime();
+		    this.Files = files;
+		    //LastNewsTime = new DateTime();
 			newDictionary = new List<NewsEntry>();
 			hotNewsDictionary = new List<NewsEntry>();
 			allHotNewsDictionary = new List<NewsEntry>();
 			allNews = new List<NewsEntry>();
-#if DEBUG
-			fileNameMonths = "monthsDebug.txt";
-			fileNameDays = "daysDebug.txt";
-#endif
 			log.Trace($"{nameof(NewsManagerBase)} is created");
 		}
 
@@ -170,7 +119,7 @@ namespace MinskTrans.Net
 		public async Task CheckMainNewsAsync()
 		{
 			log.Trace("CheckMainNewsAsync is started");
-			newDictionary = (await CheckAsync(UriNews, "div/p", "div/dl/div/table/tr/td[1]")).Where(time => time.PostedUtc > new DateTime()).ToList();
+			newDictionary = (await CheckAsync(Files.MainNewsFile.OriginalLink, "div/p", "div/dl/div/table/tr/td[1]")).Where(time => time.PostedUtc > new DateTime()).ToList();
 			if (newDictionary.Count <= 0)
 			{
 				log.Trace("CheckMainNewsAsync:new Main news have not been found");
@@ -197,50 +146,50 @@ namespace MinskTrans.Net
 			allNews.Clear();
 			string allLines = "";
 
-			if (await FileHelper.FileExistAsync(TypeFolder.Local, FileNameMonths))
+			if (await FileHelper.FileExistAsync(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName))
 			{
-				log.Trace($"Load: read file for months {FileHelper.GetPath(TypeFolder.Local)} + {FileNameMonths}");
-				allLines = await FileHelper.ReadAllTextAsync(TypeFolder.Local, FileNameMonths);
+				log.Trace($"Load: read file for months {FileHelper.GetPath(Files.MainNewsFile.Folder)} + {Files.MainNewsFile.FileName}");
+				allLines = await FileHelper.ReadAllTextAsync(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName);
 				allNews.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() }));
 				log.Trace($"Load: has been readed {allNews.Count} news");
 			}
 			NewNews = null;
 
 			AllHotNews.Clear();
-			if (await FileHelper.FileExistAsync(TypeFolder.Local, FileNameDays))
+			if (await FileHelper.FileExistAsync(Files.HotNewsFile.Folder, Files.HotNewsFile.FileName))
 			{
 				log.Trace($"read hot news");
-				allLines = await FileHelper.ReadAllTextAsync(TypeFolder.Local, FileNameDays);
+				allLines = await FileHelper.ReadAllTextAsync(Files.HotNewsFile.Folder, Files.HotNewsFile.FileName);
 				allHotNewsDictionary.AddRange(JsonConvert.DeserializeObject<List<NewsEntry>>(allLines, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() }));
 				log.Trace($"Load: has been readed {allHotNewsDictionary.Count} hot news");
 			}
 
 			hotNewsDictionary = null;
-			//AllHotNews = null;
+			AllHotNews = null;
 		}
 
-		async Task SaveToFile(string filePath, IEnumerable<NewsEntry> listToWrite)
+		async Task SaveToFile(string filePath, TypeFolder folder, IEnumerable<NewsEntry> listToWrite)
 		{
 			if (!listToWrite.Any())
 				return;
 
 			string jsonString = JsonConvert.SerializeObject(listToWrite, new JsonSerializerSettings() { ContractResolver = new ShouldSerializeContractResolver() });
 			log.Trace($"SaveToFile {filePath}, JSON: {jsonString}");
-			await FileHelper.WriteTextAsync(TypeFolder.Local, filePath, jsonString);
+			await FileHelper.WriteTextAsync(folder, filePath, jsonString);
 			log.Trace($"SaveToFile successfully done");
 		}
 
 		public async Task SaveToFile()
 		{
 			DateTime curDateTime = DateTime.UtcNow;
-			await SaveToFile(FileNameMonths, newDictionary.Where(x => x.PostedUtc.Month == curDateTime.Month || x.PostedUtc.Month == (curDateTime.Subtract(new TimeSpan(31, 0, 0, 0, 0)).Month)).ToList());
+			await SaveToFile(Files.MainNewsFile.FileName, Files.MainNewsFile.Folder ,newDictionary.Where(x => x.PostedUtc.Month == curDateTime.Month || x.PostedUtc.Month == (curDateTime.Subtract(new TimeSpan(31, 0, 0, 0, 0)).Month)).ToList());
 		}
 
 		public async Task SaveToFileHotNews()
 		{
 			DateTime curDay = DateTime.UtcNow;
 			var days = allHotNewsDictionary.Where(key => key.PostedUtc.Day == curDay.Day || (key.PostedUtc.Day == (curDay.Subtract(new TimeSpan(1, 0, 0, 0))).Day)).ToList();
-			await SaveToFile(FileNameDays, days);
+			await SaveToFile(Files.HotNewsFile.FileName, Files.HotNewsFile.Folder, days);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -248,7 +197,7 @@ namespace MinskTrans.Net
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));	
+		    handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		public DateTime LastUpdateMainNewsDateTimeUtc
@@ -274,5 +223,6 @@ namespace MinskTrans.Net
             }
         }
 
-    }
+	    public FilePathsSettings Files { get; }
+	}
 }

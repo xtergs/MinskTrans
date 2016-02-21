@@ -192,7 +192,7 @@ namespace MinskTrans.Context
         
         public abstract Task<bool> UpdateNewsTableAsync(CancellationToken token);
 
-        public abstract Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false);
+        public abstract Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false, bool tryOnlyOriginalLink = false);
 
         public IEnumerable<Rout> GetDirectionsStop(Stop FilteredSelectedStop)
         {

@@ -24,7 +24,7 @@ namespace MinskTrans.Context
             throw new NotImplementedException();
         }
 
-        public override Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false)
+        public override Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false, bool tryOnlyOriginalLink = false)
         {
             throw new NotImplementedException();
         }

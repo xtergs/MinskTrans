@@ -76,6 +76,7 @@ namespace MinskTrans.Universal.ModelView
 		    builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
 		    builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 		    builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
+	        builder.RegisterType<FilePathsSettings>().SingleInstance();
 
             container = builder.Build();
 
@@ -89,18 +90,14 @@ namespace MinskTrans.Universal.ModelView
 
 		}
 
-            public IGeolocation Geolocation
-        { get { return container.Resolve<IGeolocation>(); } }
+            public IGeolocation Geolocation => container.Resolve<IGeolocation>();
 
-        public NewsManagerBase NewsManager
-		{
-			get { return container.Resolve<NewsManagerBase>();}
-		}
+	    public NewsManagerBase NewsManager => container.Resolve<NewsManagerBase>();
 
-		public MapModelView MapModelView { get; set; }
+	    public MapModelView MapModelView { get; set; }
         public IExternalCommands ExternalCommands { get; }
 
-	    public ISettingsModelView SettingsModelView { get { return container.Resolve<ISettingsModelView>(); } }
+	    public ISettingsModelView SettingsModelView => container.Resolve<ISettingsModelView>();
 
 	    public FindModelView FindModelView => container.Resolve<FindModelView>();
 
@@ -152,6 +149,7 @@ namespace MinskTrans.Universal.ModelView
 			            using (cancelSource = new CancellationTokenSource())
 			            {
 			                await Context.UpdateTimeTableAsync(cancelSource.Token);
+			                await Context.UpdateNewsTableAsync(cancelSource.Token);
 			                await NewsManager.Load();
 			            }
 			        }

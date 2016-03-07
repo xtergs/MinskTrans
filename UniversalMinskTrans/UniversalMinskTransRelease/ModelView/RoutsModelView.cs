@@ -16,7 +16,7 @@ namespace MinskTrans.Universal.ModelView
 	public class RoutsModelView:BaseModelView
 	{
 
-	    private IExternalCommands commands;
+		private IExternalCommands commands;
 		private bool curTime;
 		private string routNum;
 		//private int routeNamesIndex;
@@ -34,10 +34,10 @@ namespace MinskTrans.Universal.ModelView
 		private int stopsIndex;
 		private List<Stop> stopsObservableCollection;
 		//private List<Time> timesObservableCollection;
-		private TransportType typeTransport;
-	    private bool isShowFavouriteRouts;
+	    private TransportType typeTransport = TransportType.All;
+		private bool isShowFavouriteRouts;
 
-	    //public RoutesModelview()
+		//public RoutesModelview()
 		//{
 		//	OnPropertyChanged("RouteNums");
 		//}
@@ -45,9 +45,9 @@ namespace MinskTrans.Universal.ModelView
 		public RoutsModelView(IBussnessLogics context, IExternalCommands commands)
 			: base(context)
 		{
-		    if (commands == null)
-		        throw new ArgumentNullException("commands");
-		    this.commands = commands;
+			if (commands == null)
+				throw new ArgumentNullException("commands");
+			this.commands = commands;
 			Context.Context.PropertyChanged += (sender, args) =>
 			{
 				if (args.PropertyName == "Routs")
@@ -73,8 +73,8 @@ namespace MinskTrans.Universal.ModelView
 			get
 			{
 				//if (String.IsNullOrWhiteSpace(typeTransport))
-				if (Context.Context.Routs != null && Context.Context.Routs.Count() > 0)
-					TypeTransport = Context.Context.Routs.First().Transport;
+				//if (Context.Context.Routs != null && Context.Context.Routs.Count() > 0)
+				//	TypeTransport = Context.Context.Routs.First().Transport;
 				return typeTransport;
 			}
 			set
@@ -82,34 +82,34 @@ namespace MinskTrans.Universal.ModelView
 				//if (value == typeTransport) return;
 				typeTransport = value;
 				OnPropertyChanged();
-				OnPropertyChanged("RouteNums");
-				OnPropertyChanged("RouteNumSelectedValue");
+				OnPropertyChanged(nameof(RouteNums));
+				OnPropertyChanged(nameof(RouteNumSelectedValue));
 			}
 		}
 
-	    public bool IsShowFavouriteRouts
-	    {
-	        get { return isShowFavouriteRouts; }
-	        set
-	        {
-	            isShowFavouriteRouts = value;
-	            OnPropertyChanged();
-                OnPropertyChanged("RouteNums");
-	        }
-	    }
+		public bool IsShowFavouriteRouts
+		{
+			get { return isShowFavouriteRouts; }
+			set
+			{
+				isShowFavouriteRouts = value;
+				OnPropertyChanged();
+				OnPropertyChanged("RouteNums");
+			}
+		}
 
-	    #region RouteNums
+		#region RouteNums
 		public virtual IEnumerable<RoutWithDestinations> RouteNums
 		{
 			get
 			{
 				if (Context.Routs != null)
 				{
-				    if (IsShowFavouriteRouts)
-				    {
-				        return Context.Context.FavouriteRouts.Select(x => new RoutWithDestinations(x, Context));
-				    }
-					IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
+					if (IsShowFavouriteRouts)
+					{
+						return Context.Context.FavouriteRouts.Select(x => new RoutWithDestinations(x, Context));
+					}
+					IEnumerable<Rout> temp = Context.Routs.Where(x=> TypeTransport.HasFlag(x.Transport)).Distinct(new RoutsComparer());
 					if (RoutNum != null)
 						temp = temp.Where(x => x.RouteNum.Contains(routNum));
 					List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
@@ -123,19 +123,19 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-	    public IEnumerable<IGrouping<TransportType,RoutWithDestinations>> RouteNumsGroups
-	    {
-            get
-            {
-                if (Context.Routs == null) return null;
-                IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
-                if (RoutNum != null)
-                    temp = temp.Where(x => x.RouteNum.Contains(routNum));
-                List<RoutWithDestinations> returnEnumerable = 
-                    temp.Select(item => new RoutWithDestinations(item, Context)).ToList();
-                return returnEnumerable.GroupBy(x => x.Transport);
-            }
-        }
+		public IEnumerable<IGrouping<TransportType,RoutWithDestinations>> RouteNumsGroups
+		{
+			get
+			{
+				if (Context.Routs == null) return null;
+				IEnumerable<Rout> temp = Context.Routs.Distinct(new RoutsComparer());
+				if (RoutNum != null)
+					temp = temp.Where(x => x.RouteNum.Contains(routNum));
+				List<RoutWithDestinations> returnEnumerable = 
+					temp.Select(item => new RoutWithDestinations(item, Context)).ToList();
+				return returnEnumerable.GroupBy(x => x.Transport);
+			}
+		}
 
 		public Rout RouteNumSelectedValue
 		{
@@ -146,8 +146,8 @@ namespace MinskTrans.Universal.ModelView
 					return;
 				//if (value == routeNumSelectedValue) return;
 				routeNumSelectedValue = value;
-			    RouteSelectedValue = null;
-                OnPropertyChanged();
+				RouteSelectedValue = null;
+				OnPropertyChanged();
 				OnPropertyChanged("RouteNames");
 				OnPropertyChanged("IsRoutFavourite");
 				
@@ -166,8 +166,8 @@ namespace MinskTrans.Universal.ModelView
 						new ObservableCollection<Rout>(Context.Routs.Where(x => RouteNumSelectedValue != null 
 							&& x.RouteNum == RouteNumSelectedValue.RouteNum 
 							&& x.Transport == RouteNumSelectedValue.Transport));
-			    if (routeObservableCollection != null && routeObservableCollection.Count == 1)
-			        RouteSelectedValue = routeObservableCollection[0];
+				if (routeObservableCollection != null && routeObservableCollection.Count == 1)
+					RouteSelectedValue = routeObservableCollection[0];
 				return routeObservableCollection;
 			}
 		}
@@ -183,7 +183,7 @@ namespace MinskTrans.Universal.ModelView
 				routeSelectedValue = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimesObservableCollection");
-                OnPropertyChanged(nameof(RoutStopsTimeTable));
+				OnPropertyChanged(nameof(RoutStopsTimeTable));
 				OnPropertyChanged("StopSelectedIndex");
 				OnPropertyChanged("IsRoutFavourite");
 			}
@@ -209,7 +209,7 @@ namespace MinskTrans.Universal.ModelView
 
 		public Stop StopSelectedValue => RouteSelectedValue?.Stops[StopSelectedIndex];
 
-	    public int StopSelectedIndex
+		public int StopSelectedIndex
 		{
 			get { return stopsIndex; }
 			set
@@ -228,7 +228,7 @@ namespace MinskTrans.Universal.ModelView
 
 		List<Time> GetTimeCollection(Rout rout, int stopIndex)
 		{
-		    Schedule tempList = rout?.Time;
+			Schedule tempList = rout?.Time;
 			if (tempList == null)
 				return null;
 			//получить 
@@ -242,51 +242,36 @@ namespace MinskTrans.Universal.ModelView
 				curTime = DateTime.Now.Hour*60 + DateTime.Now.Minute;
 #endif
 			//TODO заменяет сущь-е время
-		    if (!CurTime)
-                return timesObservableCollection;
-		    foreach (var x in timesObservableCollection)
-		    {
-		        x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
-		    }
+			if (!CurTime)
+				return timesObservableCollection;
+			foreach (var x in timesObservableCollection)
+			{
+				x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
+			}
 
-		    return timesObservableCollection;
+			return timesObservableCollection;
 		}
 
-	    public struct StopTimeTable
-	    {
-	        public StopTimeTable(Stop stop, List<Time> timeTable)
-	        {
-	            Stop = stop;
-	            TimeTable = timeTable;
-	        }
+		public struct StopTimeTable
+		{
+			public StopTimeTable(Stop stop, List<Time> timeTable)
+			{
+				Stop = stop;
+				TimeTable = timeTable;
+			}
 
-	        public Stop Stop { get; set; }
-            public List<Time> TimeTable { get; set; }
-	    }
+			public Stop Stop { get; set; }
+			public List<Time> TimeTable { get; set; }
+		}
 
-	    public class RouteStopsTimeTableList : List<StopTimeTable>
-	    {
-	        public RouteStopsTimeTableList(int coutn)
-	            : base(coutn)
-            { }
-	    }
+		public class RouteStopsTimeTableList : List<StopTimeTable>
+		{
+			public RouteStopsTimeTableList(int coutn)
+				: base(coutn)
+			{ }
+		}
 
-        public RouteStopsTimeTableList RoutStopsTimeTable
-        {
-            get
-            {
-                if (RouteSelectedValue == null)
-                {
-                    return null;
-                }
-                var returnValue = new RouteStopsTimeTableList(RouteSelectedValue.Stops.Count);
-                returnValue.AddRange(RouteSelectedValue.Stops.Select((t, i) =>
-                    new StopTimeTable(t, GetTimeCollection(RouteSelectedValue, i))));
-                return returnValue;
-            }
-        }
-
-        public List<KeyValuePair<Stop, List<Time>>> TimesObservableCollection
+		public RouteStopsTimeTableList RoutStopsTimeTable
 		{
 			get
 			{
@@ -294,10 +279,25 @@ namespace MinskTrans.Universal.ModelView
 				{
 					return null;
 				}
-                var returnValue = new List<KeyValuePair<Stop, List<Time>>>(RouteSelectedValue.Stops.Count);
-			    returnValue.AddRange(RouteSelectedValue.Stops.Select(
-                    (t, i) => new KeyValuePair<Stop, List<Time>>(t, GetTimeCollection(RouteSelectedValue, i))));
-			    return returnValue;
+				var returnValue = new RouteStopsTimeTableList(RouteSelectedValue.Stops.Count);
+				returnValue.AddRange(RouteSelectedValue.Stops.Select((t, i) =>
+					new StopTimeTable(t, GetTimeCollection(RouteSelectedValue, i))));
+				return returnValue;
+			}
+		}
+
+		public List<KeyValuePair<Stop, List<Time>>> TimesObservableCollection
+		{
+			get
+			{
+				if (RouteSelectedValue == null)
+				{
+					return null;
+				}
+				var returnValue = new List<KeyValuePair<Stop, List<Time>>>(RouteSelectedValue.Stops.Count);
+				returnValue.AddRange(RouteSelectedValue.Stops.Select(
+					(t, i) => new KeyValuePair<Stop, List<Time>>(t, GetTimeCollection(RouteSelectedValue, i))));
+				return returnValue;
 			}
 		}
 
@@ -312,7 +312,7 @@ namespace MinskTrans.Universal.ModelView
 				curTime = value;
 				OnPropertyChanged();
 				OnPropertyChanged("TimesObservableCollection");
-                OnPropertyChanged(nameof(RoutStopsTimeTable));
+				OnPropertyChanged(nameof(RoutStopsTimeTable));
 			}
 		}
 
@@ -368,6 +368,11 @@ namespace MinskTrans.Universal.ModelView
 		//	}
 		//}
 
+		public RelayCommand ShowAllTransportCommand
+		{
+			get { return new RelayCommand(() => TypeTransport = TransportType.All); }
+		}
+
 		public RelayCommand ShowBusCommand
 		{
 			get { return new RelayCommand(() => TypeTransport = TransportType.Bus); }
@@ -383,18 +388,18 @@ namespace MinskTrans.Universal.ModelView
 			get { return new RelayCommand(() => TypeTransport = TransportType.Tram); }
 		}
 public RelayCommand<Rout> AddRemoveFavouriteRout
-        {
+		{
 			get { return new RelayCommand<Rout>((x) => Context.AddRemoveFavouriteRoute(x)); }
 		}
 		
-        
-        public RelayCommand<Rout> ShowRouteMap => commands.ShowRouteMap;
+		
+		public RelayCommand<Rout> ShowRouteMap => commands.ShowRouteMap;
 
-	    public RelayCommand BackCommand => commands.BackPressedCommand;
+		public RelayCommand BackCommand => commands.BackPressedCommand;
 
-	    #region Overrides of BaseModelView
+		#region Overrides of BaseModelView
 
-        public override void RefreshView()
+		public override void RefreshView()
 		{
 			base.RefreshView();
 			OnPropertyChanged("RouteNums");

@@ -162,4 +162,31 @@
 
         </Grid>
     </DataTemplate>
+
+
+
+    <DataTemplate x:Key="GroupTransportList">
+        <Grid MinWidth="130" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Image Height="{Binding ActualHeight,
+                                        ElementName=RouteNumTextBlock}"
+                       MinHeight="15"
+                       VerticalAlignment="Top"
+                       Source="{Binding Rout.Transport,
+                                        Converter={StaticResource TransportToImageConverter}}" />
+            <TextBlock x:Name="RouteNumTextBlock"
+                           Grid.Column="1"
+                           Margin="5,0,0,0"
+                           VerticalAlignment="Top"
+                           FontSize="35"
+                           Text="{Binding Rout.RouteNum,
+                                          Converter={StaticResource DateToString}}" />
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

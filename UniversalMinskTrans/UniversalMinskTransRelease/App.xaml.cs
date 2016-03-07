@@ -30,12 +30,13 @@ namespace UniversalMinskTrans
 	/// </summary>
 	sealed partial class App : Application
 	{
+
 		/// <summary>
 		/// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
 		/// </summary>
 		//public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
 
-
+		private ILogger log;
 
 		/// <summary>
 		/// Invoked when the application is launched normally by the end user.  Other entry points
@@ -44,12 +45,8 @@ namespace UniversalMinskTrans
 		/// <param name="e">Details about the launch request and process.</param>
 		protected override async void OnLaunched(LaunchActivatedEventArgs e)
 		{
-			//InitNotificationsAsync();
+			log?.Debug("App.OnLaunched started");
 
-#if BETA
-			Logger.Log("App.OnLaunched started");
-			Debug.WriteLine("App.OnLaunched started");
-#endif
 #if DEBUG
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
@@ -61,6 +58,7 @@ namespace UniversalMinskTrans
 			switch (backgroundAccessStatus)
 			{
 				case BackgroundAccessStatus.Denied:
+					log?.Warn("BackgroundAccessStatus:Denied");
 					// Windows: Background activity and updates for this app are disabled by the user.
 					//
 					// Windows Phone: The maximum number of background apps allowed across the system has been reached or
@@ -83,6 +81,7 @@ namespace UniversalMinskTrans
 
 					updateTaskRegistration.Completed += async (sender, args) =>
 					{
+						log?.Debug("\nBackground task complited");
 						try
 						{
 							if (
@@ -91,27 +90,22 @@ namespace UniversalMinskTrans
 							{
 								await MainModelView.MainModelViewGet.Context.Save(false);
 								await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
+								log?.Info("Background task complited, DB reloaded");
 							}
 							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
 								TypeOfUpdate.News))
 							{
 								await MainModelView.MainModelViewGet.NewsManager.Load();
+								log?.Info("Background task complited, news loaded");
 							}
 							//MainModelView.MainModelViewGet.AllNews = null;
 						}
 						catch (Exception ex)
 						{
-							string message =
-								(new StringBuilder("BackgroundTask complited")).AppendLine()
-									.AppendLine(ex.ToString())
-									.AppendLine(ex.Message)
-									.AppendLine(ex.StackTrace).ToString();
-							Debug.WriteLine(message);
-#if BETA
-							Logger.Log(message);
-#endif
+							log?.Fatal("Backroudn complited", ex);
 							throw;
 						}
+						log?.Info("Background complited, OK");
 					};
 					break;
 			}
@@ -126,20 +120,17 @@ namespace UniversalMinskTrans
 			// just ensure that the window is active
 			if (rootFrame == null)
 			{
-#if BETA
-				Logger.Log("RestoreAppState");
-#endif
+				log?.Info("RestoreAppState");
+
 				// Create a Frame to act as the navigation context and navigate to the first page
 				rootFrame = new Frame();
 
 				// TODO: change this value to a cache size that is appropriate for your application
-				rootFrame.CacheSize = 1;
+				rootFrame.CacheSize = 3;
 
 				if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
 				{
-#if BETA
-					Logger.Log("Load after suspending");
-#endif
+					log?.Info("Load after suspending");
 					// TODO: Load state from previously suspended application
 					//MainModelView.MainModelViewGet.Context.Load();
 				}
@@ -148,52 +139,53 @@ namespace UniversalMinskTrans
 				Window.Current.Content = rootFrame;
 				if (e.PreviousExecutionState != ApplicationExecutionState.Running)
 				{
-#if BETA
-					Logger.Log("Prev state != Running");
-#endif
-				    model.Context.NeedUpdadteDB += async (sender, args) =>
-				    {
+					log?.Info("Prev state != Running");
 
-				        try
-				        {
-				            await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-				            {
-				                try
-				                {
-				                    await
-				                        model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных",
-				                            new List<KeyValuePair<string, RelayCommand>>
-				                            {
-				                                model.NotifyHelper.CreateCommand("Обновить", model.UpdateDataCommand, null)
-				                            });
-				                }
-				                catch (Exception ee)
-				                {
-				                    throw;
-				                }
-				                // Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
-				                // {
-				                //  Commands =
-				                //	  {
-				                //new UICommand("Обновить", command =>
-				                //{
-				                //	if (model.UpdateDataCommand.CanExecute(null))
-				                //		model.UpdateDataCommand.Execute(null);
+					model.Context.NeedUpdadteDB += async (sender, args) =>
+					{
+						log?.Info("App Need Update");
+						try
+						{
+							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+							{
+								try
+								{
+									await
+										model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных",
+											new List<KeyValuePair<string, RelayCommand>>
+											{
+												model.NotifyHelper.CreateCommand("Обновить", model.UpdateDataCommand, null)
+											});
+								}
+								catch (Exception ee)
+								{
+									log?.Fatal($"App need update: {ee.Message}", ee);
+									throw;
+								}
+								// Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+								// {
+								//  Commands =
+								//	  {
+								//new UICommand("Обновить", command =>
+								//{
+								//	if (model.UpdateDataCommand.CanExecute(null))
+								//		model.UpdateDataCommand.Execute(null);
 
-				                //})
-				                //	  }
-				                // };
-				                // await dialog.ShowAsync();
+								//})
+								//	  }
+								// };
+								// await dialog.ShowAsync();
 
-				            });
+							});
 
-				        }
-				        catch (Exception ex)
-				        {
-				            throw;
-				        }
-				    };
-					    
+						}
+						catch (Exception ex)
+						{
+							log?.Fatal($"App need update: {ex.Message}", ex);
+							throw;
+						}
+					};
+						
 
 #pragma warning disable 4014
 					model.Context.LoadDataBase();
@@ -241,11 +233,8 @@ namespace UniversalMinskTrans
 					throw new Exception("Failed to create initial page");
 				}
 			}
-#if BETA
-			Logger.Log("Activate window");
-			Debug.WriteLine("App.OnLaunched ended");
-#endif
 
+			log.Debug("Activate window");
 			// Ensure the current window is active
 			Window.Current.Activate();
 		}
@@ -269,18 +258,18 @@ namespace UniversalMinskTrans
 		/// <param name="e">Details about the suspend request.</param>
 		private async void OnSuspending(object sender, SuspendingEventArgs e)
 		{
-#if BETA
-			Logger.Log("Onsuspending");
-			await Logger.Log().SaveToFile();
-#endif
+			log.Info("Onsuspending");
+
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			await model.Context.Save(saveAllDB: false);
-		    await model.NewsManager.SaveToFile();
+			await model.NewsManager.SaveToFile();
 			model.SettingsModelView.TypeError = Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
 			deferral.Complete();
+
+			log.Info("Onsuspending2");
 		}
 
 
@@ -358,25 +347,35 @@ namespace UniversalMinskTrans
 		/// </summary>
 		public App()
 		{
+			//            var configuration = new LoggingConfiguration();
+			//#if DEBUG
+			//            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
+			//#endif
+			//            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+			//            configuration.IsEnabled = true;
 
-#if BETA
-			Logger.Log().WriteLine(Environment.NewLine+Environment.NewLine + Environment.NewLine).WriteLineTime("App");
-#endif
+			//            LogManagerFactory.DefaultConfiguration = configuration;
+			LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+			LogManagerFactory.DefaultConfiguration.IsEnabled = true;
+			log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
+
+			log.Debug("\n\nApp constructor started");
+
 			//TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
 
 			this.InitializeComponent();
 			this.Suspending += this.OnSuspending;
 
-            GlobalCrashHandler.Configure();
+			GlobalCrashHandler.Configure();
 
-            this.UnhandledException += OnUnhandledException;
+			this.UnhandledException += OnUnhandledException;
 
 
 
 			//MainModelView.Create(new UniversalContext(new FileHelper()));
-#if BETA
-			Logger.Log("App ended");
-#endif
+
+			log.Debug("App ended");
+
 		}
 
 		async Task SaveToFile(string str)
@@ -387,18 +386,10 @@ namespace UniversalMinskTrans
 
 		private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
 		{
-		    ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
 			var settings = MainModelView.MainModelViewGet.SettingsModelView;
-			StringBuilder builder = new StringBuilder(DateTime.Now.ToString());
-			builder.Append(": ").Append(unhandledExceptionEventArgs.Exception.ToString()).
-				AppendLine(unhandledExceptionEventArgs.Message).AppendLine(unhandledExceptionEventArgs.Exception.StackTrace);
-			settings.LastUnhandeledException = builder.ToString();
-		    log.Fatal("UnhandledException", unhandledExceptionEventArgs.Exception);
-#if BETA
-			Logger.Log("App.OnUnhadledException:").WriteLine(unhandledExceptionEventArgs.Exception.ToString())
-				.WriteLine(unhandledExceptionEventArgs.Message).WriteLineTime(unhandledExceptionEventArgs.Exception.StackTrace);
-			await Logger.Log().SaveToFile();
-#endif
+
+			log?.Fatal($"App.OnUnhadledException: {unhandledExceptionEventArgs.Message}\n", unhandledExceptionEventArgs.Exception);		
+
 			if (settings.TypeError == Error.Critical)
 				settings.TypeError = Error.Repeated;
 			else if (settings.TypeError == Error.Repeated)
@@ -415,14 +406,12 @@ namespace UniversalMinskTrans
 
 		protected override async void OnActivated(IActivatedEventArgs args)
 		{
-#if BETA
-			Logger.Log("App OnActivated");
-#endif
+			log?.Debug("App OnActivated");
+
 			base.OnActivated(args);
 			await MainModelView.MainModelViewGet.Context.LoadDataBase();
-#if BETA
-			Logger.Log("App OnActivated, context loaded");
-#endif
+
+			log?.Debug("App OnActivated, context loaded");
 		}
 
 		#endregion

@@ -19,13 +19,13 @@ namespace MinskTrans.Universal.Converters
 			switch (strValue)
 			{
 				case TransportType.Trol:
-					return "Image/trol.jpg";
+					return "../Image/trol.jpg";
 				case TransportType.Bus:
-					return "Image/bus.jpg";
+					return "../Image/bus.jpg";
 				case TransportType.Tram:
-					return "Image/tram.jpg";
+					return "../Image/tram.jpg";
 				case TransportType.Metro:
-					return "Image/subway.jpg";
+					return "../Image/subway.jpg";
 			}
 			return "";
 		}

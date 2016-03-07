@@ -72,7 +72,7 @@
     <Style x:Key="ToggleButtonStyle1" TargetType="ToggleButton">
 
         
-        <Setter Property="Background" Value="#FFBDBDBD"/>
+        <Setter Property="Background" Value="#FF6F6F6F"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundTransparentBrush}"/>
         <Setter Property="BorderThickness" Value="{ThemeResource ToggleButtonBorderThemeThickness}"/>

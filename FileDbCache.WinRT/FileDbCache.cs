@@ -184,7 +184,7 @@ namespace MapControl.Caching
 
             return false;
         }
-
+        public DateTime Expires { get; set; }
         private ImageCacheItem Get(string key)
         {
             var fields = new string[] { valueField, expiresField };

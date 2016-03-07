@@ -20,7 +20,7 @@
     <PackageCertificateKeyFile>UniversalMinskTransRelease_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\</AppxPackageDir>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
     <PackageCertificateThumbprint>D95E21D2866CF4CE68AF37DED04AB8CD7026C4ED</PackageCertificateThumbprint>
     <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
@@ -148,6 +148,7 @@
     <Compile Include="Converters\RoutsToNumStrConverter.cs" />
     <Compile Include="Converters\StopsToStr.cs" />
     <Compile Include="Converters\TransportFormatedStringConverter.cs" />
+    <Compile Include="Converters\TransportTypeToVisability.cs" />
     <Compile Include="Converters\WeekdaysToStrConverter.cs" />
     <Compile Include="Expander\BooleanToVisibilityConverter.cs" />
     <Compile Include="LocationToVisibilityConverter.cs" />
@@ -186,6 +187,9 @@
     </Compile>
     <Compile Include="View\NewsView.xaml.cs">
       <DependentUpon>NewsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RoutNumsView.xaml.cs">
+      <DependentUpon>RoutNumsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\RoutStopsTimeTableView.xaml.cs">
       <DependentUpon>RoutStopsTimeTableView.xaml</DependentUpon>
@@ -299,6 +303,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\RoutNumsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\RoutStopsTimeTableView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -309,6 +317,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Google\xamlmapcontrol-de5576447d46b9c177beb26dc342a4cf1cff7e6b\Caching\FileDbCache.WinRT\FileDbCache.WinRT.csproj">
+      <Project>{c7bf2b18-cc74-430b-bcb2-600304efa3d8}</Project>
+      <Name>FileDbCache.WinRT</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\BackgroundUpdateTask\BackgroundUpdateTask.csproj">
       <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
       <Name>BackgroundUpdateTask</Name>

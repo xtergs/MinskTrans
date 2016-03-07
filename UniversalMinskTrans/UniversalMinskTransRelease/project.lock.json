@@ -1643,7 +1643,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -3383,7 +3383,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -5095,7 +5095,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -6840,7 +6840,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -8552,7 +8552,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -10297,7 +10297,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -12009,7 +12009,7 @@
           "lib/uap10.0/WindowsStateTriggers.dll": {}
         }
       },
-      "XAML.MapControl/2.6.0": {
+      "XAML.MapControl/2.8.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -15839,8 +15839,8 @@
         "WindowsStateTriggers.nuspec"
       ]
     },
-    "XAML.MapControl/2.6.0": {
-      "sha512": "JNnaUttLVch1a6moUgTQ8xDIiawYzBXDu9XyxLfWe8zQNybDYpcAwk96SxjBckmtFaD84G4EyK0iK7oJeNZVHA==",
+    "XAML.MapControl/2.8.0": {
+      "sha512": "Px3+hGuMDFSGEnE7FCSv8moq1hQujW8KCBGqW/CgmhGtKoGvWXzP6HsnqhgNEy/DfOZ25LAOZS5wJBrRtuMGIw==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
@@ -15859,7 +15859,7 @@
         "lib/wpa81/MapControl.WinRT.pri",
         "lib/wpa81/MapControl.WinRT/MapControl.WinRT.xr.xml",
         "lib/wpa81/MapControl.WinRT/Themes/Generic.xbf",
-        "package/services/metadata/core-properties/f0b411c394074f6b902caf199f1edb3f.psmdcp",
+        "package/services/metadata/core-properties/3e68787d14e44e718b70190a74c6491c.psmdcp",
         "XAML.MapControl.nuspec"
       ]
     }
@@ -15878,7 +15878,7 @@
       "MvvmLightLibs >= 5.2.0",
       "Newtonsoft.Json >= 8.0.2",
       "WindowsStateTriggers >= 1.1.0",
-      "XAML.MapControl >= 2.6.0"
+      "XAML.MapControl >= 2.8.0"
     ],
     "UAP,Version=v10.0": []
   }

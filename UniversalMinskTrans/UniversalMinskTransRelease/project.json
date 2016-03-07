@@ -12,7 +12,7 @@
     "MvvmLightLibs": "5.2.0",
     "Newtonsoft.Json": "8.0.2",
     "WindowsStateTriggers": "1.1.0",
-    "XAML.MapControl": "2.6.0"
+    "XAML.MapControl": "2.8.0"
   },
   "frameworks": {
     "uap10.0": {}

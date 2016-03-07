@@ -88,29 +88,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="GroupTransportList">
-            <Grid MinWidth="130" Margin="0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <Image Height="{Binding ActualHeight,
-                                        ElementName=RouteNumTextBlock}"
-                       MinHeight="15"
-                       VerticalAlignment="Top"
-                       Source="{Binding Rout.Transport,
-                                        Converter={StaticResource TransportToImageConverter}}" />
-                <TextBlock x:Name="RouteNumTextBlock"
-                           Grid.Column="1"
-                           Margin="5,0,0,0"
-                           VerticalAlignment="Top"
-                           FontSize="35"
-                           Text="{Binding Rout.RouteNum,
-                                          Converter={StaticResource DateToString}}" />
-            </Grid>
-        </DataTemplate>
+        
         <DataTemplate x:Key="DataTemplate3">
             <StackPanel>
                 <TextBlock FontSize="15" Text="{Binding RouteName}" />
@@ -952,40 +930,16 @@
                                                             Mode=TwoWay,
                                                             UpdateSourceTrigger=PropertyChanged}" />
 
-                            <ListView x:Name="RoutsListView"
-                                      Grid.Row="1"
+                            <view:RoutNumsView x:Name="RoutsListView"
+                                      Grid.Row="1" Grid.RowSpan="2"
                                       Grid.ColumnSpan="2"
-                                      DataContext="{Binding RoutsModelView}"
-                                      ItemTemplate="{StaticResource GroupTransportList}"
-                                      ItemsSource="{Binding RouteNums,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding RouteNumSelectedValue,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout >
-                                        <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-
-
+                                      DataContext="{Binding RoutsModelView}">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="SelectionChanged">
                                         <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
                                     </Core:EventTriggerBehavior>
-                                    <Core:EventTriggerBehavior EventName="RightTapped">
-                                        <local:OpenFlyoutAction/>
-                                    </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
-                                <ListView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <Controls:WrapPanel />
-                                    </ItemsPanelTemplate>
-                                </ListView.ItemsPanel>
-                            </ListView>
-
-
-
+                            </view:RoutNumsView>
 
                             <Grid x:Name="ShowRoutsListGrid"
                                   Grid.Row="1"

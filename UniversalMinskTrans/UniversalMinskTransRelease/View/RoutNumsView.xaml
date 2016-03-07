@@ -1,0 +1,63 @@
+﻿<UserControl
+    x:Class="UniversalMinskTransRelease.View.RoutNumsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniversalMinskTransRelease.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:universal="using:MinskTrans.Universal"
+    xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
+    xmlns:modelView="using:MinskTrans.Universal.ModelView"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    d:DataContext="{d:DesignInstance modelView:RoutsModelView}"
+    >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+    <ListView x:Name="RoutsListView"
+                                      Grid.Row="0"
+                                      DataContext="{Binding}"
+                                      ItemTemplate="{StaticResource GroupTransportList}"
+                                      ItemsSource="{Binding RouteNums,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding RouteNumSelectedValue,
+                                                             Mode=TwoWay,
+                                                             UpdateSourceTrigger=PropertyChanged}">
+        <FlyoutBase.AttachedFlyout>
+            <MenuFlyout >
+                <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </MenuFlyout>
+        </FlyoutBase.AttachedFlyout>
+
+
+        <interactivity:Interaction.Behaviors>
+            
+            <core:EventTriggerBehavior EventName="RightTapped">
+                <universal:OpenFlyoutAction/>
+            </core:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
+        <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <controls:WrapPanel />
+            </ItemsPanelTemplate>
+        </ListView.ItemsPanel>
+    </ListView>
+        
+        <AppBar Grid.Row="1" IsOpen="False">
+            <StackPanel Orientation="Horizontal">
+                <AppBarToggleButton Checked="ToggleButton_OnChecked" x:Name="AllTogleButton" IsChecked="True" Margin="5,0" Width="Auto" Content="Все" Command="{Binding ShowAllTransportCommand}" IsCompact="True"/>
+                <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TrolTogleButton" Margin="5,0" Width="Auto" Grid.Column="1" Content="Тролейбус" Command="{Binding ShowTrolCommand}" IsCompact="True"/>
+                <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="BusTogleButton" Margin="5,0" Width="Auto" Grid.Column="2" Content="Автобус" Command="{Binding ShowBusCommand}" IsCompact="True"/>
+                <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TramTogleButton" Margin="5,0" Width="Auto" Grid.Column="3" Content="Трамвай" Command="{Binding ShowTramCommand}" IsCompact="True"/>
+            </StackPanel>
+            
+        </AppBar>
+        
+    </Grid>
+</UserControl>

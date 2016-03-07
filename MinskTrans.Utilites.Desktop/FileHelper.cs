@@ -76,7 +76,7 @@ namespace MinskTrans.Utilites.Desktop
 			}
 		}
 
-		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file, string subfolder = TODO)
+		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file, string subfolder = "")
 		{
 			return File.ReadAllText(Path.Combine(Folders[folder], file));
 		}
@@ -107,10 +107,20 @@ namespace MinskTrans.Utilites.Desktop
 				File.Delete(Path.Combine(path, file));
 		}
 
+	    public override Task DeleteFolder(TypeFolder folder, string folders)
+	    {
+	        throw new NotImplementedException();
+	    }
+
 	    public override async Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder)
 	    {
             string path = Path.Combine(Folders[folder], subFolder);
 	        return Directory.GetFiles(path).ToList();
+	    }
+
+	    public override Task<IList<string>> GetNamesFolder(TypeFolder folder)
+	    {
+	        throw new NotImplementedException();
 	    }
 
 	    public async override Task<Stream> OpenStream(TypeFolder folder, string file)
@@ -119,6 +129,11 @@ namespace MinskTrans.Utilites.Desktop
 			return File.Open(path, FileMode.Open);
 		}
 
-		#endregion
+	    public override Task WriteTextAsync(TypeFolder folder, string file, Stream text)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    #endregion
 	}
 }

@@ -12,5 +12,7 @@ namespace CommonLibrary.Notify
         Task ReportErrorAsync(string errorString);
         Task ShowMessageAsync(string text, List<KeyValuePair<string, RelayCommand>> commands = null);
         KeyValuePair<string, RelayCommand> CreateCommand(string text, RelayCommand command, object parametr);
+        void ShowNotificaton(string text);
+
     }
 }

@@ -72,12 +72,12 @@ using GalaSoft.MvvmLight.Command;
 		{
 			get
 			{
-			    var temp = Context.GetRouteNums(TypeTransport, RoutNum);
-			    if (temp == null)
-			        return null;
-			    var routeNums = temp as IList<Rout> ?? temp.ToList();
-			    RouteNumSelectedValue = routeNums.FirstOrDefault();
-			    return routeNums;
+				var temp = Context.GetRouteNums(TypeTransport, RoutNum);
+				if (temp == null)
+					return null;
+				var routeNums = temp as IList<Rout> ?? temp.ToList();
+				RouteNumSelectedValue = routeNums.FirstOrDefault();
+				return routeNums;
 			}
 		}
 
@@ -100,8 +100,8 @@ using GalaSoft.MvvmLight.Command;
 		{
 			get
 			{
-                routeObservableCollection = new ObservableCollection<Rout>( Context.GetRouteNums(TypeTransport, RouteNumSelectedValue?.RouteNum));
-			    return routeObservableCollection;
+				routeObservableCollection = new ObservableCollection<Rout>( Context.GetRouteNums(TypeTransport, RouteNumSelectedValue?.RouteNum));
+				return routeObservableCollection;
 			}
 		}
 
@@ -255,7 +255,10 @@ using GalaSoft.MvvmLight.Command;
 		//		OnPropertyChanged();
 		//	}
 		//}
-
+		public RelayCommand ShowAllTransportCommand
+		{
+			get { return new RelayCommand(() => TypeTransport = TransportType.None); }
+		}
 		public RelayCommand ShowBusCommand
 		{
 			get { return new RelayCommand(() => TypeTransport = TransportType.Bus); }

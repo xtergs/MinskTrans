@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
+using MapControl.Caching;
 using MetroLog;
 using Microsoft.Xaml.Interactivity;
 using MinskTrans.Context.Base.BaseModel;
@@ -47,12 +48,12 @@ namespace MinskTrans.Universal
 		private List<PushpinLocation> pushpins;
 		States state = States.Stops;
 
-	    public MainModelView MainView
-	    {
-	        get { return MainModelView.MainModelViewGet; }
-	    }
+		public MainModelView MainView
+		{
+			get { return MainModelView.MainModelViewGet; }
+		}
 
-	    void ShowPopup(string text)
+		void ShowPopup(string text)
 		{
 			TextBlock textBlock = new TextBlock()
 			{
@@ -76,10 +77,9 @@ namespace MinskTrans.Universal
 			Logger.Log("MainPage");
 #endif
 			this.InitializeComponent();
-            
-			//TileImageLoader.Cache = new MapControl.Caching.ImageCacheItem();
+
 			//TileImageLoader.DefaultCacheExpiration = new TimeSpan(10, 0, 0, 0,0);
-			
+			TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
@@ -104,8 +104,8 @@ namespace MinskTrans.Universal
 			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
 			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
 			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
-                
-                
+				
+				
 			//	await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
 			//};
 			
@@ -120,15 +120,15 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowStopDetailOnlyVisualState", true);
 			};
 
-		    //model.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
+			//model.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
 
-            //TODO
+			//TODO
 			//model.FindModelView.StopModelView.StatusGPSChanged += async (sender, args) =>
 			//{
 			//	await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { model.FindModelView.StopModelView.Refresh(); });
 
 			//};
-            //TODO
+			//TODO
 
 			//VisualStateGroup.CurrentStateChanged += (sender, args) =>
 			//{
@@ -227,7 +227,7 @@ namespace MinskTrans.Universal
 			ShowStop.AddGroup += ShowAddGroup;
 
 
-            DataContext = model;
+			DataContext = model;
 
 
 #if BETA
@@ -236,182 +236,182 @@ namespace MinskTrans.Universal
 		}
 
 
-	    public void SelectVisualState()
-	    {
-	        if (Pivot.SelectedItem == SearchPivotItem)
-	        {
-	                var curState = VisualStateGroup.CurrentState;
-	            if (curState == null)
-	            {
-                    VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
-	                return;
-	            }
-	            if (model.FindModelView.IsShowStopsView)
-	            {
-	                if (this.ActualWidth >= 800)
-	                {
-	                    if (StopsListView.SelectedItem == null)
-	                    {
-	                        if (curState == StopsCompactVisualState)
-	                            return;
-	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
-	                    }
-	                    else
-	                    {
-	                        if (curState == StopsVisualState)
-	                            return;
-	                        VisualStateManager.GoToState(mainPage, nameof(StopsVisualState), true);
-	                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-	                            AppViewBackButtonVisibility.Collapsed;
-	                    }
-	                }
-	                else
-	                {
-	                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-	                        AppViewBackButtonVisibility.Visible;
-	                   //if windows was in wide mode, go to compact
+		public void SelectVisualState()
+		{
+			if (Pivot.SelectedItem == SearchPivotItem)
+			{
+					var curState = VisualStateGroup.CurrentState;
+				if (curState == null)
+				{
+					VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+					return;
+				}
+				if (model.FindModelView.IsShowStopsView)
+				{
+					if (this.ActualWidth >= 800)
+					{
+						if (StopsListView.SelectedItem == null)
+						{
+							if (curState == StopsCompactVisualState)
+								return;
+							VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+						}
+						else
+						{
+							if (curState == StopsVisualState)
+								return;
+							VisualStateManager.GoToState(mainPage, nameof(StopsVisualState), true);
+							SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+								AppViewBackButtonVisibility.Collapsed;
+						}
+					}
+					else
+					{
+						SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+							AppViewBackButtonVisibility.Visible;
+					   //if windows was in wide mode, go to compact
 
-	                    if (StopsListView.SelectedItem != null)
-	                    {
-	                        if (curState == ShowStopVisualState)
-	                            return;
-	                        VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
-	                    }
-	                    else
-	                    {
-	                        if (curState == StopsCompactVisualState)
-	                            return;
-	                        VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
-	                    }
-	                }
-	            }
-	            else if (model.FindModelView.IsShowTransportsView)
-	            {
-                    
-                   // var curState = VisualStateGroup.CurrentState;
-                    if (this.ActualWidth >= 800)
-                    {
-                        if (RoutsListView.SelectedItem == null)
-                        {
-                            if (curState == TransportListVisualState)
-                                return;
-                            VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
-                        }
-                        else
-                        {
-                            if (curState == DescktopRoutsVisualState)
-                                return;
-                            VisualStateManager.GoToState(mainPage, nameof(DescktopRoutsVisualState), true);
-                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                            AppViewBackButtonVisibility.Collapsed;
-                        }
-                    }
-                    else
-                    {
-                        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                           AppViewBackButtonVisibility.Visible;
-                       
-                        //if windows was in wide mode, go to compact
+						if (StopsListView.SelectedItem != null)
+						{
+							if (curState == ShowStopVisualState)
+								return;
+							VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
+						}
+						else
+						{
+							if (curState == StopsCompactVisualState)
+								return;
+							VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
+						}
+					}
+				}
+				else if (model.FindModelView.IsShowTransportsView)
+				{
+					
+				   // var curState = VisualStateGroup.CurrentState;
+					if (this.ActualWidth >= 800)
+					{
+						if (RoutsListView.SelectedItem == null)
+						{
+							if (curState == TransportListVisualState)
+								return;
+							VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
+						}
+						else
+						{
+							if (curState == DescktopRoutsVisualState)
+								return;
+							VisualStateManager.GoToState(mainPage, nameof(DescktopRoutsVisualState), true);
+							SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+							AppViewBackButtonVisibility.Collapsed;
+						}
+					}
+					else
+					{
+						SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+						   AppViewBackButtonVisibility.Visible;
+					   
+						//if windows was in wide mode, go to compact
 
-                        if (ShowRoutsListView.SelectedItem != null)
-                            VisualStateManager.GoToState(mainPage, nameof(ShowRoutVisualState), true);
-                        else if (RoutsListView.SelectedItem != null)
-                        {
-                            VisualStateManager.GoToState(mainPage, nameof(RoutsListVisualState), true);
-                        }
-                        else
-                            VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
-                    }
-                }
-	        }
-            else if (Pivot.SelectedItem == MapPivotItem)
-            {
-               map.ResetVisualState();
-            }
-            //else if (Pivot.SelectedItem == GroupsPivtoItem)
-            //{
-            //    var curState = VisualStateGroup.CurrentState;
-            //    if (this.ActualWidth >= 800)
-            //    {
-            //        if (curState != ShowGroupWideVisualState)
-            //        {
-            //            VisualStateManager.GoToState(mainPage, nameof(ShowGroupWideVisualState), true);
+						if (ShowRoutsListView.SelectedItem != null)
+							VisualStateManager.GoToState(mainPage, nameof(ShowRoutVisualState), true);
+						else if (RoutsListView.SelectedItem != null)
+						{
+							VisualStateManager.GoToState(mainPage, nameof(RoutsListVisualState), true);
+						}
+						else
+							VisualStateManager.GoToState(mainPage, nameof(TransportListVisualState), true);
+					}
+				}
+			}
+			else if (Pivot.SelectedItem == MapPivotItem)
+			{
+			   map.ResetVisualState();
+			}
+			//else if (Pivot.SelectedItem == GroupsPivtoItem)
+			//{
+			//    var curState = VisualStateGroup.CurrentState;
+			//    if (this.ActualWidth >= 800)
+			//    {
+			//        if (curState != ShowGroupWideVisualState)
+			//        {
+			//            VisualStateManager.GoToState(mainPage, nameof(ShowGroupWideVisualState), true);
 
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (curState != ShowGroupVisualState && model.GroupStopsModelView.SelectedGroup != null)
-            //        {
-            //            VisualStateManager.GoToState(mainPage, nameof(ShowGroupVisualState), true);
-            //        }
-            //        else
-            //            VisualStateManager.GoToState(mainPage, nameof(ListGroupsVisualState), true);
-            //    }
-            //}
-	    }
+			//        }
+			//    }
+			//    else
+			//    {
+			//        if (curState != ShowGroupVisualState && model.GroupStopsModelView.SelectedGroup != null)
+			//        {
+			//            VisualStateManager.GoToState(mainPage, nameof(ShowGroupVisualState), true);
+			//        }
+			//        else
+			//            VisualStateManager.GoToState(mainPage, nameof(ListGroupsVisualState), true);
+			//    }
+			//}
+		}
 
-	    bool BackVisualState()
-	    {
-            if (Pivot.SelectedItem == SearchPivotItem)
-            {
-                var curState = VisualStateGroup.CurrentState;
-                if (curState == null)
-                {
-                    return false;
-                }
-                if (model.FindModelView.IsShowStopsView)
-                {
-                    if (this.ActualWidth >= 800)
-                    {
-                        if (StopsListView.SelectedItem != null)
-                        {
-                            StopsListView.SelectedItem = null;
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                       
-                        if (StopsListView.SelectedItem != null)
-                        {
-                            StopsListView.SelectedItem = null;
-                            return true;
-                        }
-                       
-                    }
-                    return false;
-                }
-                else
-                {
-                    // var curState = VisualStateGroup.CurrentState;
-                    if (this.ActualWidth >= 800)
-                    {
-                        if (StopsListView.SelectedItem != null)
-                        {
-                            StopsListView.SelectedItem = null;
-                            return true;
-                        }
-                    }
-                    else
-                    {
+		bool BackVisualState()
+		{
+			if (Pivot.SelectedItem == SearchPivotItem)
+			{
+				var curState = VisualStateGroup.CurrentState;
+				if (curState == null)
+				{
+					return false;
+				}
+				if (model.FindModelView.IsShowStopsView)
+				{
+					if (this.ActualWidth >= 800)
+					{
+						if (StopsListView.SelectedItem != null)
+						{
+							StopsListView.SelectedItem = null;
+							return true;
+						}
+					}
+					else
+					{
+					   
+						if (StopsListView.SelectedItem != null)
+						{
+							StopsListView.SelectedItem = null;
+							return true;
+						}
+					   
+					}
+					return false;
+				}
+				else
+				{
+					// var curState = VisualStateGroup.CurrentState;
+					if (this.ActualWidth >= 800)
+					{
+						if (StopsListView.SelectedItem != null)
+						{
+							StopsListView.SelectedItem = null;
+							return true;
+						}
+					}
+					else
+					{
 
-                        if (ShowRoutsListView.SelectedItem != null)
-                        {
-                            ShowRoutsListView.SelectedItem = null;
-                            return true;
-                        }
-                        else if (RoutsListView.SelectedItem != null)
-                        {
-                            RoutsListView.SelectedItem = null;
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
-	        return false;
-	    }
+						if (ShowRoutsListView.SelectedItem != null)
+						{
+							ShowRoutsListView.SelectedItem = null;
+							return true;
+						}
+						else if (RoutsListView.SelectedItem != null)
+						{
+							RoutsListView.SelectedItem = null;
+							return true;
+						}
+					}
+					return false;
+				}
+			}
+			return false;
+		}
 
 
 		private void ShowAddGroup(object sender, EventArgs args)
@@ -428,33 +428,33 @@ namespace MinskTrans.Universal
 #if WINDOWS_PHONE_APP
 			HardwareButtons.BackPressed += HardwareButtons_BackPressed;
 #elif WINDOWS_UWP
-            //Windows.Devices.HumanInterfaceDevice.
+			//Windows.Devices.HumanInterfaceDevice.
 
-		    if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-		        //Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-		        ;
+			if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+				//Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+				;
 			SystemNavigationManager.GetForCurrentView().BackRequested += NavigationManagerBackRequsted;
-		    model.ExternalCommands.BackPressed +=
-		        (o, args) =>
-		        {
-		            if (Pivot.SelectedItem == SearchPivotItem)
-		            {
-		                BackVisualState();
-		                SelectVisualState();
+			model.ExternalCommands.BackPressed +=
+				(o, args) =>
+				{
+					if (Pivot.SelectedItem == SearchPivotItem)
+					{
+						BackVisualState();
+						SelectVisualState();
 
-		            }
-		            else if (Pivot.SelectedItem == GroupsPivtoItem)
-		            {
-		                if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
-		                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-		                else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
-		                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-		                else
-		                {
-		                    return;
-		                }
-		            }
-		        };
+					}
+					else if (Pivot.SelectedItem == GroupsPivtoItem)
+					{
+						if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+							VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+						else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+							VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+						else
+						{
+							return;
+						}
+					}
+				};
 
 			//  ToDo:
 
@@ -487,42 +487,42 @@ namespace MinskTrans.Universal
 #endif
 		}
 
-	    public bool BackButton()
-	    {
-	        bool res = false;
-            if (Pivot.SelectedItem == SearchPivotItem)
-            {
-                res = BackVisualState();
-                SelectVisualState();
+		public bool BackButton()
+		{
+			bool res = false;
+			if (Pivot.SelectedItem == SearchPivotItem)
+			{
+				res = BackVisualState();
+				SelectVisualState();
 
-            }
-            else
-            if (Pivot.SelectedItem == GroupsPivtoItem)
-            {
-                res = true;
-                if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
-                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-                else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
-                    VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-                else
-                {
-                    res = false;
-                }
-            }
-	        return res;
-	    }
+			}
+			else
+			if (Pivot.SelectedItem == GroupsPivtoItem)
+			{
+				res = true;
+				if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
+					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+				else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
+					VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
+				else
+				{
+					res = false;
+				}
+			}
+			return res;
+		}
 
 		private void NavigationManagerBackRequsted(object sender, BackRequestedEventArgs e)
 		{
-		    e.Handled = BackButton();
+			e.Handled = BackButton();
 		}
 
 #if WINDOWS_UAP
 		private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
 		{
-            e.Handled = BackButton();
+			e.Handled = BackButton();
 
-        }
+		}
 #endif
 	
 
@@ -551,10 +551,10 @@ namespace MinskTrans.Universal
 			HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
 #elif WINDOWS_UWP
 
-		    if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-		        //Windows.Phone.UI.Input.HardwareButtons.BackPressed -=  ;
-		        ;
-		    //TODO
+			if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+				//Windows.Phone.UI.Input.HardwareButtons.BackPressed -=  ;
+				;
+			//TODO
 
 
 #else
@@ -563,7 +563,7 @@ namespace MinskTrans.Universal
 				Window.Current.CoreWindow.PointerPressed -=
 					this.CoreWindow_PointerPressed;
 #endif
-		    //model.Context.Save();
+			//model.Context.Save();
 		}
 
 		private void AppBarButton_Click(object sender, RoutedEventArgs e)
@@ -591,31 +591,31 @@ namespace MinskTrans.Universal
 			SendEmailToDeveloper("");
 		}
 
-	    public async void SendEmailToDeveloper(string str, IList<string> filename, IList<IRandomAccessStreamReference> streams )
-	    {
-            var email = new EmailMessage()
-            {
+		public async void SendEmailToDeveloper(string str, IList<string> filename, IList<IRandomAccessStreamReference> streams )
+		{
+			var email = new EmailMessage()
+			{
 
-                Subject = "Минский общественный транспорт",
-                To =
-                {
-                    new EmailRecipient("xtergs@gmail.com")
-                },
-                Body = str
-            };
-	        for (int i = 0; i < filename.Count; i++)
-	        {
-	            EmailAttachment attachment = new EmailAttachment(filename[i], streams[i] );
-                email.Attachments.Add(attachment);
-	        }
-	        await EmailManager.ShowComposeNewEmailAsync(email);
-	    }
+				Subject = "Минский общественный транспорт",
+				To =
+				{
+					new EmailRecipient("xtergs@gmail.com")
+				},
+				Body = str
+			};
+			for (int i = 0; i < filename.Count; i++)
+			{
+				EmailAttachment attachment = new EmailAttachment(filename[i], streams[i] );
+				email.Attachments.Add(attachment);
+			}
+			await EmailManager.ShowComposeNewEmailAsync(email);
+		}
 
 		async void SendEmailToDeveloper(string str)
 		{
-            await EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
+			await EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
 			{ 
-                
+				
 				Subject = "Минский общественный транспорт",
 				To =
 				{
@@ -650,14 +650,14 @@ namespace MinskTrans.Universal
 		{
 			string message = "";
 
-       
-            var fileHelper = model.FileHelper;
-            var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
-            await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
-            await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
-            xxx.Dispose();
-            var refer = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync("lll.log"));
-            SendEmailToDeveloper("Log", new []{"log"}, new [] {refer});
+	   
+			var fileHelper = model.FileHelper;
+			var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
+			await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+			await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
+			xxx.Dispose();
+			var refer = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync("lll.log"));
+			SendEmailToDeveloper("Log", new []{"log"}, new [] {refer});
 		}
 
 		
@@ -689,29 +689,29 @@ namespace MinskTrans.Universal
 
 		
 
-        private void mainPage_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            SelectVisualState();
-        }
+		private void mainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			SelectVisualState();
+		}
 
-        private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
-        {
-            MainModelView.MainModelViewGet.NewsModelView.FilteredStops = null;
-        }
+		private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
+		{
+			MainModelView.MainModelViewGet.NewsModelView.FilteredStops = null;
+		}
 
-        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            SelectVisualState();
-        }
-    }
+		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			SelectVisualState();
+		}
+	}
 
-    public class OpenFlyoutAction : DependencyObject, IAction
-    {
-        public object Execute(object sender, object parameter)
-        {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+	public class OpenFlyoutAction : DependencyObject, IAction
+	{
+		public object Execute(object sender, object parameter)
+		{
+			FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
 
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 }

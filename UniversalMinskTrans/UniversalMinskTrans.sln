@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinskTrans.Utilites.Desktop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundUpdateTaskUniversal", "BackgroundUpdateTaskUniversal\BackgroundUpdateTaskUniversal.csproj", "{0D04620E-75F1-4DC1-9EC0-FC0DFDC9A3DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileDbCache.WinRT", "..\FileDbCache.WinRT\FileDbCache.WinRT.csproj", "{C7BF2B18-CC74-430B-BCB2-600304EFA3D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileDbCache.WinRT", "..\..\..\Google\xamlmapcontrol-de5576447d46b9c177beb26dc342a4cf1cff7e6b\Caching\FileDbCache.WinRT\FileDbCache.WinRT.csproj", "{C7BF2B18-CC74-430B-BCB2-600304EFA3D8}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

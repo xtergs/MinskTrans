@@ -37,7 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\MapControl.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>MapControl.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
@@ -48,20 +48,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\MapControl.snk">
-      <Link>MapControl.snk</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MapControl\WinRT\MapControl.WinRT.csproj">
-      <Project>{63cefdf7-5170-43b6-86f8-5c4a383a1615}</Project>
-      <Name>MapControl.WinRT</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="FileDbPcl">
       <HintPath>..\FileDb\FileDbPcl.dll</HintPath>
     </Reference>
+    <Reference Include="MapControl.WinRT">
+      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.7.1\lib\wpa81\MapControl.WinRT.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MapControl.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

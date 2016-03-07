@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using CommonLibrary.Notify;
 using GalaSoft.MvvmLight.Command;
@@ -42,6 +43,18 @@ namespace UniversalMinskTransRelease.Nofity
             {
                 command.Execute(parametr);
             }));
+        }
+
+        public void ShowNotificaton(string text)
+        {
+            var notifi = ToastNotificationManager.CreateToastNotifier();
+
+            var xaml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText04);
+            var textNode = xaml.GetElementsByTagName("text");
+            textNode.Item(0)?.AppendChild(xaml.CreateTextNode(text));
+            //value.appendChild(toastXml.createTextNode(text));
+            ToastNotification notification = new ToastNotification(xaml);
+            notifi.Show(notification);
         }
 
         async Task ShowPendingMessaagesAsync()

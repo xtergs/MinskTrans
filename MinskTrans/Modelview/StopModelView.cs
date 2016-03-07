@@ -238,7 +238,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				isShowFavouriteStops = value;
 				OnPropertyChanged();
-				OnPropertyChanged("FilteredStops");
+				OnPropertyChanged(nameof(FilteredStops));
+			    FilterStopsAsync();
 			}
 		}
 
@@ -364,6 +365,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
 				OnPropertyChanged("TimeSchedule");
+			    FilterStopsAsync();
 
 			}
 		}
@@ -380,8 +382,9 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
 				OnPropertyChanged("TimeSchedule");
+                FilterStopsAsync();
 
-			}
+            }
 		}
 
 		//public RelayCommand<Stop> ShowStopMap
@@ -401,6 +404,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
 				OnPropertyChanged("TimeSchedule");
+			    FilterStopsAsync();
 			}
 		}
 
@@ -423,8 +427,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
 				OnPropertyChanged("TimeSchedule");
-
-			}
+                FilterStopsAsync();
+            }
 		}
 
 		public TimeLineModel SelectedTimeLineModel

@@ -104,7 +104,8 @@ namespace MinskTrans.Universal.ModelView
 			{
 				isShowFavouriteRouts = value;
 				OnPropertyChanged();
-				OnPropertyChanged("RouteNums");
+			    RouteNumsFilterAsync();
+				OnPropertyChanged(nameof(RouteNums));
 			}
 		}
 

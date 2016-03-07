@@ -21,11 +21,18 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <universal:MyTextBox x:Name="FindTrans"
+                                             Grid.Row="0"
+                                             InputScope="Number"
+                                             Text="{Binding RoutNumAsync,
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}" />
         <GridView  x:Name="RoutsListView"
-			Grid.Row="0"
+			Grid.Row="1"
                    VirtualizingStackPanel.VirtualizationMode="Recycling"
 			DataContext="{Binding}"
 			ItemTemplate="{StaticResource GroupTransportList}"
@@ -46,7 +53,7 @@
             </interactivity:Interaction.Behaviors>
             
         </GridView>
-        <AppBar Grid.Row="1" IsOpen="False">
+        <AppBar Grid.Row="2" IsOpen="False">
             <StackPanel Orientation="Horizontal">
                 <AppBarToggleButton Checked="ToggleButton_OnChecked" x:Name="AllTogleButton" IsChecked="True" Margin="5,0" Width="Auto" Content="Все" Command="{Binding ShowAllTransportCommand}" IsCompact="True"/>
                 <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TrolTogleButton" Margin="5,0" Width="Auto" Grid.Column="1" Content="Тролейбус" Command="{Binding ShowTrolCommand}" IsCompact="True"/>
@@ -56,6 +63,7 @@
 
         </AppBar>
         <AppBarToggleButton x:Name="appBarToggleButton1"
+                                                Grid.Row="1"
                                                 VerticalAlignment="Bottom"
                                                 HorizontalAlignment="Right"
                                                 Content="FavouriteRout"

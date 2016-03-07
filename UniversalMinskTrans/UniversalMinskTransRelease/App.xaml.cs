@@ -150,7 +150,9 @@ namespace UniversalMinskTrans
 							{
 								try
 								{
-									await
+								    model.IsNeesUpdate = true;
+								    return;
+                                    await
 										model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных",
 											new List<KeyValuePair<string, RelayCommand>>
 											{

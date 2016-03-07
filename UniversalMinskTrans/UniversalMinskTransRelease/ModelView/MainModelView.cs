@@ -42,8 +42,17 @@ namespace MinskTrans.Universal.ModelView
 		private readonly INotifyHelper notifyHelper;
 		private ILogger log;
 
+	    public bool IsNeesUpdate
+	    {
+	        get { return _isNeesUpdate; }
+	        set
+	        {
+	            _isNeesUpdate = value;
+	            OnPropertyChanged();
+	        }
+	    }
 
-		public UpdateManagerBase UpdateManager { get; }
+	    public UpdateManagerBase UpdateManager { get; }
 
 
 		public static MainModelView MainModelViewGet => 
@@ -148,6 +157,8 @@ namespace MinskTrans.Universal.ModelView
 				{
 					log?.Trace("UpdateDataCommand activated");
 					updating = true;
+				    bool oldNeedUpdate = IsNeesUpdate;
+				    IsNeesUpdate = false;
 					try
 					{
 						UpdateDataCommand.RaiseCanExecuteChanged();
@@ -162,6 +173,8 @@ namespace MinskTrans.Universal.ModelView
 					{
 						NotifyHelper.ReportErrorAsync("Во время обновления произошла ошибка попробуйте позже");
 						log?.Error($"UpdateDataCommand {e.Message}", e);
+					    if (oldNeedUpdate)
+					        IsNeesUpdate = true;
 					}
 					finally
 					{
@@ -200,7 +213,9 @@ namespace MinskTrans.Universal.ModelView
 		}
 
 		private bool logsWork = false;
-		public RelayCommand RefreshLogsCommand
+	    private bool _isNeesUpdate = false;
+
+	    public RelayCommand RefreshLogsCommand
 		{
 			get
 			{

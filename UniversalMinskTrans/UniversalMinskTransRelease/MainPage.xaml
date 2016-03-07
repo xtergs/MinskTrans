@@ -213,7 +213,7 @@
                         <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible" />
                         <Setter Target="RoutViews.(Grid.Column)" Value="1" />
                         <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-                        <Setter Target="appBarToggleButton1.(UIElement.Visibility)" Value="Visible" />
+                       
                     </VisualState.Setters>
 
 
@@ -229,7 +229,7 @@
                         </Setter>
                         <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-                        <Setter Target="appBarToggleButton1.(UIElement.Visibility)" Value="Visible" />
+                        
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
@@ -272,7 +272,7 @@
                 <VisualState x:Name="RoutsListVisualState">
                     <VisualState.Setters>
                         <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-                        <Setter Target="appBarToggleButton1.(UIElement.Visibility)" Value="Collapsed" />
+                        
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutsListGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -926,7 +926,7 @@
                             <local:MyTextBox x:Name="FindTrans"
                                              Grid.Row="0"
                                              InputScope="Number"
-                                             Text="{Binding RoutsModelView.RoutNum,
+                                             Text="{Binding RoutsModelView.RoutNumAsync,
                                                             Mode=TwoWay,
                                                             UpdateSourceTrigger=PropertyChanged}" />
 
@@ -990,15 +990,7 @@
                                     </Interactivity:Interaction.Behaviors>-->
                                 </ListView>
                             </Grid>
-                            <AppBarToggleButton x:Name="appBarToggleButton1"
-                                                Grid.Row="2"
-                                                HorizontalAlignment="Right"
-                                                Content="FavouriteRout"
-                                                Icon="Favorite"
-                                                IsChecked="{Binding RoutsModelView.IsShowFavouriteRouts,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                                IsCompact="True" />
+                            
                         </Grid>
                         <AppBar x:Name="appBar"
                                 Grid.Row="2"

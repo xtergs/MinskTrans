@@ -177,14 +177,14 @@
                                         ElementName=RouteNumTextBlock}"
                        MinHeight="15"
                        VerticalAlignment="Top"
-                       Source="{Binding Rout.Transport,
+                       Source="{Binding Transport,
                                         Converter={StaticResource TransportToImageConverter}}" />
             <TextBlock x:Name="RouteNumTextBlock"
                            Grid.Column="1"
                            Margin="5,0,0,0"
                            VerticalAlignment="Top"
                            FontSize="35"
-                           Text="{Binding Rout.RouteNum,
+                           Text="{Binding RouteNum,
                                           Converter={StaticResource DateToString}}" />
         </Grid>
     </DataTemplate>

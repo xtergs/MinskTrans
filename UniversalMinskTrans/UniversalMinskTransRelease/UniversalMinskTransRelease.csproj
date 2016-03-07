@@ -132,9 +132,6 @@
     <Compile Include="..\..\minsktrans\modelview\StopModelViewBase.cs">
       <Link>ModelView\StopModelViewBase.cs</Link>
     </Compile>
-    <Compile Include="..\..\minsktrans\modelview\StopsModelView.cs">
-      <Link>ModelView\StopsModelView.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

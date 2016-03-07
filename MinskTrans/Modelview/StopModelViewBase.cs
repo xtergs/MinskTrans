@@ -48,9 +48,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public override void Refresh()
 		{
-			try {
-				OnPropertyChanged("StopNameFilter");
-				OnPropertyChanged("FilteredStops");
+			try
+			{
+			    FilterStopsAsync();
+
 			}
 			catch
 			{ }

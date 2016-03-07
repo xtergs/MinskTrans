@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
@@ -23,6 +26,7 @@ namespace MinskTrans.Universal.ModelView
 		private Rout routeNumSelectedValue;
 		private IEnumerable<string> routeNums;
 
+
 		private ObservableCollection<Rout> routeObservableCollection;
 		private Rout routeSelectedValue;
 		//private int selectedRouteNumIndex;
@@ -36,8 +40,12 @@ namespace MinskTrans.Universal.ModelView
 		//private List<Time> timesObservableCollection;
 	    private TransportType typeTransport = TransportType.All;
 		private bool isShowFavouriteRouts;
+	    private string routNumAsync;
+	    private CancellationTokenSource tokenSource = null;
+	    private bool _isWorking;
+	    private IEnumerable<Rout> _routeNumsAsync;
 
-		//public RoutesModelview()
+	    //public RoutesModelview()
 		//{
 		//	OnPropertyChanged("RouteNums");
 		//}
@@ -79,8 +87,10 @@ namespace MinskTrans.Universal.ModelView
 			}
 			set
 			{
-				//if (value == typeTransport) return;
+				if (value == typeTransport)
+                    return;
 				typeTransport = value;
+			    RouteNumsFilterAsync();
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(RouteNums));
 				OnPropertyChanged(nameof(RouteNumSelectedValue));
@@ -350,25 +360,148 @@ namespace MinskTrans.Universal.ModelView
 			get { return routNum; }
 			set
 			{
-				if (value == routNum) return;
+			    if (value == null)
+			        return;
+			    value = value.Trim();
+				if (value == routNum)
+                    return;
 				routNum = value;
-				OnPropertyChanged();
-				OnPropertyChanged("RouteNums");
+				OnPropertyChanged(nameof(RouteNums));
+			    OnPropertyChanged();
 			}
 		}
 
-		//public int StopIndex
-		//{
-		//	get { return stopIndex; }
-		//	set
-		//	{
-		//		if (value == stopIndex) return;
-		//		stopIndex = value;
-		//		OnPropertyChanged();
-		//	}
-		//}
+        public string RoutNumAsync
+        {
+            get { return routNumAsync; }
+            set
+            {
+                if (value == null)
+                    return;
+                value = value.Trim();
+                if (value == routNumAsync)
+                    return;
+                routNumAsync = value;
+                RouteNumsFilterAsync();
+                OnPropertyChanged();
+            }
+        }
 
-		public RelayCommand ShowAllTransportCommand
+
+	    public bool IsWorking
+	    {
+	        get { return _isWorking; }
+	        set
+	        {
+	            _isWorking = value;
+	            OnPropertyChanged();
+	        }
+	    }
+
+	    public IEnumerable<Rout> RouteNumsAsync
+	    {
+	        get { return _routeNumsAsync; }
+	        set
+	        {
+	            if (_routeNumsAsync == value)
+	                return;
+	            _routeNumsAsync = value;
+	            OnPropertyChanged();
+	        }
+	    }
+
+
+	    public virtual async Task<IEnumerable<Rout>> RouteNumsFilterAsync()
+	    {
+#if DEBUG
+            System.Diagnostics.Stopwatch wather1 = new Stopwatch();
+            wather1.Start();
+#endif
+            if (Context.Routs == null)
+	            return null;
+	        if (tokenSource != null)
+	        {
+	            tokenSource.Cancel(true);
+	            Debug.WriteLine("Cancellation requested");
+	        }
+	        using (tokenSource = new CancellationTokenSource())
+	        {
+	            IsWorking = true;
+	            var token = tokenSource.Token;
+	            var res = await Task.Run(async () =>
+	            {
+	                await Task.Delay(250, token);
+	                if (token.IsCancellationRequested)
+	                    return null;
+#if DEBUG
+	                System.Diagnostics.Stopwatch wather = new Stopwatch();
+	                wather.Start();
+	                //await Task.Delay(5000, token);
+#endif
+
+	                if (IsShowFavouriteRouts)
+	                    return Context.Context.FavouriteRouts;
+
+	                if (token.IsCancellationRequested)
+	                    return null;
+
+	                IEnumerable<Rout> temp =
+	                    Context.Routs.Where(x => TypeTransport.HasFlag(x.Transport)).Distinct(new RoutsComparer());
+
+	                if (token.IsCancellationRequested)
+	                    return null;
+
+	                if (!string.IsNullOrWhiteSpace(RoutNumAsync))
+	                    temp = temp.Where(x => x.RouteNum.Contains(RoutNumAsync));
+
+	                
+#if DEBUG
+
+	                wather.Stop();
+	                Debug.WriteLine($"\nThread time is {wather.Elapsed}");
+#endif
+	                if (token.IsCancellationRequested)
+	                    return null;
+	                return temp;
+	            }, token);
+	            if (token.IsCancellationRequested)
+	                return null;
+	            tokenSource = null;
+	            IsWorking = false;
+#if DEBUG
+                System.Diagnostics.Stopwatch wather2 = new Stopwatch();
+                wather2.Start();
+#endif
+                RouteNumsAsync = res;
+#if DEBUG
+
+                wather2.Stop();
+                Debug.WriteLine($"\ncopy time is {wather2.Elapsed}");
+#endif
+#if DEBUG
+
+                wather1.Stop();
+                Debug.WriteLine($"\nProcess time is {wather1.Elapsed}");
+#endif
+                return res;
+	        }
+
+	    }
+
+
+
+	    //public int StopIndex
+        //{
+        //	get { return stopIndex; }
+        //	set
+        //	{
+        //		if (value == stopIndex) return;
+        //		stopIndex = value;
+        //		OnPropertyChanged();
+        //	}
+        //}
+
+        public RelayCommand ShowAllTransportCommand
 		{
 			get { return new RelayCommand(() => TypeTransport = TransportType.All); }
 		}
@@ -402,7 +535,7 @@ public RelayCommand<Rout> AddRemoveFavouriteRout
 		public override void RefreshView()
 		{
 			base.RefreshView();
-			OnPropertyChanged("RouteNums");
+		    RouteNumsFilterAsync();
 		}
 
 		#endregion

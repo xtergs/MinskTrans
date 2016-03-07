@@ -1,5 +1,4 @@
 ﻿<UserControl
-    x:Class="UniversalMinskTransRelease.View.RoutNumsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniversalMinskTransRelease.View"
@@ -10,25 +9,28 @@
     xmlns:universal="using:MinskTrans.Universal"
     xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
     xmlns:modelView="using:MinskTrans.Universal.ModelView"
+    xmlns:ExpanderControl="using:ExpanderControl"
+    x:Class="UniversalMinskTransRelease.View.RoutNumsView"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     d:DataContext="{d:DesignInstance modelView:RoutsModelView}"
     >
+    <UserControl.Resources>
+        <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListView x:Name="RoutsListView"
-                                      Grid.Row="0"
-                                      DataContext="{Binding}"
-                                      ItemTemplate="{StaticResource GroupTransportList}"
-                                      ItemsSource="{Binding RouteNums,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding RouteNumSelectedValue,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
+        <GridView  x:Name="RoutsListView"
+			Grid.Row="0"
+                   VirtualizingStackPanel.VirtualizationMode="Recycling"
+			DataContext="{Binding}"
+			ItemTemplate="{StaticResource GroupTransportList}"
+			ItemsSource="{Binding RouteNumsAsync, UpdateSourceTrigger=PropertyChanged}"
+			SelectedItem="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout >
                     <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -42,12 +44,8 @@
                     <universal:OpenFlyoutAction/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <controls:WrapPanel />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </ListView>
+            
+        </GridView>
         <AppBar Grid.Row="1" IsOpen="False">
             <StackPanel Orientation="Horizontal">
                 <AppBarToggleButton Checked="ToggleButton_OnChecked" x:Name="AllTogleButton" IsChecked="True" Margin="5,0" Width="Auto" Content="Все" Command="{Binding ShowAllTransportCommand}" IsCompact="True"/>
@@ -57,14 +55,16 @@
             </StackPanel>
 
         </AppBar>
-        <ProgressBar IsIndeterminate="True" >
-            <interactivity:Interaction.Behaviors>
-
-                <core:DataTriggerBehavior >
-                    <universal:OpenFlyoutAction/>
-                </core:DataTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
-        </ProgressBar>
+        <AppBarToggleButton x:Name="appBarToggleButton1"
+                                                VerticalAlignment="Bottom"
+                                                HorizontalAlignment="Right"
+                                                Content="FavouriteRout"
+                                                Icon="Favorite"
+                                                IsChecked="{Binding IsShowFavouriteRouts,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                IsCompact="True" />
+        <ProgressBar IsIndeterminate="True" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
     </Grid>
 </UserControl>

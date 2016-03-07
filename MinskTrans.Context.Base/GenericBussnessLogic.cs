@@ -243,6 +243,34 @@ namespace MinskTrans.Context
             //return routeNums;
         }
 
+        
+
+        public List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day)
+        {
+            int index = 0;
+            for (int i = 0; i < rout.Stops.Count; i++)
+            {
+               index = rout.Time.TimesDictionary[i].Where(x=> x.Days.Contains(day.ToString())).First().Times.IndexOf(mins);
+                if (index >= 0)
+                {
+                    break;
+                }
+            }
+            if (index >= 0)
+            {
+                List<StopTimePair> pair = new List<StopTimePair>();
+                for (int i = 0; i < rout.Stops.Count; i++)
+                {
+                    StopTimePair p = new StopTimePair();
+                    p.Time = new TimeSpan(0,0,rout.Time.TimesDictionary[i][day].Times[index] - mins, 0,0);
+                    p.Stop = rout.Stops[i];
+                    pair.Add(p);
+                }
+                return pair;
+            }
+            return null;
+        } 
+
         public event EventHandler<EventArgs> NeedUpdadteDB;
 
         public DateTime LastUpdateDbDateTimeUtc

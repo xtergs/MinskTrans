@@ -76,7 +76,7 @@ namespace MinskTrans.Utilites.Desktop
 			}
 		}
 
-		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file)
+		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file, string subfolder = TODO)
 		{
 			return File.ReadAllText(Path.Combine(Folders[folder], file));
 		}

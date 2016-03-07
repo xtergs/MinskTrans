@@ -45,6 +45,8 @@ namespace MyLibrary
         DateTime LastSeenMainNewsDateTimeUtc { get; set; }
         DateTime LastSeenHotNewsDateTimeUtc { get; set; }
         bool HaveConnection();
+
+        int FontSize { get; set; }
 	}
 
     public enum Error
@@ -109,6 +111,16 @@ namespace MyLibrary
 
             return InternetHelperBase.Is_Connected && (InternetHelperBase.Is_InternetAvailable ||
                                                    InternetHelperBase.Is_Wifi_Connected == UpdateOnWiFi);
+        }
+
+        public int FontSize {
+            get { return helper.SimpleGet(15); }
+
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
         }
 
 

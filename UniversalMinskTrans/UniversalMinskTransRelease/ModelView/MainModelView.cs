@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,12 +51,14 @@ namespace MinskTrans.Universal.ModelView
 
 	    private MainModelView()
 		{
-		    var configuration = new LoggingConfiguration();
-
+            var configuration = new LoggingConfiguration();
+#if DEBUG
             configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
-
+#endif
             configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
             configuration.IsEnabled = true;
+
+            LogManagerFactory.DefaultConfiguration = configuration;
 
             LogManagerFactory.DefaultConfiguration = configuration;
             var builder = new ContainerBuilder();
@@ -130,10 +134,9 @@ namespace MinskTrans.Universal.ModelView
 
 	    readonly ObservableCollection<string> resultString = new ObservableCollection<string>();
 
-	    public ObservableCollection<string> AllLogs { get
-	        ; set; }
+	    public ObservableCollection<string> AllLogs => resultString;
 
-		bool updating = false;
+	    bool updating = false;
         private CancellationTokenSource cancelSource;
         RelayCommand updateDataCommand;
 		public RelayCommand UpdateDataCommand
@@ -168,13 +171,26 @@ namespace MinskTrans.Universal.ModelView
 
 	    public async Task< List<string>> GetLogsAsync()
 	    {
+            string folder = "metroLogs";
             var fileHelper = container.Resolve<FileHelperBase>();
-            var fileNames = await fileHelper.GetNamesFiles(TypeFolder.Local, "metroLogs");
+	        var xxx =await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
+	        await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+	        await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
+             xxx.Dispose();
+            //var xxxxxxx = (await MetroLog.WinRT.Logger.GetCompressedLogFile());
+
+            ZipFile.ExtractToDirectory(fileHelper.GetPath(TypeFolder.Temp) + "\\" + "lll.log", fileHelper.GetPath(TypeFolder.Temp) + "\\" + folder);
+
+            var fileNames = await fileHelper.GetNamesFiles(TypeFolder.Temp, folder);
 	        List<string> resultList = new List<string>();
             foreach (var fileName in fileNames)
             {
-                resultList.AddRange((await fileHelper.ReadAllTextAsync(TypeFolder.Local, "metroLogs\\" + fileName)).Split('\n'));
-                resultList.Add(Environment.NewLine);
+#if DEBUG
+
+#endif
+                resultList.Add(await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileName, folder));
+                await fileHelper.DeleteFile(TypeFolder.Temp, folder + "\\" + fileName);
+
             }
 	        return resultList;
 	    }
@@ -192,11 +208,23 @@ namespace MinskTrans.Universal.ModelView
 	                {
 	                    logsWork = true;
 	                    resultString.Clear();
-	                    (await GetLogsAsync()).Aggregate((x,y)=> { resultString.Add(x);
-	                                                                 return "";
+	                    var entries = await GetLogsAsync();
+	                    entries.All(x =>
+	                    {
+	                        resultString.Add(x);
+	                        return true;
+	                    });
+	                    entries.Aggregate((x, y) =>
+	                    {
+	                        resultString.Add(x);
+	                        return "";
 	                    });
 	                    // OnPropertyChanged("AllLogs");
 	                    OnPropertyChanged("AllLogs");
+	                }
+	                catch (Exception e)
+	                {
+	                    log.Error(e.Message, e);
 	                }
 	                finally
 	                {
@@ -224,5 +252,6 @@ namespace MinskTrans.Universal.ModelView
         public NewsModelView NewsModelView => container.Resolve<NewsModelView>();
 
 	    public INotifyHelper NotifyHelper => notifyHelper;
+	    public FileHelperBase FileHelper { get { return container.Resolve<FileHelperBase>(); } }
 	}
 }

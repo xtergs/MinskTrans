@@ -175,6 +175,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		
 		public bool fuzzySearch;
 	    private bool isShowFavouriteStops;
+	    private TimeLineModel _selectedTimeLineModel;
 
 	    public override IEnumerable<Stop> FilteredStops
 	    {
@@ -388,6 +389,18 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
+	    public TimeLineModel SelectedTimeLineModel
+	    {
+	        get { return _selectedTimeLineModel; }
+	        set
+	        {
+	            _selectedTimeLineModel = value;
+	            OnPropertyChanged();
+	            var xxx = StopsTimesForRout;
+
+	        }
+	    }
+
 	    public virtual IEnumerable<TimeLineModel> TimeSchedule
 	    {
 	        get
@@ -395,6 +408,11 @@ namespace MinskTrans.DesctopClient.Modelview
 	            return Context.GetStopTimeLine(FilteredSelectedStop, CurDay, CurTime - SettingsModelView.TimeInPast,
 	                selectedTransport);
 	        }
+	    }
+
+	    public List<StopTimePair> StopsTimesForRout
+	    {
+	        get { return Context.GetStopsTimesParis(SelectedTimeLineModel.Rout, (int)SelectedTimeLineModel.Time.TotalMinutes, CurDay); }
 	    }
 
 	    public RelayCommand<Stop> AddRemoveFavouriteStop

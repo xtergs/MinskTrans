@@ -18,6 +18,7 @@ using Task = System.Threading.Tasks.Task;
 using Autofac;
 using CommonLibrary.Notify;
 using MetroLog;
+using MetroLog.Targets;
 using Microsoft.OneDrive.Sdk.WindowsForms;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
@@ -33,6 +34,7 @@ using MinskTrans.Utilites.Desktop;
 using MyLibrary;
 using OneDriveRestAPI;
 using OneDriveRestAPI.Model;
+using PCLStorage;
 using CredentialCache = Microsoft.OneDrive.Sdk.CredentialCache;
 using File = System.IO.File;
 using IContainer = Autofac.IContainer;
@@ -101,8 +103,16 @@ namespace PushNotificationServer
 			SetAutoUpdateTimer(NewsAutoUpdate);
             var builder = new ContainerBuilder();
 
-			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
-          // builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
+            var configuration = new LoggingConfiguration();
+
+            //configuration.AddTarget(LogLevel.Trace, new PortableFileTarget(new DesktopFileSystem()));
+
+            //configuration.IsEnabled = true;
+
+            //LogManagerFactory.DefaultConfiguration = configuration;
+
+            builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
+            //builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
             builder.RegisterType<Context>().As<IContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();

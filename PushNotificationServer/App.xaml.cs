@@ -8,6 +8,14 @@ namespace PushNotificationServer
 	/// </summary>
 	public partial class App : Application
 	{
+	    public App()
+	    {
+	        Application.Current.DispatcherUnhandledException += (sender, args) =>
+	        {
+	            MessageBox.Show(args.Exception.Message + "\n" + args.Exception.StackTrace);
+	        };
+
+	    }
 		private void Application_LoadCompleted(object sender, NavigationEventArgs e)
 		{
 			//ServerEngine.Engine.InicializeAsync();
@@ -18,5 +26,9 @@ namespace PushNotificationServer
 			await ServerEngine.Engine.InicializeAsync();
 		}
 
-	}
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message);
+        }
+    }
 }

@@ -56,6 +56,10 @@ namespace UniversalMinskTransRelease.Nofity
                     await pendingDialogs.Dequeue().ShowAsync();
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             finally
             {
                 isShowingDialog = false;

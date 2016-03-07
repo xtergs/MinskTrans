@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MetroLog;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
@@ -48,8 +49,9 @@ namespace MinskTrans.Context
 	    private readonly NewsManagerBase newManager;
 	    private readonly ISettingsModelView settings;
 	    private readonly FilePathsSettings files;
+	    public ILogger log { get; set; }
 
-	    public BussnessLogic(IContext cont, UpdateManagerBase updateManager, InternetHelperBase internetHelper, FileHelperBase fileHelper, NewsManagerBase newManager, ISettingsModelView settings, IGeolocation geolocation, FilePathsSettings files)
+	    public BussnessLogic(IContext cont, UpdateManagerBase updateManager, InternetHelperBase internetHelper, FileHelperBase fileHelper, NewsManagerBase newManager, ISettingsModelView settings, IGeolocation geolocation, FilePathsSettings files, ILogManager manager = null)
             :base(cont)
 	    {
 	        
@@ -59,6 +61,7 @@ namespace MinskTrans.Context
 	        this.newManager = newManager;
 	        this.settings = settings;
 	        this.files = files;
+	        log = manager?.GetLogger<BussnessLogic>();
 	        this.Geolocation = geolocation;
 	    }
 
@@ -110,21 +113,25 @@ namespace MinskTrans.Context
 	            try
 	            {
 	                await fileHelper.DeleteFile(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
-	                await internetHelper.Download(files.LastUpdatedFile.SecondFormatedLink, files.LastUpdatedFile.NewFileName, files.LastUpdatedFile.Folder);
+	                await
+	                    internetHelper.Download(files.LastUpdatedFile.SecondFormatedLink, files.LastUpdatedFile.NewFileName,
+	                        files.LastUpdatedFile.Folder);
 	            }
-	            catch (Exception)
+	            catch (Exception e)
 	            {
-
+	                log?.Error("UpdateNewsTAbleAsync");
+	                log?.Error(e.Message, e);
 	                return false;
 	            }
 
 	            if (token.IsCancellationRequested)
 	                return false;
 
-	            string resultStr = await fileHelper.ReadAllTextAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
+	            string resultStr =
+	                await fileHelper.ReadAllTextAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
 
 	            var timeShtaps = resultStr.Split('\n');
-                var utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
+	            var utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
 	            //NewsManager manager = new NewsManager();
 	            //await newManager.Load();
 	            DateTime oldMonthTime = settings.LastNewsTimeUtc;
@@ -135,10 +142,12 @@ namespace MinskTrans.Context
 	                try
 	                {
 	                    await fileHelper.DeleteFile(files.MainNewsFile.Folder, files.MainNewsFile.NewFileName);
-	                    await internetHelper.Download(files.MainNewsFile.SecondFormatedLink, files.MainNewsFile.NewFileName, files.MainNewsFile.Folder);
+	                    await
+	                        internetHelper.Download(files.MainNewsFile.SecondFormatedLink, files.MainNewsFile.NewFileName,
+	                            files.MainNewsFile.Folder);
 	                    await
 	                        fileHelper.SafeMoveAsync(files.MainNewsFile.Folder,
-                            from: files.MainNewsFile.NewFileName,
+	                            from: files.MainNewsFile.NewFileName,
 	                            to: files.MainNewsFile.FileName);
 	                    settings.LastNewsTimeUtc = utcNow;
 	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
@@ -150,6 +159,7 @@ namespace MinskTrans.Context
 	                            .AppendLine(e.Message)
 	                            .AppendLine(e.StackTrace)
 	                            .ToString();
+	                    log?.Error(message);
 	                    Debug.WriteLine(message);
 	                }
 	            }
@@ -157,19 +167,21 @@ namespace MinskTrans.Context
 	            if (token.IsCancellationRequested)
 	                return false;
 
-                utcNow = DateTime.Parse(timeShtaps[1], CultureInfo.InvariantCulture);
+	            utcNow = DateTime.Parse(timeShtaps[1], CultureInfo.InvariantCulture);
 	            if (utcNow > oldDaylyTime)
 	            {
 	                try
 	                {
-                        await fileHelper.DeleteFile(files.HotNewsFile.Folder, files.HotNewsFile.NewFileName);
-                        await internetHelper.Download(files.HotNewsFile.SecondFormatedLink, files.HotNewsFile.NewFileName, files.HotNewsFile.Folder);
-                        await
-                           fileHelper.SafeMoveAsync(files.HotNewsFile.Folder,
-                           from: files.HotNewsFile.NewFileName,
-                               to: files.HotNewsFile.FileName);
-                        settings.LastUpdateHotNewsDateTimeUtc = utcNow;
-	                   //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
+	                    await fileHelper.DeleteFile(files.HotNewsFile.Folder, files.HotNewsFile.NewFileName);
+	                    await
+	                        internetHelper.Download(files.HotNewsFile.SecondFormatedLink, files.HotNewsFile.NewFileName,
+	                            files.HotNewsFile.Folder);
+	                    await
+	                        fileHelper.SafeMoveAsync(files.HotNewsFile.Folder,
+	                            from: files.HotNewsFile.NewFileName,
+	                            to: files.HotNewsFile.FileName);
+	                    settings.LastUpdateHotNewsDateTimeUtc = utcNow;
+	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
 	                catch (Exception e)
 	                {
@@ -179,6 +191,7 @@ namespace MinskTrans.Context
 	                            .AppendLine(e.StackTrace)
 	                            .ToString();
 	                    Debug.WriteLine(message);
+	                    log?.Error(message, e);
 	                }
 	            }
 
@@ -186,11 +199,11 @@ namespace MinskTrans.Context
 	                return false;
 
 	            DateTime nowTimeUtc = DateTime.UtcNow;
-                //TODO
+	            //TODO
 	            //var listOfDaylyNews = newManager.NewNews.Where(
 	            //    key => key.PostedUtc > oldMonthTime && ((nowTimeUtc - key.PostedUtc).TotalDays < MaxDaysAgo));
 
-                //TODO
+	            //TODO
 	            //var listOfMonthNews = newManager.AllHotNews.Where(key =>
 	            //{
 	            //    if (key.RepairedLineUtc != default(DateTime))
@@ -203,7 +216,14 @@ namespace MinskTrans.Context
 	            //    return (key.CollectedUtc > oldDaylyTime) &&
 	            //           ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
 	            //});
+	            await newManager.Load();
+	            log?.Info("UpdateNewsTableAsync is OK, return true");
 	            return true;
+	        }
+	        catch (Exception e)
+	        {
+	            log?.Fatal("UpdateNewsTableAsync", e);
+	            throw;
 	        }
 	        finally
 	        {
@@ -218,40 +238,54 @@ namespace MinskTrans.Context
 	    public override async Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false, bool tryOnlyOriginalLink = false)
 	    {
 	        if (updatingTimeTable || token.IsCancellationRequested)
+	        {
+                log?.Debug("UpdateTimeTableAsync: already updating or cancel requested, return false");
 	            return false;
-            OnUpdateDbStarted();
+	        }
+	        OnUpdateDbStarted();
 	        DateTime utcNow = DateTime.UtcNow;
 	        try
 	        {
 	            updatingTimeTable = true;
 	            if (withLightCheck)
 	            {
+	                string suf = "ForDb";
+	                string downloadTo = files.LastUpdatedFile.NewFileName + suf;
+	                string moveTo = files.LastUpdatedFile.FileName + suf;
+	                TypeFolder folder = files.LastUpdatedFile.Folder;
+
 	                try
 	                {
-	                    await fileHelper.DeleteFile(files.LastUpdatedFile.Folder, files.LastUpdatedFile.NewFileName);
-	                    await internetHelper.Download(files.LastUpdatedFile.SecondFormatedLink, files.LastUpdatedFile.NewFileName, files.LastUpdatedFile.Folder);
-                        await
-                          fileHelper.SafeMoveAsync(files.LastUpdatedFile.Folder,
-                          from: files.LastUpdatedFile.NewFileName,
-                              to: files.LastUpdatedFile.FileName);
-                    }
-	                catch (Exception)
+	                    await fileHelper.DeleteFile(folder, downloadTo);
+	                    await internetHelper.Download(files.LastUpdatedFile.SecondFormatedLink, downloadTo, folder);
+	                    await
+	                        fileHelper.SafeMoveAsync(folder,
+	                            from: downloadTo,
+	                            to: moveTo);
+	                }
+	                catch (Exception e)
 	                {
-						countUpdateFail++;
+	                    log?.Error("UpdateTimeTableAsync: trying to download lastupdate file", e);
+	                    countUpdateFail++;
+	                    log?.Info($"UpdateTimeTableAsync: CountUpdateFail: {countUpdateFail}");
 	                    return false;
 	                }
 	                if (token.IsCancellationRequested)
 	                    return false;
-	                string resultStr = await fileHelper.ReadAllTextAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName);
+	                string resultStr =
+	                    await fileHelper.ReadAllTextAsync(folder, moveTo);
 
 	                var timeShtaps = resultStr.Split('\n');
-	                
+
 	                if (timeShtaps.Length > 2)
 	                    utcNow = DateTime.Parse(timeShtaps[2], CultureInfo.InvariantCulture);
 	                if (utcNow <= Settings.LastUpdateDbDateTimeUtc)
 	                {
+	                    log?.Info("Light check is OK, no need to update");
+	                    log?.Info($"last update: {Settings.LastUpdateDbDateTimeUtc}");
 	                    return false;
 	                }
+	                log?.Info("Light check is OK, need update");
 	            }
 	            if (tryOnlyOriginalLink || !await updateManager.DownloadFormatedUpdateAsync(token))
 	            {
@@ -275,10 +309,12 @@ namespace MinskTrans.Context
                
 	            return true;
 	        }
-			catch(Exception)
+			catch(Exception e)
 			{
-				countUpdateFail++;
-				throw;
+                log?.Error("UpdateTimeTableAsync", e);
+                countUpdateFail++;
+                log?.Info($"UpdateTimeTableAsync: CountUpdateFail: {countUpdateFail}");
+                throw;
 			}
 	        finally
 	        {
@@ -299,8 +335,11 @@ namespace MinskTrans.Context
 	        throw new NotImplementedException();
 	    }
 
-	   
 
+	    public Task ClearFolder(TypeFolder folder)
+	    {
+	        return fileHelper.ClearFolder(folder);
+	    }
 	
         
 	}

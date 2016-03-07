@@ -31,225 +31,12 @@
       d:DataContext="{d:DesignInstance modelView:MainModelView}"
       mc:Ignorable="d">
     <Page.Resources>
-
-        <Converters:TransportFormatedStringConverter x:Key="DateToString" />
-
+       
         <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
-        <Converters:WeekdaysToStrConverter x:Key="WeekdaysToStrConverter" />
-
-        <Converters:IntToVisibleConverter x:Key="IntToVisibleConverter" />
-        <Converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter" />
-        <Converters:StopsToStr x:Key="StopsToStr" />
-        <Converters:TransportToImageConverter x:Key="TransportToImageConverter" />
         <local:MinsLeftConverter x:Key="MinsLeftConverter" />
         <local:MinsToTimeConverter x:Key="MinsToTimeConverter" />
-
-
-        <Style x:Key="PushpinItemStyle" TargetType="mapControl1:MapItem">
-            <Setter Property="mapControl1:MapPanel.Location" Value="{Binding Location}" />
-
-            <Setter Property="VerticalAlignment" Value="Bottom" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="mapControl1:MapItem">
-                        <mapControl1:Pushpin Content="{Binding Name}" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-
-        </Style>
-        <Style x:Key="PushpinStyle1" TargetType="mapControl1:Pushpin">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Bottom" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="Padding" Value="3" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="mapControl1:Pushpin">
-                        <Grid x:Name="MainGrid">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Rectangle x:Name="Rectangle">
-                                <Rectangle.Fill>
-                                    <SolidColorBrush x:Name="SolidColorBrush" Color="White" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <ContentPresenter Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-                            <Path x:Name="Path"
-                                  Grid.Row="1"
-                                  Data="M0,-0.5L0,16 16,-0.5">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="SolidColorBrush1" Color="White" />
-                                </Path.Fill>
-                            </Path>
-                        </Grid>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <DataTemplate x:Key="ListStopsDataTemplate">
-            <Grid Margin="0,2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.ColumnSpan="10"
-                           FontSize="15"
-                           Text="{Binding Name}" />
-                <TextBlock Grid.Row="1"
-                           Grid.ColumnSpan="10"
-                           Foreground="{ThemeResource GreyGroundSolidColorBrush}"
-                           MaxLines="2"
-                           Text="{Binding DirectionsString,
-                                          Converter={StaticResource StopsToStr}}"
-                           TextWrapping="WrapWholeWords" />
-                <!--<ListView Grid.Row="2"
-						  Grid.ColumnSpan="9"
-						  ItemsSource="{Binding Source=GroupedTypeRoutsView}">
-					<ListView.ItemsPanel>
-						<ItemsPanelTemplate>
-							<Controls:WrapPanel>
-							</Controls:WrapPanel>
-						</ItemsPanelTemplate>
-					</ListView.ItemsPanel>
-					<ListView.GroupStyle>
-						<GroupStyle>
-							<GroupStyle.HeaderTemplate>
-								<DataTemplate>
-									<Image Source="{Binding Key, Converter={StaticResource TransportToImageConverter}}"></Image>
-								</DataTemplate>
-							</GroupStyle.HeaderTemplate>
-						</GroupStyle>
-					</ListView.GroupStyle>
-				</ListView>-->
-                <Controls:WrapPanel Grid.Row="2"
-                                    Grid.ColumnSpan="9"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Top"
-                                    ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                    <Grid HorizontalAlignment="Left" Visibility="{Binding TrolRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Height="{Binding ActualHeight,
-                                                ElementName=TextBlock,
-                                                Mode=TwoWay,
-                                                UpdateSourceTrigger=PropertyChanged}"
-                               MinWidth="10"
-                               MinHeight="10"
-                               Source="Image/trol.jpg" />
-                        <TextBlock x:Name="TextBlock"
-                                   Grid.Column="1"
-                                   Margin="3,0,0,0"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Top"
-                                   FontSize="15"
-                                   Foreground="{ThemeResource BlueSolidColorBrush}"
-                                   Text="{Binding TrolRoutsNum,
-                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
-                    </Grid>
-                    <Grid Margin="2,0,0,0"
-                          HorizontalAlignment="Left"
-                          Visibility="{Binding BusRoutsNum.Count,
-                                               Converter={StaticResource IntToVisibleConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Height="{Binding ActualHeight,
-                                                ElementName=TextBlock1,
-                                                Mode=TwoWay,
-                                                UpdateSourceTrigger=PropertyChanged}"
-                               MinWidth="10"
-                               MinHeight="10"
-                               Source="Image/bus.jpg" />
-                        <TextBlock x:Name="TextBlock1"
-                                   Grid.Column="1"
-                                   Margin="3,0,0,0"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Top"
-                                   FontSize="15"
-                                   Foreground="{ThemeResource GreenSolidColorBrush}"
-                                   Text="{Binding BusRoutsNum,
-                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
-                    </Grid>
-                    <Grid Margin="2,0,0,0"
-                          HorizontalAlignment="Left"
-                          Visibility="{Binding TramRoutsNum.Count,
-                                               Converter={StaticResource IntToVisibleConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Height="{Binding ActualHeight,
-                                                ElementName=TextBlock2,
-                                                Mode=TwoWay,
-                                                UpdateSourceTrigger=PropertyChanged}"
-                               MinWidth="10"
-                               MinHeight="10"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch"
-                               Source="Image/tram.jpg" />
-                        <TextBlock x:Name="TextBlock2"
-                                   Grid.Column="1"
-                                   Margin="3,0,0,0"
-                                   FontSize="15"
-                                   Foreground="{ThemeResource RedSolidColorBrush}"
-                                   Text="{Binding TramRoutsNum,
-                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
-                    </Grid>
-                    <Grid Margin="2,0,0,0"
-                          HorizontalAlignment="Left"
-                          Visibility="{Binding MetroRoutsNum.Count,
-                                               Converter={StaticResource IntToVisibleConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Height="{Binding ActualHeight,
-                                                ElementName=TextBlock3,
-                                                UpdateSourceTrigger=PropertyChanged}"
-                               MinWidth="10"
-                               MinHeight="10"
-                               Source="Image/subway.jpg" />
-                        <TextBlock x:Name="TextBlock3"
-                                   Grid.Column="1"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Top"
-                                   FontSize="15"
-                                   Foreground="{ThemeResource VioletSolidColorBrush}"
-                                   Text="{Binding MetroRoutsNum,
-                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
-                    </Grid>
-                </Controls:WrapPanel>
-
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="DataTemplate2">
+        
+        <DataTemplate x:Key="DataTemplate2"> 
             <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -931,116 +718,7 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
-            <VisualStateGroup x:Name="MapVisualStates">
-                <VisualState x:Name="ShowMinskTransRoutingVisualState">
-                    <VisualState.Setters>
-                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed"/>
-                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2"/>
-                    </VisualState.Setters>
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Visible</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutingMinskTrans" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMinskTrans" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Visible</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WebViewMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Visible</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="map" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="ShowNormalMapVisualState" >
-
-                    <VisualState.Setters>
-                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed"/>
-                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2"/>
-                        <Setter Target="map.(Grid.ColumnSpan)" Value="2"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="ShowNormalMapWideVisualState" >
-
-                    <VisualState.Setters>
-                        <Setter Target="grid.(UIElement.Visibility)" Value="Visible"/>
-                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="1"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="ShowVirtualTableVisualState">
-                    <VisualState.Setters>
-                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2"/>
-                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed"/>
-                    </VisualState.Setters>
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowVirtualTable" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Visible</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WebViewMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Visible</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="map" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
+            
         </VisualStateManager.VisualStateGroups>
 
         <Pivot x:Name="Pivot"
@@ -1127,7 +805,7 @@
                                        MinHeight="15"
                                        Source="{Binding RouteSelectedValue.Transport,
                                                         Converter={StaticResource TransportToImageConverter},
-                                                        UpdateSourceTrigger=PropertyChanged}" />
+                                                       UpdateSourceTrigger=PropertyChanged}" />
                                 <TextBlock Grid.Column="1"
                                            Margin="5,0,0,0"
                                            FontSize="25"
@@ -1219,6 +897,7 @@
                                       Grid.ColumnSpan="1"
                                       DataContext="{Binding StopModelView}"
                                       IsSynchronizedWithCurrentItem="False"
+                                      FontSize="20"
                                       ItemTemplate="{StaticResource ListStopsDataTemplate}"
                                       ItemsSource="{Binding FilteredStops,
                                                             Mode=OneWay,
@@ -1520,7 +1199,8 @@
                        DataContext="{Binding MapModelView}"
                        Header="Карта"
                        Padding="0">
-                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+                <view:MapViewControll DataContext="{Binding}" x:Name="map"></view:MapViewControll>
+                <!--<Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
                     <Grid x:Name="grid1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -1528,12 +1208,13 @@
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <mapControl1:Map x:Name="map"
+                        <mapControl1:Map x:Name="map" TileLayer="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}"
                                          mapControl1:MapPanel.Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          ZoomLevel="19" />
+                        
 
                         <WebView x:Name="WebViewMap"
                                  PermissionRequested="WebViewMap_PermissionRequested"
@@ -1558,6 +1239,40 @@
                                 </Interactivity:Interaction.Behaviors>
                             </ListView>
 
+                        </Grid>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="Zoom Level" HorizontalAlignment="Center" Foreground="Gray" FontSize="14"/>
+                                    <Slider Margin="10,-10,10,-10" Width="200" SmallChange="0.1"
+                            Minimum="{Binding MinZoomLevel, ElementName=map, UpdateSourceTrigger=PropertyChanged}"
+                            Maximum="{Binding MaxZoomLevel, ElementName=map, UpdateSourceTrigger=PropertyChanged}"
+                            Value="{Binding TargetZoomLevel, ElementName=map, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="Heading" HorizontalAlignment="Center" Foreground="Gray" FontSize="14"/>
+                                    <Slider Margin="10,-10,10,-10" Width="200" Minimum="0" Maximum="360" SmallChange="5" LargeChange="45"
+                            Value="{Binding Heading, ElementName=map, Mode=TwoWay}"/>
+                                </StackPanel>
+                                
+                                <ComboBox Width="200" Margin="10" VerticalAlignment="Center"
+                          SelectedValuePath="Tag" SelectedValue="{Binding TileLayer, ElementName=map, Mode=TwoWay}">
+                                    <ComboBoxItem Tag="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}">OpenStreetMap</ComboBoxItem>
+                                    <ComboBoxItem Tag="{Binding [Thunderforest OpenCycleMap], Source={StaticResource TileLayers}}">OpenCycleMap</ComboBoxItem>
+                                    <ComboBoxItem Tag="{Binding [Thunderforest Landscape], Source={StaticResource TileLayers}}">Landscape</ComboBoxItem>
+                                    <ComboBoxItem Tag="{Binding [Thunderforest Outdoors], Source={StaticResource TileLayers}}">Outdoors</ComboBoxItem>
+                                    <ComboBoxItem Tag="{Binding [Thunderforest Transport], Source={StaticResource TileLayers}}">Transport</ComboBoxItem>
+                                    <ComboBoxItem Tag="{Binding [Thunderforest Transport Dark], Source={StaticResource TileLayers}}">Transport Dark</ComboBoxItem>
+                                    <ComboBoxItem Tag="{Binding [MapQuest OpenStreetMap], Source={StaticResource TileLayers}}">MapQuest Open</ComboBoxItem>
+                                    --><!--<ComboBoxItem Tag="{Binding [Bing Maps Road], Source={StaticResource TileLayers}}">Bing Maps Road</ComboBoxItem>
+                    <ComboBoxItem Tag="{Binding [Bing Maps Aerial], Source={StaticResource TileLayers}}">Bing Maps Aerial</ComboBoxItem>
+                    <ComboBoxItem Tag="{Binding [Bing Maps Hybrid], Source={StaticResource TileLayers}}">Bing Maps Hybrid</ComboBoxItem>--><!--
+                                </ComboBox>
+                            </StackPanel>
                         </Grid>
                         <Border Grid.Row="1"
                                 Margin="0,0"
@@ -1640,7 +1355,7 @@
                             </Controls:WrapPanel>
                         </Border>
                     </Grid>
-                </Border>
+                </Border>-->
             </PivotItem>
 
             <PivotItem x:Name="SettingsPivotItem"
@@ -1716,7 +1431,15 @@
                         <Button Click="ShowPolicity" Content="Политика безопасности" />
                         <Button Click="SendLog" Content="Отправить лог разработчику" />
                         <CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
+                        <ComboBox SelectedValue="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                            <ComboBoxItem>15</ComboBoxItem>
+                            <ComboBoxItem>16</ComboBoxItem>
+                            <ComboBoxItem>17</ComboBoxItem>
+                            <ComboBoxItem>18</ComboBoxItem>
+                            <ComboBoxItem>19</ComboBoxItem>
+                            <ComboBoxItem>20</ComboBoxItem>
+                            <ComboBoxItem>21</ComboBoxItem>
+                        </ComboBox>
                     </ListView>
                 </Border>
             </PivotItem>

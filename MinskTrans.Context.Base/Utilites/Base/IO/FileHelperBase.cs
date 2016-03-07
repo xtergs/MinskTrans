@@ -53,11 +53,13 @@ namespace MinskTrans.Utilites.Base.IO
 
 		public abstract Task SafeMoveAsync(TypeFolder folder, string from, string to);
 
-		public abstract Task<string> ReadAllTextAsync(TypeFolder folder, string file);
+		public abstract Task<string> ReadAllTextAsync(TypeFolder folder, string file, string subfolder = "");
 		public abstract Task<FluentFileHelperBase> WriteTextAsync(TypeFolder folder, string file, string text);
 		public abstract Task DeleteFile(TypeFolder folder, string file);
+        public abstract Task DeleteFolder(TypeFolder folder, string folders);
 
 	    public abstract Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder);
+        public abstract Task<IList<string>> GetNamesFolder(TypeFolder folder);
 
 		public abstract Task<Stream> OpenStream(TypeFolder folder, string file);
 
@@ -72,5 +74,25 @@ namespace MinskTrans.Utilites.Base.IO
 			List<Task> taskList = from.Select((file, index) => SafeMoveAsync(folder, file, to.ElementAt(index))).ToList();
 			await Task.WhenAll(taskList);
 		}
+
+        public abstract Task WriteTextAsync(TypeFolder folder, string file, Stream text);
+
+        public async Task ClearFolder(TypeFolder folder)
+        {
+            List<Task> tasks = new List<Task>();
+            var list =await GetNamesFolder(folder);
+            foreach (var folders in list)
+            {
+                tasks.Add(
+                    DeleteFolder(folder, folders));
+            }
+            list = await GetNamesFiles(folder, "");
+            foreach (var files in list)
+            {
+                tasks.Add(DeleteFile(folder, files));
+            }
+                await Task.WhenAll(tasks);
+
+        }
 	}
 }

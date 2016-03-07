@@ -4,6 +4,8 @@
     xmlns:local="using:MinskTrans.Universal.Resourse"
     >
 
+    <x:Double x:Key="TextStyleLargeXFontSize">20</x:Double>
+
     <Style x:Key="FullListViewItem"  TargetType="ListViewItem">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="MinHeight" Value="0"/>
@@ -66,8 +68,10 @@
     <x:Double x:Key="PhoneButtonMinHeight">57.5</x:Double>
     <x:Double x:Key="PhoneButtonMinWidth">109</x:Double>
     <Thickness x:Key="PhoneTouchTargetOverhang">0,9.5</Thickness>
+    
     <Style x:Key="ToggleButtonStyle1" TargetType="ToggleButton">
 
+        
         <Setter Property="Background" Value="#FFBDBDBD"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundTransparentBrush}"/>

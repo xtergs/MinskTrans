@@ -89,8 +89,10 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 			    if (value == null)
 			    {
-			        ShowDetailViewStop = true;
-			        return;
+			        ShowDetailViewStop = false;
+			        filteredSelectedStop = null;
+
+                    return;
 			    }
 			    else
 			        ShowDetailViewStop = true;

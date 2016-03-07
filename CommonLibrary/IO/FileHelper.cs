@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
 using MetroLog;
@@ -72,9 +73,18 @@ namespace CommonLibrary.IO
 			}
 		}
 
-		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file)
+		public override async Task<string> ReadAllTextAsync(TypeFolder folder, string file, string subfolder = "")
 		{
-			return await FileIO.ReadTextAsync(await Folders[folder].GetFileAsync(file));
+		    IStorageFolder storage = Folders[folder];
+
+            if (subfolder != "")
+            {
+                storage =await storage.GetFolderAsync(subfolder);
+            }
+		    IStorageFile sfile = await storage.GetFileAsync(file);
+		    var buf = await FileIO.ReadBufferAsync(sfile);
+		    var xxx = await (await sfile.GetBasicPropertiesAsync()).RetrievePropertiesAsync(new string[] {"System.DateAccessed"});
+            return await FileIO.ReadTextAsync(sfile);
 		}
 
 		public override async Task<FluentFileHelperBase> WriteTextAsync(TypeFolder folder, string file, string text)
@@ -85,7 +95,19 @@ namespace CommonLibrary.IO
 		    return new FluentFileHelperBase(this, folder, file);
 		}
 
-		public override async Task DeleteFile(TypeFolder folder, string file)
+        public override async Task WriteTextAsync(TypeFolder folder, string file, Stream text)
+        {
+            if (text == null)
+                throw new ArgumentNullException(file);
+            var stream = await
+                (await Folders[folder].CreateFileAsync(file, CreationCollisionOption.ReplaceExisting))
+                    .OpenStreamForWriteAsync();
+            await text.CopyToAsync(stream);
+            stream.Dispose();
+            
+        }
+
+        public override async Task DeleteFile(TypeFolder folder, string file)
 		{
 			try
 			{
@@ -97,12 +119,24 @@ namespace CommonLibrary.IO
 			}
 		}
 
+	    public override async Task DeleteFolder(TypeFolder folder, string folders)
+	    {
+	        await (await Folders[folder].GetFolderAsync(folders)).DeleteAsync(StorageDeleteOption.PermanentDelete);
+
+	    }
+
 	    public override async Task<IList<string>> GetNamesFiles(TypeFolder folder, string subFolder)
 	    {
 	        var folderr = (await Folders[folder].GetFolderAsync(subFolder));
             var files = (await folderr.GetFilesAsync());
 	        return files.Select(file => file.Name).ToList();
 	    }
+
+	    public override async Task<IList<string>> GetNamesFolder(TypeFolder folder)
+	    {
+            var folderr = (await Folders[folder].GetFoldersAsync());
+            return folderr.Select(file => file.Name).ToList();
+        }
 
 	    public override string GetPath(TypeFolder folder)
 		{
@@ -115,6 +149,8 @@ namespace CommonLibrary.IO
 			return await Folders[folder].OpenStreamForReadAsync(file);
 		}
 
-		#endregion
+	   
+
+	    #endregion
 	}
 }

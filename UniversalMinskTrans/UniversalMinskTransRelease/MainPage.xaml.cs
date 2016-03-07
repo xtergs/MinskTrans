@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Windows.ApplicationModel.Email;
 using Windows.Phone.UI.Input;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -13,11 +16,13 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
+using MetroLog;
 using Microsoft.Xaml.Interactivity;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
+using MinskTrans.Utilites.Base.IO;
 using MyLibrary;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -71,39 +76,40 @@ namespace MinskTrans.Universal
 			Logger.Log("MainPage");
 #endif
 			this.InitializeComponent();
-			//TileImageLoader.Cache = new MapControl.Caching.ImageFileCache();
+            
+			//TileImageLoader.Cache = new MapControl.Caching.ImageCacheItem();
 			//TileImageLoader.DefaultCacheExpiration = new TimeSpan(10, 0, 0, 0,0);
 			
 
 			//model = MainModelView.Create(new UniversalContext());
 			model = MainModelView.MainModelViewGet;
 
-			var builder = new PushPinBuilder();
-			builder.Style = (Style)mainPage.Resources["PushpinStyle1"];
-			builder.Tapped += async (sender, args) =>
-			{
-				PopupMenu menu = new PopupMenu();
-				var push = ((Pushpin) sender);
-				Stop stop = (Stop) push.Tag;
+			//var builder = new PushPinBuilder();
+			//builder.Style = (Style)mainPage.Resources["PushpinStyle1"];
+			//builder.Tapped += async (sender, args) =>
+			//{
+			//	PopupMenu menu = new PopupMenu();
+			//	var push = ((Pushpin) sender);
+			//	Stop stop = (Stop) push.Tag;
 				
-				menu.Commands.Add(new UICommand("Показать расписание", command =>
-				{
-					model.FindModelView.StopModelView.ViewStop.Execute(stop);
-				}));
-				if (stop.Routs.Any(tr=> tr.Transport == TransportType.Bus))
-					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Bus)));
-				if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
-					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Trol)));
-				if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
-					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
-				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
-					menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
+			//	menu.Commands.Add(new UICommand("Показать расписание", command =>
+			//	{
+			//		model.FindModelView.StopModelView.ViewStop.Execute(stop);
+			//	}));
+			//	if (stop.Routs.Any(tr=> tr.Transport == TransportType.Bus))
+			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Bus)));
+			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
+			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Trol)));
+			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
+			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
+			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
+			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
                 
                 
-				await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
-			};
+			//	await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
+			//};
 			
-			model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView,model.Geolocation , builder);
+			//model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView,model.Geolocation , builder);
 			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
 			model.ShowRoute += OnShowRoute;
 			model.ShowStop += OnShowStop;
@@ -111,7 +117,7 @@ namespace MinskTrans.Universal
 			model.FindModelView.StopModelView.ViewStopOn += (sender, args) =>
 			{
 				Pivot.SelectedItem = SearchPivotItem;
-				VisualStateManager.GoToState(mainPage, "ShowStopVisualState", true);
+				VisualStateManager.GoToState(mainPage, "ShowStopDetailOnlyVisualState", true);
 			};
 
 		    //model.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
@@ -126,7 +132,7 @@ namespace MinskTrans.Universal
 
 			//VisualStateGroup.CurrentStateChanged += (sender, args) =>
 			//{
-			//	if (args.NewState == ShowStopVisualState)
+			//	if (args.NewState == ShowStopDetailOnlyVisualState)
 			//	{
 			//		StopsListView.SelectedIndex = -1;
 			//	} else if (args.NewState == RoutsListVisualState)
@@ -220,9 +226,8 @@ namespace MinskTrans.Universal
 			//ShowFavouriteStop.AddGroup += ShowAddGroup;
 			ShowStop.AddGroup += ShowAddGroup;
 
-			//model.MapModelView = new MapModelView(model.Context, map);
 
-			DataContext = model;
+            DataContext = model;
 
 
 #if BETA
@@ -321,22 +326,7 @@ namespace MinskTrans.Universal
 	        }
             else if (Pivot.SelectedItem == MapPivotItem)
             {
-                var curState = VisualStateGroup.CurrentState;
-                if (this.ActualWidth >= 800)
-                {
-                    if (curState != ShowNormalMapWideVisualState )
-                    {
-                        VisualStateManager.GoToState(mainPage, nameof(ShowNormalMapWideVisualState), true);
-                        
-                    }
-                }
-                else
-                {
-                    if (curState != ShowNormalMapVisualState)
-                    {
-                        VisualStateManager.GoToState(mainPage, nameof(ShowNormalMapVisualState), true);
-                    }
-                }
+               map.ResetVisualState();
             }
             //else if (Pivot.SelectedItem == GroupsPivtoItem)
             //{
@@ -429,20 +419,6 @@ namespace MinskTrans.Universal
 			Pivot.SelectedItem = GroupsPivtoItem;
 		}
 
-		//private MapPanel mappanel;
-
-
-
-		
-
-		/// <summary>
-		/// Invoked when this page is about to be displayed in a Frame.
-		/// </summary>
-		/// <param name="e">Event data that describes how this page was reached.
-		/// This parameter is typically used to configure the page.</param>
-		
-		
-
 		private async void Page_Loaded(object sender, RoutedEventArgs e)
 		{
 #if BETA
@@ -521,22 +497,6 @@ namespace MinskTrans.Universal
 
             }
             else
-            //         if (Pivot.SelectedItem == FavourPivotItem)
-            //{
-            //	e.Handled = true;
-
-            //	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-            //		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-            //	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-            //		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-            //	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-            //			 !FavouriteRoutssHyperlinkButton.IsEnabled)
-            //		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-            //	else
-            //		e.Handled = false;
-
-            //}
-            //else
             if (Pivot.SelectedItem == GroupsPivtoItem)
             {
                 res = true;
@@ -561,49 +521,6 @@ namespace MinskTrans.Universal
 		private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
 		{
             e.Handled = BackButton();
-            //if (Pivot.SelectedItem == SearchPivotItem)
-            //{
-            //	e.Handled = true;
-            //	if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
-            //		VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
-            //	else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
-            //		VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
-            //	else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
-            //		VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
-            //	else
-            //	{
-            //		e.Handled = false;
-            //	}
-
-            //}
-            //else
-            ////         if (Pivot.SelectedItem == FavourPivotItem)
-            ////{
-            ////	e.Handled = true;
-
-            ////	if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-            ////		VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-            ////	else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-            ////		VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-            ////	else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-            ////			 !FavouriteRoutssHyperlinkButton.IsEnabled)
-            ////		VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-            ////	else
-            ////		e.Handled = false;
-
-            ////}else 
-            //         if (Pivot.SelectedItem == GroupsPivtoItem)
-            //{
-            //	e.Handled = true;
-            //	if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
-            //		VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-            //	else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
-            //		VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-            //	else
-            //	{
-            //		e.Handled = false;
-            //	}
-            //}
 
         }
 #endif
@@ -624,7 +541,7 @@ namespace MinskTrans.Universal
 			Pivot.SelectedItem = MapPivotItem;
 			var x = args.SelectedRoute;
 			model.MapModelView.ShowRoutCommand.Execute(x);
-			ShowAllPushPins.Visibility = Visibility.Visible;
+			map.ShowAllPushPinss = true;
 			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
 		}
 
@@ -663,86 +580,42 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowGroupVisualState", true);
 		}
 
-/*
-		private Pushpin ipushpin;
-*/
-/*
-		private ObservableCollection<Pushpin> pushpins1;
-*/
 
-		//public Pushpin Ipushpin
-		//{
-		//	get
-		//	{
-		//		if (ipushpin == null)
-		//			ipushpin = new Pushpin(){Content = "Я"};
-		//		return ipushpin;
-		//	}
-		//	set { ipushpin = value; }
-		//}
-
-		//private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
-		//{
-		//	Geolocator geolocator = new Geolocator();
-			
-		//	geolocator.DesiredAccuracy = PositionAccuracy.High;
-		//	//geolocator.DesiredAccuracyInMeters = 5;
-
-		//	try
-		//	{
-		//		Geoposition geoposition = await geolocator.GetGeopositionAsync(
-		//			maximumAge: TimeSpan.FromMinutes(5),
-		//			timeout: TimeSpan.FromSeconds(10)
-		//			);
-
-		//		map.Center = new Location(geoposition.Coordinate.Latitude, geoposition.Coordinate.Longitude);
-		//		MapPanel.SetLocation(Ipushpin, map.Center);
-		//		map.Children.Add(Ipushpin);
-
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		if ((uint)ex.HResult == 0x80004004)
-		//		{
-		//			// the application does not have the right capability or the location master switch is off
-		//			MessageDialog dialog = new MessageDialog("location  is disabled in phone settings.");
-		//			await dialog.ShowAsync();
-					
-		//		}
-		//		//else
-		//		{
-		//			// something else happened acquring the location
-		//		}
-		//	}
-		//}
-
-
-		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-		{
-			model.MapModelView.ShowAllStops.Execute(null);
-			ShowAllPushPins.Visibility = Visibility.Collapsed;
-		}
+		
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-/*
-		[NotifyPropertyChangedInvocator]
-		private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-		}
-*/
 
 		private void StartEmailToDeveloper(object sender, RoutedEventArgs e)
 		{
 			SendEmailToDeveloper("");
 		}
 
+	    public async void SendEmailToDeveloper(string str, IList<string> filename, IList<IRandomAccessStreamReference> streams )
+	    {
+            var email = new EmailMessage()
+            {
+
+                Subject = "Минский общественный транспорт",
+                To =
+                {
+                    new EmailRecipient("xtergs@gmail.com")
+                },
+                Body = str
+            };
+	        for (int i = 0; i < filename.Count; i++)
+	        {
+	            EmailAttachment attachment = new EmailAttachment(filename[i], streams[i] );
+                email.Attachments.Add(attachment);
+	        }
+	        await EmailManager.ShowComposeNewEmailAsync(email);
+	    }
+
 		async void SendEmailToDeveloper(string str)
 		{
-			await EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
-			{
+            await EmailManager.ShowComposeNewEmailAsync(new EmailMessage()
+			{ 
+                
 				Subject = "Минский общественный транспорт",
 				To =
 				{
@@ -756,17 +629,6 @@ namespace MinskTrans.Universal
 		{
 			await Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
 		}
-
-/*
-		private async void Test(object sender, RoutedEventArgs e)
-		{
-			await model.Context.Save();
-			var file = await ApplicationData.Current.LocalFolder.GetFileAsync("data.dat");
-			//var result = await FileIO.ReadTextAsync(file);
-			//var sizeFile = await file.Properties.GetDocumentPropertiesAsync();
-			await model.Context.LoadDataBase();
-		}
-*/
 
 		private async void OnOffLocationServises(object sender, RoutedEventArgs e)
 		{
@@ -787,16 +649,15 @@ namespace MinskTrans.Universal
 		async void SendLog()
 		{
 			string message = "";
-            //= await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException;
-            var list= (await model.GetLogsAsync());
-		    list.Reverse();
-		    StringBuilder builder = new StringBuilder();
-            foreach (var line in list)
-            {
-                builder.Append(line);
-            }
-		    message = builder.ToString();
-            SendEmailToDeveloper(message);
+
+       
+            var fileHelper = model.FileHelper;
+            var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
+            await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+            await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
+            xxx.Dispose();
+            var refer = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync("lll.log"));
+            SendEmailToDeveloper("Log", new []{"log"}, new [] {refer});
 		}
 
 		
@@ -826,119 +687,11 @@ namespace MinskTrans.Universal
 			
 		}
 
-		string MinskTransRoutingAdress = @"http://www.minsktrans.by/lookout_yard/Home/PageRouteSearch#/routes/search?";
-		string MisnkTransVirtualTableAdress = @"http://www.minsktrans.by/lookout_yard/Home/Index/minsk";
-
-		string MyPositionOnMap(string baseUri)
-		{
-			return baseUri + "type1=location&lat1=" + map.Center.Latitude + "&lon1=" + map.Center.Longitude;
-        }
-
-		private void ShowWebViewRouting(object sender, RoutedEventArgs e)
-		{
-			WebViewMap.Source = new Uri(MinskTransRoutingAdress);
-			//map.Visibility = Visibility.Collapsed;
-			//WebViewMap.Visibility = Visibility.Visible;
-			//ShowRoutingMinskTrans.Visibility = Visibility.Collapsed;
-			//ShowNormalMap.Visibility = Visibility.Visible;
-        }
-
-		private void WebViewMap_PermissionRequested(WebView sender, WebViewPermissionRequestedEventArgs args)
-		{
-			if (args.PermissionRequest.PermissionType == WebViewPermissionType.Geolocation)
-				args.PermissionRequest.Allow();
-		}
-
-		private void ShowNormalMapClick(object sender, RoutedEventArgs e)
-		{
-			//map.Visibility = Visibility.Visible;
-			//WebViewMap.Visibility = Visibility.Collapsed;
-			//ShowRoutingMinskTrans.Visibility = Visibility.Visible;
-			//ShowNormalMap.Visibility = Visibility.Collapsed;
-			WebViewMap.Stop();
-		}
-
-		private void ShowIClick(object sender, RoutedEventArgs e)
-		{
-			MainModelView.MainModelViewGet.MapModelView.ShowICommand.Execute(null);
-			WebViewMap.Source = new Uri(MyPositionOnMap(MinskTransRoutingAdress));
-			WebViewMap.Refresh();
-		}
-
-		private void ShowVirtualTableClick(object sender, RoutedEventArgs e)
-		{
-			WebViewMap.Source = new Uri(MisnkTransVirtualTableAdress);
-		}
+		
 
         private void mainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SelectVisualState();
-            //if (Pivot.SelectedItem == SearchPivotItem)
-            //{
-            //    if (e.NewSize.Width >= 800)
-            //    {
-            //        var curState = VisualStateGroup.CurrentState;
-            //        //if windows was in compact mode, go to wide mode
-            //        if (curState == StopsCompactVisualState || curState == ShowStopVisualState)
-            //        {
-            //            VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        var curState = VisualStateGroup.CurrentState;
-            //        //if windows was in wide mode, go to compact
-            //        if (curState == StopsVisualState)
-            //        {
-            //            if (StopsListView != null)
-            //                VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
-            //            else
-            //            {
-            //                VisualStateManager.GoToState(mainPage, nameof(StopsCompactVisualState), true);
-            //            }
-            //        }
-            //    }
-            //}
-
-            //    if (VisualStateGroup.CurrentState == ShowStopVisualState && !StopsHyperlinkButton.IsEnabled)
-            //        VisualStateManager.GoToState(mainPage, "StopsVisualState", true);
-            //    else if (VisualStateGroup.CurrentState == RoutsListVisualState && !RoutsHyperlinkButton.IsEnabled)
-            //        VisualStateManager.GoToState(mainPage, "TransportListVisualState", true);
-            //    else if (VisualStateGroup.CurrentState == ShowRoutVisualState && !RoutsHyperlinkButton.IsEnabled)
-            //        VisualStateManager.GoToState(mainPage, "RoutsListVisualState", true);
-            //    else
-            //    {
-
-            //    }
-
-            //}
-            //else if (Pivot.SelectedItem == FavourPivotItem)
-            //{
-
-
-            //    if (FavouriteVisualStateGroup.CurrentState == FavouriteShowStopVisualState && !FavouriteStopsHyperlinkButton.IsEnabled)
-            //        VisualStateManager.GoToState(mainPage, "FavouriteStopsVisualState", true);
-            //    else if (FavouriteVisualStateGroup.CurrentState == FavouriteRoutsListVisualState && !FavouriteRoutssHyperlinkButton.IsEnabled)
-            //        VisualStateManager.GoToState(mainPage, "FavouriteRoutsVisualState", true);
-            //    else if (FavouriteVisualStateGroup.CurrentState == FavouriteShowRoutVisualState &&
-            //             !FavouriteRoutssHyperlinkButton.IsEnabled)
-            //        VisualStateManager.GoToState(mainPage, "FavouriteRoutsListVisualState", true);
-            //    else
-
-
-            //}
-            //else if (Pivot.SelectedItem == GroupsPivtoItem)
-            //{
-
-            //    if (GroupsVisualStateGroup.CurrentState == ShowGroupVisualState)
-            //        VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-            //    else if (GroupsVisualStateGroup.CurrentState == SelectToDeleteVisualState)
-            //        VisualStateManager.GoToState(mainPage, "ListGroupsVisualState", true);
-            //    else
-            //    {
-
-            //    }
-            //}
         }
 
         private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)

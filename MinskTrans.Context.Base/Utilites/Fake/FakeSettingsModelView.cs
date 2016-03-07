@@ -37,6 +37,8 @@ namespace MyLibrary
             throw new NotImplementedException();
         }
 
+        public int FontSize { get; set; }
+
         #endregion
     }
 }

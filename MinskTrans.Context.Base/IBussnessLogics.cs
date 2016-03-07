@@ -9,6 +9,12 @@ using MyLibrary;
 
 namespace MinskTrans.Context
 {
+    public class StopTimePair
+    {
+        public Stop Stop { get; set; }
+
+        public TimeSpan Time { get; set; }
+    }
     public interface IBussnessLogics : INotifyPropertyChanged
     {
         IContext Context { get; }
@@ -38,6 +44,7 @@ namespace MinskTrans.Context
          event EventHandler<EventArgs> NeedUpdadteDB;
 
         DateTime LastUpdateDbDateTimeUtc { get; }
+        List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day);
 
     }
 }

@@ -151,30 +151,50 @@ namespace UniversalMinskTrans
 #if BETA
 					Logger.Log("Prev state != Running");
 #endif
-					model.Context.NeedUpdadteDB += async (sender, args) =>
-					{
+				    model.Context.NeedUpdadteDB += async (sender, args) =>
+				    {
 
-						
-							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-								  {
-                                      await model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных", new List<KeyValuePair<string, RelayCommand>> {model.NotifyHelper.CreateCommand("Обновить", model.UpdateDataCommand, null) });
-									 // Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
-									 // {
-										//  Commands =
-										//	  {
-										//new UICommand("Обновить", command =>
-										//{
-										//	if (model.UpdateDataCommand.CanExecute(null))
-										//		model.UpdateDataCommand.Execute(null);
+				        try
+				        {
+				            await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+				            {
+				                try
+				                {
+				                    await
+				                        model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных",
+				                            new List<KeyValuePair<string, RelayCommand>>
+				                            {
+				                                model.NotifyHelper.CreateCommand("Обновить", model.UpdateDataCommand, null)
+				                            });
+				                }
+				                catch (Exception ee)
+				                {
+				                    throw;
+				                }
+				                // Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
+				                // {
+				                //  Commands =
+				                //	  {
+				                //new UICommand("Обновить", command =>
+				                //{
+				                //	if (model.UpdateDataCommand.CanExecute(null))
+				                //		model.UpdateDataCommand.Execute(null);
 
-										//})
-										//	  }
-									 // };
-									 // await dialog.ShowAsync();
+				                //})
+				                //	  }
+				                // };
+				                // await dialog.ShowAsync();
 
-								  });
-						
-					};
+				            });
+
+				        }
+				        catch (Exception ex)
+				        {
+				            throw;
+				        }
+				    };
+					    
+
 #pragma warning disable 4014
 					model.Context.LoadDataBase();
 #pragma warning restore 4014

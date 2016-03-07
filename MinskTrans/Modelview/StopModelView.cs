@@ -1,9 +1,10 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
-
+using System.Threading;
 using MapControl;
 using System.Threading.Tasks;
+using Windows.Foundation.Metadata;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -26,7 +27,7 @@ namespace MinskTrans.DesctopClient.Modelview
 	public class StopModelView : StopModelViewBase
 	{
 		private ISettingsModelView settingsModelView;
-	    private IExternalCommands commands;
+		private IExternalCommands commands;
 		private bool autoDay;
 		private bool autoNowTime;
 /*
@@ -56,16 +57,16 @@ namespace MinskTrans.DesctopClient.Modelview
 		//}
 
 		private TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
-		                                          TransportType.Trol;
+												  TransportType.Trol;
 
 		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;
-		    if (commands == null)
-		        throw new ArgumentNullException("commands");
+			if (commands == null)
+				throw new ArgumentNullException("commands");
 			settingsModelView = settings;
-		    this.commands = commands;
+			this.commands = commands;
 
 			settingsModelView.PropertyChanged += async (sender, args) =>
 			{
@@ -87,7 +88,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				SetGPS();
 #pragma warning restore 4014
 
-		    IsShowFavouriteStops = false;
+			IsShowFavouriteStops = false;
 		}
 
 		private async Task SetGPS()
@@ -174,37 +175,74 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		
 		public bool fuzzySearch;
-	    private bool isShowFavouriteStops;
-	    private TimeLineModel _selectedTimeLineModel;
+		private bool isShowFavouriteStops;
+		private TimeLineModel _selectedTimeLineModel;
+	    private bool _isWorking = false;
 
-	    public override IEnumerable<Stop> FilteredStops
+
+	    [Deprecated("FilteredStops is depricated, use FilteredStopsStore", DeprecationType.Deprecate, 0)]
+		public override IEnumerable<Stop> FilteredStops => FilterStops();
+
+		
+
+		public override IEnumerable<Stop> FilterStops()
+		{
+			if (IsShowFavouriteStops)
+				return Context.Context.FavouriteStops;
+			return Context.FilteredStops(StopNameFilter, selectedTransport, Context.Geolocation.CurLocation, FuzzySearch);
+		}
+
+	    public bool IsWorking
 	    {
-	        get
+	        get { return _isWorking; }
+	        set
 	        {
-	            if (IsShowFavouriteStops)
-	                return Context.Context.FavouriteStops;
-	            return context.FilteredStops(StopNameFilter, selectedTransport, Context.Geolocation.CurLocation, FuzzySearch);
+	            _isWorking = value;
+	            OnPropertyChanged();
 	        }
-
 	    }
-        
-	    public ISettingsModelView SettingsModelView
+
+	    public override async Task<IEnumerable<Stop>> FilterStopsAsync()
+		{
+			if (IsShowFavouriteStops)
+				return Context.Context.FavouriteStops;
+			if (sourceToken != null)
+				sourceToken.Cancel();
+	        IsWorking = true;
+			using (sourceToken = new CancellationTokenSource())
+			{
+				var token = sourceToken.Token;
+
+				var res =
+					await
+						Context.FilteredStopsAsync(StopNameFilter,token , selectedTransport,
+							Context.Geolocation.CurLocation, FuzzySearch);
+				if (token.IsCancellationRequested)
+					return null;
+				FilteredStopsStore = res;
+				sourceToken = null;
+			    IsWorking = false;
+				return res;
+			}
+		}
+
+		public ISettingsModelView SettingsModelView
 	{
 		get { return settingsModelView; }
 	}
 
-	    public bool IsShowFavouriteStops
-	    {
-	        get { return isShowFavouriteStops; }
-	        set
-	        {
-	            isShowFavouriteStops = value;
-                OnPropertyChanged();
-                OnPropertyChanged("FilteredStops");
-	        }
-	    }
+		public bool IsShowFavouriteStops
+		{
+			get { return isShowFavouriteStops; }
+			set
+			{
+				isShowFavouriteStops = value;
+				OnPropertyChanged();
+				OnPropertyChanged("FilteredStops");
+			}
+		}
 
-	    public string DestinationStop
+		public string DestinationStop
 		{
 			get
 			{
@@ -229,7 +267,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (value.Equals(autoDay)) return;
 				autoDay = value;
 				OnPropertyChanged();
-                OnPropertyChanged("CurDay");
+				OnPropertyChanged("CurDay");
 				OnPropertyChanged("TimeSchedule");
 			}
 		}
@@ -253,7 +291,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (value <= 0 || value > 7)
 					return;
 				curDay = value;
-			    AutoDay = false;
+				AutoDay = false;
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
 			}
@@ -316,19 +354,19 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool Trol
 		{
-            get { return selectedTransport.HasFlag(TransportType.Trol); }
-            set
-            {
-                if (value)
-                    selectedTransport |= TransportType.Trol;
-                else
-                    selectedTransport ^= TransportType.Trol;
-                OnPropertyChanged();
-                OnPropertyChanged("FilteredStops");
-                OnPropertyChanged("TimeSchedule");
+			get { return selectedTransport.HasFlag(TransportType.Trol); }
+			set
+			{
+				if (value)
+					selectedTransport |= TransportType.Trol;
+				else
+					selectedTransport ^= TransportType.Trol;
+				OnPropertyChanged();
+				OnPropertyChanged("FilteredStops");
+				OnPropertyChanged("TimeSchedule");
 
-            }
-        }
+			}
+		}
 
 		public bool Bus
 		{
@@ -341,10 +379,10 @@ namespace MinskTrans.DesctopClient.Modelview
 					selectedTransport ^= TransportType.Bus; 
 				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
-                OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged("TimeSchedule");
 
-            }
-        }
+			}
+		}
 
 		//public RelayCommand<Stop> ShowStopMap
 		//{
@@ -353,74 +391,74 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public bool Tram
 		{
-            get { return selectedTransport.HasFlag(TransportType.Tram); }
-            set
-            {
-                if (value)
-                    selectedTransport |= TransportType.Tram;
-                else
-                    selectedTransport ^= TransportType.Tram;
-                OnPropertyChanged();
-                OnPropertyChanged("FilteredStops");
-                OnPropertyChanged("TimeSchedule");
-            }
-        }
+			get { return selectedTransport.HasFlag(TransportType.Tram); }
+			set
+			{
+				if (value)
+					selectedTransport |= TransportType.Tram;
+				else
+					selectedTransport ^= TransportType.Tram;
+				OnPropertyChanged();
+				OnPropertyChanged("FilteredStops");
+				OnPropertyChanged("TimeSchedule");
+			}
+		}
 
 /*
 		private bool metro;
 */
 /*
-	    private Visibility showDetailViewStop;
+		private Visibility showDetailViewStop;
 */
 
-	    public bool Metro
+		public bool Metro
 		{
-            get { return selectedTransport.HasFlag(TransportType.Metro); }
-            set
-            {
-                if (value)
-                    selectedTransport |= TransportType.Metro;
-                else
-                    selectedTransport ^= TransportType.Metro;
-                OnPropertyChanged();
-                OnPropertyChanged("FilteredStops");
-                OnPropertyChanged("TimeSchedule");
+			get { return selectedTransport.HasFlag(TransportType.Metro); }
+			set
+			{
+				if (value)
+					selectedTransport |= TransportType.Metro;
+				else
+					selectedTransport ^= TransportType.Metro;
+				OnPropertyChanged();
+				OnPropertyChanged("FilteredStops");
+				OnPropertyChanged("TimeSchedule");
 
-            }
-        }
+			}
+		}
 
-	    public TimeLineModel SelectedTimeLineModel
-	    {
-	        get { return _selectedTimeLineModel; }
-	        set
-	        {
-	            _selectedTimeLineModel = value;
-	            OnPropertyChanged();
-	            var xxx = StopsTimesForRout;
+		public TimeLineModel SelectedTimeLineModel
+		{
+			get { return _selectedTimeLineModel; }
+			set
+			{
+				_selectedTimeLineModel = value;
+				OnPropertyChanged();
+				var xxx = StopsTimesForRout;
 
-	        }
-	    }
+			}
+		}
 
-	    public virtual IEnumerable<TimeLineModel> TimeSchedule
-	    {
-	        get
-	        {
-	            return Context.GetStopTimeLine(FilteredSelectedStop, CurDay, CurTime - SettingsModelView.TimeInPast,
-	                selectedTransport);
-	        }
-	    }
+		public virtual IEnumerable<TimeLineModel> TimeSchedule
+		{
+			get
+			{
+				return Context.GetStopTimeLine(FilteredSelectedStop, CurDay, CurTime - SettingsModelView.TimeInPast,
+					selectedTransport);
+			}
+		}
 
-	    public List<StopTimePair> StopsTimesForRout
-	    {
-	        get { return Context.GetStopsTimesParis(SelectedTimeLineModel.Rout, (int)SelectedTimeLineModel.Time.TotalMinutes, CurDay); }
-	    }
+		public List<StopTimePair> StopsTimesForRout
+		{
+			get { return Context.GetStopsTimesParis(SelectedTimeLineModel.Rout, (int)SelectedTimeLineModel.Time.TotalMinutes, CurDay); }
+		}
 
-	    public RelayCommand<Stop> AddRemoveFavouriteStop
-	    {
-            get { return new RelayCommand<Stop>((x)=> Context.AddRemoveFavouriteStop(x));}
-	    }
+		public RelayCommand<Stop> AddRemoveFavouriteStop
+		{
+			get { return new RelayCommand<Stop>((x)=> Context.AddRemoveFavouriteStop(x));}
+		}
 
-	    public RelayCommand RefreshTimeSchedule
+		public RelayCommand RefreshTimeSchedule
 		{
 			get { return new RelayCommand(() => OnPropertyChanged("TimeSchedule")); }
 		}
@@ -439,15 +477,15 @@ namespace MinskTrans.DesctopClient.Modelview
 				RefreshTimeSchedule.Execute(null);
 			});}
 		}
-        public RelayCommand<Stop> ShowStopMap
-        {
+		public RelayCommand<Stop> ShowStopMap
+		{
 			get { return commands.ShowStopMap; }
 		}
 
-	    public RelayCommand BackCommand
-	    {
-	        get { return commands.BackPressedCommand; }
-	    }
+		public RelayCommand BackCommand
+		{
+			get { return commands.BackPressedCommand; }
+		}
 		public bool FuzzySearch
 		{
 			get { return fuzzySearch; }

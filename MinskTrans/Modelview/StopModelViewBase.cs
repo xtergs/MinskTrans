@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
@@ -12,6 +14,8 @@ namespace MinskTrans.DesctopClient.Modelview
 	{
 		private Stop filteredSelectedStop;
 		private string stopNameFilter;
+        private IEnumerable<Stop> _filteredStopsStore;
+        protected CancellationTokenSource sourceToken = null;
 		
 		private ISettingsModelView settings;
 
@@ -59,46 +63,63 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return stopNameFilter; }
 			set
 			{
-				//if (value == stopNameFilter) return;
+				if (value == stopNameFilter)
+                    return;
 				stopNameFilter = value;
-				OnPropertyChanged();
 				OnPropertyChanged("FilteredStops");
 			}
 		}
 
-		public bool IsStopFavourite
+        public string StopNameFilterAsync
+        {
+            get { return stopNameFilter; }
+            set
+            {
+                if (value == null)
+                    return;
+                value = value.Trim();
+                if (value == stopNameFilter)
+                    return;
+                stopNameFilter = value;
+                FilterStopsAsync();
+            }
+        }
+
+        public bool IsStopFavourite
 		{
 			get { return Context.Context.IsFavouriteStop(FilteredSelectedStop); }
 			set { OnPropertyChanged();}
 		}
 
-        public bool ShowDetailViewStop
-        {
-            get { return showDetailViewStop; }
-            set
-            {
-                showDetailViewStop = value;
-                OnPropertyChanged();
-            }
-        }
+		public bool ShowDetailViewStop
+		{
+			get { return showDetailViewStop; }
+			set
+			{
+				showDetailViewStop = value;
+				OnPropertyChanged();
+			}
+		}
 
-        public virtual Stop FilteredSelectedStop
+
+
+		public virtual Stop FilteredSelectedStop
 		{
 			get { return filteredSelectedStop; }
 			set
 			{
-			    if (value == null)
-			    {
-			        ShowDetailViewStop = false;
-			        filteredSelectedStop = null;
+				if (value == null)
+				{
+					ShowDetailViewStop = false;
+					filteredSelectedStop = null;
 
-                    return;
-			    }
-			    else
-			        ShowDetailViewStop = true;
-                //if (Equals(value, filteredSelectedStop)) return;
-                //ShowStopMap.RaiseCanExecuteChanged();
-                filteredSelectedStop = value;
+					return;
+				}
+				else
+					ShowDetailViewStop = true;
+				//if (Equals(value, filteredSelectedStop)) return;
+				//ShowStopMap.RaiseCanExecuteChanged();
+				filteredSelectedStop = value;
 				Context.Context.IncrementCounter(filteredSelectedStop);
 				OnPropertyChanged();
 				OnPropertyChanged("TimeSchedule");
@@ -111,11 +132,31 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public virtual IEnumerable<Stop> FilteredStops
 		{
-		    get { throw new NotImplementedException(); }
-		    set { throw new NotImplementedException(); }
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
-        
-		public GroupStop SelectedGroup
+
+        public IEnumerable<Stop> FilteredStopsStore
+        {
+            get { return _filteredStopsStore; }
+            set
+            {
+                _filteredStopsStore = value;
+                OnPropertyChanged();
+            }
+        }
+
+	    public virtual IEnumerable<Stop> FilterStops()
+	    {
+	        throw new NotImplementedException();
+	    }
+
+        public virtual Task<IEnumerable<Stop>> FilterStopsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public GroupStop SelectedGroup
 		{
 			get { return selectedGroup; }
 			set
@@ -129,9 +170,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		private RelayCommand showStopMap;
 */
 		private GroupStop selectedGroup;
-	    private bool showDetailViewStop;
+		private bool showDetailViewStop;
 
-	    //public new RelayCommand ShowStopMap
+		//public new RelayCommand ShowStopMap
 		//{
 		//	get
 		//	{
@@ -147,7 +188,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get { return new RelayCommand(() =>
 			{
-			    SelectedGroup.Stops.Add(FilteredSelectedStop);
+				SelectedGroup.Stops.Add(FilteredSelectedStop);
 			} );}
 		}
 

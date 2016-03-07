@@ -15,8 +15,10 @@ namespace MinskTrans.Context
 {
     public abstract class GenericBussnessLogic: IBussnessLogics
     {
-        
-
+        private Dictionary<CancellationToken, bool> tokens = new Dictionary<CancellationToken, bool>(); 
+        private bool isWorking = false;
+        private bool isLoaded = false;
+        private bool isLocked = false;
 
         //private readonly UpdateManagerBase updateManager;
         //private readonly InternetHelperBase internetHelper;
@@ -106,6 +108,55 @@ namespace MinskTrans.Context
 
         }
 
+        public async Task<IEnumerable<Stop>> FilteredStopsAsync(string StopNameFilter, CancellationToken token,
+            TransportType selectedTransport = TransportType.All, Location location = null, bool FuzzySearch = false)
+        {
+            if (token.IsCancellationRequested)
+                return null;
+            tokens.Add(token, true);
+            try
+            {
+                return await Task.Run(() =>
+                {
+                    IEnumerable<Stop> returnList = Context.ActualStops;
+                    returnList =
+                        returnList?.Where(x => x.Routs.Any(d => selectedTransport.HasFlag(d.Transport))).ToList();
+                    if (!string.IsNullOrWhiteSpace(StopNameFilter) && returnList != null)
+                    {
+                        var tempSt = StopNameFilter.ToLower();
+                        IEnumerable<Stop> temp = new List<Stop>();
+                        if (FuzzySearch)
+                            //TODO
+                            //temp = Levenshtein.Search(tempSt, (List<Stop>) returnList.ToList(), 0.4);
+                            ;
+                        else
+                            temp = returnList.Where(
+                                x => x.SearchName.Contains(tempSt) || x.Routs.Any(r => r.RouteNum.Contains(tempSt)))
+                                .OrderBy(x => x.SearchName.StartsWith(tempSt));
+                        if (location != null)
+                            return
+                                SmartSort(temp, location);
+                        //Enumerable.OrderBy<Stop, double>(temp, (Func<Stop, double>) this.Distance)
+                        //	.ThenByDescending((Func<Stop, uint>) Context.GetCounter);
+                        else
+                            return
+                                temp.OrderByDescending(Context.GetCounter)
+                                    .ThenByDescending(x => x.SearchName.StartsWith(tempSt));
+
+                    }
+                    if (returnList != null)
+                        return location == null
+                            ? returnList.OrderByDescending(Context.GetCounter).ThenBy(x => x.SearchName)
+                            //: Context.ActualStops.OrderBy(Distance).ThenByDescending(Context.GetCounter);
+                            : SmartSort(returnList, location);
+                    return null;
+                }, token);
+            }
+            finally
+            {
+                tokens.Remove(token);
+            }
+        }
 
 
         private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops, Location location)

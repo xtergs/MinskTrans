@@ -24,6 +24,7 @@ namespace MinskTrans.Context
         Task LoadDataBase(LoadType loadType = LoadType.LoadAll);
         Task Save(bool saveAllDB = true);
         IEnumerable<Stop> FilteredStops(string StopNameFilter, TransportType selectedTransport = TransportType.All, Location location = null,bool FuzzySearch = false);
+        Task<IEnumerable<Stop>> FilteredStopsAsync(string StopNameFilter, CancellationToken token, TransportType selectedTransport = TransportType.All, Location location = null, bool FuzzySearch = false);
         void SetGPS(bool v, object useGPS);
 
         IEnumerable<TimeLineModel> GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,

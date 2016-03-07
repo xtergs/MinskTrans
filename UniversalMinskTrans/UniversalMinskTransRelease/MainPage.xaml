@@ -865,7 +865,7 @@
                                              Grid.Row="0"
                                              InputScope="Search"
                                              IsTextPredictionEnabled="False"
-                                             Text="{Binding StopModelView.StopNameFilter,
+                                             Text="{Binding StopModelView.StopNameFilterAsync,
                                                             Mode=TwoWay,
                                                             UpdateSourceTrigger=PropertyChanged}"
                                              Visibility="Visible" />
@@ -877,7 +877,7 @@
                                       IsSynchronizedWithCurrentItem="False"
                                       FontSize="20"
                                       ItemTemplate="{StaticResource ListStopsDataTemplate}"
-                                      ItemsSource="{Binding FilteredStops,
+                                      ItemsSource="{Binding FilteredStopsStore,
                                                             Mode=OneWay,
                                                             UpdateSourceTrigger=PropertyChanged}"
                                       SelectedItem="{Binding FilteredSelectedStop,

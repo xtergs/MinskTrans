@@ -20,7 +20,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-    <ListView x:Name="RoutsListView"
+        <ListView x:Name="RoutsListView"
                                       Grid.Row="0"
                                       DataContext="{Binding}"
                                       ItemTemplate="{StaticResource GroupTransportList}"
@@ -29,26 +29,25 @@
                                       SelectedItem="{Binding RouteNumSelectedValue,
                                                              Mode=TwoWay,
                                                              UpdateSourceTrigger=PropertyChanged}">
-        <FlyoutBase.AttachedFlyout>
-            <MenuFlyout >
-                <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            </MenuFlyout>
-        </FlyoutBase.AttachedFlyout>
+            <FlyoutBase.AttachedFlyout>
+                <MenuFlyout >
+                    <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </MenuFlyout>
+            </FlyoutBase.AttachedFlyout>
 
 
-        <interactivity:Interaction.Behaviors>
-            
-            <core:EventTriggerBehavior EventName="RightTapped">
-                <universal:OpenFlyoutAction/>
-            </core:EventTriggerBehavior>
-        </interactivity:Interaction.Behaviors>
-        <ListView.ItemsPanel>
-            <ItemsPanelTemplate>
-                <controls:WrapPanel />
-            </ItemsPanelTemplate>
-        </ListView.ItemsPanel>
-    </ListView>
-        
+            <interactivity:Interaction.Behaviors>
+
+                <core:EventTriggerBehavior EventName="RightTapped">
+                    <universal:OpenFlyoutAction/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <controls:WrapPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
         <AppBar Grid.Row="1" IsOpen="False">
             <StackPanel Orientation="Horizontal">
                 <AppBarToggleButton Checked="ToggleButton_OnChecked" x:Name="AllTogleButton" IsChecked="True" Margin="5,0" Width="Auto" Content="Все" Command="{Binding ShowAllTransportCommand}" IsCompact="True"/>
@@ -56,8 +55,16 @@
                 <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="BusTogleButton" Margin="5,0" Width="Auto" Grid.Column="2" Content="Автобус" Command="{Binding ShowBusCommand}" IsCompact="True"/>
                 <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TramTogleButton" Margin="5,0" Width="Auto" Grid.Column="3" Content="Трамвай" Command="{Binding ShowTramCommand}" IsCompact="True"/>
             </StackPanel>
-            
+
         </AppBar>
-        
+        <ProgressBar IsIndeterminate="True" >
+            <interactivity:Interaction.Behaviors>
+
+                <core:DataTriggerBehavior >
+                    <universal:OpenFlyoutAction/>
+                </core:DataTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </ProgressBar>
+
     </Grid>
 </UserControl>

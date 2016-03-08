@@ -1,0 +1,112 @@
+﻿<UserControl
+    x:Class="UniversalMinskTransRelease.View.StopsListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniversalMinskTransRelease.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:universal="using:MinskTrans.Universal"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    d:DataContext="{d:DesignInstance modelview:StopModelView}">
+
+    <Grid x:Name="ShowStopsGrid"
+                              Grid.Row="1"
+                              Grid.ColumnSpan="1"
+                              Margin="10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
+
+
+        <universal:MyTextBox x:Name="FindStop"
+                                             Grid.Row="0"
+                                             InputScope="Search"
+                                             IsTextPredictionEnabled="False"
+                                             Text="{Binding StopNameFilterAsync,
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                             Visibility="Visible" />
+
+        <ListView x:Name="StopsList"
+                                      Grid.Row="1"
+                                      Grid.ColumnSpan="1"
+                                      DataContext="{Binding}"
+                                      IsSynchronizedWithCurrentItem="False"
+                                      FontSize="20"
+                                      ItemTemplate="{StaticResource ListStopsDataTemplate}"
+                                      ItemsSource="{Binding FilteredStopsStore,
+                                                            Mode=OneWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding FilteredSelectedStop,
+                                                             Mode=TwoWay,
+                                                             UpdateSourceTrigger=PropertyChanged}">
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="SelectionChanged">
+                    <core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <AppBarToggleButton x:Name="appBarToggleButton"
+                                                Grid.Row="1"
+                                                VerticalAlignment="Bottom"
+                                                HorizontalAlignment="Right"
+                                                Content="FavouriteStop"
+                                                Icon="Favorite"
+                                                IsChecked="{Binding IsShowFavouriteStops,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                IsCompact="True" Visibility="{Binding FavouriteStopsCount, Converter={StaticResource IntToVisibleConverter}}" />
+        <AppBar x:Name="appBar"
+                                Grid.Row="2"
+                                DataContext="{Binding}">
+            <VariableSizedWrapGrid Orientation="Horizontal">
+                <CheckBox Content="Автобус"
+                                          IsChecked="{Binding Bus,
+                                                              UpdateSourceTrigger=PropertyChanged,
+                                                              Mode=TwoWay}"
+                                          IsDoubleTapEnabled="False"
+                                          IsHoldingEnabled="False" />
+                <CheckBox Content="Тролейбус" IsChecked="{Binding Trol, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <CheckBox Content="Трамвай" IsChecked="{Binding Tram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <!--<CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
+
+
+                <VariableSizedWrapGrid DataContext="{Binding SettingsModelView}"
+                                                       VariableSizedWrapGrid.ColumnSpan="10"
+                                                       Visibility="Collapsed">
+                    <interactivity:Interaction.Behaviors>
+                        <core:DataTriggerBehavior Binding="{Binding Develop}" Value="true">
+                            <core:ChangePropertyAction PropertyName="Visibility" />
+                        </core:DataTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                    <TextBlock Text="Develop settings: " VariableSizedWrapGrid.ColumnSpan="1" />
+                    <CheckBox Content="Нечеткий поиск"
+                                              DataContext="{Binding ElementName=ShowStop,
+                                                                    Path=DataContext}"
+                                              IsChecked="{Binding FuzzySearch,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=PropertyChanged}" />
+                </VariableSizedWrapGrid>
+            </VariableSizedWrapGrid>
+        </AppBar>
+    </Grid>
+</UserControl>

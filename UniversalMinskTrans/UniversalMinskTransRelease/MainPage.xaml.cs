@@ -25,6 +25,7 @@ using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
 using MinskTrans.Utilites.Base.IO;
 using MyLibrary;
+using UniversalMinskTransRelease.View;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -250,7 +251,7 @@ namespace MinskTrans.Universal
 				{
 					if (this.ActualWidth >= 800)
 					{
-						if (StopsListView.SelectedItem == null)
+						if (ShowStopsGrid.SelectedItem == null)
 						{
 							if (curState == StopsCompactVisualState)
 								return;
@@ -271,7 +272,7 @@ namespace MinskTrans.Universal
 							AppViewBackButtonVisibility.Visible;
 					   //if windows was in wide mode, go to compact
 
-						if (StopsListView.SelectedItem != null)
+						if (ShowStopsGrid.SelectedItem != null)
 						{
 							if (curState == ShowStopVisualState)
 								return;
@@ -364,18 +365,18 @@ namespace MinskTrans.Universal
 				{
 					if (this.ActualWidth >= 800)
 					{
-						if (StopsListView.SelectedItem != null)
+						if (ShowStopsGrid.SelectedItem != null)
 						{
-							StopsListView.SelectedItem = null;
+                            ShowStopsGrid.SelectedItem = null;
 							return true;
 						}
 					}
 					else
 					{
 					   
-						if (StopsListView.SelectedItem != null)
+						if (ShowStopsGrid.SelectedItem != null)
 						{
-							StopsListView.SelectedItem = null;
+                            ShowStopsGrid.SelectedItem = null;
 							return true;
 						}
 					   
@@ -387,9 +388,9 @@ namespace MinskTrans.Universal
 					// var curState = VisualStateGroup.CurrentState;
 					if (this.ActualWidth >= 800)
 					{
-						if (StopsListView.SelectedItem != null)
+						if (ShowStopsGrid.SelectedItem != null)
 						{
-							StopsListView.SelectedItem = null;
+                            ShowStopsGrid.SelectedItem = null;
 							return true;
 						}
 					}

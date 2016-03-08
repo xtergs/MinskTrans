@@ -194,6 +194,9 @@
     <Compile Include="View\SelectTimeFromTimeTable.xaml.cs">
       <DependentUpon>SelectTimeFromTimeTable.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\StopsListView.xaml.cs">
+      <DependentUpon>StopsListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WrapPanel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -312,15 +315,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\StopsListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Google\xamlmapcontrol-de5576447d46b9c177beb26dc342a4cf1cff7e6b\Caching\FileDbCache.WinRT\FileDbCache.WinRT.csproj">
       <Project>{c7bf2b18-cc74-430b-bcb2-600304efa3d8}</Project>
       <Name>FileDbCache.WinRT</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BackgroundUpdateTask\BackgroundUpdateTask.csproj">
-      <Project>{96102582-0abb-46bb-8451-d43adf63f594}</Project>
-      <Name>BackgroundUpdateTask</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
       <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
@@ -329,6 +332,10 @@
     <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
       <Name>MinskTrans.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BackgroundUpdateTaskUniversal\BackgroundUpdateTaskUniversal.csproj">
+      <Project>{0d04620e-75f1-4dc1-9ec0-fc0dfdc9a3de}</Project>
+      <Name>BackgroundUpdateTaskUniversal</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

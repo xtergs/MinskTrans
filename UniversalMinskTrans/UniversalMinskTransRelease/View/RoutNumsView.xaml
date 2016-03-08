@@ -22,17 +22,30 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <universal:MyTextBox x:Name="FindTrans"
                                              Grid.Row="0"
                                              InputScope="Number"
                                              Text="{Binding RoutNumAsync,
                                                             Mode=TwoWay,
                                                             UpdateSourceTrigger=PropertyChanged}" />
+        <AppBarToggleButton MinHeight="10" MinWidth="10" Padding="-5,-5" Margin="5,-10"   IsCompact="True" Grid.Column="1" Icon="Setting" IsChecked="{Binding IsShowAdditionFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+        <universal:MyTextBox  Visibility="{Binding IsShowAdditionFilter, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                             Grid.Row="1"
+                                             
+                                             Text="{Binding AdditionStopFilter,
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}" />
         <GridView  x:Name="RoutsListView"
-			Grid.Row="1"
+			Grid.Row="2"
+                   Grid.ColumnSpan="2"
                    VirtualizingStackPanel.VirtualizationMode="Recycling"
 			DataContext="{Binding}"
 			ItemTemplate="{StaticResource GroupTransportList}"
@@ -51,9 +64,9 @@
                     <universal:OpenFlyoutAction/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
-            
+
         </GridView>
-        <AppBar Grid.Row="2" IsOpen="False">
+        <AppBar Grid.Row="3" Grid.ColumnSpan="2" IsOpen="False">
             <StackPanel Orientation="Horizontal">
                 <AppBarToggleButton Checked="ToggleButton_OnChecked" x:Name="AllTogleButton" IsChecked="True" Margin="5,0" Width="Auto" Content="Все" Command="{Binding ShowAllTransportCommand}" IsCompact="True"/>
                 <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TrolTogleButton" Margin="5,0" Width="Auto" Grid.Column="1" Content="Тролейбус" Command="{Binding ShowTrolCommand}" IsCompact="True"/>
@@ -63,16 +76,18 @@
 
         </AppBar>
         <AppBarToggleButton x:Name="appBarToggleButton1"
-                                                Grid.Row="1"
+                                                Grid.Row="2"
+                            Grid.ColumnSpan="2"
                                                 VerticalAlignment="Bottom"
                                                 HorizontalAlignment="Right"
                                                 Content="FavouriteRout"
                                                 Icon="Favorite"
+                                                Visibility="{Binding FavouriteRoutsCount, Converter={StaticResource IntToVisibleConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                 IsChecked="{Binding IsShowFavouriteRouts,
                                                                     Mode=TwoWay,
                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                 IsCompact="True" />
-        <ProgressBar IsIndeterminate="True" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ProgressBar Grid.Row="2" IsIndeterminate="True" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
     </Grid>
 </UserControl>

@@ -105,13 +105,10 @@
 
                 <VisualState x:Name="StopsVisualState">
                     <VisualState.Setters>
-                        <Setter Target="StopsListView.(Grid.Column)" Value="0" />
-                        <Setter Target="StopsListView.(Grid.ColumnSpan)" Value="1" />
+                        
                         <Setter Target="ShowStop.(Grid.Column)" Value="1" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="secondColumn.Width" Value="1*" />
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Visible" />
-                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Visible" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -147,14 +144,11 @@
                 </VisualState>
                 <VisualState x:Name="StopsCompactVisualState">
                     <VisualState.Setters>
-                        <Setter Target="StopsListView.(Grid.Column)" Value="0" />
-                        <Setter Target="StopsListView.(Grid.ColumnSpan)" Value="2" />
+                        
                         <Setter Target="ShowStop.(Grid.Column)" Value="0" />
                         <Setter Target="ShowStop.Visibility" Value="Collapsed" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="secondColumn.Width" Value="Auto" />
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Visible" />
-                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Visible" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -176,28 +170,14 @@
                 </VisualState>
                 <VisualState x:Name="ShowStopVisualState">
                     <VisualState.Setters>
-                        <Setter Target="StopsListView.(Grid.Column)" Value="0" />
-                        <Setter Target="StopsListView.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="StopsListView.Visibility" Value="Collapsed" />
-                        <Setter Target="FindStop.Visibility" Value="Collapsed" />
+
                         <Setter Target="ShowStop.(Grid.Column)" Value="0" />
                         <Setter Target="ShowStop.Visibility" Value="Visible" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ShowStopsGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="FindHyperButtonGrid.Visibility" Value="Collapsed" />
                         <Setter Target="secondColumn.Width" Value="Auto" />
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Collapsed" />
                     </VisualState.Setters>
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FindHyperButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
-                            <DiscreteObjectKeyFrame KeyTime="0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-
-
-                    </Storyboard>
                 </VisualState>
                 <VisualState x:Name="DescktopRoutsVisualState">
                     <VisualState.Setters>
@@ -212,7 +192,6 @@
                         <Setter Target="ShowRoutsListGrid.(UIElement.Visibility)" Value="Visible" />
                         <Setter Target="RoutViews.(UIElement.Visibility)" Value="Visible" />
                         <Setter Target="RoutViews.(Grid.Column)" Value="1" />
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
 
                     </VisualState.Setters>
 
@@ -228,8 +207,6 @@
                             </Setter.Value>
                         </Setter>
                         <Setter Target="RoutsListView.(Grid.ColumnSpan)" Value="1" />
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
@@ -270,10 +247,6 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="RoutsListVisualState">
-                    <VisualState.Setters>
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-
-                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutsListGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -335,9 +308,6 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="ShowRoutVisualState">
-                    <VisualState.Setters>
-                        <Setter Target="appBar.(UIElement.Visibility)" Value="Collapsed" />
-                    </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutsListGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
@@ -602,7 +572,7 @@
                                                         IsCompact="True" />
                                     <AppBarButton HorizontalAlignment="Center"
                                                   Command="{Binding ShowRouteMap}"
-                                                  CommandParameter="{Binding RouteNumSelectedValue.Rout}"
+                                                  CommandParameter="{Binding RouteNumSelectedValue}"
                                                   Icon="Map"
                                                   IsCompact="True"
                                                   Label="" />
@@ -619,74 +589,17 @@
                                             ShowStatusBar="Visible"
                                             Visibility="Collapsed" />
 
-                        
 
-                        <Button Grid.Row="1"
-                                HorizontalAlignment="Center"
-                                Content="Обновить расписание"
-                                Visibility="Collapsed" />
-
-
-                        <Grid x:Name="ShowStopsGrid"
+                        <view:StopsListView x:Name="ShowStopsGrid" DataContext="{Binding StopModelView}"
                               Grid.Row="1"
                               Grid.ColumnSpan="1"
                               Margin="10,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-
-
-                            </Grid.RowDefinitions>
-
-
-                            <local:MyTextBox x:Name="FindStop"
-                                             Grid.Row="0"
-                                             InputScope="Search"
-                                             IsTextPredictionEnabled="False"
-                                             Text="{Binding StopModelView.StopNameFilterAsync,
-                                                            Mode=TwoWay,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                             Visibility="Visible" />
-
-                            <ListView x:Name="StopsListView"
-                                      Grid.Row="1"
-                                      Grid.ColumnSpan="1"
-                                      DataContext="{Binding StopModelView}"
-                                      IsSynchronizedWithCurrentItem="False"
-                                      FontSize="20"
-                                      ItemTemplate="{StaticResource ListStopsDataTemplate}"
-                                      ItemsSource="{Binding FilteredStopsStore,
-                                                            Mode=OneWay,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding FilteredSelectedStop,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-
-
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                            </ListView>
-                            <AppBarToggleButton x:Name="appBarToggleButton"
-                                                Grid.Row="1"
-                                                VerticalAlignment="Bottom"
-                                                HorizontalAlignment="Right"
-                                                Content="FavouriteStop"
-                                                Icon="Favorite"
-                                                IsChecked="{Binding StopModelView.IsShowFavouriteStops,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                                IsCompact="True" />
-                        </Grid>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                        </view:StopsListView>
 
                         <Grid x:Name="ShowRoutsGrid"
                               Grid.Row="1"
@@ -767,41 +680,7 @@
                             </Grid>
                             
                         </Grid>
-                        <AppBar x:Name="appBar"
-                                Grid.Row="2"
-                                DataContext="{Binding StopModelView}">
-                            <VariableSizedWrapGrid Orientation="Horizontal">
-                                <CheckBox Content="Автобус"
-                                          IsChecked="{Binding Bus,
-                                                              UpdateSourceTrigger=PropertyChanged,
-                                                              Mode=TwoWay}"
-                                          IsDoubleTapEnabled="False"
-                                          IsHoldingEnabled="False" />
-                                <CheckBox Content="Тролейбус" IsChecked="{Binding Trol, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                                <CheckBox Content="Трамвай" IsChecked="{Binding Tram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <CheckBox Content="Метро" IsChecked="{Binding Metro, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                                <!--<CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
-
-
-                                <VariableSizedWrapGrid DataContext="{Binding SettingsModelView}"
-                                                       VariableSizedWrapGrid.ColumnSpan="10"
-                                                       Visibility="Collapsed">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <Core:DataTriggerBehavior Binding="{Binding Develop}" Value="true">
-                                            <Core:ChangePropertyAction PropertyName="Visibility" />
-                                        </Core:DataTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>
-                                    <TextBlock Text="Develop settings: " VariableSizedWrapGrid.ColumnSpan="1" />
-                                    <CheckBox Content="Нечеткий поиск"
-                                              DataContext="{Binding ElementName=ShowStop,
-                                                                    Path=DataContext}"
-                                              IsChecked="{Binding FuzzySearch,
-                                                                  Mode=TwoWay,
-                                                                  UpdateSourceTrigger=PropertyChanged}" />
-                                </VariableSizedWrapGrid>
-                            </VariableSizedWrapGrid>
-                        </AppBar>
+                        
                         <Button x:Name="UpdateButton"
                         	Grid.Row="1"
                         	HorizontalAlignment="Center"
@@ -925,162 +804,6 @@
                        Header="Карта"
                        Padding="0">
                 <view:MapViewControll DataContext="{Binding}" x:Name="map"></view:MapViewControll>
-                <!--<Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <Grid x:Name="grid1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="0.3*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <mapControl1:Map x:Name="map" TileLayer="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}"
-                                         mapControl1:MapPanel.Location="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         ZoomLevel="19" />
-                        
-
-                        <WebView x:Name="WebViewMap"
-                                 PermissionRequested="WebViewMap_PermissionRequested"
-                                 Visibility="Collapsed" />
-                        <Grid x:Name="grid"  Grid.Column="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <local:MyTextBox Text="{Binding SearchPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <ListView Grid.Row="1"
-                                      Grid.ColumnSpan="1"
-                                      DataContext="{Binding}"
-                                      IsSynchronizedWithCurrentItem="False"
-                                      ItemTemplate="{StaticResource ListStopsDataTemplate}"
-                                      ItemsSource="{Binding FilteredStops, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding CurrentStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:InvokeCommandAction Command="{Binding ShowStopMap}" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                            </ListView>
-
-                        </Grid>
-                        <Grid Grid.Row="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <StackPanel Margin="5">
-                                    <TextBlock Text="Zoom Level" HorizontalAlignment="Center" Foreground="Gray" FontSize="14"/>
-                                    <Slider Margin="10,-10,10,-10" Width="200" SmallChange="0.1"
-                            Minimum="{Binding MinZoomLevel, ElementName=map, UpdateSourceTrigger=PropertyChanged}"
-                            Maximum="{Binding MaxZoomLevel, ElementName=map, UpdateSourceTrigger=PropertyChanged}"
-                            Value="{Binding TargetZoomLevel, ElementName=map, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-                                <StackPanel Margin="5">
-                                    <TextBlock Text="Heading" HorizontalAlignment="Center" Foreground="Gray" FontSize="14"/>
-                                    <Slider Margin="10,-10,10,-10" Width="200" Minimum="0" Maximum="360" SmallChange="5" LargeChange="45"
-                            Value="{Binding Heading, ElementName=map, Mode=TwoWay}"/>
-                                </StackPanel>
-                                
-                                <ComboBox Width="200" Margin="10" VerticalAlignment="Center"
-                          SelectedValuePath="Tag" SelectedValue="{Binding TileLayer, ElementName=map, Mode=TwoWay}">
-                                    <ComboBoxItem Tag="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}">OpenStreetMap</ComboBoxItem>
-                                    <ComboBoxItem Tag="{Binding [Thunderforest OpenCycleMap], Source={StaticResource TileLayers}}">OpenCycleMap</ComboBoxItem>
-                                    <ComboBoxItem Tag="{Binding [Thunderforest Landscape], Source={StaticResource TileLayers}}">Landscape</ComboBoxItem>
-                                    <ComboBoxItem Tag="{Binding [Thunderforest Outdoors], Source={StaticResource TileLayers}}">Outdoors</ComboBoxItem>
-                                    <ComboBoxItem Tag="{Binding [Thunderforest Transport], Source={StaticResource TileLayers}}">Transport</ComboBoxItem>
-                                    <ComboBoxItem Tag="{Binding [Thunderforest Transport Dark], Source={StaticResource TileLayers}}">Transport Dark</ComboBoxItem>
-                                    <ComboBoxItem Tag="{Binding [MapQuest OpenStreetMap], Source={StaticResource TileLayers}}">MapQuest Open</ComboBoxItem>
-                                    --><!--<ComboBoxItem Tag="{Binding [Bing Maps Road], Source={StaticResource TileLayers}}">Bing Maps Road</ComboBoxItem>
-                    <ComboBoxItem Tag="{Binding [Bing Maps Aerial], Source={StaticResource TileLayers}}">Bing Maps Aerial</ComboBoxItem>
-                    <ComboBoxItem Tag="{Binding [Bing Maps Hybrid], Source={StaticResource TileLayers}}">Bing Maps Hybrid</ComboBoxItem>--><!--
-                                </ComboBox>
-                            </StackPanel>
-                        </Grid>
-                        <Border Grid.Row="1"
-                                Margin="0,0"
-                                VerticalAlignment="Bottom"
-                                Background="#FF5D5959" Grid.ColumnSpan="2">
-                            <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                <AppBarButton x:Name="ButtonIMap"
-                                              Command="{Binding ShowICommand}"
-                                              IsCompact="True"
-                                              Label="Местоположение"
-                                              ToolTipService.ToolTip="Определить мое местоположение">
-                                    <AppBarButton.Icon>
-                                        <FontIcon FontFamily="Segoe UI" Glyph="Я" />
-                                    </AppBarButton.Icon>
-                                </AppBarButton>
-                                <AppBarButton x:Name="ButtonIMinskTrans"
-                                              Click="ShowIClick"
-                                              IsCompact="True"
-                                              Visibility="Collapsed">
-                                    <AppBarButton.Icon>
-                                        <FontIcon Glyph="Я" />
-                                    </AppBarButton.Icon>
-                                </AppBarButton>
-                                <AppBarButton x:Name="ShowAllPushPins"
-                                              Click="ButtonBase_OnClick"
-                                              Icon="ViewAll"
-                                              IsCompact="True"
-                                              Visibility="Collapsed" />
-                                <AppBarButton x:Name="ShowRoutingMinskTrans"
-                                              Click="ShowWebViewRouting"
-                                              Icon="MapDrive"
-                                              IsCompact="True"
-                                              Label="Минсктранс"
-                                              ToolTipService.ToolTip="Отобразить карту минсктранса">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <Core:EventTriggerBehavior EventName="Click">
-                                            <Core:GoToStateAction StateName="ShowMinskTransRoutingVisualState" />
-                                        </Core:EventTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>
-                                </AppBarButton>
-                                <AppBarButton x:Name="ShowNormalMap"
-                                              Click="ShowNormalMapClick"
-                                              Icon="Map"
-                                              IsCompact="True"
-                                              Visibility="Collapsed">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <Core:EventTriggerBehavior EventName="Click">
-                                            <Core:GoToStateAction StateName="ShowNormalMapVisualState" />
-                                        </Core:EventTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>
-                                </AppBarButton>
-                                <AppBarButton x:Name="ShowVirtualTable"
-                                              Click="ShowVirtualTableClick"
-                                              Icon="Tag"
-                                              IsCompact="True"
-                                              Label="Маршрут"
-                                              ToolTipService.ToolTip="Отобразить карту для прокладки маршрута">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <Core:EventTriggerBehavior EventName="Click">
-                                            <Core:GoToStateAction StateName="ShowVirtualTableVisualState" />
-                                        </Core:EventTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>
-                                </AppBarButton>
-                                <AppBarToggleButton
-                                                Command="{Binding ChangeShowStopList}"
-                                              IsChecked="{Binding ShowStopsList, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                                              IsCompact="True"
-                                              Label="Остановки"
-                                              ToolTipService.ToolTip="Отобразить список остановок" Icon="ShowResults">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <Core:EventTriggerBehavior EventName="Unchecked">
-                                            <Core:ChangePropertyAction PropertyName="Width" Value="0" TargetObject="{Binding ColumnDefinitions[1], ElementName=grid1}"></Core:ChangePropertyAction>
-                                        </Core:EventTriggerBehavior>
-                                        <Core:EventTriggerBehavior EventName="Checked">
-                                            <Core:ChangePropertyAction PropertyName="Width" Value="0.3*" TargetObject="{Binding ColumnDefinitions[1], ElementName=grid1}"></Core:ChangePropertyAction>
-                                        </Core:EventTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>
-                                </AppBarToggleButton>
-
-                            </Controls:WrapPanel>
-                        </Border>
-                    </Grid>
-                </Border>-->
             </PivotItem>
 
             <PivotItem x:Name="SettingsPivotItem"

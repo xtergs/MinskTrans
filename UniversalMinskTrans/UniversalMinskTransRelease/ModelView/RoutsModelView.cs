@@ -44,6 +44,8 @@ namespace MinskTrans.Universal.ModelView
 	    private CancellationTokenSource tokenSource = null;
 	    private bool _isWorking;
 	    private IEnumerable<Rout> _routeNumsAsync;
+	    private bool _isShowAdditionFilter = false;
+	    private string _additionStopFilter = "";
 
 	    //public RoutesModelview()
 		//{
@@ -71,12 +73,18 @@ namespace MinskTrans.Universal.ModelView
 			get { return Context.Context.IsFavouriteRout(RouteNumSelectedValue); }
 		}
 
-		//public RelayCommand<Rout> ShowRouteMap
-		//{
-		//	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-		//}
+        //public RelayCommand<Rout> ShowRouteMap
+        //{
+        //	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
+        //}
 
-		public TransportType TypeTransport
+	    public int FavouriteRoutsCount
+	    {
+	        get { return Context.Context.FavouriteRouts.Count; }
+            set { OnPropertyChanged(); }
+	    }
+
+	    public TransportType TypeTransport
 		{
 			get
 			{
@@ -97,7 +105,17 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public bool IsShowFavouriteRouts
+	    public bool IsShowAdditionFilter
+	    {
+	        get { return _isShowAdditionFilter; }
+	        set
+	        {
+	            _isShowAdditionFilter = value;
+	            OnPropertyChanged();
+	        }
+	    }
+
+	    public bool IsShowFavouriteRouts
 		{
 			get { return isShowFavouriteRouts; }
 			set
@@ -134,7 +152,20 @@ namespace MinskTrans.Universal.ModelView
 			}
 		}
 
-		public IEnumerable<IGrouping<TransportType,RoutWithDestinations>> RouteNumsGroups
+	    public string AdditionStopFilter
+	    {
+	        get { return _additionStopFilter; }
+	        set
+	        {
+
+                if (!string.IsNullOrWhiteSpace(value))
+	                _additionStopFilter = value.Trim();
+	            OnPropertyChanged();
+	            RouteNumsFilterAsync();
+	        }
+	    }
+
+	    public IEnumerable<IGrouping<TransportType,RoutWithDestinations>> RouteNumsGroups
 		{
 			get
 			{
@@ -434,11 +465,6 @@ namespace MinskTrans.Universal.ModelView
 	                await Task.Delay(250, token);
 	                if (token.IsCancellationRequested)
 	                    return null;
-#if DEBUG
-	                System.Diagnostics.Stopwatch wather = new Stopwatch();
-	                wather.Start();
-	                //await Task.Delay(5000, token);
-#endif
 
 	                if (IsShowFavouriteRouts)
 	                    return Context.Context.FavouriteRouts;
@@ -454,13 +480,12 @@ namespace MinskTrans.Universal.ModelView
 
 	                if (!string.IsNullOrWhiteSpace(RoutNumAsync))
 	                    temp = temp.Where(x => x.RouteNum.Contains(RoutNumAsync));
-
+	                if (IsShowAdditionFilter && !string.IsNullOrWhiteSpace(AdditionStopFilter))
+	                {
+	                    string filter = AdditionStopFilter.ToLowerInvariant();
+	                    temp = temp.Where(rout => rout.Stops.Any(stop => stop.SearchName.Contains(filter)));
+	                }
 	                
-#if DEBUG
-
-	                wather.Stop();
-	                Debug.WriteLine($"\nThread time is {wather.Elapsed}");
-#endif
 	                if (token.IsCancellationRequested)
 	                    return null;
 	                return temp;
@@ -469,21 +494,8 @@ namespace MinskTrans.Universal.ModelView
 	                return null;
 	            tokenSource = null;
 	            IsWorking = false;
-#if DEBUG
-                System.Diagnostics.Stopwatch wather2 = new Stopwatch();
-                wather2.Start();
-#endif
+
                 RouteNumsAsync = res;
-#if DEBUG
-
-                wather2.Stop();
-                Debug.WriteLine($"\ncopy time is {wather2.Elapsed}");
-#endif
-#if DEBUG
-
-                wather1.Stop();
-                Debug.WriteLine($"\nProcess time is {wather1.Elapsed}");
-#endif
                 return res;
 	        }
 
@@ -523,7 +535,9 @@ namespace MinskTrans.Universal.ModelView
 		}
 public RelayCommand<Rout> AddRemoveFavouriteRout
 		{
-			get { return new RelayCommand<Rout>((x) => Context.AddRemoveFavouriteRoute(x)); }
+			get { return new RelayCommand<Rout>((x) => { Context.AddRemoveFavouriteRoute(x);
+			                                               FavouriteRoutsCount = 1;
+			}); }
 		}
 		
 		

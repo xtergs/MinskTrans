@@ -204,9 +204,12 @@ namespace MinskTrans.DesctopClient.Modelview
 
 	    public override async Task<IEnumerable<Stop>> FilterStopsAsync()
 		{
-			if (IsShowFavouriteStops)
-				return Context.Context.FavouriteStops;
-			if (sourceToken != null)
+	        if (IsShowFavouriteStops)
+	        {
+	            FilteredStopsStore = Context.Context.FavouriteStops;
+	            return FilteredStopsStore;
+	        }
+	        if (sourceToken != null)
 				sourceToken.Cancel();
 	        IsWorking = true;
 			using (sourceToken = new CancellationTokenSource())
@@ -431,14 +434,20 @@ namespace MinskTrans.DesctopClient.Modelview
             }
 		}
 
-		public TimeLineModel SelectedTimeLineModel
+	    public int FavouriteStopsCount
+	    {
+	        get { return Context.Context.FavouriteStops.Count; }
+	        set { OnPropertyChanged(); }
+	    }
+
+	    public TimeLineModel SelectedTimeLineModel
 		{
 			get { return _selectedTimeLineModel; }
 			set
 			{
 				_selectedTimeLineModel = value;
 				OnPropertyChanged();
-				var xxx = StopsTimesForRout;
+				//var xxx = StopsTimesForRout;
 
 			}
 		}
@@ -459,7 +468,11 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public RelayCommand<Stop> AddRemoveFavouriteStop
 		{
-			get { return new RelayCommand<Stop>((x)=> Context.AddRemoveFavouriteStop(x));}
+			get { return new RelayCommand<Stop>((x) =>
+			{
+			    Context.AddRemoveFavouriteStop(x);
+			    FavouriteStopsCount = 1;
+			});}
 		}
 
 		public RelayCommand RefreshTimeSchedule

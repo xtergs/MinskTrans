@@ -313,7 +313,7 @@ namespace MinskTrans.Context
                 for (int i = 0; i < rout.Stops.Count; i++)
                 {
                     StopTimePair p = new StopTimePair();
-                    p.Time = new TimeSpan(0,0,rout.Time.TimesDictionary[i][day].Times[index] - mins, 0,0);
+                    p.Time = new TimeSpan(0,0,rout.Time.TimesDictionary[i][day-1].Times[index] - mins, 0,0);
                     p.Stop = rout.Stops[i];
                     pair.Add(p);
                 }

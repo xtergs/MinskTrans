@@ -70,7 +70,7 @@ namespace MinskTrans.Universal.ModelView
             //			LogManagerFactory.DefaultConfiguration = configuration;
 		    //LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
 
-            LogManagerFactory.DefaultConfiguration.IsEnabled = true;
+            //LogManagerFactory.DefaultConfiguration.IsEnabled = true;
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
 			//builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();

@@ -75,9 +75,8 @@ namespace UniversalMinskTrans
 				case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
 				case BackgroundAccessStatus.Unspecified:
 					// The user didn't explicitly disable or enable access and updates. 
-					var updateTaskRegistration = RegisterBackgroundTask("MinskTrans.BackgroundUpdateTask.UpdateBackgroundTask",
-						"UpdateBackgroundTasks1", new TimeTrigger(15, false),
-						null);
+					var updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
+                        backgroundName, new TimeTrigger(15, false), new SystemCondition(SystemConditionType.InternetAvailable));
 
 					updateTaskRegistration.Completed += async (sender, args) =>
 					{
@@ -103,7 +102,7 @@ namespace UniversalMinskTrans
 						catch (Exception ex)
 						{
 							log?.Fatal("Backroudn complited", ex);
-							throw;
+							//MainModelView.MainModelViewGet.NotifyHelper.ShowMessageAsync()
 						}
 						log?.Info("Background complited, OK");
 					};
@@ -277,8 +276,10 @@ namespace UniversalMinskTrans
 
 
 		readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
+	    private string backgroundAssembly = "MinskTrans.BackgroundUpdateTask.UpdateBackgroundTask";
+	    private string backgroundName = "UpdateBackground";
 
-		void CallBackReconnectPushServerTimer(object state)
+	    void CallBackReconnectPushServerTimer(object state)
 		{
 			//InitNotificationsAsync();
 		}
@@ -301,20 +302,27 @@ namespace UniversalMinskTrans
 			//
 			// Check for existing registrations of this background task.
 			//
-
+		    BackgroundTaskRegistration registered = null;
+		    bool isRegistered = false;
 			foreach (var cur in BackgroundTaskRegistration.AllTasks)
 			{
 
-				if (cur.Value.Name == taskName)
-				{
-					// 
-					// The task is already registered.
-					// 
+			    if (cur.Value.Name == taskName)
+			    {
+                    // 
+                    // The task is already registered.
+                    // 
+			        isRegistered = true;
 
-					return (BackgroundTaskRegistration)(cur.Value);
-				}
+                    registered =  (BackgroundTaskRegistration) (cur.Value);
+			    }
+			    else
+			         cur.Value.Unregister(true);
+
 			}
 
+		    if (isRegistered)
+		        return registered;
 
 			//
 			// Register the background task.
@@ -349,16 +357,16 @@ namespace UniversalMinskTrans
 		/// </summary>
 		public App()
 		{
-			//            var configuration = new LoggingConfiguration();
-			//#if DEBUG
-			//            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
-			//#endif
-			//            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
-			//            configuration.IsEnabled = true;
+            var configuration = new LoggingConfiguration();
+#if DEBUG
+            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
+#endif
+            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+            configuration.IsEnabled = true;
 
-			//            LogManagerFactory.DefaultConfiguration = configuration;
-			LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
-			LogManagerFactory.DefaultConfiguration.IsEnabled = true;
+            LogManagerFactory.DefaultConfiguration = configuration;
+   //         LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+			//LogManagerFactory.DefaultConfiguration.IsEnabled = true;
 			log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
 
 			log.Debug("\n\nApp constructor started");

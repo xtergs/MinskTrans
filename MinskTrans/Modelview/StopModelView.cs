@@ -244,6 +244,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(FilteredStops));
 			    FilterStopsAsync();
+			    FavouriteStopsCount = 1;
+
 			}
 		}
 
@@ -437,7 +439,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 	    public int FavouriteStopsCount
 	    {
-	        get { return Context.Context.FavouriteStops.Count; }
+	        get { return IsShowFavouriteStops? 1 : Context.Context.FavouriteStops.Count; }
 	        set { OnPropertyChanged(); }
 	    }
 

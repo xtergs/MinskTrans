@@ -47,5 +47,6 @@ namespace MinskTrans.Context
         DateTime LastUpdateDbDateTimeUtc { get; }
         List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day);
 
+        void ForsStopActivity();
     }
 }

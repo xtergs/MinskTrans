@@ -15,7 +15,7 @@ namespace MinskTrans.Context
 {
     public abstract class GenericBussnessLogic: IBussnessLogics
     {
-        private Dictionary<CancellationToken, bool> tokens = new Dictionary<CancellationToken, bool>(); 
+        protected Dictionary<CancellationToken, bool> tokens = new Dictionary<CancellationToken, bool>(); 
         private bool isWorking = false;
         private bool isLoaded = false;
         private bool isLocked = false;
@@ -53,16 +53,30 @@ namespace MinskTrans.Context
 
         private int countUpdateFail = 0;
         private int maxCountUpdateFail = 10;
-
+        private CancellationTokenSource loadDataSource = null;
         public async Task LoadDataBase(LoadType loadType = LoadType.LoadAll)
+        {
+            if (loadDataSource != null)
+                return;
+            using (loadDataSource = new CancellationTokenSource())
+            {
+                var token = loadDataSource.Token;
+                await LoadDataBase(token);
+            }
+            loadDataSource = null;
+        }
+
+        public async Task LoadDataBase(CancellationToken token,LoadType loadType = LoadType.LoadAll)
         {
             OnLoadStarted();
             try
             {
+                tokens.Add(token, true);
                 await Context.Load(loadType);
             }
             finally
             {
+                tokens.Remove(token);
                 OnLoadEnded();
             }
         }
@@ -320,7 +334,15 @@ namespace MinskTrans.Context
                 return pair;
             }
             return null;
-        } 
+        }
+
+        public void ForsStopActivity()
+        {
+            foreach (var token in tokens)
+            {
+                
+            }
+        }
 
         public event EventHandler<EventArgs> NeedUpdadteDB;
 

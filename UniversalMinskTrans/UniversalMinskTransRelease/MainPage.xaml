@@ -511,74 +511,13 @@
                                 </Interactivity:Interaction.Behaviors>
                             </HyperlinkButton>
                         </Grid>
-                        <Grid x:Name="RoutViews"
+                        <view:RoutStopsTimeTableView x:Name="RoutViews"
                               Grid.Row="0"
                               Grid.RowSpan="3"
                               Grid.ColumnSpan="3"
                               Margin="10,0"
                               DataContext="{Binding RoutsModelView}"
-                              Visibility="Collapsed">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="1" Margin="0,5,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-
-                                </Grid.ColumnDefinitions>
-                                <Image Height="{Binding ActualHeight,
-                                                        ElementName=RouteNameTextBlock}"
-                                       MinHeight="15"
-                                       Source="{Binding RouteSelectedValue.Transport,
-                                                        Converter={StaticResource TransportToImageConverter},
-                                                       UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBlock Grid.Column="1"
-                                           Margin="5,0,0,0"
-                                           FontSize="25"
-                                           Text="{Binding RouteSelectedValue.RouteNum,
-                                                          Mode=TwoWay,
-                                                          UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBlock x:Name="RouteNameTextBlock"
-                                           Grid.Column="2"
-                                           Margin="5,0,0,0"
-                                           FontSize="25"
-                                           Text="{Binding RouteSelectedValue.RouteName,
-                                                          Mode=TwoWay,
-                                                          UpdateSourceTrigger=PropertyChanged}" />
-                            </Grid>
-                            <view:RoutStopsTimeTableView Grid.Row="2" DataContext="{Binding RoutStopsTimeTable, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                            <Border Grid.Row="3"
-                                    Margin="-10,0"
-                                    VerticalAlignment="Bottom"
-                                    Background="#FF5D5959">
-                                <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                    <AppBarButton x:Name="SoftBackButton"
-                                                  Command="{Binding BackCommand}"
-                                                  Icon="Back"
-                                                  IsCompact="True" />
-                                    <AppBarToggleButton HorizontalAlignment="Center"
-                                                        Command="{Binding AddRemoveFavouriteRout}"
-                                                        CommandParameter="{Binding RouteNumSelectedValue}"
-                                                        Icon="Favorite"
-                                                        IsChecked="{Binding IsRoutFavourite,
-                                                                            Mode=TwoWay,
-                                                                            UpdateSourceTrigger=PropertyChanged}"
-                                                        IsCompact="True" />
-                                    <AppBarButton HorizontalAlignment="Center"
-                                                  Command="{Binding ShowRouteMap}"
-                                                  CommandParameter="{Binding RouteNumSelectedValue}"
-                                                  Icon="Map"
-                                                  IsCompact="True"
-                                                  Label="" />
-                                </Controls:WrapPanel>
-                            </Border>
-                        </Grid>
+                              Visibility="Collapsed"/>
 
                         <local:ShowStopView x:Name="ShowStop"
                                             Grid.Row="0"
@@ -648,12 +587,12 @@
                                                             UpdateSourceTrigger=PropertyChanged}"
                                            MinWidth="15"
                                            MinHeight="15"
-                                           Source="{Binding RouteNumSelectedValue.Rout.Transport,
+                                           Source="{Binding RouteNumSelectedValue.Transport,
                                                             Converter={StaticResource TransportToImageConverter}}" />
                                     <TextBlock x:Name="TransportTextBlock"
                                                Grid.Column="1"
                                                FontSize="20"
-                                               Text="{Binding RouteNumSelectedValue.Rout.RouteNum}" />
+                                               Text="{Binding RouteNumSelectedValue.RouteNum}" />
                                 </Grid>
 
 
@@ -911,6 +850,11 @@
                      IsEnabled="True"
                      IsIndeterminate="True"
                      Visibility="Collapsed" />
+        <ProgressBar Height="10"
+                     VerticalAlignment="Top"
+                     IsEnabled="True"
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
 
     </Grid>
 </Page>

@@ -60,10 +60,12 @@ namespace MinskTrans.Universal.ModelView
 			this.commands = commands;
 			Context.Context.PropertyChanged += (sender, args) =>
 			{
-				if (args.PropertyName == "Routs")
-					OnPropertyChanged("RouteNums");
+			    if (args.PropertyName == "Routs")
+			        RouteNumsFilterAsync();
 			};
 			OnPropertyChanged("RouteNums");
+		    FavouriteRoutsCount = 1;
+
 		}
 
 		public bool ShowFavourite { get; set; }
@@ -80,7 +82,7 @@ namespace MinskTrans.Universal.ModelView
 
 	    public int FavouriteRoutsCount
 	    {
-	        get { return Context.Context.FavouriteRouts.Count; }
+	        get { return IsShowFavouriteRouts ? 1 : Context.Context.FavouriteRouts.Count; }
             set { OnPropertyChanged(); }
 	    }
 
@@ -124,6 +126,7 @@ namespace MinskTrans.Universal.ModelView
 				OnPropertyChanged();
 			    RouteNumsFilterAsync();
 				OnPropertyChanged(nameof(RouteNums));
+			    FavouriteRoutsCount = 1;
 			}
 		}
 

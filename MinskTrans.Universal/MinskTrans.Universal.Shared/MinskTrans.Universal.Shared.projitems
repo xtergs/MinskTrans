@@ -9,14 +9,22 @@
     <Import_RootNamespace>MinskTrans.Universal</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DateToString.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\IntToStringDayOfWeek.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\IntToVisibleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsLeftConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\MinsToTimeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\RoutsToNumStrConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\StopsToStr.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\TransportFormatedStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\TransportTypeToVisability.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\WeekdaysToStrConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Expander\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\NoFilesToRestoreDataException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\NotDataToDeserialize.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OrientedSize.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PushPinBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PushpinLocation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WrapPanel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -38,6 +46,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Resourse\BrushesLight.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resourse\DataTemplates.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

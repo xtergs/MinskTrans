@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Data;
 
 namespace MinskTrans.Universal.Converters
 {
-    class StopsToStr:IValueConverter
+    public class StopsToStr:IValueConverter
     {
 	    #region Implementation of IValueConverter
 

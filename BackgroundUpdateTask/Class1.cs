@@ -22,7 +22,7 @@ using MinskTrans.Utilites.Base.Net;
 using MyLibrary;
 using UniversalMinskTransRelease.Nofity;
 
-namespace MinskTrans.BackgroundUpdateTask
+namespace BackgroundUpdateTaskUniversalRuntime
 {
 	public sealed class UpdateBackgroundTask : IBackgroundTask
 	{
@@ -53,7 +53,7 @@ namespace MinskTrans.BackgroundUpdateTask
 
 			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
 
-			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new StreamingFileTarget());
 			configuration.IsEnabled = true;
 
 			LogManagerFactory.DefaultConfiguration = configuration;
@@ -67,7 +67,7 @@ namespace MinskTrans.BackgroundUpdateTask
 				var builder = new ContainerBuilder();
 				builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
 				//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-				builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+				builder.RegisterType<Context>().As<IContext>().SingleInstance();
 				builder.RegisterType<UpdateManagerBase>().SingleInstance();
 				builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
 				builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>().SingleInstance();

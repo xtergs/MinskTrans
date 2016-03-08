@@ -20,7 +20,7 @@
     <PackageCertificateKeyFile>UniversalMinskTransRelease_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\</AppxPackageDir>
-    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>D95E21D2866CF4CE68AF37DED04AB8CD7026C4ED</PackageCertificateThumbprint>
     <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
@@ -38,7 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINDOWS_UAP;CODE_ANALYSIS</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -47,6 +47,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +71,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -85,7 +87,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINDOWS_UAP;CODE_ANALYSIS; BETA;CODE_ANALYSIS;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINDOWS_UAP;CODE_ANALYSIS</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -93,7 +95,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
@@ -137,18 +140,6 @@
     </Compile>
     <Compile Include="Class.cs" />
     <Compile Include="Class2.cs" />
-    <Compile Include="Converters\DateToString.cs" />
-    <Compile Include="Converters\IntToStringDayOfWeek.cs" />
-    <Compile Include="Converters\IntToVisibleConverter.cs" />
-    <Compile Include="Converters\MinsLeftConverter.cs" />
-    <Compile Include="Converters\MinsToTimeConverter.cs" />
-    <Compile Include="Converters\RoutsToNumStrConverter.cs" />
-    <Compile Include="Converters\StopsToStr.cs" />
-    <Compile Include="Converters\TransportFormatedStringConverter.cs" />
-    <Compile Include="Converters\TransportTypeToVisability.cs" />
-    <Compile Include="Converters\WeekdaysToStrConverter.cs" />
-    <Compile Include="Expander\BooleanToVisibilityConverter.cs" />
-    <Compile Include="LocationToVisibilityConverter.cs" />
     <Compile Include="LocationX.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -158,16 +149,11 @@
     <Compile Include="ModelView\MainModelView.cs" />
     <Compile Include="ModelView\NewsModelView.cs" />
     <Compile Include="ModelView\RoutsModelView.cs" />
-    <Compile Include="MyTextBox.xaml.cs">
+    <Compile Include="View\MyTextBox.xaml.cs">
       <DependentUpon>MyTextBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NoFilesToRestoreDataException.cs" />
-    <Compile Include="NotDataToDeserialize.cs" />
-    <Compile Include="OrientedSize.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PushPinBuilder.cs" />
-    <Compile Include="PushpinLocation.cs" />
-    <Compile Include="ShowStopView.xaml.cs">
+    <Compile Include="View\ShowStopView.xaml.cs">
       <DependentUpon>ShowStopView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TextBoxDelete.cs" />
@@ -197,7 +183,6 @@
     <Compile Include="View\StopsListView.xaml.cs">
       <DependentUpon>StopsListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WrapPanel.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Resources.resw" />
@@ -246,10 +231,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
-    <Content Include="Image\bus.jpg" />
-    <Content Include="Image\subway.jpg" />
-    <Content Include="Image\tram.jpg" />
-    <Content Include="Image\trol.jpg" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
@@ -262,28 +243,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MyTextBox.xaml">
+    <Page Include="View\MyTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resourse\Brushes.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resourse\BrushesLight.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resourse\DataTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
-    <Page Include="Resourse\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ShowStopView.xaml">
+    <Page Include="View\ShowStopView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -333,9 +297,9 @@
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
       <Name>MinskTrans.Context</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BackgroundUpdateTaskUniversal\BackgroundUpdateTaskUniversal.csproj">
-      <Project>{0d04620e-75f1-4dc1-9ec0-fc0dfdc9a3de}</Project>
-      <Name>BackgroundUpdateTaskUniversal</Name>
+    <ProjectReference Include="..\BackgroundUpdateTaskUniversalRuntime\BackgroundUpdateTaskUniversalRuntime.csproj">
+      <Project>{9be28be3-37c6-4a93-8df8-ac970ec3a650}</Project>
+      <Name>BackgroundUpdateTaskUniversalRuntime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

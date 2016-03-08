@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0D04620E-75F1-4DC1-9EC0-FC0DFDC9A3DE}</ProjectGuid>
-    <OutputType>winmdobj</OutputType>
+    <ProjectGuid>{4B88A2E0-3E8E-499B-863B-3A2531793D88}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MinskTrans.BackgroundUpdateTask</RootNamespace>
-    <AssemblyName>MinskTrans.BackgroundUpdateTask</AssemblyName>
+    <RootNamespace>FileDbCacheUniversal</RootNamespace>
+    <AssemblyName>FileDbCacheUniversal</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
@@ -46,7 +46,6 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -108,27 +107,13 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\BackgroundUpdateTask\Class1.cs">
-      <Link>Class1.cs</Link>
-    </Compile>
+    <Compile Include="Class1.cs" />
+    <Compile Include="FileDbCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\BackgroundUpdateTaskUniversal.rd.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
-      <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
-      <Name>CommonLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
-      <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
-      <Name>MinskTrans.Context</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="Properties\FileDbCacheUniversal.rd.xml" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

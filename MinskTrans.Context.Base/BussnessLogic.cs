@@ -109,6 +109,7 @@ namespace MinskTrans.Context
             OnUpdateDbStarted();
 	        try
 	        {
+	            tokens.Add(token, true);
 	            updatingNewsTable = true;
 	            try
 	            {
@@ -227,6 +228,7 @@ namespace MinskTrans.Context
 	        }
 	        finally
 	        {
+	            tokens.Remove(token);
                 OnUpdateDbEnded();
 	            updatingNewsTable = false;
 	        }
@@ -246,6 +248,7 @@ namespace MinskTrans.Context
 	        DateTime utcNow = DateTime.UtcNow;
 	        try
 	        {
+	            tokens.Add(token, true);
 	            updatingTimeTable = true;
 	            if (withLightCheck)
 	            {
@@ -318,6 +321,7 @@ namespace MinskTrans.Context
 			}
 	        finally
 	        {
+	            tokens.Remove(token);
                 OnUpdateDbEnded();
 	            updatingTimeTable = false;
 	        }

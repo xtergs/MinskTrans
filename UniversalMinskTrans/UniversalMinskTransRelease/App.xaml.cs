@@ -20,6 +20,7 @@ using GalaSoft.MvvmLight.Command;
 using MyLibrary;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using StreamingFileTarget = MetroLog;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -87,9 +88,17 @@ namespace UniversalMinskTrans
 								MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
 									TypeOfUpdate.Db))
 							{
-								await MainModelView.MainModelViewGet.Context.Save(false);
-								await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
-								log?.Info("Background task complited, DB reloaded");
+							    try
+							    {
+							        MainModelView.MainModelViewGet.IsLoading = true;
+                                    await MainModelView.MainModelViewGet.Context.Save(false);
+							        await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
+							        log?.Info("Background task complited, DB reloaded");
+							    }
+							    finally
+							    {
+                                    MainModelView.MainModelViewGet.IsLoading = false;
+                                }
 							}
 							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
 								TypeOfUpdate.News))
@@ -140,6 +149,7 @@ namespace UniversalMinskTrans
 				{
 					log?.Info("Prev state != Running");
 
+				    model.Context.LoadEnded += (sender, args) => model.IsLoading = false;
 					model.Context.NeedUpdadteDB += async (sender, args) =>
 					{
 						log?.Info("App Need Update");
@@ -264,8 +274,8 @@ namespace UniversalMinskTrans
 			var deferral = e.SuspendingOperation.GetDeferral();
 			var model = MainModelView.MainModelViewGet;
 			await model.Context.Save(saveAllDB: false);
-			await model.NewsManager.SaveToFile();
-			model.SettingsModelView.TypeError = Error.None;
+			//await model.NewsManager.SaveToFile();
+			//model.SettingsModelView.TypeError = Error.None;
 			if (!model.SettingsModelView.KeepTracking)
 				model.MapModelView.StopGPS();
 			deferral.Complete();
@@ -276,7 +286,7 @@ namespace UniversalMinskTrans
 
 
 		readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
-	    private string backgroundAssembly = "MinskTrans.BackgroundUpdateTask.UpdateBackgroundTask";
+	    private string backgroundAssembly = "BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask";
 	    private string backgroundName = "UpdateBackground";
 
 	    void CallBackReconnectPushServerTimer(object state)
@@ -361,7 +371,7 @@ namespace UniversalMinskTrans
 #if DEBUG
             configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
 #endif
-            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+            configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new MetroLog.Targets.StreamingFileTarget());
             configuration.IsEnabled = true;
 
             LogManagerFactory.DefaultConfiguration = configuration;

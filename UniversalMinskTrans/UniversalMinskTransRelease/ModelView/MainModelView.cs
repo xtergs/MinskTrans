@@ -48,6 +48,18 @@ namespace MinskTrans.Universal.ModelView
 	        set
 	        {
 	            _isNeesUpdate = value;
+	            if (value)
+	                IsLoading = false;
+	            OnPropertyChanged();
+	        }
+	    }
+
+	    public bool IsLoading
+	    {
+	        get { return _isLoading; }
+	        set
+	        {
+	            _isLoading = value;
 	            OnPropertyChanged();
 	        }
 	    }
@@ -214,6 +226,7 @@ namespace MinskTrans.Universal.ModelView
 
 		private bool logsWork = false;
 	    private bool _isNeesUpdate = false;
+	    private bool _isLoading = true;
 
 	    public RelayCommand RefreshLogsCommand
 		{

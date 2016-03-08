@@ -1,62 +1,79 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
-using Autofac;
+using System.Threading.Tasks;
 using CommonLibrary;
+using GalaSoft.MvvmLight.Command;
+using MinskTrans.DesctopClient.Modelview;
+using MyLibrary;
+using Autofac;
 using CommonLibrary.IO;
 using CommonLibrary.Notify;
-using GalaSoft.MvvmLight.Command;
 using MetroLog;
+using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
-using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.UniversalModelView;
-using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
-using UniversalMinskTransRelease.Nofity;
-using MyLibrary;
 using UniversalMinskTransRelease.ModelView;
+using UniversalMinskTransRelease.Nofity;
 
 namespace MinskTrans.Universal.ModelView
 {
 
-	public class MainModelView : BaseModelView, INotifyPropertyChanged
-	{
-	    private IContainer container;
-		private static MainModelView mainModelView;
-		//private readonly IContext context;
-	    private readonly NewsManagerBase newsManager;
+    public class MainModelView : BaseModelView, INotifyPropertyChanged
+    {
+        private readonly IContainer container;
+        private static MainModelView mainModelView;
+        //private readonly IContext context;
+        /*
+                private FindModelView findModelView;
+        */
+        private readonly NewsManagerBase newsManager;
+        private readonly INotifyHelper notifyHelper;
+        private ILogger log;
 
-	    private bool updating;
+        public bool IsNeesUpdate
+        {
+            get { return _isNeesUpdate; }
+            set
+            {
+                _isNeesUpdate = value;
+                OnPropertyChanged();
+            }
+        }
 
-		//public static MainModelView Create(Context newContext)
-		//{
-		//	if (mainModelView == null)
-		//		mainModelView = new MainModelView(newContext);
-		//	return mainModelView;
-		//}
+        public UpdateManagerBase UpdateManager { get; }
 
-		public static MainModelView MainModelViewGet
-		{
-			get {
-				if (mainModelView == null)
-					mainModelView = new MainModelView();
-				return mainModelView;}
-		}
 
-		
+        public static MainModelView MainModelViewGet =>
+            mainModelView ?? (mainModelView = new MainModelView());
 
-		private MainModelView()
-		{
-			var builder = new ContainerBuilder();
-			builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
-            //builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity3_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+        private MainModelView()
+        {
+            //			var configuration = new LoggingConfiguration();
+            //#if DEBUG
+            //			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
+            //#endif
+            //			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+            //			configuration.IsEnabled = true;
+
+            //			LogManagerFactory.DefaultConfiguration = configuration;
+            //LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+
+            //LogManagerFactory.DefaultConfiguration.IsEnabled = true;
+            var builder = new ContainerBuilder();
+            builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
+            //builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
             builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
             builder.RegisterType<UpdateManagerBase>();
             builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
@@ -73,8 +90,7 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
             builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
             builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
-
-            //builder.RegisterType<Context>().As<IContext>();
+            builder.RegisterType<FilePathsSettings>().SingleInstance();
 
             container = builder.Build();
 
@@ -85,109 +101,170 @@ namespace MinskTrans.Universal.ModelView
             log = container.Resolve<ILogManager>().GetLogger<MainModelView>();
 
             ExternalCommands = container.Resolve<IExternalCommands>();
+
         }
 
-	    public ILogger log { get; set; }
+        public IGeolocation Geolocation => container.Resolve<IGeolocation>();
 
-	    public UpdateManagerBase UpdateManager { get; set; }
+        public NewsManagerBase NewsManager => container.Resolve<NewsManagerBase>();
 
-	    public IGeolocation Geolocation
-        { get { return container.Resolve<IGeolocation>(); } }
+        public MapModelView MapModelView { get; set; }
+        public IExternalCommands ExternalCommands { get; }
 
-        public NewsManagerBase NewsManager
-		{
-            get { return container.Resolve<NewsManagerBase>(); }
-        }
+        public ISettingsModelView SettingsModelView => container.Resolve<ISettingsModelView>();
 
-		public MapModelView MapModelView { get; set; }
+        public FindModelView FindModelView => container.Resolve<FindModelView>();
 
-	    public ISettingsModelView SettingsModelView { get { return container.Resolve<ISettingsModelView>(); } }
+        public StopModelView StopMovelView { get; }
 
-	    public FindModelView FindModelView { get { return container.Resolve<FindModelView>(); } }
+        public RoutsModelView RoutsModelView { get; }
 
-	    public GroupStopsModelView GroupStopsModelView { get { return container.Resolve<GroupStopsModelView>(); } }
+        public GroupStopsModelView GroupStopsModelView => container.Resolve<GroupStopsModelView>();
 
-	    public FavouriteModelView FavouriteModelView { get { return container.Resolve<FavouriteModelView>(); } }
+        public FavouriteModelView FavouriteModelView => container.Resolve<FavouriteModelView>();
 
-	    //public IContext Context { get { return context; } }
+        //public IContext Context { get { return context; } }
 
 
-		public List<NewsEntry> AllNews
-		{
-			get
-			{
-				if (NewsManager != null)
-				{
+        public List<NewsEntry> AllNews
+        {
+            get
+            {
 #if DEBUG
-					var xxx = NewsManager.AllHotNews.Concat(newsManager.NewNews).ToList();
+                var xxx = NewsManager?.AllHotNews.Concat(newsManager.NewNews).ToList();
 #endif
-					return NewsManager.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.PostedUtc).ThenByDescending(key=> key.RepairedLineUtc).ToList();
-				}
-				return null;
-			}
-			set
-			{
-				
-				//var handle = PropertyChangedHandler;
-				//if (handle != null)
-				//	PropertyChangedHandler.Invoke(this, new PropertyChangedEventArgs("AllNews"));
-				OnPropertyChanged("AllNews");
-			}
-		}
+                return NewsManager?.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.PostedUtc).ThenByDescending(key => key.RepairedLineUtc).ToList();
+            }
+            set
+            {
 
-		
+                OnPropertyChanged();
+            }
+        }
 
-		public UpdateManagerBase UpdateManagerBase { get { return container.Resolve<UpdateManagerBase>(); } }
+        readonly ObservableCollection<string> resultString = new ObservableCollection<string>();
 
-	    RelayCommand updateDataCommand;
-	    private INotifyHelper notifyHelper;
-	    private CancellationTokenSource cancelSource;
+        public ObservableCollection<string> AllLogs => resultString;
 
-	    public RelayCommand UpdateDataCommand
-		{
-			get
-			{
-				if (updateDataCommand == null)
-					updateDataCommand = new RelayCommand(async () =>
-				{
-					updating = true;
-					UpdateDataCommand.RaiseCanExecuteChanged();
-				    using (cancelSource = new CancellationTokenSource())
-				    {
-				        await Context.UpdateTimeTableAsync(cancelSource.Token, false);
-				    }
-				    updating = false;
-					UpdateDataCommand.RaiseCanExecuteChanged();
-				}, () => !updating);
-				return updateDataCommand;
-			}
-		}
+        bool updating = false;
+        private CancellationTokenSource cancelSource;
+        RelayCommand updateDataCommand;
+        public RelayCommand UpdateDataCommand
+        {
+            get
+            {
+                return updateDataCommand ?? (updateDataCommand = new RelayCommand(async () =>
+                {
+                    log?.Trace("UpdateDataCommand activated");
+                    updating = true;
+                    bool oldNeedUpdate = IsNeesUpdate;
+                    IsNeesUpdate = false;
+                    try
+                    {
+                        UpdateDataCommand.RaiseCanExecuteChanged();
+                        using (cancelSource = new CancellationTokenSource())
+                        {
+                            await Context.UpdateTimeTableAsync(cancelSource.Token);
+                            await Context.UpdateNewsTableAsync(cancelSource.Token);
+                            await NewsManager.Load();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        NotifyHelper.ReportErrorAsync("Во время обновления произошла ошибка попробуйте позже");
+                        log?.Error($"UpdateDataCommand {e.Message}", e);
+                        if (oldNeedUpdate)
+                            IsNeesUpdate = true;
+                    }
+                    finally
+                    {
+                        updating = false;
+                    }
+                    UpdateDataCommand.RaiseCanExecuteChanged();
+                    log?.Info("UpdateDataCommand, OK");
+                }, () => !updating));
+            }
+        }
 
-        //public RelayCommand<Stop> ShowStopMap
-        //{
-        //	get { return new RelayCommand<Stop>((x) => OnShowStop(new ShowArgs() { SelectedStop = x }), (x) => x != null); }
-        //}
+        public async Task<List<string>> GetLogsAsync()
+        {
+            string folder = "metroLogs";
+            var fileHelper = container.Resolve<FileHelperBase>();
+            using (var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs())
+            {
+                await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+                
+#if WINDOWS_PHONE_APP
+            using (GZipStream stream = new GZipStream(xxx, CompressionMode.Decompress))
+            {
+                    await fileHelper.DeleteFile(TypeFolder.Temp, $"{folder}\\lll.log");
+                    await fileHelper.WriteTextAsync(TypeFolder.Temp, $"{folder}\\lll.log", xxx);
+            }
+#else
+            await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+            await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
+            ZipFile.ExtractToDirectory(fileHelper.GetPath(TypeFolder.Temp) + "\\" + "lll.log", fileHelper.GetPath(TypeFolder.Temp) + "\\" + folder);
+#endif
+            }
+            //var xxxxxxx = (await MetroLog.WinRT.Logger.GetCompressedLogFile());
 
-        //public RelayCommand<Rout> ShowRouteMap
-        //{
-        //	get { return new RelayCommand<Rout>((x) => OnShowRoute(new ShowArgs() { SelectedRoute = x }), (x) => x != null); }
-        //}
-        //public event Show ShowStop;
-        //public event Show ShowRoute;
-        //public delegate void Show(object sender, ShowArgs args);
+            var fileNames = await fileHelper.GetNamesFiles(TypeFolder.Temp, folder);
+            List<string> resultList = new List<string>();
+            foreach (var fileName in fileNames)
+            {
+#if DEBUG
 
-        //protected virtual void OnShowStop(ShowArgs args)
-        //{
-        //	var handler = ShowStop;
-        //	if (handler != null) handler(this, args);
-        //}
+#endif
+                resultList.Add(await fileHelper.ReadAllTextAsync(TypeFolder.Temp, fileName, folder));
+                await fileHelper.DeleteFile(TypeFolder.Temp, folder + "\\" + fileName);
 
-        //protected virtual void OnShowRoute(ShowArgs args)
-        //{
-        //	var handler = ShowRoute;
-        //	if (handler != null) handler(this, args);
-        //}
-        private IExternalCommands ExternalCommands { get; }
+            }
+            return resultList;
+        }
+
+        private bool logsWork = false;
+        private bool _isNeesUpdate = false;
+
+        public RelayCommand RefreshLogsCommand
+        {
+            get
+            {
+                return new RelayCommand(async () =>
+                {
+                    if (logsWork)
+                        return;
+                    try
+                    {
+                        logsWork = true;
+                        resultString.Clear();
+                        var entries = await GetLogsAsync();
+                        entries.All(x =>
+                        {
+                            resultString.Add(x);
+                            return true;
+                        });
+                        entries.Aggregate((x, y) =>
+                        {
+                            resultString.Add(x);
+                            return "";
+                        });
+                        // OnPropertyChanged("AllLogs");
+                        OnPropertyChanged("AllLogs");
+                    }
+                    catch (Exception e)
+                    {
+                        log.Error(e.Message, e);
+                    }
+                    finally
+                    {
+                        logsWork = false;
+                    }
+                }, () => !logsWork);
+
+
+            }
+        }
+
         public event Show ShowStop
         {
             add { ExternalCommands.ShowStop += value; }
@@ -199,5 +276,12 @@ namespace MinskTrans.Universal.ModelView
             add { ExternalCommands.ShowRoute += value; }
             remove { ExternalCommands.ShowRoute -= value; }
         }
+
+
+
+        public NewsModelView NewsModelView => container.Resolve<NewsModelView>();
+
+        public INotifyHelper NotifyHelper => notifyHelper;
+        public FileHelperBase FileHelper { get { return container.Resolve<FileHelperBase>(); } }
     }
 }

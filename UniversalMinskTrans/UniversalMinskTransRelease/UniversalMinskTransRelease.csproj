@@ -350,6 +350,7 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\..\MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

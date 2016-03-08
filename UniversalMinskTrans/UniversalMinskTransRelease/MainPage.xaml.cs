@@ -653,11 +653,12 @@ namespace MinskTrans.Universal
 
 	   
 			var fileHelper = model.FileHelper;
-			var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs();
-			await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
-			await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
-			xxx.Dispose();
-			var refer = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync("lll.log"));
+		    using (var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs())
+		    {
+		        await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+		        await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
+		    }
+		    var refer = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync("lll.log"));
 			SendEmailToDeveloper("Log", new []{"log"}, new [] {refer});
 		}
 

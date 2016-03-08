@@ -26,4 +26,9 @@ public class NotifyHelperDesctop : INotifyHelper
     {
         throw new NotImplementedException();
     }
+
+    public void ShowNotificaton(string text)
+    {
+        throw new NotImplementedException();
+    }
 }

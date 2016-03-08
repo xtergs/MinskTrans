@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.Email;
 using Windows.Devices.Geolocation;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -16,12 +18,14 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
+using MetroLog;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.Annotations;
 using MinskTrans.Universal.ModelView;
+using MinskTrans.Utilites.Base.IO;
 using MyLibrary;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -147,7 +151,7 @@ namespace MinskTrans.Universal
 			//model.Context.Save();
 			//model.Context.Load();
 
-			model.UpdateManagerBase.ErrorDownloading += async (sender, args) =>
+			model.UpdateManager.ErrorDownloading += async (sender, args) =>
 			{
 				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ProgressBar.Visibility = Visibility.Collapsed);
 			};
@@ -453,7 +457,27 @@ namespace MinskTrans.Universal
 			});
 		}
 
-		private async void ShowInStore(object sender, RoutedEventArgs e)
+        public async void SendEmailToDeveloper(string str, IList<string> filename, IList<IRandomAccessStreamReference> streams)
+        {
+            var email = new EmailMessage()
+            {
+
+                Subject = "Минский общественный транспорт",
+                To =
+                {
+                    new EmailRecipient("xtergs@gmail.com")
+                },
+                Body = str
+            };
+            for (int i = 0; i < filename.Count; i++)
+            {
+                EmailAttachment attachment = new EmailAttachment(filename[i], streams[i]);
+                email.Attachments.Add(attachment);
+            }
+            await EmailManager.ShowComposeNewEmailAsync(email);
+        }
+
+        private async void ShowInStore(object sender, RoutedEventArgs e)
 		{
 			await Launcher.LaunchUriAsync(new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
 		}
@@ -474,15 +498,38 @@ namespace MinskTrans.Universal
 			SendLog();
 		}
 
-		async void SendLog()
-		{
-			string message = await Logger.Log().GetAllText() + Environment.NewLine + model.SettingsModelView.LastUnhandeledException;
-            SendEmailToDeveloper(message);
-		}
+        async void SendLog()
+        {
+            string message = "";
 
-		
 
-		private void PivotItem_Loaded(object sender, RoutedEventArgs e)
+            var fileHelper = model.FileHelper;
+#if WINDOWS_PHONE_APP
+            try
+            {
+                var logs = await (await ApplicationData.Current.LocalFolder.GetFolderAsync("MetroLogs")).GetFilesAsync();
+                var refer =
+                    logs.Select(x => (IRandomAccessStreamReference) RandomAccessStreamReference.CreateFromFile(x));
+                SendEmailToDeveloper("Log", new[] {"log"}, refer.ToList());
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+#else
+            using (var xxx = await LogManagerFactory.DefaultLogManager.GetCompressedLogs())
+            {
+                await fileHelper.DeleteFile(TypeFolder.Temp, "lll.log");
+                await fileHelper.WriteTextAsync(TypeFolder.Temp, "lll.log", xxx);
+            }
+            var refer = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync("lll.log"));
+            SendEmailToDeveloper("Log", new[] { "log" }, new[] { refer });
+#endif
+        }
+
+
+
+        private void PivotItem_Loaded(object sender, RoutedEventArgs e)
 		{
 			MainModelView.MainModelViewGet.AllNews = null;
 		}

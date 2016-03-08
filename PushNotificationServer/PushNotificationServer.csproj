@@ -164,7 +164,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="NotifyHelperDesctop.cs" />
     <Compile Include="ServerEngine.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -226,6 +225,10 @@
     <ProjectReference Include="..\MinskTrans.Utilites.Desktop\MinskTrans.Utilites.Desktop.csproj">
       <Project>{02880aeb-7ecb-4f06-8281-a66daf84e2f8}</Project>
       <Name>MinskTrans.Utilites.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MinskTrans\MinskTrans.DesctopClient.csproj">
+      <Project>{B0D150C2-9F62-4577-9A6F-970A67033CCC}</Project>
+      <Name>MinskTrans.DesctopClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

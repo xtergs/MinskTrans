@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using MapControl;
 using System.Threading.Tasks;
-using Windows.Foundation.Metadata;
+
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -16,8 +16,8 @@ using PositionChangedEventArgs = MinskTrans.Context.Base.PositionChangedEventArg
 
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient.Properties;
-
 #else
+using Windows.Foundation.Metadata;
 using GalaSoft.MvvmLight.Command;
 
 #endif
@@ -180,7 +180,8 @@ namespace MinskTrans.DesctopClient.Modelview
 	    private bool _isWorking = false;
 
 
-	    [Deprecated("FilteredStops is depricated, use FilteredStopsStore", DeprecationType.Deprecate, 0)]
+	    //[Deprecated("FilteredStops is depricated, use FilteredStopsStore", DeprecationType.Deprecate, 0)]
+        //Deprecated
 		public override IEnumerable<Stop> FilteredStops => FilterStops();
 
 		

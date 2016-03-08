@@ -221,6 +221,10 @@
       <HintPath>..\..\UniversalMinskTrans\packages\MetroLog.1.0.1\lib\wpa81\MetroLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MetroLog.Targets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\MetroLog.Targets.1.0.0.0\lib\portable-win81+wpa81\MetroLog.Targets.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\UniversalMinskTrans\packages\Newtonsoft.Json.8.0.2\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -233,10 +237,6 @@
     <ProjectReference Include="..\..\CommonLibrary\CommonLibrary.csproj">
       <Project>{a7577975-54ed-4521-997b-6facd396dad9}</Project>
       <Name>CommonLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MinskTrans.AutoRouting\MinskTrans.AutoRouting.csproj">
-      <Project>{33DB7D58-46C8-4756-B7AC-39994422188E}</Project>
-      <Name>MinskTrans.AutoRouting</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>

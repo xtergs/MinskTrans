@@ -3,6 +3,8 @@ using System.Threading;
 using MapControl;
 using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
+using CommonLibrary.Notify;
+using MetroLog;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
@@ -46,7 +48,6 @@ namespace MinskTrans.DesctopClient.Modelview
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
             //builder.RegisterType<Context>().As<IContext>();
             builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
-            builder.RegisterType<FakeGeolocation>().As<IGeolocation>().SingleInstance();
             builder.RegisterType<DesktopApplicationHelper>().As<IApplicationSettingsHelper>().SingleInstance().WithParameter("settingsBase", Properties.Settings.Default);
 		    builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
             builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>().SingleInstance();
@@ -55,9 +56,15 @@ namespace MinskTrans.DesctopClient.Modelview
             builder.RegisterType<StopModelView>();
             builder.RegisterType<GroupStopsModelView>();
             builder.RegisterType<FindModelView>();
-            
-		    //builder.As<ApplicationSettingsBase>();
-                       
+            builder.RegisterType<FakeGeolocation>().As<IGeolocation>().SingleInstance();
+            builder.RegisterType<FakeSettingsModelView>().As<ISettingsModelView>().SingleInstance();
+            builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
+            builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
+            builder.RegisterType<NotifyHelperDesctop>().As<INotifyHelper>().SingleInstance();
+            builder.RegisterType<FilePathsSettings>().SingleInstance();
+
+            //builder.As<ApplicationSettingsBase>();
+
 
             container = builder.Build();
 
@@ -188,7 +195,7 @@ namespace MinskTrans.DesctopClient.Modelview
         //		return timeTable;
         //	}
         //}
-        private IExternalCommands ExternalCommands { get; }
+        private IExternalCommands ExternalCommands { get { return container.Resolve<IExternalCommands>(); } }
         public event Show ShowStop
         {
             add { ExternalCommands.ShowStop += value; }

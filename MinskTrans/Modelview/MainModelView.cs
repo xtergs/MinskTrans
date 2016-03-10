@@ -146,7 +146,8 @@ namespace MinskTrans.DesctopClient.Modelview
 					    using (soruce = new CancellationTokenSource())
 					    {
 					        await Context.UpdateTimeTableAsync(soruce.Token);
-					        await Context.UpdateNewsTableAsync(soruce.Token);
+					        if (await Context.UpdateNewsTableAsync(soruce.Token))
+					            await container.Resolve<NewsManagerBase>().Load();
 					    }
 					    updateing = false;
 					}, () => !updateing);

@@ -177,8 +177,8 @@ namespace MinskTrans.Universal.ModelView
 						using (cancelSource = new CancellationTokenSource())
 						{
 							await Context.UpdateTimeTableAsync(cancelSource.Token);
-							await Context.UpdateNewsTableAsync(cancelSource.Token);
-							await NewsManager.Load();
+							if (await Context.UpdateNewsTableAsync(cancelSource.Token))
+							    await NewsManager.Load();
 						}
 					}
 					catch (Exception e)

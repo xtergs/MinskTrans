@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -93,14 +94,19 @@ namespace BackgroundUpdateTaskUniversalRuntime
 
 				settings.LastUpdatedDataInBackground = TypeOfUpdate.None;
 				helper.UpdateNetworkInformation();
-				if (!settings.HaveConnection())
-					_deferral.Complete();
-				MaxDaysAgo = 30;
+			    if (!settings.HaveConnection())
+			    {
+			        Log.Info("Background: Have no connection, exiting");
+			        _deferral.Complete();
+			        return;
+			    }
+			    MaxDaysAgo = 30;
 				MaxMinsAgo = 20;
 
 
 				var oldDaylyTime = settings.LastSeenHotNewsDateTimeUtc;
 				var oldMonthTime = settings.LastSeenMainNewsDateTimeUtc;
+			    bool isHaveNews = false;
 				try
 				{
 					
@@ -112,6 +118,7 @@ namespace BackgroundUpdateTaskUniversalRuntime
 					if (await context.UpdateNewsTableAsync(cancellationTokenSource.Token))
 					{
 						settings.LastUpdatedDataInBackground |= TypeOfUpdate.News;
+					    isHaveNews = true;
 					}
 				}
 				catch (Exception e)
@@ -120,7 +127,13 @@ namespace BackgroundUpdateTaskUniversalRuntime
 					throw;
 				}
 
-				
+			    if (!isHaveNews)
+			    {
+			        Log.Info("No new news, exiting");
+			        _deferral.Complete();
+			        return;
+			    }
+
 				var manager = container.Resolve<NewsManagerBase>();
 				await manager.Load();
 				var nowTimeUtc = DateTime.UtcNow;
@@ -139,8 +152,13 @@ namespace BackgroundUpdateTaskUniversalRuntime
 						   ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
 				});
 
-
-				foreach (var source in listOfDaylyNews.Concat(listOfMonthNews))
+			    var allEntries = listOfDaylyNews.Concat(listOfMonthNews);
+			    var newsEntries = allEntries as NewsEntry[] ?? allEntries.ToArray();
+			    if (newsEntries.Count() > 2)
+			    {
+			        notify.ShowNotificaton($"Новые уведомления: {newsEntries.Count()}");
+			    }else
+                foreach (var source in newsEntries)
 				{
 					notify.ShowNotificaton(source.Message);
 				}

@@ -128,7 +128,7 @@ namespace MyLibrary
 		{
 			get
 			{
-				return (TypeOfUpdate)helper.SimpleGet(TypeOfUpdate.None);
+				return (TypeOfUpdate)helper.SimpleGet((int)TypeOfUpdate.None);
 			   
 			}
 

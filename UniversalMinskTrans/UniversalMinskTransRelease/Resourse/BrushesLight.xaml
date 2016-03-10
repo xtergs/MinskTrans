@@ -1,0 +1,17 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MinskTrans.Universal.Resourse">
+    <SolidColorBrush x:Key="LightBlueSolidColorBrush" Color="#FF0996AC"/>
+    <SolidColorBrush x:Key="BlueSolidColorBrush" Color="#FF319AF7"/>
+    <SolidColorBrush x:Key="RedSolidColorBrush" Color="#FFd14243"/>
+    <SolidColorBrush x:Key="VioletSolidColorBrush" Color="#FF962BE2"/>
+    <SolidColorBrush x:Key="GreenSolidColorBrush" Color="#FF7AA24C"/>
+    <SolidColorBrush x:Key="BackGroundSolidColorBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="GreyGroundSolidColorBrush" Color="#FF2C292B"/>
+    <SolidColorBrush x:Key="HyperlinkDisabledThemeBrush" Color="Black"/>
+    <SolidColorBrush x:Key="HyperlinkEnabledThemeBrush" Color="#FF6C6C6C"/>
+    <SolidColorBrush x:Key="ListBoxForegroundThemeBrush" Color="Black"/>
+
+
+</ResourceDictionary>

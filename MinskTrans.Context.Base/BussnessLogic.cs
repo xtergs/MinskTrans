@@ -46,19 +46,18 @@ namespace MinskTrans.Context
 	    private readonly UpdateManagerBase updateManager;
 	    private readonly InternetHelperBase internetHelper;
 	    private readonly FileHelperBase fileHelper;
-	    private readonly NewsManagerBase newManager;
+
 	    private readonly ISettingsModelView settings;
 	    private readonly FilePathsSettings files;
 	    public ILogger log { get; set; }
 
-	    public BussnessLogic(IContext cont, UpdateManagerBase updateManager, InternetHelperBase internetHelper, FileHelperBase fileHelper, NewsManagerBase newManager, ISettingsModelView settings, IGeolocation geolocation, FilePathsSettings files, ILogManager manager = null)
+	    public BussnessLogic(IContext cont, UpdateManagerBase updateManager, InternetHelperBase internetHelper, FileHelperBase fileHelper, ISettingsModelView settings, IGeolocation geolocation, FilePathsSettings files, ILogManager manager = null)
             :base(cont)
 	    {
 	        
 	        this.updateManager = updateManager;
 	        this.internetHelper = internetHelper;
 	        this.fileHelper = fileHelper;
-	        this.newManager = newManager;
 	        this.settings = settings;
 	        this.files = files;
 	        log = manager?.GetLogger<BussnessLogic>();
@@ -137,7 +136,7 @@ namespace MinskTrans.Context
 	            //await newManager.Load();
 	            DateTime oldMonthTime = settings.LastNewsTimeUtc;
 	            DateTime oldDaylyTime = settings.LastUpdateHotNewsDateTimeUtc;
-
+	            bool isHaveNews = false;
 	            if (utcNow > oldMonthTime)
 	            {
 	                try
@@ -151,6 +150,7 @@ namespace MinskTrans.Context
 	                            from: files.MainNewsFile.NewFileName,
 	                            to: files.MainNewsFile.FileName);
 	                    settings.LastNewsTimeUtc = utcNow;
+	                    isHaveNews = true;
 	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
 	                catch (Exception e)
@@ -182,6 +182,7 @@ namespace MinskTrans.Context
 	                            from: files.HotNewsFile.NewFileName,
 	                            to: files.HotNewsFile.FileName);
 	                    settings.LastUpdateHotNewsDateTimeUtc = utcNow;
+	                    isHaveNews = true;
 	                    //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
 	                }
 	                catch (Exception e)
@@ -217,9 +218,8 @@ namespace MinskTrans.Context
 	            //    return (key.CollectedUtc > oldDaylyTime) &&
 	            //           ((nowTimeUtc - key.CollectedUtc).TotalDays < 1);
 	            //});
-	            await newManager.Load();
 	            log?.Info("UpdateNewsTableAsync is OK, return true");
-	            return true;
+	            return isHaveNews;
 	        }
 	        catch (Exception e)
 	        {

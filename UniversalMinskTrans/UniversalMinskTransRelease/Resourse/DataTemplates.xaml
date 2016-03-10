@@ -1,0 +1,192 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
+    xmlns:converters="using:MinskTrans.Universal.Converters">
+
+    <converters:WeekdaysToStrConverter x:Key="WeekdaysToStrConverter" />
+
+    <converters:IntToVisibleConverter x:Key="IntToVisibleConverter" />
+    <converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter" />
+    <converters:StopsToStr x:Key="StopsToStr" />
+    <converters:TransportToImageConverter x:Key="TransportToImageConverter" />
+    <converters:TransportFormatedStringConverter x:Key="DateToString" />
+
+    <DataTemplate x:Key="ListStopsDataTemplate">
+        <Grid Margin="0,2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.ColumnSpan="10"
+                           FontSize="{ThemeResource TextStyleLargeXFontSize}"
+                           Text="{Binding Name}" />
+            <TextBlock Grid.Row="1"
+                           Grid.ColumnSpan="10"
+                           Foreground="{ThemeResource GreyGroundSolidColorBrush}"
+                           MaxLines="2"
+                           Text="{Binding DirectionsString,
+                                          Converter={StaticResource StopsToStr}}"
+                           TextWrapping="WrapWholeWords" />
+            <!--<ListView Grid.Row="2"
+						  Grid.ColumnSpan="9"
+						  ItemsSource="{Binding Source=GroupedTypeRoutsView}">
+					<ListView.ItemsPanel>
+						<ItemsPanelTemplate>
+							<Controls:WrapPanel>
+							</Controls:WrapPanel>
+						</ItemsPanelTemplate>
+					</ListView.ItemsPanel>
+					<ListView.GroupStyle>
+						<GroupStyle>
+							<GroupStyle.HeaderTemplate>
+								<DataTemplate>
+									<Image Source="{Binding Key, Converter={StaticResource TransportToImageConverter}}"></Image>
+								</DataTemplate>
+							</GroupStyle.HeaderTemplate>
+						</GroupStyle>
+					</ListView.GroupStyle>
+				</ListView>-->
+            <controls:WrapPanel Grid.Row="2"
+                                    Grid.ColumnSpan="9"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Top"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <Grid HorizontalAlignment="Left" Visibility="{Binding TrolRoutsNum.Count, Converter={StaticResource IntToVisibleConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                               Height="{Binding ActualHeight,
+                                                ElementName=TextBlock,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                               MinWidth="10"
+                               MinHeight="10"
+                               Source="../Image/trol.jpg" />
+                    <TextBlock x:Name="TextBlock"
+                                   Grid.Column="1"
+                                   Margin="3,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   FontSize="15"
+                                   Foreground="{ThemeResource BlueSolidColorBrush}"
+                                   Text="{Binding TrolRoutsNum,
+                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
+                </Grid>
+                <Grid Margin="2,0,0,0"
+                          HorizontalAlignment="Left"
+                          Visibility="{Binding BusRoutsNum.Count,
+                                               Converter={StaticResource IntToVisibleConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                               Height="{Binding ActualHeight,
+                                                ElementName=TextBlock1,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                               MinWidth="10"
+                               MinHeight="10"
+                               Source="../Image/bus.jpg" />
+                    <TextBlock x:Name="TextBlock1"
+                                   Grid.Column="1"
+                                   Margin="3,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   FontSize="15"
+                                   Foreground="{ThemeResource GreenSolidColorBrush}"
+                                   Text="{Binding BusRoutsNum,
+                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
+                </Grid>
+                <Grid Margin="2,0,0,0"
+                          HorizontalAlignment="Left"
+                          Visibility="{Binding TramRoutsNum.Count,
+                                               Converter={StaticResource IntToVisibleConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                               Height="{Binding ActualHeight,
+                                                ElementName=TextBlock2,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                               MinWidth="10"
+                               MinHeight="10"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Source="../Image/tram.jpg" />
+                    <TextBlock x:Name="TextBlock2"
+                                   Grid.Column="1"
+                                   Margin="3,0,0,0"
+                                   FontSize="15"
+                                   Foreground="{ThemeResource RedSolidColorBrush}"
+                                   Text="{Binding TramRoutsNum,
+                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
+                </Grid>
+                <Grid Margin="2,0,0,0"
+                          HorizontalAlignment="Left"
+                          Visibility="{Binding MetroRoutsNum.Count,
+                                               Converter={StaticResource IntToVisibleConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                               Height="{Binding ActualHeight,
+                                                ElementName=TextBlock3,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                               MinWidth="10"
+                               MinHeight="10"
+                               Source=" ../Image/subway.jpg" />
+                    <TextBlock x:Name="TextBlock3"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   FontSize="15"
+                                   Foreground="{ThemeResource VioletSolidColorBrush}"
+                                   Text="{Binding MetroRoutsNum,
+                                                  Converter={StaticResource RoutsToNumStrConverter}}" />
+                </Grid>
+            </controls:WrapPanel>
+
+        </Grid>
+    </DataTemplate>
+
+
+
+    <DataTemplate x:Key="GroupTransportList">
+        <Grid MinWidth="130" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Image Height="{Binding ActualHeight,
+                                        ElementName=RouteNumTextBlock}"
+                       MinHeight="15"
+                       VerticalAlignment="Top"
+                       Source="{Binding Transport,
+                                        Converter={StaticResource TransportToImageConverter}}" />
+            <TextBlock x:Name="RouteNumTextBlock"
+                           Grid.Column="1"
+                           Margin="5,0,0,0"
+                           VerticalAlignment="Top"
+                           FontSize="35"
+                           Text="{Binding RouteNum,
+                                          Converter={StaticResource DateToString}}" />
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

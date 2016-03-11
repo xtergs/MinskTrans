@@ -86,17 +86,16 @@ namespace MinskTrans.Net
 		}
 
 
-		readonly FileHelperBase fileHelper;
-		protected readonly InternetHelperBase internetHelper;
+	    protected readonly InternetHelperBase internetHelper;
 	    protected readonly ISettingsModelView settings;
 
-		FileHelperBase FileHelper { get { return fileHelper; } }
+	    private FileHelperBase FileHelper { get; }
 
-		public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files)
+	    public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files)
 		{
 			if (helper == null)
 				throw new ArgumentNullException(nameof(helper));
-			fileHelper = helper;
+			FileHelper = helper;
             if (internetHelper  == null)
                 throw new ArgumentNullException(nameof(internetHelper));
 			this.internetHelper = internetHelper;

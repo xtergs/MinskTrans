@@ -84,7 +84,7 @@ namespace MinskTrans.Universal.ModelView
 
             //LogManagerFactory.DefaultConfiguration.IsEnabled = true;
 			var builder = new ContainerBuilder();
-			builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
+			builder.RegisterType<FileHelper>().As<FileHelperBase>();
 			//builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
 			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();

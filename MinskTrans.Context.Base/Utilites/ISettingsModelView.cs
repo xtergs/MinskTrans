@@ -354,7 +354,12 @@ namespace MyLibrary
 
 			get
 			{
-				return helper.SimpleGet(true);
+#if BETA
+
+                return helper.SimpleGet(true);
+#else
+			    return false;
+#endif
 			}
 
 			set

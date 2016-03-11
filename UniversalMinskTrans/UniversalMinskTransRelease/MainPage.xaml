@@ -817,7 +817,7 @@
                         <Button Click="OnOffLocationServises" Content="Настройка сервисов местоположения" />
                         <Button Click="ShowPolicity" Content="Политика безопасности" />
                         <Button Click="SendLog" Content="Отправить лог разработчику" />
-                        <CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <!--<CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox SelectedValue="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                             <ComboBoxItem>15</ComboBoxItem>
                             <ComboBoxItem>16</ComboBoxItem>
@@ -826,11 +826,11 @@
                             <ComboBoxItem>19</ComboBoxItem>
                             <ComboBoxItem>20</ComboBoxItem>
                             <ComboBoxItem>21</ComboBoxItem>
-                        </ComboBox>
+                        </ComboBox>-->
                     </ListView>
                 </Border>
             </PivotItem>
-            <PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
+            <!--<PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -839,7 +839,7 @@
                     <Button Content="Обновить" Command="{Binding RefreshLogsCommand}"/>
                     <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
                 </Grid>
-            </PivotItem>
+            </PivotItem>-->
         </Pivot>
 
 

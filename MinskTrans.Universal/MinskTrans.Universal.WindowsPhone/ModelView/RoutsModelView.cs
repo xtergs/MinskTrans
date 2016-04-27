@@ -215,7 +215,8 @@ namespace MinskTrans.Universal.ModelView
 			{
 				return null;
 			}
-			Schedule tempList = rout.Time;
+            Schedule tempList = Context.GetRouteSchedule(rout.RoutId);
+		//	Schedule tempList = rout.Time;
 			if (tempList == null)
 				return null;
 			//получить 

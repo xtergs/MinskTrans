@@ -206,8 +206,9 @@ namespace MinskTrans.Context
 
             foreach (Rout rout in stp.Routs.Where(x => selectedTransportType.HasFlag(x.Transport)))
             {
-                Schedule sched = rout.Time;
-                IEnumerable<TimeLineModel> temp =
+                Schedule sched = GetRouteSchedule(rout.RoutId);
+                //    Schedule sched = rout.Time;
+                IEnumerable <TimeLineModel> temp =
                     sched.GetListTimes(rout.Stops.IndexOf(stp), day, startingTime, endTime)
                         .Select(x => new TimeLineModel(x.Key, new TimeSpan(0, 0, x.Value, 0, 0)));
 
@@ -313,9 +314,10 @@ namespace MinskTrans.Context
         public List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day)
         {
             int index = 0;
+            Schedule timee = GetRouteSchedule(rout.RoutId);
             for (int i = 0; i < rout.Stops.Count; i++)
             {
-               index = rout.Time.TimesDictionary[i].Where(x=> x.Days.Contains(day.ToString())).First().Times.IndexOf(mins);
+               index = timee.TimesDictionary[i].Where(x=> x.Days.Contains(day.ToString())).First().Times.IndexOf(mins);
                 if (index >= 0)
                 {
                     break;
@@ -327,7 +329,7 @@ namespace MinskTrans.Context
                 for (int i = 0; i < rout.Stops.Count; i++)
                 {
                     StopTimePair p = new StopTimePair();
-                    p.Time = new TimeSpan(0,0,rout.Time.TimesDictionary[i][day-1].Times[index] - mins, 0,0);
+                    p.Time = new TimeSpan(0,0, timee.TimesDictionary[i][day-1].Times[index] - mins, 0,0);
                     p.Stop = rout.Stops[i];
                     pair.Add(p);
                 }
@@ -342,6 +344,12 @@ namespace MinskTrans.Context
             {
                 
             }
+        }
+
+        public Schedule GetRouteSchedule(int routId)
+        {
+            var time = Context.Times.FirstOrDefault(t=> t.RoutId == routId);
+            return time;
         }
 
         public event EventHandler<EventArgs> NeedUpdadteDB;

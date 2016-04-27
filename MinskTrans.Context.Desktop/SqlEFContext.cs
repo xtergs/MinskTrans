@@ -229,15 +229,15 @@ namespace MinskTrans.Context.Desktop
 			foreach (var rout in routsl)
 			{
 				var rout1 = rout;
-				Schedule first = timesl.Where(x =>
-				{
-					if (x == null)
-						return false;
-					return x.RoutId == rout1.RoutId;
-				}).FirstOrDefault();
-				rout.Time = first;
-				if (rout.Time != null)
-					rout.Time.Rout = rout;
+				//Schedule first = timesl.Where(x =>
+				//{
+				//	if (x == null)
+				//		return false;
+				//	return x.RoutId == rout1.RoutId;
+				//}).FirstOrDefault();
+				//rout.Time = first;
+				//if (rout.Time != null)
+				//	rout.Time.Rout = rout;
 
 
 				rout1.Stops = rout1.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>

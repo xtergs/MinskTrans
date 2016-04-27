@@ -273,7 +273,8 @@ namespace MinskTrans.Universal.ModelView
 
 		List<Time> GetTimeCollection(Rout rout, int stopIndex)
 		{
-			Schedule tempList = rout?.Time;
+		    Schedule tempList = Context.GetRouteSchedule(rout.RoutId);
+        //    Schedule tempList = rout?.Time;
 			if (tempList == null)
 				return null;
 			//получить 

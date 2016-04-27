@@ -48,5 +48,6 @@ namespace MinskTrans.Context
         List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day);
 
         void ForsStopActivity();
+        Schedule GetRouteSchedule(int routId);
     }
 }

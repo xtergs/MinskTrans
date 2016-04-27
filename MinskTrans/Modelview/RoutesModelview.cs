@@ -168,8 +168,9 @@ using GalaSoft.MvvmLight.Command;
 				{
 					return null;
 				}
-				Schedule tempList = RouteSelectedValue.Time;
-				if (tempList == null)
+			    Schedule tempList = Context.GetRouteSchedule(RouteSelectedValue.RoutId);
+                //Schedule tempList = RouteSelectedValue.Time;
+                if (tempList == null)
 					return null;
 				//получить 
 				var timesObservableCollection = tempList.TimesDictionary[StopSelectedIndex];

@@ -527,10 +527,10 @@ namespace MinskTrans.Context
 			foreach (var rout in routsl)
 			{
 				var rout1 = rout;
-				Schedule first = timesl.FirstOrDefault(x => x.RoutId == rout1.RoutId);
-				rout.Time = first;
-				if (rout.Time != null)
-					rout.Time.Rout = rout;
+				//Schedule first = timesl.FirstOrDefault(x => x.RoutId == rout1.RoutId);
+				//rout.Time = first;
+				//if (rout.Time != null)
+				//	rout.Time.Rout = rout;
 
 
 				rout1.Stops = rout1.RouteStops.Join(stopsl, i => i, stop => stop.ID, (i, stop) =>
@@ -956,8 +956,9 @@ namespace MinskTrans.Context
 
             foreach (Rout rout in stp.Routs.Where(x=> selectedTransportType.HasFlag(x.Transport)))
             {
-                Schedule sched = rout.Time;
-                IEnumerable<KeyValuePair<Rout, TimeSpan>> temp =
+                Schedule sched = Times.FirstOrDefault(r => r.RoutId == rout.RoutId);
+                //Schedule sched = rout.Time;
+                IEnumerable <KeyValuePair<Rout, TimeSpan>> temp =
                     sched.GetListTimes(rout.Stops.IndexOf(stp), day, startingTime, endTime)
                         .Select(x => new KeyValuePair<Rout, TimeSpan>(x.Key, new TimeSpan(0, 0, x.Value, 0, 0)));
 

@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MinskTrans.Context.Base.BaseModel.BaseModel" Collapsed="true">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAGQAAAAAAAAAIAAIAAAAAAAAAAAAAACAAAQ=</HashCode>
+      <FileName>Base\BaseModel\BaseModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.GroupStop" Collapsed="true">
+    <Position X="3" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAQAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Base\BaseModel\GroupStop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.Rout" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAABAAAAAWQAAABEBAAAIAAIAAAAACIAAAAAAACAAQQ=</HashCode>
+      <FileName>Base\BaseModel\Rout.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.RoutBase" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAUAAQAAAAAAAhKAAAABAQAABAAABIAEBAAQAEAIAQ=</HashCode>
+      <FileName>Base\BaseModel\RoutBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.Schedule" Collapsed="true">
+    <Position X="0.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAACIAAAAABAAAQAUAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Base\BaseModel\Schedule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.Stop" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAgAWUAAAAIBAAAIIkIBAQJAAIABAAAAACAAAQ=</HashCode>
+      <FileName>Base\BaseModel\Stop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.StopBase" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAIAAACAAgAAIAAAAAAQAAEAIAAAEAAAAAUAAAAA=</HashCode>
+      <FileName>Base\BaseModel\StopBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.Time" Collapsed="true">
+    <Position X="5.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAEAAAAIASAAAAQAAAAA=</HashCode>
+      <FileName>Base\BaseModel\Time.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.BaseModel.Transport" Collapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Base\BaseModel\Transport.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Base.TimeLineModel" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Base\TimeLineModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.BussnessLogic" Collapsed="true">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKgAACAAAACAAAAEAAAgCAgIAECMAABAgAAEgBAAAAA=</HashCode>
+      <FileName>BussnessLogic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Context.Context" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIUJgOCAAD4gAAkBILHhAIAShRDhCkcgAQANgJFAAAM=</HashCode>
+      <FileName>Context.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MinskTrans.Context.GenericBussnessLogic" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKMJCKYAAogIAQAAIBAADIgYhFEdAARBgAAAFAAAkAg=</HashCode>
+      <FileName>GenericBussnessLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MinskTrans.Context.WebBussnessLogic" Collapsed="true">
+    <Position X="6.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>WebBussnessLogic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Net.Base.UpdateManagerBase" Collapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ADIBKFAAAAKAAAIAAAAiAAAAAEBBAAAAQAACABACiQA=</HashCode>
+      <FileName>Net\Base\UpdateManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Net.NewsManagerBase" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kIADgAAgAAAAIEAgIAAgCAAKgACAAAAAIAAAAAGAAIA=</HashCode>
+      <FileName>Net\NewsManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MinskTrans.Utilites.Base.IO.FileHelperBase" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACEAAAAIAAAAAEBBAAAAAABABSQAAAAAUAAAAAggA=</HashCode>
+      <FileName>Utilites\Base\IO\FileHelperBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Utilites.Base.Net.InternetHelperBase" Collapsed="true">
+    <Position X="9.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAEAAABABAAQCAAAAAAAEAAAAAAAAAAEAAAAAASA=</HashCode>
+      <FileName>Utilites\Base\Net\InternetHelperBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyLibrary.Tools" Collapsed="true">
+    <Position X="9.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAGQAAABAAAAAIAAIAAAAAAAQAAAAAACAAAQ=</HashCode>
+      <FileName>Utilites\Tools.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyLibrary.Model.GroupIdExt" Collapsed="true">
+    <Position X="3" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilites\Model\GroupIdExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Utilites.Model.RoutEx" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Utilites\Model\RoutEx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Utilites.Model.StopEx" Collapsed="true">
+    <Position X="0.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilites\Model\StopEx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.DesctopClient.Model.RoutWithDestinations" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgCAAAAAAAAAAAAAAAAAEAAAABAAAAAA=</HashCode>
+      <FileName>Utilites\Model\RoutWithDestinations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinskTrans.Utilites.ShedulerParser" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Utilites\ShedulerParser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Struct Name="MinskTrans.Net.Base.TimeTable" Collapsed="true">
+    <Position X="11" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Net\Base\UpdateManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MinskTrans.Net.NewsEntry" Collapsed="true">
+    <Position X="9.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAEAAAAAAgAEIAAAAAQBAAAAAACAAAAAIAAAAAA=</HashCode>
+      <FileName>Net\NewsEntry.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="MinskTrans.Context.Base.IContext" Collapsed="true">
+    <Position X="11" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQJgOCAADIgAAgBIKEAAAAQAQAhCEcgAQABAIBAAAM=</HashCode>
+      <FileName>Base\IContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MinskTrans.Context.Base.IGeolocation" Collapsed="true">
+    <Position X="11" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAEAJACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Base\IGeolocation.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MinskTrans.Context.Base.IScheduleRepository" Collapsed="true">
+    <Position X="9.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Base\IScheduleRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MinskTrans.Context.IBussnessLogics" Collapsed="true">
+    <Position X="11" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACIICIYAAoAIAQAAIBAAAIgQABERAAQBgAAAAAAAkAA=</HashCode>
+      <FileName>IBussnessLogics.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MinskTrans.Net.Base.ITimeTableParser" Collapsed="true">
+    <Position X="11" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Net\Base\ITimeTableParser.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CommonLibrary.Notify.INotifyHelper" Collapsed="true">
+    <Position X="9.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAEAAAAAAAAAAAAAAABAAAAAAQ=</HashCode>
+      <FileName>Notify\INotifyHelper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MinskTrans.Utilites.Base.Net.ICloudStorageController" Collapsed="true">
+    <Position X="11" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAIAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilites\Base\Net\ICloudStorageController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MyLibrary.IApplicationSettingsHelper" Collapsed="true">
+    <Position X="11" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAABAA=</HashCode>
+      <FileName>Utilites\ISettingsModelView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

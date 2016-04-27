@@ -25,7 +25,7 @@ namespace MinskTrans.Context.Base.BaseModel
 		public string Days { get; set; }
 
 		
-		public Dictionary<int, string> daysToString = new Dictionary<int, string>()
+		public static readonly Dictionary<int, string> daysToString = new Dictionary<int, string>()
 		{
 			{1, "Пн"},
 			{2, "Вт"},

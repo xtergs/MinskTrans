@@ -10,6 +10,7 @@
              xmlns:local="using:MinskTrans.Universal"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
+             xmlns:base="using:MinskTrans.Context.Base"
              d:DataContext="{d:DesignInstance modelview:StopModelView}"
              d:DesignHeight="300"
              d:DesignWidth="400"
@@ -24,8 +25,8 @@
         <local:MinsLeftFromTimeSpanConverter x:Key="MinsLeftConverter" />
         <local:MinsToTimeFromTimeSpanConverter x:Key="MinsToTimeConverter" />
 
-        <DataTemplate x:Key="DataTemplate1">
-            <Grid x:Name="Grid" Margin="0,5">
+        <DataTemplate x:Key="DataTemplate1" >
+            <Grid x:Name="Grid" Margin="0,5" d:DataContext="{d:DesignInstance base:TimeLineModel}">
                 <Grid.ColumnDefinitions>
 
                     <ColumnDefinition Width="Auto" />

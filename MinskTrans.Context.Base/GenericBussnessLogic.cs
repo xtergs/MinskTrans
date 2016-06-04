@@ -207,6 +207,7 @@ namespace MinskTrans.Context
             foreach (Rout rout in stp.Routs.Where(x => selectedTransportType.HasFlag(x.Transport)))
             {
                 Schedule sched = GetRouteSchedule(rout.RoutId);
+                sched.Rout = rout;
                 //    Schedule sched = rout.Time;
                 IEnumerable <TimeLineModel> temp =
                     sched.GetListTimes(rout.Stops.IndexOf(stp), day, startingTime, endTime)

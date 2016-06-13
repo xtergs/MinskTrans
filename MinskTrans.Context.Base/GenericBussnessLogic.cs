@@ -61,7 +61,7 @@ namespace MinskTrans.Context
             using (loadDataSource = new CancellationTokenSource())
             {
                 var token = loadDataSource.Token;
-                await LoadDataBase(token);
+                await LoadDataBase(token).ConfigureAwait(false);
             }
             loadDataSource = null;
         }

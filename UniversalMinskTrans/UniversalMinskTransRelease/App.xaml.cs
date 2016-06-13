@@ -199,20 +199,20 @@ namespace UniversalMinskTrans
 						
 
 #pragma warning disable 4014
-					model.Context.LoadDataBase();
+				    model.Context.LoadDataBase().ConfigureAwait(false);
 #pragma warning restore 4014
 
 
-					//					timer = new Timer(state =>
-					//					{
-					//#if BETA
-					//						Logger.Log("autoupdate timer elapsed");
-					//#endif
-					//						InternetHelper.UpdateNetworkInformation();
-					//						if ( model.SettingsModelView.HaveConnection())
-					//							if (model.Context.UpdateDataCommand.CanExecute(null))
-					//								model.Context.UpdateAsync();
-					//					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
+				    //					timer = new Timer(state =>
+				    //					{
+				    //#if BETA
+				    //						Logger.Log("autoupdate timer elapsed");
+				    //#endif
+				    //						InternetHelper.UpdateNetworkInformation();
+				    //						if ( model.SettingsModelView.HaveConnection())
+				    //							if (model.Context.UpdateDataCommand.CanExecute(null))
+				    //								model.Context.UpdateAsync();
+				    //					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
 
 				}
 			}

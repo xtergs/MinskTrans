@@ -63,6 +63,7 @@
     <Compile Include="Fakes\FakeGeolocation.cs" />
     <Compile Include="FileSettings.cs" />
     <Compile Include="GenericBussnessLogic.cs" />
+    <Compile Include="Geopositioning\WebSeacher.cs" />
     <Compile Include="IBussnessLogics.cs" />
     <Compile Include="Net\Base\ITimeTableParser.cs" />
     <Compile Include="Net\Base\UpdateManagerBase.cs" />
@@ -116,9 +117,7 @@
     <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Geopositioning\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

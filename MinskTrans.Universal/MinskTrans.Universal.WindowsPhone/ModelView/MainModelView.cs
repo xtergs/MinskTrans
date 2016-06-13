@@ -18,6 +18,7 @@ using MetroLog;
 using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
@@ -74,7 +75,7 @@ namespace MinskTrans.Universal.ModelView
             var builder = new ContainerBuilder();
             builder.RegisterType<FileHelper>().As<FileHelperBase>().SingleInstance();
             //builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
-            builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
+            builder.RegisterType<Context.Context.Context>().As<IContext>().SingleInstance();
             builder.RegisterType<UpdateManagerBase>();
             builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
             builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
@@ -91,7 +92,7 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
             builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
             builder.RegisterType<FilePathsSettings>().SingleInstance();
-
+            builder.RegisterType<WebSeacher>().AsSelf().SingleInstance();
             container = builder.Build();
 
             context = container.Resolve<IBussnessLogics>();

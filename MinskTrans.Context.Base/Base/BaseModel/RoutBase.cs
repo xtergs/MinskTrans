@@ -53,23 +53,23 @@ namespace MinskTrans.Context.Base.BaseModel
 
 		[JsonProperty]
 		public string RouteNum { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string Authority { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string City { get; set; }
 		[JsonProperty]
 		public TransportType Transport { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string Operator { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string ValidityPeriods { get; set; }
 		[JsonProperty]
 		public string SpecialDates { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string RoutTag { get; set; }
 		[JsonProperty]
 		public string RoutType { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string Commercial { get; set; }
 		[JsonProperty]
 		public string RouteName { get; set; }
@@ -77,13 +77,13 @@ namespace MinskTrans.Context.Base.BaseModel
 		public string Weekdays { get; set; }
 		[JsonProperty]
 		public int RoutId { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string Entry { get; set; }
 		[JsonProperty]
 		public List<int> RouteStops { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string Data { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string Datestart { get; set; }
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using MapControl;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Utilites.FuzzySearch;
 using Location = MinskTrans.Context.Location;
@@ -28,7 +30,8 @@ namespace MinskTrans.DesctopClient.Modelview
 	{
 		private ISettingsModelView settingsModelView;
 		private IExternalCommands commands;
-		private bool autoDay;
+	    protected WebSeacher webSeacher;
+        private bool autoDay;
 		private bool autoNowTime;
 /*
 		private bool bus;
@@ -56,16 +59,19 @@ namespace MinskTrans.DesctopClient.Modelview
 		//{
 		//}
 
-		private TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
+	    protected TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
 												  TransportType.Trol;
 
-		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, bool UseGPS = false)
+		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, WebSeacher webSeacher, bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;
+		    if (webSeacher == null)
+		        throw new ArgumentNullException(nameof(webSeacher));
 			if (commands == null)
 				throw new ArgumentNullException("commands");
 			settingsModelView = settings;
+		    this.webSeacher = webSeacher;
 			this.commands = commands;
 
 			settingsModelView.PropertyChanged += async (sender, args) =>
@@ -190,8 +196,11 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			if (IsShowFavouriteStops)
 				return Context.Context.FavouriteStops;
-			return Context.FilteredStops(StopNameFilter, selectedTransport, Context.Geolocation.CurLocation, FuzzySearch);
+			var stops =  Context.FilteredStops(StopNameFilter, selectedTransport, Context.Geolocation.CurLocation, FuzzySearch);
+		    return stops;
 		}
+
+	    
 
 	    public bool IsWorking
 	    {

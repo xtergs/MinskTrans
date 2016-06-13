@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Core;
+using Windows.UI.Xaml.Data;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
@@ -17,7 +20,7 @@ namespace UniversalMinskTransRelease.ModelView
         private CoreDispatcher dispatcher;
         private IEnumerable<TimeLineModel> _timeSchedule;
 
-        public StopModelViewUIDispatcher(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, bool UseGPS = false) : base(newContext, settings, commands, UseGPS)
+        public StopModelViewUIDispatcher(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, WebSeacher seacher, bool UseGPS = false) : base(newContext, settings, commands, seacher, UseGPS)
         {
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
@@ -47,7 +50,9 @@ namespace UniversalMinskTransRelease.ModelView
                     return;
                 sourceToken = null;
                 IsWorking = false;
-                FilteredStopsStore = res;
+                FilteredStopsStore = res.ToArray();
+                
+                    GetWebResultsAsync();
             }
         }
 
@@ -68,6 +73,46 @@ namespace UniversalMinskTransRelease.ModelView
         }
 
         public override IEnumerable<TimeLineModel> TimeSchedule => _timeSchedule;
+
+        public ObservableCollection<Stop> WebResults { get; set; }
+        private async Task GetWebResultsAsync()
+        {
+                WebResults = new ObservableCollection<Stop>();
+            if (FilteredStopsStore.Count() > 6)
+            {
+                OnPropertyChanged(nameof(WebResults));
+                IsShowWebResuls = WebResults.Count > 0;
+                OnPropertyChanged(nameof(IsShowWebResuls));
+                return;
+            }
+            Settings.UpdateNetworkData();
+            if (!Settings.HaveConnection())
+            {
+                OnPropertyChanged(nameof(WebResults));
+                IsShowWebResuls = WebResults.Count > 0;
+                OnPropertyChanged(nameof(IsShowWebResuls));
+                return;
+            }
+            var webResults = (await webSeacher.QueryToPosition(StopNameFilter))?.Where(x=> x.Address.ToLower() != "минск").ToArray();
+            if (webResults == null || webResults.Length == 0)
+            {
+                OnPropertyChanged(nameof(WebResults));
+                IsShowWebResuls = WebResults.Count > 0;
+                OnPropertyChanged(nameof(IsShowWebResuls));
+                return;
+            }
+            var results  = Context.FilteredStops(null, selectedTransport, webResults[0].Location, FuzzySearch);
+            results = results.Except(FilteredStopsStore).Take(5);
+            WebResults = new ObservableCollection<Stop>( results);
+            OnPropertyChanged(nameof(WebResults));
+            StreetName = webResults[0].Address;
+            OnPropertyChanged(StreetName);
+            IsShowWebResuls = WebResults.Count > 0;
+            OnPropertyChanged(nameof(IsShowWebResuls));
+        }
+        public string StreetName { get; set; }
+        public bool IsShowWebResuls { get; set; }
+
 
         protected override void OnPropertyChanged(string propertyName = null)
         {

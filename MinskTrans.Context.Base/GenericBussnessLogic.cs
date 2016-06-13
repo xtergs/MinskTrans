@@ -176,9 +176,10 @@ namespace MinskTrans.Context
         private IEnumerable<Stop> SmartSort(IEnumerable<Stop> stops, Location location)
         {
             IEnumerable<Stop> enumerable = stops as IList<Stop> ?? stops.ToList();
-            var byDeistance = enumerable.OrderBy(x => Distance(x, location)).ToList();
+            var byDeistance = enumerable.Select(x => new {Stop = x, Distance =  Distance(x, location)}).OrderBy(x=> x.Distance)
+                .ToDictionary(x=> x.Stop, x=> x.Distance);
             var result = enumerable.OrderByDescending(x => Context.GetCounter(x))
-                .Select((x, i) => new { x, byCounter = i, byDistance = byDeistance.IndexOf(x) })
+                .Select((x, i) => new { x, byCounter = i, byDistance = byDeistance[x] })
                 .OrderBy(x => x.byCounter + x.byDistance)
                 .Select(x => x.x)
                 .ToList();

@@ -69,7 +69,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -80,6 +82,7 @@
     <Compile Include="TestFileHelperDesktop.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="ContextUnitTest.cs" />
+    <Compile Include="WebSeacherTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -94,10 +97,6 @@
     <ProjectReference Include="..\..\MinskTrans.Context.Base\MinskTrans.Context.csproj">
       <Project>{76BFE88D-0563-4897-B242-58CEEBA93431}</Project>
       <Name>MinskTrans.Context</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MinskTrans.Context.Desktop\MinskTrans.Context.Desktop.csproj">
-      <Project>{C4FBD2FD-EA17-4F5C-B240-FDC9E8826DC0}</Project>
-      <Name>MinskTrans.Context.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

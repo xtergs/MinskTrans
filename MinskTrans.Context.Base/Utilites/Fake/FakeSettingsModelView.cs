@@ -37,6 +37,11 @@ namespace MyLibrary
             throw new NotImplementedException();
         }
 
+        public void UpdateNetworkData()
+        {
+            
+        }
+
         public int FontSize { get; set; }
 
         #endregion

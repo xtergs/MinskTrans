@@ -121,6 +121,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\GridBoolHeightConverter.cs" />
     <Compile Include="Converters\listConverter.cs" />
     <Compile Include="Converters\ListToStr.cs" />
     <Compile Include="Converters\MinsLeftConverter.cs" />

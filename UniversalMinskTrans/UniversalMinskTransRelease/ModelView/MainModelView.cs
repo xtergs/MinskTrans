@@ -18,6 +18,7 @@ using MetroLog;
 using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
@@ -96,14 +97,14 @@ namespace MinskTrans.Universal.ModelView
 			builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
 			builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
 			builder.RegisterType<GroupStopsModelView>().SingleInstance();
-			builder.RegisterType<FavouriteModelView>().SingleInstance();
+			//builder.RegisterType<FavouriteModelView>().SingleInstance();
 			builder.RegisterType<NewsModelView>().SingleInstance();
 			builder.RegisterType<FindModelView>().SingleInstance().WithParameter("UseGPS", true);
 			builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
 			builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 			builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
 			builder.RegisterType<FilePathsSettings>().SingleInstance();
-
+		    builder.RegisterType<WebSeacher>().AsSelf();
 			container = builder.Build();
 
 			context = container.Resolve<IBussnessLogics>();
@@ -133,7 +134,7 @@ namespace MinskTrans.Universal.ModelView
 
 		public GroupStopsModelView GroupStopsModelView => container.Resolve<GroupStopsModelView>();
 
-		public FavouriteModelView FavouriteModelView => container.Resolve<FavouriteModelView>();
+		//public FavouriteModelView FavouriteModelView => container.Resolve<FavouriteModelView>();
 
 		//public IContext Context { get { return context; } }
 

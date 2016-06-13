@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
@@ -38,12 +39,12 @@ namespace MinskTrans.Universal.ModelView
 	    private bool isShowStopsView;
 	    public ISettingsModelView MainSettings { get; private set; }
 
-	    public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands, bool UseGps = false) : base(newContext)
+	    public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands, WebSeacher seacher, bool UseGps = false) : base(newContext)
         {
             IsShowTransportsView = false;
             IsShowStopsView = true;
             MainSettings = settingsModelView;
-			StopModelView = new StopModelViewUIDispatcher(newContext, settingsModelView, commands, UseGps);
+			StopModelView = new StopModelViewUIDispatcher(newContext, settingsModelView, commands, seacher, UseGps);
 			RoutsModelView = new RoutsModelView(newContext, commands);
 		}
 

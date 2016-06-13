@@ -18,7 +18,7 @@ namespace DesktopUnitTests
 		    var fileHelper = new TestFileHelperDesktop();
             Context cont = new Context(fileHelper, new InternetHelperDesktop(fileHelper, LogManagerFactory.DefaultLogManager), new FilePathsSettings());
 		    var rout = new Rout();
-		    cont.Routs.Add(rout);
+		   //ToDO cont.Routs = new [] {rout};;
 
             //Act
             await cont.AddFavouriteRout(cont.Routs.First());
@@ -35,7 +35,7 @@ namespace DesktopUnitTests
             var fileHelper = new TestFileHelperDesktop();
             Context cont = new Context(fileHelper, new InternetHelperDesktop(fileHelper, LogManagerFactory.DefaultLogManager), new FilePathsSettings());
             var stop = new Stop();
-            cont.Stops.Add(stop);
+            //ToDO cont.Stops.Add(stop);
 
             //Act
             await cont.AddFavouriteStop(cont.Stops.First());

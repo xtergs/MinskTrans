@@ -45,6 +45,7 @@ namespace MyLibrary
 		DateTime LastSeenMainNewsDateTimeUtc { get; set; }
 		DateTime LastSeenHotNewsDateTimeUtc { get; set; }
 		bool HaveConnection();
+	    void UpdateNetworkData();
 
 		int FontSize { get; set; }
 	}
@@ -67,15 +68,18 @@ namespace MyLibrary
 	public class SettingsModelView : ISettingsModelView
 	{
 		private readonly IApplicationSettingsHelper helper;
+	    private InternetHelperBase internetHelper;
 
 
-
-		public SettingsModelView(IApplicationSettingsHelper helper)
+	    public SettingsModelView(IApplicationSettingsHelper helper, InternetHelperBase internetHelper)
 			: base()
 		{
+            if (internetHelper == null)
+                throw new ArgumentNullException(nameof(internetHelper));
 			if (helper == null)
 				throw new ArgumentNullException(nameof(helper));
 			this.helper = helper;
+		    this.internetHelper = internetHelper;
 		}
 
 		static string SettingsToStr([CallerMemberName] string propertyName = null)
@@ -113,7 +117,12 @@ namespace MyLibrary
 												   InternetHelperBase.Is_Wifi_Connected == UpdateOnWiFi);
 		}
 
-		public int FontSize {
+	    public void UpdateNetworkData()
+	    {
+	        internetHelper.UpdateNetworkInformation();
+	    }
+
+	    public int FontSize {
 			get { return helper.SimpleGet(15); }
 
 			set

@@ -166,7 +166,7 @@ namespace MinskTrans.Context.Desktop
 		    }
 		}
         
-		public IList<Stop> Stops{get
+		public Stop[] Stops{get
 		{
 		    if (stopsEF.Local.Count == 0)
 		    {
@@ -178,7 +178,7 @@ namespace MinskTrans.Context.Desktop
         }
         }
 
-		public IList<Schedule> Times { get
+		public Schedule[] Times { get
 		{
 		    if (timesEF.Local.Count == 0)
 		        timesEF.Load();

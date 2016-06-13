@@ -19,6 +19,7 @@ using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
 using MyLibrary;
+using UniversalMinskTransRelease.ModelView;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -57,7 +58,7 @@ namespace UniversalMinskTransRelease.View
                 await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
             };
 
-            model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView, model.Geolocation, builder);
+            model.MapModelView = new MapModelViewUIDispatcher(model.Context, map, model.SettingsModelView, model.Geolocation, builder);
 
             //TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
         }

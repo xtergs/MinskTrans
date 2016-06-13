@@ -147,6 +147,7 @@
     <Compile Include="ModelView\FavouriteModelView.cs" />
     <Compile Include="ModelView\FindModelView.cs" />
     <Compile Include="ModelView\MainModelView.cs" />
+    <Compile Include="ModelView\MapModelViewUIDispatcher.cs" />
     <Compile Include="ModelView\NewsModelView.cs" />
     <Compile Include="ModelView\RoutsModelView.cs" />
     <Compile Include="ModelView\StopModelViewUIDispatcher.cs" />

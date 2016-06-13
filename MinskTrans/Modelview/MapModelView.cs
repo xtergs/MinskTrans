@@ -34,9 +34,9 @@ namespace MinskTrans.DesctopClient.Modelview
 		private Stop currentStop;
 		private Rout currentRout;
 		private Location location;
-		private bool showAllPushpins = true;
-		private readonly Map map;
-		private List<PushpinLocation> allPushpins;
+	    protected bool showAllPushpins = true;
+	    protected readonly Map map;
+	    protected List<PushpinLocation> allPushpins;
 		private Pushpin ipushpin;
 		private ObservableCollection<Pushpin> pushpins1;
 		private Pushpin startStopPushpin;
@@ -57,7 +57,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public static Style StylePushpin { get; set; }
 
-		private readonly PushPinBuilder pushBuilder;
+	    protected readonly PushPinBuilder pushBuilder;
 
 		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, PushPinBuilder pushPinBuilder = null)
 			: base(context)
@@ -282,22 +282,27 @@ namespace MinskTrans.DesctopClient.Modelview
 
 	    public Stop EndStop => (Stop) EndStopPushpin?.Tag;
 
-	    void ShowOnMap()
+	    protected void ShowOnMap()
 		{
-            var temp = map.Children.OfType<Pushpin>();
-            var except = temp.Except(Pushpins).ToList();
+            ShowOnMap(Pushpins.ToArray());
+		}
+
+	    protected void ShowOnMap(Pushpin[] pins)
+	    {
+            var temp = map.Children.OfType<Pushpin>().ToArray();
+            var except = temp.Except(pins).ToList();
             foreach (var pushpin in except)
-			{
-				map.Children.Remove(pushpin);
-			}
+            {
+                map.Children.Remove(pushpin);
+            }
             //map.Children.RemoveAt(i);
-            except = Pushpins.Except(temp).ToList();
+            except = pins.Except(temp).ToList();
 
             foreach (var pushpin in except)
-			{
-			    map.Children.Add(pushpin);
-			}
-		}
+            {
+                map.Children.Add(pushpin);
+            }
+        }
 
 		public ObservableCollection<Pushpin> Pushpins
 		{
@@ -315,62 +320,17 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public int MaxZoomLevel { get; set; }
 
-		PushpinLocation CreatePushpin(Stop st)
+		protected virtual PushpinLocation CreatePushpin(Stop st)
 		{
-			var tempPushPin = new PushpinLocation
+			return new PushpinLocation
 			{
 				Location = new Location(st.Lat, st.Lng),
 				Stop = st,
 				
 			};
-            //var pushpin = new Pushpin { Tag = st, Content = st.Name };
-#if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
-            tempPushPin.Pushpin.ContextMenu = new ContextMenu();
-					var menuItem = new MenuItem();
-					menuItem.Command = SetStartStop;
-					menuItem.CommandParameter = tempPushPin.Pushpin;
-					//menuItem.Click += ContextClickStartStop;
-					menuItem.Header = "Start";
-					tempPushPin.Pushpin.ContextMenu.Items.Add(menuItem);
-					menuItem = new MenuItem();
-					menuItem.Command = SetEndtStop;
-					menuItem.CommandParameter = tempPushPin.Pushpin;
-					//menuItem.Click += ContextClickEndStop;
-					menuItem.Header = "End";
-					tempPushPin.Pushpin.ContextMenu.Items.Add(menuItem);
-					//tempPushPin.Pushpin.MouseMove += (senderr, argsr) =>
-					//{
-					//	((Pushpin)senderr).BringToFront();
-					//};
-#else
-			if (pushBuilder != null)
-			{
-				tempPushPin.Pushpin = pushBuilder.CreatePushPin(tempPushPin.Location);
-				tempPushPin.Pushpin.Tag = st;
-				tempPushPin.Pushpin.Content = st.Name;
-#if DEBUG
-			    tempPushPin.Pushpin.Content += string.Format("\n {0} \n {1} ", st.ID, st.SearchName);
-#endif
-			}
-#endif
-			//tempPushPin.Pushpin.MouseLeftButtonDown += (o, argsr) =>
-			//{
-			//	Pushpin tempPushpin = (Pushpin)o;
-			//	Stop tmStop = (Stop)tempPushpin.Tag;
-			//	ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
-			//	stopTabItem.Focus();
-			//};
-			//tempPushPin.Pushpin.MouseRightButtonDown += (o, eventArgs) =>
-			//{
-			//	Pushpin tempPushpin = (Pushpin)o;
-			//	tempPushpin.ContextMenu.IsOpen = true;
-			//	currentPushpin = (Pushpin)o;
-			//};
-			//MapPanel.SetLocation(tempPushPin.Pushpin, tempPushPin.Location);
-			return tempPushPin;
 		}
 
-		void PreperPushpinsForView(IEnumerable<Stop> needStops)
+		protected virtual void PreperPushpinsForView(IEnumerable<Stop> needStops)
 		{
 			foreach (var needShowStop in needStops)
 			{
@@ -384,7 +344,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public void RefreshPushPinsAsync()
+		public virtual void RefreshPushPinsAsync()
 		{
 
 			if (showAllPushpins && map != null && Context.Context.ActualStops != null)

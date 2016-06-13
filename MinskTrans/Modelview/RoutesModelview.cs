@@ -53,7 +53,7 @@ using GalaSoft.MvvmLight.Command;
 			get
 			{
 				//if (String.IsNullOrWhiteSpace(typeTransport))
-					if (typeTransport == TransportType.None && Context.Context.Routs != null && Context.Context.Routs.Count > 0) 
+					if (typeTransport == TransportType.None && Context.Context.Routs != null && Context.Context.Routs.Length > 0) 
 						TypeTransport = Context.Context.Routs[0].Transport;
 				return typeTransport;
 			}
@@ -184,7 +184,7 @@ using GalaSoft.MvvmLight.Command;
 				if (CurTime)
 					foreach (var x in timesObservableCollection)
 					{
-						x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
+					    x.Times = x.Times.Where(d => d >= (curTime - 30)).ToArray();
 					}
 
 				return timesObservableCollection;

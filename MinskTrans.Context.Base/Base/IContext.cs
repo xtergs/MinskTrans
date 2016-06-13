@@ -21,9 +21,9 @@ namespace MinskTrans.Context.Base
 		IList<Stop> FavouriteStops { get; }
 		IList<GroupStop> Groups { get; }
 		//DateTime LastUpdateDataDateTime { get; set; }
-		IList<Rout> Routs { get; }
-		IList<Stop> Stops { get; }
-		IList<Schedule> Times { get; }
+		Rout[] Routs { get; }
+		Stop[] Stops { get; }
+		Schedule[] Times { get; }
 
 		event EventHandler<EventArgs> ApplyUpdateEnded;
 		event EventHandler<EventArgs> ApplyUpdateStarted;

@@ -84,11 +84,13 @@ namespace MinskTrans.Context
 			fileHelper = helper;
 			this.internetHelper = internetHelper;
 		    this.files = files;
-		    Create();
-		    Routs = new List<Rout>();
-		    Stops = new List<Stop>();
-            Times = new List<Schedule>();
-		}
+            favouriteRouts = new ObservableCollection<int>();
+            favouriteStops = new ObservableCollection<int>();
+            Groups = new ObservableCollection<GroupStop>();
+            //Routs = new List<Rout>();
+            //Stops = new List<Stop>();
+            //      Times = new List<Schedule>();
+        }
 
 		public void Inicialize(IContext cont)
 		{
@@ -118,9 +120,9 @@ namespace MinskTrans.Context
 			OnApplyUpdateStarted();
 			try
 			{
-				Stops = newStops;
-			    Routs = newRoutes.ToList();
-				Times = newSchedule;
+			    Stops = newStops.ToArray();
+			    Routs = newRoutes.ToArray();
+				Times = newSchedule.ToArray();
 				
                 await Save(true);
 			}
@@ -343,9 +345,9 @@ namespace MinskTrans.Context
 
 				//lock (o)
 				//{
-				Routs = tpRouts;
-				Stops = tpStops;
-				Times = tpTimes;
+				Routs = tpRouts.ToArray();
+				Stops = tpStops.ToArray();
+				Times = tpTimes.ToArray();
 				//ActualStops = Stops;
 			}
 			//await Task.Delay(new TimeSpan(0, 0, 0, 10));
@@ -558,7 +560,7 @@ namespace MinskTrans.Context
 #if DEBUG
 			var xx = newSchedule.Except(Times).ToList();
 #endif
-			if (newStops.Count != Stops.Count() || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+			if (newStops.Count != Stops.Count() || newRoutes.Count != Routs.Length || newSchedule.Count != Times.Length)
 				return true;
 
 			foreach (var newRoute in newRoutes)
@@ -893,8 +895,8 @@ namespace MinskTrans.Context
 
 		public FileHelperBase FileHelper => fileHelper;
 
-	    public IList<Rout> Routs { get; protected set; }
-		public IList<Schedule> Times { get; protected set; }
+	    public Rout[] Routs { get; protected set; }
+		public Schedule[] Times { get; protected set; }
 
 		public IEnumerable<Stop> ActualStops => Stops;
 
@@ -919,12 +921,12 @@ namespace MinskTrans.Context
 			get
 			{
 				if (ActualStops == null)
-					return null;
+					return new List<Stop>();
 				return ActualStops.Where(st => favouriteStops.Contains(st.ID)).ToList();
 			}
 		}
 
-		public IList<Stop> Stops { get; protected set; }
+		public Stop[] Stops { get; protected set; }
 
 		//public ContextFileSettings Settings
 		//{

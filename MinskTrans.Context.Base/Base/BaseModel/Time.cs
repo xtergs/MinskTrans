@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -13,12 +14,10 @@ namespace MinskTrans.Context.Base.BaseModel
 
 		public Time(Time time, int correnction)
 		{
-			Times = new List<int>();
+			var newTimes = new List<int>(time.Times.Length);
 			Days = time.Days;
-			for (int i = 0; i < time.Times.Count; i++)
-			{
-				Times.Add(time.Times[i] + correnction);
-			}
+		    newTimes.AddRange(time.Times.Select(t => t + correnction));
+		    Times = newTimes.ToArray();
 			Schedule = time.Schedule;
 		}
 		[JsonProperty]
@@ -49,7 +48,7 @@ namespace MinskTrans.Context.Base.BaseModel
 			}
 		}
 		[JsonProperty]
-		public List<int> Times { get; set; }
+		public int[] Times { get; set; }
 
 		public Dictionary<int, List<int>> DictionaryTime
 		{
@@ -57,7 +56,7 @@ namespace MinskTrans.Context.Base.BaseModel
 			{
 				var dic = new Dictionary<int, List<int>>();
 				int val = 0;
-				for (int i = 0; i < Times.Count; i++)
+				for (int i = 0; i < Times.Length; i++)
 				{
 					val = Times[i];
 					int hour = val/60;

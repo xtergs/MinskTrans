@@ -292,7 +292,7 @@ namespace MinskTrans.Universal.ModelView
 				return timesObservableCollection;
 			foreach (var x in timesObservableCollection)
 			{
-				x.Times = x.Times.Where(d => d >= (curTime - 30)).ToList();
+				x.Times = x.Times.Where(d => d >= (curTime - 30)).ToArray();
 			}
 
 			return timesObservableCollection;

@@ -230,16 +230,15 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public ISettingsModelView SettingsModelView
-	{
-		get { return settingsModelView; }
-	}
+		public ISettingsModelView SettingsModelView => settingsModelView;
 
-		public bool IsShowFavouriteStops
+	    public bool IsShowFavouriteStops
 		{
 			get { return isShowFavouriteStops; }
 			set
 			{
+			    if (isShowFavouriteStops == value)
+			        return;
 				isShowFavouriteStops = value;
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(FilteredStops));
@@ -251,17 +250,12 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public string DestinationStop
 		{
-			get
-			{
-				if (destinationStop == null)
-					destinationStop = "";
-				return destinationStop;
-			}
-			set
+			get { return destinationStop ?? (destinationStop = ""); }
+		    set
 			{
 				destinationStop = value;
 				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged(nameof(TimeSchedule));
 			}
 		}
 
@@ -274,8 +268,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				//if (value.Equals(autoDay)) return;
 				autoDay = value;
 				OnPropertyChanged();
-				OnPropertyChanged("CurDay");
-				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged(nameof(CurDay));
+				OnPropertyChanged(nameof(TimeSchedule));
 			}
 		}
 
@@ -300,7 +294,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				curDay = value;
 				AutoDay = false;
 				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged(nameof(TimeSchedule));
 			}
 		}
 
@@ -314,7 +308,7 @@ namespace MinskTrans.DesctopClient.Modelview
 					value = 0;
 				nowTimeHour = value;
 				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged(nameof(TimeSchedule));
 			}
 		}
 
@@ -333,7 +327,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 				nowTimeMin = value;
 				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged(nameof(TimeSchedule));
 			}
 		}
 
@@ -345,7 +339,7 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (value.Equals(autoNowTime)) return;
 				autoNowTime = value;
 				OnPropertyChanged();
-				OnPropertyChanged("TimeSchedule");
+				OnPropertyChanged(nameof(TimeSchedule));
 			}
 		}
 
@@ -359,21 +353,17 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public bool Trol
+        #region Transport flags
+
+        public bool Trol
 		{
 			get { return selectedTransport.HasFlag(TransportType.Trol); }
 			set
 			{
-				if (value)
-					selectedTransport |= TransportType.Trol;
-				else
-					selectedTransport ^= TransportType.Trol;
-				OnPropertyChanged();
-				OnPropertyChanged("FilteredStops");
-				OnPropertyChanged("TimeSchedule");
-			    FilterStopsAsync();
+                SetTransportFlag(value, TransportType.Trol);
+                OnPropertyChanged();
 
-			}
+            }
 		}
 
 		public bool Bus
@@ -381,14 +371,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return selectedTransport.HasFlag(TransportType.Bus); }
 			set
 			{
-				if (value)
-					selectedTransport |= TransportType.Bus;
-				else
-					selectedTransport ^= TransportType.Bus; 
-				OnPropertyChanged();
-				OnPropertyChanged("FilteredStops");
-				OnPropertyChanged("TimeSchedule");
-                FilterStopsAsync();
+                SetTransportFlag(value, TransportType.Bus);
+                OnPropertyChanged();
 
             }
 		}
@@ -403,16 +387,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return selectedTransport.HasFlag(TransportType.Tram); }
 			set
 			{
-				if (value)
-					selectedTransport |= TransportType.Tram;
-				else
-					selectedTransport ^= TransportType.Tram;
-				OnPropertyChanged();
-				OnPropertyChanged("FilteredStops");
-				OnPropertyChanged("TimeSchedule");
-			    FilterStopsAsync();
-			}
+                SetTransportFlag(value, TransportType.Tram);
+                OnPropertyChanged();
+
+            }
 		}
+
+	    
 
 /*
 		private bool metro;
@@ -420,24 +401,33 @@ namespace MinskTrans.DesctopClient.Modelview
 /*
 		private Visibility showDetailViewStop;
 */
-
 		public bool Metro
 		{
 			get { return selectedTransport.HasFlag(TransportType.Metro); }
 			set
 			{
-				if (value)
-					selectedTransport |= TransportType.Metro;
-				else
-					selectedTransport ^= TransportType.Metro;
-				OnPropertyChanged();
-				OnPropertyChanged("FilteredStops");
-				OnPropertyChanged("TimeSchedule");
-                FilterStopsAsync();
+			    SetTransportFlag(value, TransportType.Metro);
+                OnPropertyChanged();
             }
 		}
 
-	    public int FavouriteStopsCount
+        void SetTransportFlag(bool value, TransportType flag)
+        {
+            var oldVal = selectedTransport.HasFlag(flag);
+            if (value == oldVal)
+                return;
+            if (value)
+                selectedTransport |= flag;
+            else
+                selectedTransport ^= flag;
+            OnPropertyChanged(nameof(FilteredStops));
+            OnPropertyChanged(nameof(TimeSchedule));
+            FilterStopsAsync();
+        }
+
+#endregion
+
+        public int FavouriteStopsCount
 	    {
 	        get { return IsShowFavouriteStops? 1 : Context.Context.FavouriteStops.Count; }
 	        set { OnPropertyChanged(); }
@@ -480,7 +470,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public RelayCommand RefreshTimeSchedule
 		{
-			get { return new RelayCommand(() => OnPropertyChanged("TimeSchedule")); }
+			get { return new RelayCommand(() => OnPropertyChanged(nameof(TimeSchedule))); }
 		}
 
 		public RelayCommand<int> SetTimeInPast
@@ -512,7 +502,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			set
 			{
 				fuzzySearch = value; 
-				OnPropertyChanged("FilteredStops");
+				OnPropertyChanged(nameof(FilteredStops));
 			}
 		}
 

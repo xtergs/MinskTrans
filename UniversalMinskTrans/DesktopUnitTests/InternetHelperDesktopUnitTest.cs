@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
+using MetroLog;
 using MinskTrans.Utilites.Base.Net;
 using MinskTrans.Utilites.Desktop;
 
@@ -15,7 +16,7 @@ namespace DesktopUnitTests
 		[TestInitialize]
 		public void Inicialize()
 		{
-			internetHelper = new InternetHelperDesktop(new TestFileHelperDesktop());
+			internetHelper = new InternetHelperDesktop(new TestFileHelperDesktop(), LogManagerFactory.DefaultLogManager);
 			uri = @"https://docs.google.com/uc?authuser=0&id=0Bx0XRya1BPrlVlNQd0ZyOEU4cTg&export=download";
 		}
 

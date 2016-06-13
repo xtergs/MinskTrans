@@ -149,6 +149,7 @@
     <Compile Include="ModelView\MainModelView.cs" />
     <Compile Include="ModelView\NewsModelView.cs" />
     <Compile Include="ModelView\RoutsModelView.cs" />
+    <Compile Include="ModelView\StopModelViewUIDispatcher.cs" />
     <Compile Include="View\MyTextBox.xaml.cs">
       <DependentUpon>MyTextBox.xaml</DependentUpon>
     </Compile>

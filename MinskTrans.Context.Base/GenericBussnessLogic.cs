@@ -196,7 +196,7 @@ namespace MinskTrans.Context
             //return Math.Abs(Math.Sqrt(Math.Pow( - x.Lng, 2) + Math.Pow(LocationXX.Get().Latitude - x.Lat, 2)));
         }
 
-        public IEnumerable<TimeLineModel> GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
+        public TimeLineModel[] GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
             int endTime = int.MaxValue)
         {
             if (stp == null)
@@ -207,6 +207,8 @@ namespace MinskTrans.Context
             foreach (Rout rout in stp.Routs.Where(x => selectedTransportType.HasFlag(x.Transport)))
             {
                 Schedule sched = GetRouteSchedule(rout.RoutId);
+                if (sched == null)
+                    return null;
                 sched.Rout = rout;
                 //    Schedule sched = rout.Time;
                 IEnumerable <TimeLineModel> temp =
@@ -218,7 +220,7 @@ namespace MinskTrans.Context
 
             }
             stopTimeLine = stopTimeLine.OrderBy(x => x.Time);
-            return stopTimeLine;
+            return stopTimeLine.ToArray();
 
 
         }
@@ -318,7 +320,7 @@ namespace MinskTrans.Context
             Schedule timee = GetRouteSchedule(rout.RoutId);
             for (int i = 0; i < rout.Stops.Count; i++)
             {
-               index = timee.TimesDictionary[i].Where(x=> x.Days.Contains(day.ToString())).First().Times.IndexOf(mins);
+               index = timee.TimesDictionary[i].First(x => x.Days.Contains(day.ToString())).Times.ToList().IndexOf(mins);
                 if (index >= 0)
                 {
                     break;

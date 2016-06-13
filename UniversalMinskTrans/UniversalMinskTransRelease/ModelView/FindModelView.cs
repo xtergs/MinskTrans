@@ -5,6 +5,7 @@ using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
+using UniversalMinskTransRelease.ModelView;
 
 namespace MinskTrans.Universal.ModelView
 {
@@ -42,7 +43,7 @@ namespace MinskTrans.Universal.ModelView
             IsShowTransportsView = false;
             IsShowStopsView = true;
             MainSettings = settingsModelView;
-			StopModelView = new StopModelView(newContext, settingsModelView, commands, UseGps);
+			StopModelView = new StopModelViewUIDispatcher(newContext, settingsModelView, commands, UseGps);
 			RoutsModelView = new RoutsModelView(newContext, commands);
 		}
 

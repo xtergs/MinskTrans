@@ -27,7 +27,7 @@ namespace MinskTrans.Context
         Task<IEnumerable<Stop>> FilteredStopsAsync(string StopNameFilter, CancellationToken token, TransportType selectedTransport = TransportType.All, Location location = null, bool FuzzySearch = false);
         void SetGPS(bool v, object useGPS);
 
-        IEnumerable<TimeLineModel> GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
+        TimeLineModel[] GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
             int endTime = int.MaxValue);
         Stop GetStop(int stopId);
         IEnumerable<Stop> GetDirection(int stopID, int count);

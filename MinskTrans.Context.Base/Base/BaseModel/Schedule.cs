@@ -87,7 +87,7 @@ namespace MinskTrans.Context.Base.BaseModel
 				if (i >= list.Count)
 					timesDictionary[timesDictionary.Count - 1].Days += curValue;
 				else
-					timesDictionary.Add(new Time { Days = curValue, Times = list[i++], Schedule = this });
+					timesDictionary.Add(new Time { Days = curValue, Times = list[i++].ToArray(), Schedule = this });
 				if (GetStr() == null)
 					break;
 			}
@@ -108,9 +108,9 @@ namespace MinskTrans.Context.Base.BaseModel
 				for (int ddd = 0; ddd < TimesDictionary[j - 4].Count; ddd++)
 				{
 					var tempTime = new Time();
-					tempTime.Times = new List<int>();
+					var tempTimes = new List<int>();
 					tempTime.Days = TimesDictionary[j - 4][ddd].Days;
-					for (i = 0; i < TimesDictionary[j - 4][ddd].Times.Count; i++)
+					for (i = 0; i < TimesDictionary[j - 4][ddd].Times.Length; i++)
 					{
 						counter--;
 						if (counter == 0)
@@ -140,8 +140,9 @@ namespace MinskTrans.Context.Base.BaseModel
 								change = !change;
 							}
 						}
-						tempTime.Times.Add(TimesDictionary[j - 4][ddd].Times[i] + cor.Value);
+						tempTimes.Add(TimesDictionary[j - 4][ddd].Times[i] + cor.Value);
 					}
+				    tempTime.Times = tempTimes.ToArray();
 					tempTime.Schedule = TimesDictionary[j - 4][ddd].Schedule;
 
 					timesDictionary.Add(tempTime);

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using MetroLog;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
@@ -16,7 +16,7 @@ namespace DesktopUnitTests
 		{
             //Arrange
 		    var fileHelper = new TestFileHelperDesktop();
-            Context cont = new Context(fileHelper, new InternetHelperDesktop(fileHelper));
+            Context cont = new Context(fileHelper, new InternetHelperDesktop(fileHelper, LogManagerFactory.DefaultLogManager), new FilePathsSettings());
 		    var rout = new Rout();
 		    cont.Routs.Add(rout);
 
@@ -33,7 +33,7 @@ namespace DesktopUnitTests
         {
             //Arrange
             var fileHelper = new TestFileHelperDesktop();
-            Context cont = new Context(fileHelper, new InternetHelperDesktop(fileHelper));
+            Context cont = new Context(fileHelper, new InternetHelperDesktop(fileHelper, LogManagerFactory.DefaultLogManager), new FilePathsSettings());
             var stop = new Stop();
             cont.Stops.Add(stop);
 

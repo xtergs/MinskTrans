@@ -1,0 +1,11 @@
+﻿{
+  "dependencies": {
+    "Microsoft.Bcl.Build": "1.0.21",
+    "MvvmLightLibs": "5.3.0"
+  },
+  "frameworks": {
+    "wp81": {},
+    ".NETPortable,Version=v4.6,Profile=Profile32": {}
+  },
+  "supports": {}
+}

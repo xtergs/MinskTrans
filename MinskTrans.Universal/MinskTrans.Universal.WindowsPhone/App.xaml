@@ -9,7 +9,7 @@
       </ResourceDictionary.ThemeDictionaries>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Resourse/Styles.xaml">
-         
+          <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="using:MinskTrans.Universal.ViewModel" />
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>

@@ -14,7 +14,8 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>5f3d3529</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,35 +54,31 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FileDb, Version=6.1.0.0, Culture=neutral, PublicKeyToken=ba3f58a0e60cd01d, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.8.0\lib\net45\FileDb.dll</HintPath>
+      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\net45\FileDb.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FileDbCache.WPF, Version=2.8.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.8.0\lib\net45\FileDbCache.WPF.dll</HintPath>
+    <Reference Include="FileDbCache.WPF, Version=2.9.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\net45\FileDbCache.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.2.0.37226, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ImageFileCache.WPF, Version=2.8.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.8.0\lib\net45\ImageFileCache.WPF.dll</HintPath>
+    <Reference Include="ImageFileCache.WPF, Version=2.9.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\net45\ImageFileCache.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MapControl.WPF, Version=2.8.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.8.0\lib\net45\MapControl.WPF.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MetroLog, Version=1.0.1.0, Culture=neutral, PublicKeyToken=ba4ace74c3b410f3, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MetroLog.1.0.1\lib\net45\MetroLog.dll</HintPath>
+    <Reference Include="MapControl.WPF, Version=2.9.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\net45\MapControl.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -89,7 +86,7 @@
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\UniversalMinskTrans\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -101,7 +98,7 @@
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -243,7 +240,9 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
+    <Error Condition="!Exists('..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
+  <Import Project="..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

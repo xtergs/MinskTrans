@@ -20,7 +20,8 @@
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
     <AppxBundle>Always</AppxBundle>
     <AppxPackageDir>beta\</AppxPackageDir>
-    <NuGetPackageImportStamp>531d19ab</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -201,32 +202,24 @@
       <HintPath>..\..\UniversalMinskTrans\packages\Autofac.3.5.2\lib\portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\wpa81\GalaSoft.MvvmLight.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\wpa81\GalaSoft.MvvmLight.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\wpa81\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\wpa81\GalaSoft.MvvmLight.Extras.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.2.0.37227, Culture=neutral, PublicKeyToken=2d6752c4fdf70b88, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.2.0.0\lib\wpa81\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19038, Culture=neutral, PublicKeyToken=2d6752c4fdf70b88, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\wpa81\GalaSoft.MvvmLight.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MapControl.WinRT, Version=2.7.1.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\XAML.MapControl.2.7.1\lib\wpa81\MapControl.WinRT.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MetroLog, Version=1.0.1.0, Culture=neutral, PublicKeyToken=ba4ace74c3b410f3, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\MetroLog.1.0.1\lib\wpa81\MetroLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MetroLog.Targets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\MetroLog.Targets.1.0.0.0\lib\portable-win81+wpa81\MetroLog.Targets.dll</HintPath>
+    <Reference Include="MapControl.WinRT, Version=2.9.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\wpa81\MapControl.WinRT.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\Newtonsoft.Json.8.0.2\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\UniversalMinskTrans\packages\Newtonsoft.Json.8.0.3\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -254,6 +247,13 @@
   </PropertyGroup>
   <Import Project="..\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="..\..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\UniversalMinskTrans\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -41,14 +41,6 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MetroLog, Version=1.0.1.0, Culture=neutral, PublicKeyToken=ba4ace74c3b410f3, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MetroLog.1.0.1\lib\net45\MetroLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MetroLog.Targets.PortableFileTarget, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\MetroLog.Targets.PortableFileTarget.1.0.0.0\lib\portable-net45+win+wp80\MetroLog.Targets.PortableFileTarget.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PCLStorage, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
       <HintPath>..\UniversalMinskTrans\packages\PCLStorage.1.0.2\lib\net45\PCLStorage.dll</HintPath>
       <Private>True</Private>

@@ -32,6 +32,7 @@ namespace UniversalMinskTransRelease.ModelView
 
         protected string changeLog = "- Веб поиск Яндекс Геолокатор API\n" +
                                    "- Повышена производительность\n" +
+                                   "- Просмотр прибытия выбранного транспорта на остановки (Просмотр остановки)" +
                                    "- Изменен алгоритм отображения остановок на карте\n" +
                                    "- Временно отключена вкладка Группы";
         public override string ChangeLogOnce

@@ -23,10 +23,7 @@
         <Converters:IntToVisibleConverter x:Key="IntToVisibleConverter"/>
     </UserControl.Resources>
 
-    <Grid x:Name="ShowStopsGrid"
-		Grid.Row="1"
-		Grid.ColumnSpan="1"
-		Margin="10,0">
+    <Grid x:Name="ShowStopsGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition  />
@@ -53,20 +50,13 @@
 			ItemTemplate="{StaticResource ListStopsDataTemplate}"
 			ItemsSource="{Binding FilteredStopsStore, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 			SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="SelectionChanged">
-                    <core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
-
-
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Grid Grid.Row="2" Visibility="{Binding IsShowWebResuls, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Grid.Row="2" Background="{ThemeResource BackGroundSolidColorBrushLight}" Visibility="{Binding IsShowWebResuls, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
@@ -86,7 +76,7 @@
             <TextBlock Grid.Column="1" Text="{Binding StreetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 
             </TextBlock>
-        <ListView x:Name="WebStopsList"
+            <ListView x:Name="WebStopsList"
                                     
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
@@ -96,14 +86,9 @@
 			ItemTemplate="{StaticResource ListStopsDataTemplate}"
 			ItemsSource="{Binding WebResults, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 			SelectedItem="{Binding FilteredSelectedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="SelectionChanged">
-                    <core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
 
 
-            <ListView.ItemContainerStyle>
+                <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>

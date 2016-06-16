@@ -23,14 +23,16 @@ namespace UniversalMinskTransRelease.View
         {
             this.InitializeComponent();
             this.StopsList.SelectionChanged += (sender, args) => OnSelectionChanged(args);
+            this.WebStopsList.SelectionChanged += (sender, args) => OnSelectionChanged(args);
         }
 
         public object SelectedItem
         {
-            get { return this.StopsList.SelectedItem; }
+            get { return this.StopsList.SelectedItem ?? this.WebStopsList.SelectedItem; }
             set
             {
                 this.StopsList.SelectedItem = value;
+                this.WebStopsList.SelectedItem = value;
             }
         }
 

@@ -9,6 +9,7 @@
     <SolidColorBrush x:Key="VioletSolidColorBrush" Color="#FFaa5ee0"/>
     <SolidColorBrush x:Key="GreenSolidColorBrush" Color="#FF9dd45f"/>
     <SolidColorBrush x:Key="BackGroundSolidColorBrush" Color="#FF1D1D1D"/>
+    <SolidColorBrush x:Key="BackGroundSolidColorBrushLight" Color="#FF4D4D3D"/>
     <SolidColorBrush x:Key="GreyGroundSolidColorBrush" Color="#FF7E7C7D"/>
     <SolidColorBrush x:Key="ListBoxForegroundThemeBrush" Color="White"/>
     <SolidColorBrush x:Key="HyperlinkEnabledThemeBrush" Color="White"/>

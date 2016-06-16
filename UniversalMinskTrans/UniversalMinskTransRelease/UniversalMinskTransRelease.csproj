@@ -275,7 +275,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Google\xamlmapcontrol-de5576447d46b9c177beb26dc342a4cf1cff7e6b\Caching\FileDbCache.WinRT\FileDbCache.WinRT.csproj">
+    <ProjectReference Include="..\..\Caching\FileDbCache.WinRT\FileDbCache.WinRT.csproj">
       <Project>{c7bf2b18-cc74-430b-bcb2-600304efa3d8}</Project>
       <Name>FileDbCache.WinRT</Name>
     </ProjectReference>

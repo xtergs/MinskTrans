@@ -236,7 +236,7 @@
                               Label="" />
             </controls:WrapPanel>
         </Border>
-        <AppBar Grid.Row="3">
+        <AppBar Grid.Row="3" IsOpen="False">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

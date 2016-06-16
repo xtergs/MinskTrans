@@ -114,9 +114,6 @@
     <Compile Include="..\..\MinskTrans\FrameworkElementExt.cs">
       <Link>FrameworkElementExt.cs</Link>
     </Compile>
-    <Compile Include="..\..\minsktrans\modelview\BaseModelView.cs">
-      <Link>ModelView\BaseModelView.cs</Link>
-    </Compile>
     <Compile Include="..\..\minsktrans\modelview\GroupEditModelView.cs">
       <Link>ModelView\GroupEditModelView.cs</Link>
     </Compile>
@@ -125,15 +122,6 @@
     </Compile>
     <Compile Include="..\..\minsktrans\modelview\MapModelView.cs">
       <Link>ModelView\MapModelView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\modelview\RoutesModelview.cs">
-      <Link>ModelView\RoutesModelview.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\modelview\StopModelView.cs">
-      <Link>ModelView\StopModelView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\minsktrans\modelview\StopModelViewBase.cs">
-      <Link>ModelView\StopModelViewBase.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -144,12 +132,13 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ModelView\FindModelView.cs" />
     <Compile Include="ModelView\MainModelView.cs" />
     <Compile Include="ModelView\MapModelViewUIDispatcher.cs" />
-    <Compile Include="ModelView\NewsModelView.cs" />
-    <Compile Include="ModelView\RoutsModelView.cs" />
+    <Compile Include="ModelView\NewsModelViewUIDispatcher.cs" />
+    <Compile Include="ModelView\RoutsModelViewUIDispatcher.cs" />
+    <Compile Include="ModelView\SettingsModelViewUIDispatcher.cs" />
     <Compile Include="ModelView\StopModelViewUIDispatcher.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="View\MyTextBox.xaml.cs">
       <DependentUpon>MyTextBox.xaml</DependentUpon>
     </Compile>

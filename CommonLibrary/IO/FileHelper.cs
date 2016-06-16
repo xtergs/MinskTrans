@@ -82,8 +82,6 @@ namespace CommonLibrary.IO
                 storage =await storage.GetFolderAsync(subfolder);
             }
 		    IStorageFile sfile = await storage.GetFileAsync(file);
-		    var buf = await FileIO.ReadBufferAsync(sfile);
-		    var xxx = await (await sfile.GetBasicPropertiesAsync()).RetrievePropertiesAsync(new string[] {"System.DateAccessed"});
             return await FileIO.ReadTextAsync(sfile);
 		}
 
@@ -113,7 +111,7 @@ namespace CommonLibrary.IO
 			{
 				await (await Folders[folder].GetFileAsync(file)).DeleteAsync(StorageDeleteOption.Default);
 			}
-			catch (FileNotFoundException)
+			catch (FileNotFoundException e)
 			{
 				//nothing to delete
 			}

@@ -2,25 +2,14 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:Controls="using:NumberConverter.WinRTXamlToolkit.Controls"
-      xmlns:Converters="using:MinskTrans.Universal.Converters"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-      xmlns:ExpaControl="using:ExpanderViewMaster.ExpaControl"
       xmlns:ExpanderControl="using:ExpanderControl"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:UI="using:Microsoft.Advertising.Mobile.UI"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:desctopClient="using:MinskTrans.DesctopClient"
       xmlns:local="using:MinskTrans.Universal"
-      xmlns:logicalTriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
-      xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WinRT"
-      xmlns:mapControl1="using:MapControl"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:model="using:MinskTrans.Universal.Model"
       xmlns:modelView="using:MinskTrans.Universal.ModelView"
-      xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
-      xmlns:popups="using:Windows.UI.Popups"
       xmlns:view="using:UniversalMinskTransRelease.View"
-      xmlns:windowsStateTriggers="using:WindowsStateTriggers"
       x:Name="mainPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       KeyDown="mainPage_KeyDown"
@@ -625,7 +614,7 @@
                         	HorizontalAlignment="Center"
                         	Content="Обновить расписание"
                         	Command="{Binding MainView.UpdateDataCommand, ElementName=mainPage}"
-                        	Visibility="{Binding MainView.IsNeesUpdate, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=mainPage}" />
+                        	Visibility="{Binding MainView.IsNeesUpdate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=mainPage}" />
                     </Grid>
                 </Border>
 
@@ -638,7 +627,11 @@
                         GotFocus="PivotItem_GotFocus_1"
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <view:NewsView DataContext="{Binding  UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                    <Grid>
+                        <Button Content="Проверить обновления" Visibility="{Binding IsNotHaveAnyNews, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Command="{Binding MainView.UpdateDataCommand, ElementName=mainPage}"/>
+                        <view:NewsView Visibility="{Binding IsHaveAnyNews, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" DataContext="{Binding  UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                    </Grid>
                 </Border>
             </PivotItem>
 
@@ -742,7 +735,7 @@
                        DataContext="{Binding MapModelView}"
                        Header="Карта"
                        Padding="0">
-                <view:MapViewControll DataContext="{Binding}" x:Name="map"></view:MapViewControll>
+                <view:MapViewControll x:DeferLoadStrategy="Lazy"  DataContext="{Binding}" x:Name="map"></view:MapViewControll>
             </PivotItem>
 
             <PivotItem x:Name="SettingsPivotItem"
@@ -784,7 +777,7 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="Дата обновления расписания" />
-                            <TextBlock Grid.Row="1" Text="{Binding LastUpdateDbDateTimeUtc, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="1" Text="{Binding LastUpdateDbDateTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -810,6 +803,7 @@
                                                               Mode=TwoWay,
                                                               UpdateSourceTrigger=Default}" />
                         </Grid>
+                        <Button Click="ShowChangelog" Content="Изменения"/>
                         <Button Click="ShowInStore" Content="Оставить отзыв" />
                         <Button Name="ChatWithDeveloper"
                                 Click="StartEmailToDeveloper"
@@ -842,14 +836,6 @@
             </PivotItem>-->
         </Pivot>
 
-
-
-        <ProgressBar x:Name="ProgressBar"
-                     Height="10"
-                     VerticalAlignment="Top"
-                     IsEnabled="True"
-                     IsIndeterminate="True"
-                     Visibility="Collapsed" />
         <ProgressBar Height="10"
                      VerticalAlignment="Top"
                      IsEnabled="True"

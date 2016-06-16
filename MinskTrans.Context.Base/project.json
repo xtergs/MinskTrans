@@ -7,7 +7,8 @@
     "Newtonsoft.Json": "8.0.3",
   },
    "frameworks": {
-        ".NETCore,Version=v4.5.1": { }
+    ".NETCore,Version=v4.5.1": { },
+    ".NETPortable,Version=v4.6,Profile=Profile151": { }
     },  
     "runtimes": {
         "win": { },

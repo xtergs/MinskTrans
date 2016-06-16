@@ -1,0 +1,16 @@
+﻿{
+  "dependencies": {
+    "MetroLog": "1.0.1",
+    "MetroLog.Targets.PortableFileTarget": "1.0.0",
+    "Microsoft.Bcl": "1.1.10",
+    "Microsoft.Bcl.Build": "1.0.21",
+    "PCLStorage": "1.0.2"
+  },
+  "frameworks": {
+    ".NETFramework,Version=4.5.1": {}
+  },
+  "runtimes": {
+    "win": {},
+    "win-anycpu": {}
+  }
+}

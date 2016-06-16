@@ -9,6 +9,7 @@ using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
 using MinskTrans.Context.Fakes;
+using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient.ViewModel;
 using MinskTrans.Net;
@@ -56,7 +57,9 @@ namespace MinskTrans.DesctopClient.Modelview
             builder.RegisterType<StopModelView>();
             builder.RegisterType<GroupStopsModelView>();
             builder.RegisterType<FindModelView>();
+		    builder.RegisterType<MapModelView>().AsSelf();
             builder.RegisterType<FakeGeolocation>().As<IGeolocation>().SingleInstance();
+            builder.RegisterType<WebSeacher>().AsSelf();
             builder.RegisterType<FakeSettingsModelView>().As<ISettingsModelView>().SingleInstance();
             builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
             builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
@@ -70,16 +73,12 @@ namespace MinskTrans.DesctopClient.Modelview
 
 			context = container.Resolve<IBussnessLogics>();
 			//timeTable = container.Resolve<IContext>();
-
-		    
-
-
 		}
 
 		public MainModelView(Map map)
 			: this()
 		{
-			mapModelView = new MapModelView(Context, map, SettingsModelView, container.Resolve<IGeolocation>());
+		    mapModelView = container.Resolve<MapModelView.MapModelViewFactory>()(map);
 			model = this;
 		}
 

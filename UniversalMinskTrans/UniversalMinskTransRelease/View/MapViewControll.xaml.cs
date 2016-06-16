@@ -1,25 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using MapControl;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
 using MyLibrary;
-using UniversalMinskTransRelease.ModelView;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -27,15 +15,17 @@ namespace UniversalMinskTransRelease.View
 {
     public sealed partial class MapViewControll : UserControl
     {
-   
+        private MapModelView model;
         public MapViewControll()
         {
             this.InitializeComponent();
-           var  model = MainModelView.MainModelViewGet;
-
+            TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
+            var model = MainModelView.MainModelViewGet;
             var builder = new PushPinBuilder();
+            model.MapModelView = model.MapModelViewFactory(map, builder);
+            this.model = model.MapModelView;
             builder.Style = (Style)this.Resources["PushpinStyle1"];
-            builder.Tapped += async (sender, args) =>
+            builder.Tapped +=  async (sender, args) =>
             {
                 PopupMenu menu = new PopupMenu();
                 var push = ((Pushpin)sender);
@@ -46,21 +36,25 @@ namespace UniversalMinskTransRelease.View
                     model.FindModelView.StopModelView.ViewStop.Execute(stop);
                 }));
                 if (stop.Routs.Any(tr => tr.Transport == TransportType.Bus))
-                    menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Bus)));
+                    menu.Commands.Add(new UICommand(model.MapModelView.TransportToString(stop, TransportType.Bus)));
                 if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
-                    menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Trol)));
+                    menu.Commands.Add(new UICommand(model.MapModelView.TransportToString(stop, TransportType.Trol)));
                 if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
-                    menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
+                    menu.Commands.Add(new UICommand(model.MapModelView.TransportToString(stop, TransportType.Tram)));
                 if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
-                    menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
+                    menu.Commands.Add(new UICommand(model.MapModelView.TransportToString(stop, TransportType.Metro)));
 
 
                 await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
             };
 
-            model.MapModelView = new MapModelViewUIDispatcher(model.Context, map, model.SettingsModelView, model.Geolocation, builder);
 
-            //TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
+            DataContext = model.MapModelView;
+        }
+
+        void CreateContextMenuForPushPin()
+        {
+            
         }
 
         string MinskTransRoutingAdress = @"http://www.minsktrans.by/lookout_yard/Home/PageRouteSearch#/routes/search?";
@@ -141,8 +135,14 @@ namespace UniversalMinskTransRelease.View
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            MainModelView.MainModelViewGet.MapModelView.ShowAllStops.Execute(null);
+           model.ShowAllStops.Execute(null);
             ShowAllPushPinss = false;
+        }
+
+        private void UserControl_Loaded(object senderr, RoutedEventArgs e)
+        {
+            DataContext = model;
+            //TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
         }
     }
 }

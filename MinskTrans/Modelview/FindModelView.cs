@@ -24,10 +24,10 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands) : base(newContext)
+		public FindModelView(StopModelView stopModelView, RoutesModelview routesModelView, IBussnessLogics newContext) : base(newContext)
 		{
-			stopModelView = new StopModelView(newContext, settingsModelView, commands);
-			routesModelview = new RoutesModelview(newContext, settingsModelView);
+			this.stopModelView = stopModelView;
+			this.routesModelview = routesModelView;
 		}
 	}
 }

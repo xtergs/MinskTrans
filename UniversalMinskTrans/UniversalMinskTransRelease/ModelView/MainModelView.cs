@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonLibrary;
@@ -15,7 +16,6 @@ using Autofac;
 using CommonLibrary.IO;
 using CommonLibrary.Notify;
 using MetroLog;
-using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Geopositioning;
@@ -25,13 +25,14 @@ using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
+using UniversalMinskTransRelease.Annotations;
 using UniversalMinskTransRelease.ModelView;
 using UniversalMinskTransRelease.Nofity;
 
 namespace MinskTrans.Universal.ModelView
 {
 
-	public class MainModelView : BaseModelView, INotifyPropertyChanged
+	public class MainModelView : INotifyPropertyChanged
 	{
 		private readonly IContainer container;
 		private static MainModelView mainModelView;
@@ -39,8 +40,6 @@ namespace MinskTrans.Universal.ModelView
 /*
 		private FindModelView findModelView;
 */
-		private readonly NewsManagerBase newsManager;
-		private readonly INotifyHelper notifyHelper;
 		private ILogger log;
 
 	    public bool IsNeesUpdate
@@ -49,30 +48,45 @@ namespace MinskTrans.Universal.ModelView
 	        set
 	        {
 	            _isNeesUpdate = value;
-	            if (value)
-	                IsLoading = false;
+	            //if (value)
+	            //    IsLoading = false;
 	            OnPropertyChanged();
 	        }
 	    }
 
+	    private int isLoading = 0;
 	    public bool IsLoading
 	    {
-	        get { return _isLoading; }
+	        get { return isLoading > 0; }
 	        set
 	        {
-	            _isLoading = value;
+	            if (value)
+	                Interlocked.Increment(ref isLoading);
+	            else
+	                Interlocked.Decrement(ref isLoading);
 	            OnPropertyChanged();
 	        }
 	    }
 
-	    public UpdateManagerBase UpdateManager { get; }
+	    public Task LoadAllData()
+	    {
+	        return Task.WhenAll(
+	            Context.LoadDataBase(),
+	            NewsManager.Load());
+	    }
+
+	    public IBussnessLogics Context => container.Resolve<IBussnessLogics>();
 
 
-		public static MainModelView MainModelViewGet => 
+	    public static MainModelView MainModelViewGet => 
 			mainModelView ?? (mainModelView = new MainModelView());
 
 		private MainModelView()
 		{
+#if DEBUG
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+#endif
             //			var configuration = new LoggingConfiguration();
             //#if DEBUG
             //			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
@@ -81,10 +95,10 @@ namespace MinskTrans.Universal.ModelView
             //			configuration.IsEnabled = true;
 
             //			LogManagerFactory.DefaultConfiguration = configuration;
-		    //LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+            //LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
 
             //LogManagerFactory.DefaultConfiguration.IsEnabled = true;
-			var builder = new ContainerBuilder();
+            var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelper>().As<FileHelperBase>();
 			//builder.RegisterType<SqliteContext>().As<IContext>().SingleInstance();
 			builder.RegisterType<Context.Context>().As<IContext>().SingleInstance();
@@ -93,67 +107,46 @@ namespace MinskTrans.Universal.ModelView
 			builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
 			builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
 			builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
-			builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
-			builder.RegisterType<SettingsModelView>().As<ISettingsModelView>().SingleInstance();
 			builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
+			builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
+			builder.RegisterType<FilePathsSettings>().SingleInstance();
+
+            #region Register ModelView
+			builder.RegisterType<SettingsModelViewUIDispatcher>().As<ISettingsModelView>().SingleInstance();
+            builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
+		    builder.RegisterType<MapModelViewUIDispatcher>().As<MapModelView>();
 			builder.RegisterType<GroupStopsModelView>().SingleInstance();
-			//builder.RegisterType<FavouriteModelView>().SingleInstance();
-			builder.RegisterType<NewsModelView>().SingleInstance();
+		    builder.RegisterType<StopModelViewUIDispatcher>().As<StopModelView>();
+		    builder.RegisterType<RoutsModelViewUIDispatcher>().As<RoutsModelView>();
+			builder.RegisterType<NewsModelViewUIDispatcher>().As<NewsModelView>();
 			builder.RegisterType<FindModelView>().SingleInstance().WithParameter("UseGPS", true);
 			builder.RegisterType<ExternalCommands>().As<IExternalCommands>().SingleInstance();
-			builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 			builder.RegisterType<NotifyHelperUniversal>().As<INotifyHelper>();
-			builder.RegisterType<FilePathsSettings>().SingleInstance();
 		    builder.RegisterType<WebSeacher>().AsSelf();
-			container = builder.Build();
+            #endregion
+            container = builder.Build();
 
-			context = container.Resolve<IBussnessLogics>();
-			newsManager = container.Resolve<NewsManagerBase>();
-			UpdateManager = container.Resolve<UpdateManagerBase>();
-			notifyHelper = container.Resolve<INotifyHelper>();
 			log = container.Resolve<ILogManager>().GetLogger<MainModelView>();
 
 			ExternalCommands = container.Resolve<IExternalCommands>();
+#if DEBUG
+            watch.Stop();
+            Debug.WriteLine($"\n\nMainViewModel!: {watch.ElapsedMilliseconds}\n\n");
+#endif
+        }
 
-		}
-
-			public IGeolocation Geolocation => container.Resolve<IGeolocation>();
+			//public IGeolocation Geolocation => container.Resolve<IGeolocation>();
 
 		public NewsManagerBase NewsManager => container.Resolve<NewsManagerBase>();
 
-		public MapModelView MapModelView { get; set; }
+        public MapModelView MapModelView { get; set; }
+
+        public MapModelView.MapModelViewFactory MapModelViewFactory => container.Resolve<MapModelView.MapModelViewFactory>();
 		public IExternalCommands ExternalCommands { get; }
 
 		public ISettingsModelView SettingsModelView => container.Resolve<ISettingsModelView>();
 
 		public FindModelView FindModelView => container.Resolve<FindModelView>();
-
-		public StopModelView StopMovelView { get; }
-
-		public RoutsModelView RoutsModelView { get; }
-
-		public GroupStopsModelView GroupStopsModelView => container.Resolve<GroupStopsModelView>();
-
-		//public FavouriteModelView FavouriteModelView => container.Resolve<FavouriteModelView>();
-
-		//public IContext Context { get { return context; } }
-
-
-		public List<NewsEntry> AllNews
-		{
-			get
-			{
-#if DEBUG
-				var xxx = NewsManager?.AllHotNews.Concat(newsManager.NewNews).ToList();
-#endif
-				return NewsManager?.AllHotNews.Concat(newsManager.NewNews).OrderByDescending(key => key.PostedUtc).ThenByDescending(key=> key.RepairedLineUtc).ToList();
-			}
-			set
-			{
-
-				OnPropertyChanged();
-			}
-		}
 
 		readonly ObservableCollection<string> resultString = new ObservableCollection<string>();
 
@@ -169,7 +162,7 @@ namespace MinskTrans.Universal.ModelView
 				return updateDataCommand ?? (updateDataCommand = new RelayCommand(async () =>
 				{
 					log?.Trace("UpdateDataCommand activated");
-					updating = true;
+					Updating = true;
 				    bool oldNeedUpdate = IsNeesUpdate;
 				    IsNeesUpdate = false;
 					try
@@ -177,9 +170,19 @@ namespace MinskTrans.Universal.ModelView
 						UpdateDataCommand.RaiseCanExecuteChanged();
 						using (cancelSource = new CancellationTokenSource())
 						{
-							await Context.UpdateTimeTableAsync(cancelSource.Token);
-							if (await Context.UpdateNewsTableAsync(cancelSource.Token))
-							    await NewsManager.Load();
+						    var token = cancelSource.Token;
+						    await Task.WhenAll(Context.UpdateTimeTableAsync(token), Task.Run(
+						        async () =>
+						        {
+						            bool result = await Context.UpdateNewsTableAsync(token);
+						            if (!result)
+						                return;
+
+						            if (token.IsCancellationRequested)
+						                return;
+						            await NewsManager.Load();
+						        }, token));
+
 						}
 					}
 					catch (Exception e)
@@ -191,11 +194,11 @@ namespace MinskTrans.Universal.ModelView
 					}
 					finally
 					{
-						updating = false;
+						Updating = false;
 					}
 					UpdateDataCommand.RaiseCanExecuteChanged();
 					log?.Info("UpdateDataCommand, OK");
-				}, () => !updating));
+				}, () => !Updating));
 			}
 		}
 
@@ -284,7 +287,27 @@ namespace MinskTrans.Universal.ModelView
 
 		public NewsModelView NewsModelView => container.Resolve<NewsModelView>();
 
-		public INotifyHelper NotifyHelper => notifyHelper;
-		public FileHelperBase FileHelper { get { return container.Resolve<FileHelperBase>(); } }
+		public INotifyHelper NotifyHelper => container.Resolve<INotifyHelper>();
+		public FileHelperBase FileHelper => container.Resolve<FileHelperBase>();
+
+	    public bool Updating
+	    {
+	        get { return updating; }
+	        private set
+	        {
+	            if (updating == value)
+	                return;
+	            updating = value;
+	            OnPropertyChanged();
+	        }
+	    }
+
+	    public event PropertyChangedEventHandler PropertyChanged;
+
+	    [NotifyPropertyChangedInvocator]
+	    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+	    {
+	        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	    }
 	}
 }

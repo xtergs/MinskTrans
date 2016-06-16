@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Core;
@@ -61,6 +62,7 @@ namespace UniversalMinskTransRelease.ModelView
             set
             {
                 base.FilteredSelectedStop = value;
+                OnPropertyChanged();
                 UpdateTimeScheduleAsync();
             }
         }
@@ -114,7 +116,7 @@ namespace UniversalMinskTransRelease.ModelView
         public bool IsShowWebResuls { get; set; }
 
 
-        protected override void OnPropertyChanged(string propertyName = null)
+        protected override void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             dispatcher?.RunAsync(CoreDispatcherPriority.Normal, () =>
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using MinskTrans.AutoRouting.AutoRouting;
@@ -61,9 +62,11 @@ namespace MinskTrans.Context
             using (loadDataSource = new CancellationTokenSource())
             {
                 var token = loadDataSource.Token;
-                await LoadDataBase(token).ConfigureAwait(false);
+                await LoadDataBase(token);
             }
             loadDataSource = null;
+            OnPropertyChanged(nameof(Context.Stops));
+            OnPropertyChanged(nameof(Context.Routs));
         }
 
         public async Task LoadDataBase(CancellationToken token,LoadType loadType = LoadType.LoadAll)
@@ -374,7 +377,10 @@ namespace MinskTrans.Context
         {
             LoadStarted?.Invoke(this, EventArgs.Empty);
         }
-
+        protected virtual void OnPropertyChanged([CallerMemberName]string str = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(str));
+        }
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);

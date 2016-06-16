@@ -108,7 +108,7 @@ namespace MinskTrans.Context
             OnUpdateDbStarted();
 	        try
 	        {
-	            tokens.Add(token, true);
+	            //tokens.Add(token, true);
 	            updatingNewsTable = true;
 	            try
 	            {
@@ -228,7 +228,7 @@ namespace MinskTrans.Context
 	        }
 	        finally
 	        {
-	            tokens.Remove(token);
+	            //tokens.Remove(token);
                 OnUpdateDbEnded();
 	            updatingNewsTable = false;
 	        }
@@ -323,7 +323,9 @@ namespace MinskTrans.Context
 	        {
 	            tokens.Remove(token);
                 OnUpdateDbEnded();
-	            updatingTimeTable = false;
+                OnPropertyChanged(nameof(Context.Stops));
+                OnPropertyChanged(nameof(Context.Routs));
+                updatingTimeTable = false;
 	        }
 	    }
 

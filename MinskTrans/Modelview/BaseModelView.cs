@@ -236,10 +236,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var handler = PropertyChanged;
-			if (handler == null)
-				return;
-			if (handler != null)
-				handler(this, new PropertyChangedEventArgs(propertyName));
+		    handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 

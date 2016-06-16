@@ -1,0 +1,489 @@
+{
+  "locked": false,
+  "version": 1,
+  "targets": {
+    ".NETFramework,Version=v4.5.1": {
+      "Autofac/3.5.2": {
+        "compile": {
+          "lib/net40/Autofac.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Autofac.dll": {}
+        }
+      },
+      "MetroLog/1.0.1": {
+        "compile": {
+          "lib/net45/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/net45/MetroLog.dll": {}
+        }
+      },
+      "MetroLog.Targets.PortableFileTarget/1.0.0": {
+        "dependencies": {
+          "MetroLog": "0.8.6",
+          "Microsoft.Bcl.Compression": "3.9.83",
+          "PCLStorage": "0.9.6"
+        },
+        "compile": {
+          "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll": {}
+        }
+      },
+      "Microsoft.Bcl/1.1.10": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "compile": {
+          "lib/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "Microsoft.Bcl.Build/1.0.21": {},
+      "Microsoft.Bcl.Compression/3.9.83": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "frameworkAssemblies": [
+          "System.IO.Compression"
+        ],
+        "compile": {
+          "lib/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "Newtonsoft.Json/8.0.3": {
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "PCLStorage/1.0.2": {
+        "compile": {
+          "lib/net45/PCLStorage.Abstractions.dll": {},
+          "lib/net45/PCLStorage.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PCLStorage.Abstractions.dll": {},
+          "lib/net45/PCLStorage.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win": {
+      "Autofac/3.5.2": {
+        "compile": {
+          "lib/net40/Autofac.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Autofac.dll": {}
+        }
+      },
+      "MetroLog/1.0.1": {
+        "compile": {
+          "lib/net45/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/net45/MetroLog.dll": {}
+        }
+      },
+      "MetroLog.Targets.PortableFileTarget/1.0.0": {
+        "dependencies": {
+          "MetroLog": "0.8.6",
+          "Microsoft.Bcl.Compression": "3.9.83",
+          "PCLStorage": "0.9.6"
+        },
+        "compile": {
+          "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll": {}
+        }
+      },
+      "Microsoft.Bcl/1.1.10": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "compile": {
+          "lib/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "Microsoft.Bcl.Build/1.0.21": {},
+      "Microsoft.Bcl.Compression/3.9.83": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "frameworkAssemblies": [
+          "System.IO.Compression"
+        ],
+        "compile": {
+          "lib/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "Newtonsoft.Json/8.0.3": {
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "PCLStorage/1.0.2": {
+        "compile": {
+          "lib/net45/PCLStorage.Abstractions.dll": {},
+          "lib/net45/PCLStorage.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PCLStorage.Abstractions.dll": {},
+          "lib/net45/PCLStorage.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win-anycpu": {
+      "Autofac/3.5.2": {
+        "compile": {
+          "lib/net40/Autofac.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Autofac.dll": {}
+        }
+      },
+      "MetroLog/1.0.1": {
+        "compile": {
+          "lib/net45/MetroLog.dll": {}
+        },
+        "runtime": {
+          "lib/net45/MetroLog.dll": {}
+        }
+      },
+      "MetroLog.Targets.PortableFileTarget/1.0.0": {
+        "dependencies": {
+          "MetroLog": "0.8.6",
+          "Microsoft.Bcl.Compression": "3.9.83",
+          "PCLStorage": "0.9.6"
+        },
+        "compile": {
+          "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll": {}
+        }
+      },
+      "Microsoft.Bcl/1.1.10": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "compile": {
+          "lib/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "Microsoft.Bcl.Build/1.0.21": {},
+      "Microsoft.Bcl.Compression/3.9.83": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "frameworkAssemblies": [
+          "System.IO.Compression"
+        ],
+        "compile": {
+          "lib/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "Newtonsoft.Json/8.0.3": {
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "PCLStorage/1.0.2": {
+        "compile": {
+          "lib/net45/PCLStorage.Abstractions.dll": {},
+          "lib/net45/PCLStorage.dll": {}
+        },
+        "runtime": {
+          "lib/net45/PCLStorage.Abstractions.dll": {},
+          "lib/net45/PCLStorage.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Autofac/3.5.2": {
+      "sha512": "pGR5LjY8T/16x6SkJNd7u6EjQnE4C7JS0BZJ7Yl7pt313gIUZ/2ZnPSOIM5eaIA7ArxaudlyyLvAT4ayX5UJ/A==",
+      "type": "package",
+      "files": [
+        "Autofac.3.5.2.nupkg.sha512",
+        "Autofac.nuspec",
+        "lib/net40/Autofac.dll",
+        "lib/net40/Autofac.xml",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.xml"
+      ]
+    },
+    "MetroLog/1.0.1": {
+      "sha512": "9+i0lIT+OAf9FQOrnSbyxG5RbBtRUthIQAn73c9Y1z0v+2dPCKn9oTPTt8njHPMzy5lRoT9MDQRkYSqJ7aVqgA==",
+      "type": "package",
+      "files": [
+        "MetroLog.1.0.1.nupkg.sha512",
+        "MetroLog.nuspec",
+        "content/win8-javascript/MetroLog ReadMe.txt",
+        "content/win8-javascript/typings/MetroLog.WinRT.d.ts",
+        "content/win8-javascript/typings/winrt.d.ts",
+        "lib/MonoAndroid/MetroLog.dll",
+        "lib/MonoAndroid/MetroLog.pdb",
+        "lib/MonoTouch/MetroLog.dll",
+        "lib/MonoTouch/MetroLog.pdb",
+        "lib/Xamarin.iOS/MetroLog.dll",
+        "lib/Xamarin.iOS/MetroLog.pdb",
+        "lib/dotnet/MetroLog.dll",
+        "lib/dotnet/MetroLog.pdb",
+        "lib/net45/MetroLog.dll",
+        "lib/net45/MetroLog.pdb",
+        "lib/portable-net45+wp8+win8+wpa81/MetroLog.dll",
+        "lib/portable-net45+wp8+win8+wpa81/MetroLog.pdb",
+        "lib/win81/MetroLog.WinRT.pdb",
+        "lib/win81/MetroLog.WinRT.pri",
+        "lib/win81/MetroLog.WinRT.winmd",
+        "lib/win81/MetroLog.dll",
+        "lib/win81/MetroLog.pdb",
+        "lib/win81/MetroLog.pri",
+        "lib/wp8/MetroLog.dll",
+        "lib/wp8/MetroLog.pdb",
+        "lib/wpa81/MetroLog.dll",
+        "lib/wpa81/MetroLog.pdb",
+        "lib/wpa81/MetroLog.pri"
+      ]
+    },
+    "MetroLog.Targets.PortableFileTarget/1.0.0": {
+      "sha512": "ZSVm0jjfU44JYoqmOHJ9q5LQDzBcKkWTjBnYGh+zzGNbkSsDKrfG/59cAV9cKqPHb/dh+gyxJnWqXapF54Ib2Q==",
+      "type": "package",
+      "files": [
+        "MetroLog.Targets.PortableFileTarget.1.0.0.nupkg.sha512",
+        "MetroLog.Targets.PortableFileTarget.nuspec",
+        "lib/portable-net45+win+wp80/MetroLog.Targets.PortableFileTarget.dll"
+      ]
+    },
+    "Microsoft.Bcl/1.1.10": {
+      "sha512": "+tTqoh/M1pyL8El3qLy30EcwnAtyvFoDZJtdG9Cbg/WdFbh4N8kyrq198XHuEL7lnJbeD0DRO8jcX5IIOh05cQ==",
+      "type": "package",
+      "files": [
+        "License-Stable.rtf",
+        "Microsoft.Bcl.1.1.10.nupkg.sha512",
+        "Microsoft.Bcl.nuspec",
+        "lib/Xamarin.iOS10/_._",
+        "lib/monoandroid/_._",
+        "lib/monotouch/_._",
+        "lib/net40/System.IO.dll",
+        "lib/net40/System.IO.xml",
+        "lib/net40/System.Runtime.dll",
+        "lib/net40/System.Runtime.xml",
+        "lib/net40/System.Threading.Tasks.dll",
+        "lib/net40/System.Threading.Tasks.xml",
+        "lib/net40/ensureRedirect.xml",
+        "lib/net45/_._",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/System.IO.dll",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/System.IO.xml",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/System.Runtime.dll",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/System.Runtime.xml",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/System.Threading.Tasks.dll",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/System.Threading.Tasks.xml",
+        "lib/portable-net40+sl4+win8+wp71+wpa81/ensureRedirect.xml",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/System.IO.dll",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/System.IO.xml",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/System.Runtime.dll",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/System.Runtime.xml",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/System.Threading.Tasks.dll",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/System.Threading.Tasks.xml",
+        "lib/portable-net40+sl4+win8+wp8+wpa81/ensureRedirect.xml",
+        "lib/portable-net40+sl4+win8/System.IO.dll",
+        "lib/portable-net40+sl4+win8/System.IO.xml",
+        "lib/portable-net40+sl4+win8/System.Runtime.dll",
+        "lib/portable-net40+sl4+win8/System.Runtime.xml",
+        "lib/portable-net40+sl4+win8/System.Threading.Tasks.dll",
+        "lib/portable-net40+sl4+win8/System.Threading.Tasks.xml",
+        "lib/portable-net40+sl4+win8/ensureRedirect.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/System.IO.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/System.IO.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/System.Runtime.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/System.Runtime.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/System.Threading.Tasks.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/System.Threading.Tasks.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/ensureRedirect.xml",
+        "lib/portable-net40+win8+wp8+wpa81/System.IO.dll",
+        "lib/portable-net40+win8+wp8+wpa81/System.IO.xml",
+        "lib/portable-net40+win8+wp8+wpa81/System.Runtime.dll",
+        "lib/portable-net40+win8+wp8+wpa81/System.Runtime.xml",
+        "lib/portable-net40+win8+wp8+wpa81/System.Threading.Tasks.dll",
+        "lib/portable-net40+win8+wp8+wpa81/System.Threading.Tasks.xml",
+        "lib/portable-net40+win8+wp8+wpa81/ensureRedirect.xml",
+        "lib/portable-net40+win8/System.IO.dll",
+        "lib/portable-net40+win8/System.IO.xml",
+        "lib/portable-net40+win8/System.Runtime.dll",
+        "lib/portable-net40+win8/System.Runtime.xml",
+        "lib/portable-net40+win8/System.Threading.Tasks.dll",
+        "lib/portable-net40+win8/System.Threading.Tasks.xml",
+        "lib/portable-net40+win8/ensureRedirect.xml",
+        "lib/portable-net45+win8+wp8+wpa81/_._",
+        "lib/portable-net45+win8+wpa81/_._",
+        "lib/portable-net451+win81+wpa81/_._",
+        "lib/portable-net451+win81/_._",
+        "lib/portable-win81+wp81+wpa81/_._",
+        "lib/sl4-windowsphone71/System.IO.dll",
+        "lib/sl4-windowsphone71/System.IO.xml",
+        "lib/sl4-windowsphone71/System.Runtime.dll",
+        "lib/sl4-windowsphone71/System.Runtime.xml",
+        "lib/sl4-windowsphone71/System.Threading.Tasks.dll",
+        "lib/sl4-windowsphone71/System.Threading.Tasks.xml",
+        "lib/sl4-windowsphone71/ensureRedirect.xml",
+        "lib/sl4/System.IO.dll",
+        "lib/sl4/System.IO.xml",
+        "lib/sl4/System.Runtime.dll",
+        "lib/sl4/System.Runtime.xml",
+        "lib/sl4/System.Threading.Tasks.dll",
+        "lib/sl4/System.Threading.Tasks.xml",
+        "lib/sl5/System.IO.dll",
+        "lib/sl5/System.IO.xml",
+        "lib/sl5/System.Runtime.dll",
+        "lib/sl5/System.Runtime.xml",
+        "lib/sl5/System.Threading.Tasks.dll",
+        "lib/sl5/System.Threading.Tasks.xml",
+        "lib/win8/_._",
+        "lib/wp8/_._",
+        "lib/wpa81/_._"
+      ]
+    },
+    "Microsoft.Bcl.Build/1.0.21": {
+      "sha512": "sgHu4mIt0+NVGyI12Bj4hLPypNK55UOH+ologj2LqDCjxq3EbIxe/uAtHjY+fEwbE1dtsAHG8SXHf+V/EYbKTg==",
+      "type": "package",
+      "files": [
+        "License-Stable.rtf",
+        "Microsoft.Bcl.Build.1.0.21.nupkg.sha512",
+        "Microsoft.Bcl.Build.nuspec",
+        "build/Microsoft.Bcl.Build.Tasks.dll",
+        "build/Microsoft.Bcl.Build.targets"
+      ]
+    },
+    "Microsoft.Bcl.Compression/3.9.83": {
+      "sha512": "c1Qq+8ZdgP2dYii6nW7CRweP5RIjF1EBMy9SY1S1GCurQ7W4db4TyRlvWWhS1dPpgHo6jfjYNSgDAlRzbJ42vA==",
+      "type": "package",
+      "files": [
+        "License-Stable.rtf",
+        "Microsoft.Bcl.Compression.3.9.83.nupkg.sha512",
+        "Microsoft.Bcl.Compression.nuspec",
+        "lib/native/ARM/ClrCompression.dll",
+        "lib/native/ARM/ClrCompression.winmd",
+        "lib/native/x86/ClrCompression.dll",
+        "lib/native/x86/ClrCompression.winmd",
+        "lib/net45/_._",
+        "lib/portable-net45+win8+wp8+wpa81/System.IO.Compression.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.IO.Compression.xml",
+        "lib/portable-net45+win8+wpa81/_._",
+        "lib/portable-net45+wp8+wpa81/System.IO.Compression.dll",
+        "lib/portable-net45+wp8+wpa81/System.IO.Compression.xml",
+        "lib/win8/_._",
+        "lib/wp8/System.IO.Compression.dll",
+        "lib/wp8/System.IO.Compression.xml",
+        "lib/wpa81/_._",
+        "tools/Install.ps1",
+        "tools/Microsoft.Bcl.Compression.targets",
+        "tools/Uninstall.ps1"
+      ]
+    },
+    "Newtonsoft.Json/8.0.3": {
+      "sha512": "KGsYQdS2zLH+H8x2cZaSI7e+YZ4SFIbyy1YJQYl6GYBWjf5o4H1A68nxyq+WTyVSOJQ4GqS/DiPE+UseUizgMg==",
+      "type": "package",
+      "files": [
+        "Newtonsoft.Json.8.0.3.nupkg.sha512",
+        "Newtonsoft.Json.nuspec",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
+        "tools/install.ps1"
+      ]
+    },
+    "PCLStorage/1.0.2": {
+      "sha512": "9If+1ZFCk3QaT/asfiL+J9FMnx2CTMrLCU8tDMUOI/aCGWGWl9vJ1/KcMkjf92op23ZknenvYJZBLDAqE3sFlg==",
+      "type": "package",
+      "files": [
+        "PCLStorage.1.0.2.nupkg.sha512",
+        "PCLStorage.nuspec",
+        "lib/monoandroid/PCLStorage.Abstractions.dll",
+        "lib/monoandroid/PCLStorage.Abstractions.xml",
+        "lib/monoandroid/PCLStorage.dll",
+        "lib/monoandroid/PCLStorage.xml",
+        "lib/monotouch/PCLStorage.Abstractions.dll",
+        "lib/monotouch/PCLStorage.Abstractions.xml",
+        "lib/monotouch/PCLStorage.dll",
+        "lib/monotouch/PCLStorage.xml",
+        "lib/net45/PCLStorage.Abstractions.dll",
+        "lib/net45/PCLStorage.Abstractions.xml",
+        "lib/net45/PCLStorage.dll",
+        "lib/net45/PCLStorage.xml",
+        "lib/portable-Xamarin.iOS+Xamarin.Mac/PCLStorage.Abstractions.dll",
+        "lib/portable-Xamarin.iOS+Xamarin.Mac/PCLStorage.Abstractions.xml",
+        "lib/portable-Xamarin.iOS+Xamarin.Mac/PCLStorage.dll",
+        "lib/portable-Xamarin.iOS+Xamarin.Mac/PCLStorage.xml",
+        "lib/portable-net45+sl5+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.Abstractions.dll",
+        "lib/portable-net45+sl5+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.Abstractions.xml",
+        "lib/portable-net45+sl5+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.dll",
+        "lib/portable-net45+sl5+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.xml",
+        "lib/portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.Abstractions.dll",
+        "lib/portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.Abstractions.xml",
+        "lib/portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.dll",
+        "lib/portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac/PCLStorage.xml",
+        "lib/portable-win8+wpa81/PCLStorage.Abstractions.dll",
+        "lib/portable-win8+wpa81/PCLStorage.Abstractions.xml",
+        "lib/portable-win8+wpa81/PCLStorage.dll",
+        "lib/portable-win8+wpa81/PCLStorage.xml",
+        "lib/sl5/PCLStorage.Abstractions.dll",
+        "lib/sl5/PCLStorage.Abstractions.xml",
+        "lib/sl5/PCLStorage.dll",
+        "lib/sl5/PCLStorage.xml",
+        "lib/wp8/PCLStorage.Abstractions.dll",
+        "lib/wp8/PCLStorage.Abstractions.xml",
+        "lib/wp8/PCLStorage.dll",
+        "lib/wp8/PCLStorage.xml"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "MetroLog >= 1.0.1",
+      "MetroLog.Targets.PortableFileTarget >= 1.0.0",
+      "Microsoft.Bcl >= 1.1.10",
+      "Microsoft.Bcl.Build >= 1.0.21",
+      "PCLStorage >= 1.0.2"
+    ],
+    ".NETFramework,Version=v4.5.1": []
+  }
+}

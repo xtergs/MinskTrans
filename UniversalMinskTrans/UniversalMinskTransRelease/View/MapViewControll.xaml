@@ -9,13 +9,13 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
-    xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
     xmlns:ExpanderControl="using:ExpanderControl"
+    xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
     x:Class="UniversalMinskTransRelease.View.MapViewControll"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance modelview:MapModelView}"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <mapControl:TileLayerCollection x:Key="TileLayers">
@@ -114,7 +114,7 @@
 
 
 
-    <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+    <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" DataContext="{Binding}" d:DataContext="{d:DesignInstance modelview:MapModelView}" BorderThickness="0,3,0,0">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="MapVisualStates">
                 <VisualState x:Name="ShowMinskTransRoutingVisualState">
@@ -246,7 +246,10 @@
             <WebView x:Name="WebViewMap"
 				PermissionRequested="WebViewMap_PermissionRequested"
 				Visibility="Collapsed" />
-            <Grid x:Name="grid"  Grid.Column="1">
+            <local:StopsListView x:Name="grid"  Grid.Column="1" DataContext="{Binding StopModelView, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+                
+            </local:StopsListView>
+            <!--<Grid x:Name="grid"  Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
@@ -266,7 +269,7 @@
                     </interactivity:Interaction.Behaviors>
                 </ListView>
 
-            </Grid>
+            </Grid>-->
             <Grid Grid.ColumnSpan="3" Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

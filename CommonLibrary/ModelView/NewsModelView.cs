@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
-using MyLibrary;
 
 namespace UniversalMinskTransRelease.ModelView
 {
@@ -21,11 +18,20 @@ namespace UniversalMinskTransRelease.ModelView
             if (NewsManagerBase == null)
                 throw new ArgumentNullException();
             newsManager = NewsManagerBase;
-            NewsManagerBase.PropertyChanged += (sender, args) =>
+            newsManager.PropertyChanged += (sender, args) =>
             {
-                var x = FilteredStops; OnPropertyChanged(); OnPropertyChanged(nameof(FilteredStops)); };
-            NewsManagerBase.Load().ContinueWith(x=> {OnPropertyChanged("FilteredStops"); OnPropertyChanged();});
+                NotifyChanges();
+            };
+            //Task.Run(()=>newsManager.Load()).ContinueWith(x=> {OnPropertyChanged("FilteredStops"); OnPropertyChanged();});
         }
+
+       public void NotifyChanges()
+       {
+           OnPropertyChanged(nameof(FilteredStops));
+           OnPropertyChanged(nameof(ListOfDatesStrings));
+           OnPropertyChanged(nameof(IsHaveAnyNews));
+           OnPropertyChanged(nameof(IsNotHaveAnyNews));
+       }
 
         public List<DateTime> ListDates
         {
@@ -40,6 +46,9 @@ namespace UniversalMinskTransRelease.ModelView
                 return tmp;
             }
         }
+
+        public bool IsHaveAnyNews => newsManager.AllHotNews.Any() || newsManager.NewNews.Any();
+       public bool IsNotHaveAnyNews => !IsHaveAnyNews;
 
        public List<string> ListOfDatesStrings
        {
@@ -89,7 +98,6 @@ namespace UniversalMinskTransRelease.ModelView
                 }
                 return filteredStops;
             }
-           set { OnPropertyChanged(); }
         }
 
        public int SelectedDateIndex
@@ -97,20 +105,24 @@ namespace UniversalMinskTransRelease.ModelView
            get { return selectedDateIndex; }
            set
            {
+               if (value < 0)
+               {
+                   OnPropertyChanged();
+                   return;
+               }
                selectedDateIndex = value;
                SelectedDate = ListDates[value];
-               OnPropertyChanged("SelectedDate");
+               //OnPropertyChanged("SelectedDate");
            }
        }
 
-       public DateTime SelectedDate
+       private DateTime SelectedDate
         {
             get { return selectedDate; }
             set
             {
                 selectedDate = value;
-                OnPropertyChanged();
-                OnPropertyChanged("FilteredStops");
+                OnPropertyChanged(nameof(FilteredStops));
             }
         }
 

@@ -19,7 +19,7 @@ namespace UniversalMinskTransRelease.ModelView
     {
         private CoreDispatcher dispatcher;
 
-        public MapModelViewUIDispatcher(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, PushPinBuilder pushPinBuilder = null) : base(context, map, newSettigns, geolocation, pushPinBuilder)
+        public MapModelViewUIDispatcher(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, StopModelView stopModelView, PushPinBuilder pushPinBuilder = null) : base(context, map, newSettigns, geolocation, stopModelView, pushPinBuilder)
         {
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
@@ -31,6 +31,8 @@ namespace UniversalMinskTransRelease.ModelView
                 _cancelPrepareStops.Cancel();
             _cancelPrepareStops = new CancellationTokenSource();
             List<Pushpin> pushs = new List<Pushpin>(10);
+            List<Pushpin> toRemove = new List<Pushpin>(10);
+            List<Pushpin> toAdd = new List<Pushpin>(10);
             var token = _cancelPrepareStops.Token;
             Task.Run(async () =>
             {
@@ -48,11 +50,20 @@ namespace UniversalMinskTransRelease.ModelView
                     if (token.IsCancellationRequested)
                         return;
                 }
-            }, token).ContinueWith((o) =>
-            {
+                //stopsOnMap.AddRange(Pushpins);
+                //var temp = map.Children.OfType<Pushpin>().ToArray();
+                var except = StopsOnMap.Concat(Pushpins).Except(pushs).ToList();
+                toRemove.AddRange(except);
+                except = pushs.Except(StopsOnMap).ToList();
+                toAdd.AddRange(except);
                 if (token.IsCancellationRequested)
                     return;
-                    dispatcher?.RunAsync(CoreDispatcherPriority.Normal,()=> ShowOnMap(pushs.ToArray()));
+                StopsOnMap = pushs.Distinct().ToArray();
+            }, token).ContinueWith((o) =>
+            {
+                if (token.IsCancellationRequested || ( !toRemove.Any() && !toAdd.Any()))
+                    return;
+                    dispatcher?.RunAsync(CoreDispatcherPriority.Normal,()=> ShowOnMap(toRemove.ToArray(), toAdd.ToArray()));
                 }, token);
         }
 
@@ -61,10 +72,11 @@ namespace UniversalMinskTransRelease.ModelView
             if (showAllPushpins && map != null && Context.Context.ActualStops != null)
             {
                 double zoomLevel = map.ZoomLevel;
-                Pushpins.Clear();
+                //Pushpins.Clear();
                 if (zoomLevel <= MaxZoomLevel)
                 {
-                    ShowOnMap();
+                    PreperPushpinsForView(new List<Stop>(0));
+                    //ShowOnMap();
                     return;
                 }
 

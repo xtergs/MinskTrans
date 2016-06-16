@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using MetroLog;
 using MetroLog.Targets;
 using Windows.ApplicationModel;
@@ -12,15 +12,9 @@ using MinskTrans.Universal.ModelView;
 using Windows.ApplicationModel.Background;
 using System.Threading.Tasks;
 using Windows.Storage;
-using System.Text;
 using Windows.UI.Core;
-using System.Diagnostics;
-using Windows.UI.Popups;
-using GalaSoft.MvvmLight.Command;
 using MyLibrary;
-using MinskTrans.Context;
 using MinskTrans.Context.Base;
-using StreamingFileTarget = MetroLog;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -54,8 +48,8 @@ namespace UniversalMinskTrans
 				this.DebugSettings.EnableFrameRateCounter = true;
 			}
 #endif
-
-			var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            Frame rootFrame = null;
+            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
 			switch (backgroundAccessStatus)
 			{
 				case BackgroundAccessStatus.Denied:
@@ -79,42 +73,9 @@ namespace UniversalMinskTrans
 					var updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
                         backgroundName, new TimeTrigger(15, false), new SystemCondition(SystemConditionType.InternetAvailable));
 
-					updateTaskRegistration.Completed += async (sender, args) =>
-					{
-						log?.Debug("\nBackground task complited");
-						try
-						{
-							if (
-								MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-									TypeOfUpdate.Db))
-							{
-							    try
-							    {
-							        MainModelView.MainModelViewGet.IsLoading = true;
-                                    await MainModelView.MainModelViewGet.Context.Save(false);
-							        await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
-							        log?.Info("Background task complited, DB reloaded");
-							    }
-							    finally
-							    {
-                                    MainModelView.MainModelViewGet.IsLoading = false;
-                                }
-							}
-							if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-								TypeOfUpdate.News))
-							{
-								await MainModelView.MainModelViewGet.NewsManager.Load();
-								log?.Info("Background task complited, news loaded");
-							}
-							//MainModelView.MainModelViewGet.AllNews = null;
-						}
-						catch (Exception ex)
-						{
-							log?.Fatal("Backroudn complited", ex);
-							//MainModelView.MainModelViewGet.NotifyHelper.ShowMessageAsync()
-						}
-						log?.Info("Background complited, OK");
-					};
+					updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
+
+                   
 					break;
 			}
 
@@ -122,9 +83,10 @@ namespace UniversalMinskTrans
 
 			var model = MainModelView.MainModelViewGet;
 
-			Frame rootFrame = Window.Current.Content as Frame;
+			
+		    rootFrame = Window.Current.Content as Frame;
 
-			// Do not repeat app initialization when the Window already has content,
+		    // Do not repeat app initialization when the Window already has content,
 			// just ensure that the window is active
 			if (rootFrame == null)
 			{
@@ -149,71 +111,16 @@ namespace UniversalMinskTrans
 				{
 					log?.Info("Prev state != Running");
 
-				    model.Context.LoadEnded += (sender, args) => model.IsLoading = false;
-					model.Context.NeedUpdadteDB += async (sender, args) =>
-					{
-						log?.Info("App Need Update");
-						try
-						{
-							await rootFrame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-							{
-								try
-								{
-								    model.IsNeesUpdate = true;
-								    return;
-                                    await
-										model.NotifyHelper.ShowMessageAsync("Необходимо обновить базу данных",
-											new List<KeyValuePair<string, RelayCommand>>
-											{
-												model.NotifyHelper.CreateCommand("Обновить", model.UpdateDataCommand, null)
-											});
-								}
-								catch (Exception ee)
-								{
-									log?.Fatal($"App need update: {ee.Message}", ee);
-									throw;
-								}
-								// Windows.UI.Popups.MessageDialog dialog = new MessageDialog("Необходимо обновить базу данных")
-								// {
-								//  Commands =
-								//	  {
-								//new UICommand("Обновить", command =>
-								//{
-								//	if (model.UpdateDataCommand.CanExecute(null))
-								//		model.UpdateDataCommand.Execute(null);
-
-								//})
-								//	  }
-								// };
-								// await dialog.ShowAsync();
-
-							});
-
-						}
-						catch (Exception ex)
-						{
-							log?.Fatal($"App need update: {ex.Message}", ex);
-							throw;
-						}
-					};
+					model.Context.NeedUpdadteDB += TimeTabletOnNeedUpdadteDb;
+                    model.Context.LoadStarted+= TimeTableOnLoadStarted;
+				    model.Context.LoadEnded += TimeTableOnLoadEnded;
+				    model.Context.UpdateDBStarted += TimeTableOnLoadStarted;
+                    model.Context.UpdateDBEnded += TimeTableOnUpdateDbEnded;
 						
 
 #pragma warning disable 4014
-				    model.Context.LoadDataBase().ConfigureAwait(false);
+				    model.LoadAllData().ConfigureAwait(false);
 #pragma warning restore 4014
-
-
-				    //					timer = new Timer(state =>
-				    //					{
-				    //#if BETA
-				    //						Logger.Log("autoupdate timer elapsed");
-				    //#endif
-				    //						InternetHelper.UpdateNetworkInformation();
-				    //						if ( model.SettingsModelView.HaveConnection())
-				    //							if (model.Context.UpdateDataCommand.CanExecute(null))
-				    //								model.Context.UpdateAsync();
-				    //					}, null, model.SettingsModelView.InvervalAutoUpdateTimeSpan, model.SettingsModelView.InvervalAutoUpdateTimeSpan);
-
 				}
 			}
 
@@ -250,7 +157,121 @@ namespace UniversalMinskTrans
 			Window.Current.Activate();
 		}
 
-		/// <summary>
+
+	    private async void UpdateTaskRegistrationOnCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
+	    {
+           log?.Debug("\nBackground task complited");
+                try
+                {
+                    if (
+                        MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
+                            TypeOfUpdate.Db))
+                    {
+                        try
+                        {
+                            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                                CoreDispatcherPriority.Normal, () =>
+                                {
+
+                                    MainModelView
+                                        .MainModelViewGet
+                                        .IsLoading
+                                        = true;
+                                });
+                            await MainModelView.MainModelViewGet.Context.Save(false);
+                            await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
+                            log?.Info("Background task complited, DB reloaded");
+                        }
+                        finally
+                        {
+                            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                            {
+                                MainModelView.MainModelViewGet.IsLoading = false;
+                            });
+                        }
+                    }
+                    if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
+                        TypeOfUpdate.News))
+                    {
+                        await MainModelView.MainModelViewGet.NewsManager.Load();
+                        log?.Info("Background task complited, news loaded");
+                    }
+                    //MainModelView.MainModelViewGet.AllNews = null;
+                }
+                catch (Exception ex)
+                {
+                    log?.Fatal("Backroudn complited", ex);
+                    //MainModelView.MainModelViewGet.NotifyHelper.ShowMessageAsync()
+                }
+                log?.Info("Background complited, OK");
+        }
+
+	    private async void TimeTableOnUpdateDbEnded(object sender, EventArgs eventArgs)
+	    {
+            var model = MainModelView.MainModelViewGet;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Normal, () =>
+                {
+                    model.IsLoading = false;
+                    model.IsNeesUpdate = false;
+                });
+        }
+
+	    private async void TimeTabletOnNeedUpdadteDb(object sender, EventArgs eventArgs)
+	    {
+            var model = MainModelView.MainModelViewGet;
+           
+            log?.Info("App Need Update");
+                try
+                {
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        try
+                        {
+                            model.IsNeesUpdate = true;
+                        }
+                        catch (Exception ee)
+                        {
+                            log?.Fatal($"App need update: {ee.Message}", ee);
+                            throw;
+                        }
+                    });
+
+                }
+                catch (Exception ex)
+                {
+                    log?.Fatal($"App need update: {ex.Message}", ex);
+                    throw;
+                }
+            
+        }
+
+	    private async void TimeTableOnLoadStarted(object sender, EventArgs eventArgs)
+	    {
+            var model = MainModelView.MainModelViewGet;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Normal, () =>
+                {
+                    model.IsLoading = true;
+
+                });
+
+        }
+
+        private async void TimeTableOnLoadEnded(object sender, EventArgs eventArgs)
+	    {
+            var model = MainModelView.MainModelViewGet;
+	        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+	            CoreDispatcherPriority.Normal, () =>
+	            {
+	                model.IsLoading = false;
+	                if (model.Context.Context.Stops?.Any() == true)
+	                    model.IsNeesUpdate = false;
+	            });
+
+	    }
+
+	    /// <summary>
 		/// Invoked when Navigation to a certain page fails
 		/// </summary>
 		/// <param name="sender">The Frame which failed navigation</param>
@@ -429,7 +450,7 @@ namespace UniversalMinskTrans
 			log?.Debug("App OnActivated");
 
 			base.OnActivated(args);
-			await MainModelView.MainModelViewGet.Context.LoadDataBase();
+		    await MainModelView.MainModelViewGet.LoadAllData();
 
 			log?.Debug("App OnActivated, context loaded");
 		}

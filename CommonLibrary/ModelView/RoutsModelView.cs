@@ -61,9 +61,17 @@ namespace MinskTrans.Universal.ModelView
 			Context.Context.PropertyChanged += (sender, args) =>
 			{
 			    if (args.PropertyName == "Routs")
-			        RouteNumsFilterAsync();
+			        RefreshView();
+
 			};
-			OnPropertyChanged("RouteNums");
+            Context.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "Routs")
+                    RefreshView();
+
+            };
+            OnPropertyChanged("RouteNums");
+            OnPropertyChanged(nameof(RouteNumsAsync));
 		    FavouriteRoutsCount = 1;
 
 		}
@@ -555,6 +563,7 @@ public RelayCommand<Rout> AddRemoveFavouriteRout
 		{
 			base.RefreshView();
 		    RouteNumsFilterAsync();
+            OnPropertyChanged(nameof(FavouriteRoutsCount));
 		}
 
 		#endregion

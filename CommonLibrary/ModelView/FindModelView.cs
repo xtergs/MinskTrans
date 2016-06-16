@@ -39,13 +39,14 @@ namespace MinskTrans.Universal.ModelView
 	    private bool isShowStopsView;
 	    public ISettingsModelView MainSettings { get; private set; }
 
-	    public FindModelView(IBussnessLogics newContext, ISettingsModelView settingsModelView, IExternalCommands commands, WebSeacher seacher, bool UseGps = false) : base(newContext)
+	    public FindModelView(StopModelView stopModelView, RoutsModelView routsModelView, IBussnessLogics newContext,
+            ISettingsModelView settingsModelView, bool UseGPS) : base(newContext)
         {
             IsShowTransportsView = false;
             IsShowStopsView = true;
             MainSettings = settingsModelView;
-			StopModelView = new StopModelViewUIDispatcher(newContext, settingsModelView, commands, seacher, UseGps);
-			RoutsModelView = new RoutsModelView(newContext, commands);
+			StopModelView = stopModelView;
+			RoutsModelView = routsModelView;
 		}
 
 	    private RelayCommand toggleFindViewCommanBack;

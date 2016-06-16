@@ -43,6 +43,8 @@ namespace MyLibrary
         }
 
         public int FontSize { get; set; }
+        public string ChangeLogOnce { get; }
+        public string ChangeLog { get; }
 
         #endregion
     }

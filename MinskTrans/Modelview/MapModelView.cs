@@ -4,7 +4,10 @@ using System.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using MapControl;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -48,8 +51,9 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		public IGeolocation Geolocator => geolocator;
 
+	    public delegate MapModelView MapModelViewFactory(Map map, PushPinBuilder pushPinBuilder);
 
-	    private MapModelView(IBussnessLogics context)
+        private MapModelView(IBussnessLogics context)
 			:base(context)
 		{
 			
@@ -59,10 +63,24 @@ namespace MinskTrans.DesctopClient.Modelview
 
 	    protected readonly PushPinBuilder pushBuilder;
 
-		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, PushPinBuilder pushPinBuilder = null)
+        //Design only!!!!
+	    public MapModelView()
+	    {
+	    }
+
+	    public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, StopModelView stopModelView , PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
+		    if (stopModelView == null)
+		        throw new ArgumentNullException(nameof(stopModelView));
 			this.map = map;
+		    this.StopModelView = stopModelView;
+	        StopModelView.PropertyChanged += (sender, args) =>
+	        {
+	            if (StopModelView.FilteredSelectedStop != null && 
+                args.PropertyName == nameof(StopModelView.FilteredSelectedStop)) 
+                    ShowStopCommand.Execute(StopModelView.FilteredSelectedStop);
+	        };
 			pushBuilder = pushPinBuilder;
 			Settings = newSettigns;
 			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
@@ -77,10 +95,21 @@ namespace MinskTrans.DesctopClient.Modelview
 			map.Center = new Location(53.898532, 27.562501);
 			allPushpins = new List<PushpinLocation>();
 			RegistrMap(true);
-			
-		}
+            StopModelView.Refresh();
 
-		public void MarkPushPins(IEnumerable<Stop> stops, Style stylePushPin)
+        }
+
+	    public StopModelView StopModelView
+	    {
+	        get { return _stopModelView; }
+	        set
+	        {
+	            _stopModelView = value;
+	            OnPropertyChanged();
+	        }
+	    }
+
+	    public void MarkPushPins(IEnumerable<Stop> stops, Style stylePushPin)
 		{
 			foreach (var pushpinLocation in allPushpins)
 			{
@@ -287,6 +316,27 @@ namespace MinskTrans.DesctopClient.Modelview
             ShowOnMap(Pushpins.ToArray());
 		}
 
+	    protected void ShowOnMap(Pushpin[] toRemove, Pushpin[] toAdd)
+	    {
+	        foreach (var pushpin in toRemove)
+	        {
+	            map.Children.Remove(pushpin);
+	        }
+	        foreach (var pushpin in toAdd)
+	        {
+	            try
+	            {
+	                map.Children.Add(pushpin);
+	            }
+	            catch (COMException e)
+	            {
+	                Debug.WriteLine("Error while updating map\n");
+	                Debug.WriteLine(e.Message);
+	                //StopsOnMap.Add(pushpin);
+	            }
+	        }
+	    }
+
 	    protected void ShowOnMap(Pushpin[] pins)
 	    {
             var temp = map.Children.OfType<Pushpin>().ToArray();
@@ -302,6 +352,8 @@ namespace MinskTrans.DesctopClient.Modelview
             {
                 map.Children.Add(pushpin);
             }
+            //if (Ipushpin != null)
+            //    map.Children.Add(Ipushpin);
         }
 
 		public ObservableCollection<Pushpin> Pushpins
@@ -318,7 +370,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public int MaxZoomLevel { get; set; }
+	    protected Pushpin[] stopsOnMap = new Pushpin[0];
+
+        public int MaxZoomLevel { get; set; }
 
 		protected virtual PushpinLocation CreatePushpin(Stop st)
 		{
@@ -552,6 +606,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private RelayCommand calculateCommand;
 	    private string searchPattern;
+	    private StopModelView _stopModelView;
 
 	    public RelayCommand CalculateRoutCommand
 		{
@@ -604,7 +659,16 @@ namespace MinskTrans.DesctopClient.Modelview
 	        get { return new RelayCommand(() => ShowStopsList = ShowStopsList); }
 	    }
 
-#region events
+	    protected Pushpin[] StopsOnMap
+	    {
+	        get { return stopsOnMap; }
+	        set
+	        {
+                Interlocked.Exchange(ref stopsOnMap,value);
+	        }
+	    }
+
+	    #region events
 
 		public event EventHandler MapInicialized;
 		public event EventHandler StartStopSeted;

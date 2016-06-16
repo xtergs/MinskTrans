@@ -31,10 +31,10 @@ namespace MinskTrans.DesctopClient.Modelview
 		public StopModelViewBase(IBussnessLogics newContext, ISettingsModelView newSettings) : base(newContext)
 		{
 			settings = newSettings;
-			newContext.Context.PropertyChanged+= (sender, args) =>
+			newContext.PropertyChanged+= (sender, args) =>
 			{
-				if (args.PropertyName == "ActualStops")
-				Refresh();
+				if (args.PropertyName == "ActualStops" || args.PropertyName == "Stops")
+				    Refresh();
 			};
 			settings.PropertyChanged += (sender, args) =>
 			{
@@ -51,7 +51,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			try
 			{
 			    FilterStopsAsync();
-
+                
 			}
 			catch
 			{ }
@@ -136,6 +136,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
 		}
+
+	    
 
         public IEnumerable<Stop> FilteredStopsStore
         {

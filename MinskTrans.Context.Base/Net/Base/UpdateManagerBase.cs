@@ -48,12 +48,12 @@ namespace MinskTrans.Net.Base
 
 		//public TypeFolder Folder { get; set; } //= TypeFolder.Temp;
 
-	    Task ClearDownloadedFiles()
+	    Task ClearDownloadedFiles(List<Pair> list)
 	    {
-	        return Task.WhenAll(
-	            fileHelper.DeleteFile(filesPath.StopsFile.Folder, filesPath.StopsFile.NewFileName),
-	            fileHelper.DeleteFile(filesPath.RouteFile.Folder, filesPath.RouteFile.NewFileName),
-	            fileHelper.DeleteFile(filesPath.TimeFile.Folder, filesPath.TimeFile.NewFileName));
+            List<Task> tasks = new List<Task>(list.Count);
+	        tasks.AddRange(list.Select(line => fileHelper.DeleteFile(line.Folder, line.FileName)));
+
+	        return Task.WhenAll(tasks);
 	    }
 
 	    public Task ApproveDonloadedFilesAsync()
@@ -122,7 +122,7 @@ namespace MinskTrans.Net.Base
 		        return false;
 			try
 			{
-                await ClearDownloadedFiles();
+                await ClearDownloadedFiles(list);
 			    await Task.WhenAll(list.Select(x => internetHelper.Download(x.Link, x.FileName, x.Folder)));
 				OnDataBaseDownloadEnded();
 
@@ -131,7 +131,7 @@ namespace MinskTrans.Net.Base
 			{
 				OnErrorDownloading();
                 /*await*/
-			    ClearDownloadedFiles();
+			    ClearDownloadedFiles(list);
 
                 return false;
 			}
@@ -139,7 +139,7 @@ namespace MinskTrans.Net.Base
 			{
 				OnErrorDownloading();
                 /*await*/
-                ClearDownloadedFiles();
+                ClearDownloadedFiles(list);
                 return false;
 			}
 			catch (Exception e)
@@ -148,7 +148,7 @@ namespace MinskTrans.Net.Base
                 Logger.Info("UpdadteManagerBase.DownloadUpdadte error");
                 Logger.Fatal("UpdadteManagerBase.DownloadUpdadte", e);
                 /*await*/
-                ClearDownloadedFiles();
+                ClearDownloadedFiles(list);
                 throw;
 			}
 		    //await
@@ -158,7 +158,7 @@ namespace MinskTrans.Net.Base
 
 		    if (cancelToken.IsCancellationRequested)
 		    {
-		        ClearDownloadedFiles();
+		        ClearDownloadedFiles(list);
 		        return false;
 		    }
             Logger.Info("UpdadteManagerBase.DownloadUpdadte ended");

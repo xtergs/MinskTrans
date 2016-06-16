@@ -93,9 +93,6 @@
     <Compile Include="..\..\MinskTrans\FrameworkElementExt.cs">
       <Link>FrameworkElementExt.cs</Link>
     </Compile>
-    <Compile Include="..\..\MinskTrans\Modelview\BaseModelView.cs">
-      <Link>ModelView\BaseModelView.cs</Link>
-    </Compile>
     <Compile Include="..\..\MinskTrans\Modelview\GroupEditModelView.cs">
       <Link>ModelView\GroupEditModelView.cs</Link>
     </Compile>

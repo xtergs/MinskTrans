@@ -1,9 +1,7 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using MapControl;
 using System.Threading.Tasks;
 
 using MinskTrans.Context;
@@ -62,7 +60,8 @@ namespace MinskTrans.DesctopClient.Modelview
 	    protected TransportType selectedTransport = TransportType.Bus | TransportType.Metro | TransportType.Tram |
 												  TransportType.Trol;
 
-		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, WebSeacher webSeacher, bool UseGPS = false)
+		public StopModelView(IBussnessLogics newContext, ISettingsModelView settings, IExternalCommands commands, WebSeacher webSeacher, 
+            bool UseGPS = false)
 			: base(newContext, settings)
 		{
 			Bus = Trol = Tram = Metro = AutoDay = AutoNowTime = true;
@@ -257,7 +256,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public string DestinationStop
+	    public override void Refresh()
+	    {
+	        base.Refresh();
+	        OnPropertyChanged(nameof(FavouriteStopsCount));
+	    }
+
+	    public string DestinationStop
 		{
 			get { return destinationStop ?? (destinationStop = ""); }
 		    set

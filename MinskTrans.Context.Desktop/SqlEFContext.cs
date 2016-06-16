@@ -156,13 +156,13 @@ namespace MinskTrans.Context.Desktop
 			}
 		}
 
-		public IList<Rout> Routs
+		public Rout[] Routs
 		{
 		    get
 		    {
 		        if (routsEF.Local.Count == 0)
 		            routsEF.Load();
-		        return routsEF.Local.ToList();
+		        return routsEF.Local.ToArray();
 		    }
 		}
         
@@ -173,16 +173,16 @@ namespace MinskTrans.Context.Desktop
 		        stopsEF.Include(x => x.Routs).Load();
 		        timesEF.Load();
 		    }
-		    return stopsEF.Local;
+		    return stopsEF.Local.ToArray();
 
-        }
+		}
         }
 
 		public Schedule[] Times { get
 		{
 		    if (timesEF.Local.Count == 0)
 		        timesEF.Load();
-            return timesEF.Local.ToList();
+            return timesEF.Local.ToArray();
 			
 		} }
 
@@ -333,7 +333,7 @@ namespace MinskTrans.Context.Desktop
 #if DEBUG
 			var xx = newSchedule.Except(Times).ToList();
 #endif
-			if (newStops.Count != Stops.Count() || newRoutes.Count != Routs.Count || newSchedule.Count != Times.Count)
+			if (newStops.Count != Stops.Count() || newRoutes.Count != Routs.Length || newSchedule.Count != Times.Length)
 				return true;
 
 			foreach (var newRoute in newRoutes)

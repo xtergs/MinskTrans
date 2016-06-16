@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using Windows.ApplicationModel.Email;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
@@ -16,16 +14,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
-using MapControl.Caching;
 using MetroLog;
 using Microsoft.Xaml.Interactivity;
-using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient;
-using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Universal.ModelView;
 using MinskTrans.Utilites.Base.IO;
 using MyLibrary;
-using UniversalMinskTransRelease.View;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -74,45 +68,16 @@ namespace MinskTrans.Universal
 		
 		public MainPage()
 		{
-#if BETA
-			Logger.Log("MainPage");
+            
+            this.InitializeComponent();
+#if DEBUG
+		    Stopwatch watch = new Stopwatch();
+            watch.Start();
 #endif
-			this.InitializeComponent();
 
-			//TileImageLoader.DefaultCacheExpiration = new TimeSpan(10, 0, 0, 0,0);
-			TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
-
-			//model = MainModelView.Create(new UniversalContext());
-			model = MainModelView.MainModelViewGet;
-
-			//var builder = new PushPinBuilder();
-			//builder.Style = (Style)mainPage.Resources["PushpinStyle1"];
-			//builder.Tapped += async (sender, args) =>
-			//{
-			//	PopupMenu menu = new PopupMenu();
-			//	var push = ((Pushpin) sender);
-			//	Stop stop = (Stop) push.Tag;
-				
-			//	menu.Commands.Add(new UICommand("Показать расписание", command =>
-			//	{
-			//		model.FindModelView.StopModelView.ViewStop.Execute(stop);
-			//	}));
-			//	if (stop.Routs.Any(tr=> tr.Transport == TransportType.Bus))
-			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Bus)));
-			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Trol))
-			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Trol)));
-			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Tram))
-			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Tram)));
-			//	if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
-			//		menu.Commands.Add(new UICommand(model.TransportToString(stop, TransportType.Metro)));
-				
-				
-			//	await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
-			//};
-			
-			//model.MapModelView = new MapModelView(model.Context, map, model.SettingsModelView,model.Geolocation , builder);
-			//MapModelView.StylePushpin = (Style) App.Current.Resources["PushpinStyle1"];
-			model.ShowRoute += OnShowRoute;
+            model = MainModelView.MainModelViewGet;
+            
+            model.ShowRoute += OnShowRoute;
 			model.ShowStop += OnShowStop;
 
 			model.FindModelView.StopModelView.ViewStopOn += (sender, args) =>
@@ -121,119 +86,21 @@ namespace MinskTrans.Universal
 				VisualStateManager.GoToState(mainPage, "ShowStopDetailOnlyVisualState", true);
 			};
 
-			//model.ShowStop += (sender, args) => { Pivot.SelectedItem = MapPivotItem; };
-
-			//TODO
-			//model.FindModelView.StopModelView.StatusGPSChanged += async (sender, args) =>
-			//{
-			//	await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { model.FindModelView.StopModelView.Refresh(); });
-
-			//};
-			//TODO
-
-			//VisualStateGroup.CurrentStateChanged += (sender, args) =>
-			//{
-			//	if (args.NewState == ShowStopDetailOnlyVisualState)
-			//	{
-			//		StopsListView.SelectedIndex = -1;
-			//	} else if (args.NewState == RoutsListVisualState)
-			//		RoutsListView.SelectedIndex = -1;
-			//	else if (args.NewState == ShowRoutVisualState)
-			//		ShowRoutsListView.SelectedIndex = -1;
-				
-			//};
-
-			//FavouriteVisualStateGroup.CurrentStateChanged += (sender, args) =>
-			//{
-			//	if (args.NewState == FavouriteShowStopVisualState)
-			//		FavouriteStopsListView.SelectedIndex = -1;
-			//	else if (args.NewState == FavouriteShowRoutVisualState)
-			//		ShowFavouriteRoutsListView.SelectedIndex = -1;
-			//	else if (args.NewState == FavouriteRoutsListVisualState)
-			//		FavouriteRoutsListView.SelectedIndex = -1;
-			//};
-
 			GroupsVisualStateGroup.CurrentStateChanged += (sender, args) =>
 			{
 				if (args.NewState == ListGroupsVisualState || args.NewState == SelectToDeleteVisualState)
 					GroupsListView.SelectedIndex = -1;
 			};
 			
-			//model.ShowStop += OnShowStop;
-
-			
-
 			this.NavigationCacheMode = NavigationCacheMode.Required;
-			//model.Context.Save();
-			//model.Context.Load();
-
-			model.UpdateManager.ErrorDownloading += async (sender, args) =>
-			{
-				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ProgressBar.Visibility = Visibility.Collapsed);
-			};
-			model.Context.UpdateDBStarted += async (sender, args) =>
-			{
-				await ProgressBar.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					ProgressBar.Visibility = Visibility.Visible;
-					ProgressBar.IsIndeterminate = true;
-
-				});
-			};
-			model.Context.UpdateDBEnded += async (senderr, args) =>
-			{
-				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					//FlyoutBase.GetAttachedFlyout(GgGrid).Hide();
-
-					//listBox.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add("Data downloaded"));
-
-
-					//DataContext = model;
-#if _DEBUG
-				model.Context.FavouriteStops.Add(model.Context.ActualStops.First(x => x.SearchName.Contains("шепичи")));
-				model.Context.FavouriteRouts.Add(new RoutWithDestinations(model.Context.Routs.First(x=>x.RouteNum.Contains("20")), model.Context));
-				model.Context.AllPropertiesChanged();
-				string str = "s";
-#endif
-					ProgressBar.Visibility = Visibility.Collapsed;
-					//ProgressBar.IsIndeterminate = false;
-					pushpins = null;
-					//Dispatcher.RunAsync(CoreDispatcherPriority.Normal, InicializeMap);
-					//model.MapModelView.Inicialize();
-					//Flyout.Show();
-					//ProgressRing.Visibility = Visibility.Collapsed;
-				});
-
-			};
-			//model.Context.LogMessage += (o, args) => Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => listBox.Items.Add(args.Message));
-			model.Context.LoadStarted += async (sender, args) =>
-			{
-				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					ProgressBar.IsIndeterminate = true;
-					ProgressBar.Visibility = Visibility.Visible;
-				});
-			};
-			model.Context.LoadEnded += async (sender, args) =>
-			{
-				await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					model.Context.Context.AllPropertiesChanged();
-					ProgressBar.Visibility = Visibility.Collapsed;
-				});
-			};
-			
-			//ShowFavouriteStop.AddGroup += ShowAddGroup;
 			ShowStop.AddGroup += ShowAddGroup;
+            DataContext = model;
+#if DEBUG
+            watch.Stop();
 
-
-			DataContext = model;
-
-
-#if BETA
-			Logger.Log("MainPage ended");
+            Debug.WriteLine($"\nMainPage ctro: {watch.ElapsedMilliseconds}\n");
 #endif
+
 		}
 
 
@@ -327,29 +194,10 @@ namespace MinskTrans.Universal
 			}
 			else if (Pivot.SelectedItem == MapPivotItem)
 			{
-			   map.ResetVisualState();
+			    if (map == null)
+			        FindName(nameof(map));
+               map.ResetVisualState();
 			}
-			//else if (Pivot.SelectedItem == GroupsPivtoItem)
-			//{
-			//    var curState = VisualStateGroup.CurrentState;
-			//    if (this.ActualWidth >= 800)
-			//    {
-			//        if (curState != ShowGroupWideVisualState)
-			//        {
-			//            VisualStateManager.GoToState(mainPage, nameof(ShowGroupWideVisualState), true);
-
-			//        }
-			//    }
-			//    else
-			//    {
-			//        if (curState != ShowGroupVisualState && model.GroupStopsModelView.SelectedGroup != null)
-			//        {
-			//            VisualStateManager.GoToState(mainPage, nameof(ShowGroupVisualState), true);
-			//        }
-			//        else
-			//            VisualStateManager.GoToState(mainPage, nameof(ListGroupsVisualState), true);
-			//    }
-			//}
 		}
 
 		bool BackVisualState()
@@ -425,7 +273,9 @@ namespace MinskTrans.Universal
 #if BETA
 			Logger.Log("Page_Loaded");
 #endif
-
+		    var changelog = model.SettingsModelView.ChangeLogOnce;
+		    if (!string.IsNullOrWhiteSpace(changelog))
+		        model.NotifyHelper.ShowMessageAsync(changelog);
 #if WINDOWS_PHONE_APP
 			HardwareButtons.BackPressed += HardwareButtons_BackPressed;
 #elif WINDOWS_UWP
@@ -481,7 +331,7 @@ namespace MinskTrans.Universal
 			}
 
 			//await model.NewsManager.Load();
-			MainModelView.MainModelViewGet.AllNews = null;
+			//MainModelView.MainModelViewGet.AllNews = null;
 			
 #if BETA
 			await Logger.Log("Page_Loaded ended").SaveToFile();
@@ -530,17 +380,21 @@ namespace MinskTrans.Universal
 		private void OnShowStop(object sender, ShowArgs args)
 		{
 			Pivot.SelectedItem = MapPivotItem;
-			
-			//model.MapModelView.ShowStop.Execute(args.SelectedStop);
 
-			var temp = args.SelectedStop;
+            //model.MapModelView.ShowStop.Execute(args.SelectedStop);
+            if (map == null)
+                FindName(nameof(map));
+            var temp = args.SelectedStop;
 			model.MapModelView.ShowStopCommand.Execute(temp);
 		}
 
 		private void OnShowRoute(object sender, ShowArgs args)
 		{
+
 			Pivot.SelectedItem = MapPivotItem;
-			var x = args.SelectedRoute;
+            if (map == null)
+                FindName(nameof(map));
+            var x = args.SelectedRoute;
 			model.MapModelView.ShowRoutCommand.Execute(x);
 			map.ShowAllPushPinss = true;
 			//model.MapModelView.ShowRout.Execute(args.SelectedRoute);
@@ -666,12 +520,12 @@ namespace MinskTrans.Universal
 
 		private void PivotItem_Loaded(object sender, RoutedEventArgs e)
 		{
-			MainModelView.MainModelViewGet.AllNews = null;
+			//MainModelView.MainModelViewGet.AllNews = null;
 		}
 
 		private void PivotItem_GotFocus(object sender, RoutedEventArgs e)
 		{
-			MainModelView.MainModelViewGet.NewsModelView.FilteredStops = null;
+			MainModelView.MainModelViewGet.NewsModelView.NotifyChanges();
 		}
 
 		private void Pivot_PointerWheelChanged(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -698,13 +552,18 @@ namespace MinskTrans.Universal
 
 		private void PivotItem_GotFocus_1(object sender, RoutedEventArgs e)
 		{
-			MainModelView.MainModelViewGet.NewsModelView.FilteredStops = null;
+			//MainModelView.MainModelViewGet.NewsModelView.NotifyChanges();
 		}
 
 		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			SelectVisualState();
 		}
+
+	    private void ShowChangelog(object sender, RoutedEventArgs e)
+	    {
+	        model.NotifyHelper.ShowMessageAsync(model.SettingsModelView.ChangeLog);
+	    }
 	}
 
 	public class OpenFlyoutAction : DependencyObject, IAction

@@ -13,7 +13,11 @@ namespace MinskTrans.Universal
 
 		public object Convert(object value, Type targetType, object parameter, string language)
 		{
-			var mins = (int)value;
+		    int mins = 0;
+            if (value is int)
+			    mins = (int)value;
+		    if (value is TimeSpan)
+		        mins = (int)((TimeSpan) value).TotalMinutes;
 			mins -= DateTime.Now.Hour * 60 + DateTime.Now.Minute;
 			if (mins == 0)
 				return "прибывает";

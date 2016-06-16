@@ -11,6 +11,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
              xmlns:base="using:MinskTrans.Context.Base"
+             xmlns:view="using:UniversalMinskTransRelease.View"
              d:DataContext="{d:DesignInstance modelview:StopModelView}"
              d:DesignHeight="300"
              d:DesignWidth="400"
@@ -25,7 +26,7 @@
         <local:MinsLeftFromTimeSpanConverter x:Key="MinsLeftConverter" />
         <local:MinsToTimeFromTimeSpanConverter x:Key="MinsToTimeConverter" />
 
-        <DataTemplate x:Key="DataTemplate1" >
+        <DataTemplate x:Key="DataTemplate1" x:DataType="base:TimeLineModel" >
             <Grid x:Name="Grid" Margin="0,5" d:DataContext="{d:DesignInstance base:TimeLineModel}">
                 <Grid.ColumnDefinitions>
 
@@ -119,13 +120,18 @@
                   ItemTemplate="{StaticResource DataTemplate1}"
                   SelectedItem="{Binding SelectedTimeLineModel, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   ItemsSource="{Binding TimeSchedule, Mode=OneWay,
-                                        UpdateSourceTrigger=PropertyChanged}">
+                                        UpdateSourceTrigger=PropertyChanged}" ItemClick="tesstListview_ItemClick" Tapped="tesstListview_Tapped">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="MinHeight" Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <FlyoutBase.AttachedFlyout>
+                <Flyout Placement="Full" >
+                    <view:ShowTimeLineStopsPerRout DataContext="{Binding StopsTimesForRout, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></view:ShowTimeLineStopsPerRout>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
         </ListView>
         <Border x:Name="statusBar"
                 Grid.Row="2"

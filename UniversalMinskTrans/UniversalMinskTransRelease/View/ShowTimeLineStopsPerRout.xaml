@@ -1,0 +1,42 @@
+﻿<UserControl
+    x:Class="UniversalMinskTransRelease.View.ShowTimeLineStopsPerRout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniversalMinskTransRelease.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modelview="using:MinskTrans.DesctopClient.Modelview"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance modelview:ListStopTimePair}"
+    Width="Auto">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="{Binding Rout.RouteName}" FontSize="20"></TextBlock>
+        <ListView Grid.Row="1" ItemsSource="{Binding StopTimePairs}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="5">
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Stop.Name}" Grid.Row="0" Grid.ColumnSpan="2"/>
+                        <TextBlock Text="Прибудет через: " Grid.Row="1"/>
+                            <TextBlock Text="{Binding Time, Converter={StaticResource MinsLeftConverter}}" Grid.Row="1" Grid.Column="1"/>
+                    </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

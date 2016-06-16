@@ -24,7 +24,23 @@ using GalaSoft.MvvmLight.Command;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-	public class StopModelView : StopModelViewBase
+    public class ListStopTimePair
+    {
+        public ListStopTimePair(IList<StopTimePair> stopTimePairs, Rout rout)
+        {
+            if (stopTimePairs == null)
+                throw new ArgumentNullException(nameof(stopTimePairs));
+            if (rout == null)
+                throw new ArgumentNullException(nameof(rout));
+            StopTimePairs = stopTimePairs;
+            Rout = rout;
+        }
+
+        public Rout Rout { get; }
+        public IList<StopTimePair> StopTimePairs { get; }
+    }
+
+    public class StopModelView : StopModelViewBase
 	{
 		private ISettingsModelView settingsModelView;
 		private IExternalCommands commands;
@@ -452,9 +468,13 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return _selectedTimeLineModel; }
 			set
 			{
+			    var oldVal = _selectedTimeLineModel;
 				_selectedTimeLineModel = value;
+			    if (oldVal == value || value == null)
+			        return;
 				OnPropertyChanged();
-				//var xxx = StopsTimesForRout;
+			    OnPropertyChanged(nameof(StopsTimesForRout));
+			    //var xxx = StopsTimesForRout;
 
 			}
 		}
@@ -468,12 +488,19 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-		public List<StopTimePair> StopsTimesForRout
-		{
-			get { return Context.GetStopsTimesParis(SelectedTimeLineModel.Rout, (int)SelectedTimeLineModel.Time.TotalMinutes, CurDay); }
-		}
+        public ListStopTimePair StopsTimesForRout
+        {
+            get
+            {
+                if (SelectedTimeLineModel == null)
+                    return null;
+                return new ListStopTimePair(
+                    Context.GetStopsTimesParis(SelectedTimeLineModel.Rout, FilteredSelectedStop, (int) SelectedTimeLineModel.Time.TotalMinutes,
+                        CurDay), SelectedTimeLineModel.Rout);
+            }
+        }
 
-		public RelayCommand<Stop> AddRemoveFavouriteStop
+        public RelayCommand<Stop> AddRemoveFavouriteStop
 		{
 			get { return new RelayCommand<Stop>((x) =>
 			{

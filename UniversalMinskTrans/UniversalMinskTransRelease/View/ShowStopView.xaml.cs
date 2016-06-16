@@ -77,5 +77,15 @@ namespace MinskTrans.Universal
 			
             
         }
-	}
+
+        private void tesstListview_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+        }
+
+        private void tesstListview_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+        }
+    }
 }

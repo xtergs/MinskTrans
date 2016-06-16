@@ -45,7 +45,7 @@ namespace MinskTrans.Context
          event EventHandler<EventArgs> NeedUpdadteDB;
 
         DateTime LastUpdateDbDateTimeUtc { get; }
-        List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day);
+        List<StopTimePair> GetStopsTimesParis(Rout rout, Stop stop, int mins, int day);
 
         void ForsStopActivity();
         Schedule GetRouteSchedule(int routId);

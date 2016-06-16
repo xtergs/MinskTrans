@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -318,25 +319,28 @@ namespace MinskTrans.Context
 
         
 
-        public List<StopTimePair> GetStopsTimesParis(Rout rout, int mins, int day)
+        public List<StopTimePair> GetStopsTimesParis(Rout rout, Stop stop, int mins, int day)
         {
-            int index = 0;
+            int indexStop = 0;
             Schedule timee = GetRouteSchedule(rout.RoutId);
-            for (int i = 0; i < rout.Stops.Count; i++)
-            {
-               index = timee.TimesDictionary[i].First(x => x.Days.Contains(day.ToString())).Times.ToList().IndexOf(mins);
-                if (index >= 0)
-                {
-                    break;
-                }
-            }
-            if (index >= 0)
+            indexStop = rout.Stops.IndexOf(stop);
+            var time = timee.GetScheduleForStop(stopIndex: indexStop, day: day).Times;
+            int timeIndex = Array.IndexOf(time, mins);
+            //for (int i = 0; i < rout.Stops.Count; i++)
+            //{
+            //   index = timee.Where(.First(x => x.Days.Contains(day.ToString())).Times.ToList().IndexOf(mins);
+            //    if (index >= 0)
+            //    {
+            //        break;
+            //    }
+            //}
+            if (indexStop >= 0)
             {
                 List<StopTimePair> pair = new List<StopTimePair>();
                 for (int i = 0; i < rout.Stops.Count; i++)
                 {
                     StopTimePair p = new StopTimePair();
-                    p.Time = new TimeSpan(0,0, timee.TimesDictionary[i][day-1].Times[index] - mins, 0,0);
+                    p.Time = new TimeSpan(0,0, timee.GetScheduleForStop(stopIndex:i, day:day).Times[timeIndex], 0,0);
                     p.Stop = rout.Stops[i];
                     pair.Add(p);
                 }

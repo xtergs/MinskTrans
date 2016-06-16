@@ -170,6 +170,9 @@
     <Compile Include="View\SelectTimeFromTimeTable.xaml.cs">
       <DependentUpon>SelectTimeFromTimeTable.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ShowTimeLineStopsPerRout.xaml.cs">
+      <DependentUpon>ShowTimeLineStopsPerRout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\StopsListView.xaml.cs">
       <DependentUpon>StopsListView.xaml</DependentUpon>
     </Compile>
@@ -266,6 +269,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SelectTimeFromTimeTable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ShowTimeLineStopsPerRout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -118,7 +118,7 @@
                   HorizontalContentAlignment="Stretch"
                   ItemTemplate="{StaticResource DataTemplate1}"
                   SelectedItem="{Binding SelectedTimeLineModel, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                  ItemsSource="{Binding TimeSchedule,
+                  ItemsSource="{Binding TimeSchedule, Mode=OneWay,
                                         UpdateSourceTrigger=PropertyChanged}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

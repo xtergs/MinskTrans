@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Data;
+using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
@@ -115,6 +116,22 @@ namespace UniversalMinskTransRelease.ModelView
         public string StreetName { get; set; }
         public bool IsShowWebResuls { get; set; }
 
+        #region Commands
+
+        private RelayCommand _refreshTimeShcedule;
+
+        public override RelayCommand RefreshTimeSchedule
+        {
+            get
+            {
+                if (_refreshTimeShcedule == null)
+                    _refreshTimeShcedule = new RelayCommand(
+                        ()=> UpdateTimeScheduleAsync().ConfigureAwait(false));
+                return _refreshTimeShcedule;
+            }
+        }
+
+        #endregion
 
         protected override void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {

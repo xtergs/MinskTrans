@@ -482,7 +482,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			});}
 		}
 
-		public RelayCommand RefreshTimeSchedule
+		public virtual RelayCommand RefreshTimeSchedule
 		{
 			get { return new RelayCommand(() => OnPropertyChanged(nameof(TimeSchedule))); }
 		}

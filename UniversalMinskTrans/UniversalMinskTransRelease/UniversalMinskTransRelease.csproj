@@ -20,7 +20,7 @@
     <PackageCertificateKeyFile>UniversalMinskTransRelease_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\</AppxPackageDir>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>D95E21D2866CF4CE68AF37DED04AB8CD7026C4ED</PackageCertificateThumbprint>
     <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
@@ -137,6 +137,7 @@
     <Compile Include="ModelView\NewsModelViewUIDispatcher.cs" />
     <Compile Include="ModelView\RoutsModelViewUIDispatcher.cs" />
     <Compile Include="ModelView\SettingsModelViewUIDispatcher.cs" />
+    <Compile Include="ModelView\SingFilterForAllDataModelView.cs" />
     <Compile Include="ModelView\StopModelViewUIDispatcher.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="View\MyTextBox.xaml.cs">
@@ -173,9 +174,13 @@
     <Compile Include="View\ShowTimeLineStopsPerRout.xaml.cs">
       <DependentUpon>ShowTimeLineStopsPerRout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SingFilterFieldView.xaml.cs">
+      <DependentUpon>SingFilterFieldView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\StopsListView.xaml.cs">
       <DependentUpon>StopsListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\TypeResultTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Resources.resw" />
@@ -273,6 +278,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ShowTimeLineStopsPerRout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SingFilterFieldView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

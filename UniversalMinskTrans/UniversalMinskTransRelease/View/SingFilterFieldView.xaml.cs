@@ -17,26 +17,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace UniversalMinskTransRelease.View
 {
-    public sealed partial class RoutStopsTimeTableView : UserControl
+    public sealed partial class SingFilterFieldView : UserControl
     {
-        public RoutStopsTimeTableView()
+        public SingFilterFieldView()
         {
             this.InitializeComponent();
-        }
-
-        private void ListView_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            //
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
-        }
-
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-
         }
     }
 }

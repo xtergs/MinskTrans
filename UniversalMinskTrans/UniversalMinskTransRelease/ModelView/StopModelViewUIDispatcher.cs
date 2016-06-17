@@ -17,7 +17,7 @@ using MyLibrary;
 
 namespace UniversalMinskTransRelease.ModelView
 {
-    class StopModelViewUIDispatcher : StopModelView
+    public class StopModelViewUIDispatcher : StopModelView
     {
         private CoreDispatcher dispatcher;
         private IEnumerable<TimeLineModel> _timeSchedule;
@@ -33,6 +33,25 @@ namespace UniversalMinskTransRelease.ModelView
             return null;
         }
 
+        public async Task<IEnumerable<Stop>>  UpdateStopsAsync(string filter)
+        {
+            if (sourceToken != null)
+                sourceToken.Cancel();
+            IsWorking = true;
+            using (sourceToken = new CancellationTokenSource())
+            {
+                var token = sourceToken.Token;
+                if (string.IsNullOrWhiteSpace(filter))
+                    filter = "";
+                var res = await Task.Run(() => Context.FilteredStops(filter, selectedTransport, Context.Geolocation.CurLocation, FuzzySearch), token).ConfigureAwait(false);
+                if (token.IsCancellationRequested)
+                    token.ThrowIfCancellationRequested();
+                sourceToken = null;
+                IsWorking = false;
+                return res?.ToArray();
+            }
+        }
+
         public async Task UpdateStopsAsync()
         {
             if (IsShowFavouriteStops)
@@ -40,22 +59,11 @@ namespace UniversalMinskTransRelease.ModelView
                 FilteredStopsStore = Context.Context.FavouriteStops;
                 return;
             }
-            if (sourceToken != null)
-                sourceToken.Cancel();
-            IsWorking = true;
-            using (sourceToken = new CancellationTokenSource())
-            {
-                var token = sourceToken.Token;
+            FilteredStopsStore = await UpdateStopsAsync(StopNameFilter);
+            
+            await GetWebResultsAsync().ConfigureAwait(false);
 
-                var res = await Task.Run(() => FilterStops(), token).ConfigureAwait(false);
-                if (token.IsCancellationRequested)
-                    return;
-                sourceToken = null;
-                IsWorking = false;
-                FilteredStopsStore = res.ToArray();
-                
-                    GetWebResultsAsync();
-            }
+
         }
 
         public override Stop FilteredSelectedStop {
@@ -75,13 +83,18 @@ namespace UniversalMinskTransRelease.ModelView
             OnPropertyChanged(nameof(TimeSchedule));
         }
 
+        public override async void NotifyTimeScheduleChanged()
+        {
+            await UpdateTimeScheduleAsync();
+        }
+
         public override IEnumerable<TimeLineModel> TimeSchedule => _timeSchedule;
 
         public ObservableCollection<Stop> WebResults { get; set; }
         private async Task GetWebResultsAsync()
         {
                 WebResults = new ObservableCollection<Stop>();
-            if (FilteredStopsStore.Count() > 6)
+            if (FilteredStopsStore?.Count() > 6)
             {
                 OnPropertyChanged(nameof(WebResults));
                 IsShowWebResuls = WebResults.Count > 0;

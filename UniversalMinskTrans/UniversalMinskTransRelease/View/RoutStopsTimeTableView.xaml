@@ -132,7 +132,7 @@
                                                                                       IsHoldingEnabled="False"
                                                                                       IsDoubleTapEnabled="False"
                                                                                       SelectionMode="None"
-                                                                                      IsRightTapEnabled="False" >
+                                                                                      IsRightTapEnabled="False" ItemClick="ListView_ItemClick" >
                                                                                 <ListView.ItemsPanel>
                                                                                     <ItemsPanelTemplate>
                                                                                         <WrapGrid

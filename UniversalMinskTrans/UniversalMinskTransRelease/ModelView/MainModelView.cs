@@ -112,6 +112,8 @@ namespace MinskTrans.Universal.ModelView
 			builder.RegisterType<FilePathsSettings>().SingleInstance();
 
             #region Register ModelView
+
+		    builder.RegisterType<SingFilterForAllDataModelView>().AsSelf();
 			builder.RegisterType<SettingsModelViewUIDispatcher>().As<ISettingsModelView>().SingleInstance();
             builder.RegisterType<UniversalGeolocator>().As<IGeolocation>().SingleInstance();
 		    builder.RegisterType<MapModelViewUIDispatcher>().As<MapModelView>();
@@ -141,14 +143,17 @@ namespace MinskTrans.Universal.ModelView
 
         public MapModelView MapModelView { get; set; }
 
+	    public SingFilterForAllDataModelView SingFilterForAllDataModelView
+	        => container.Resolve<SingFilterForAllDataModelView>();
         public MapModelView.MapModelViewFactory MapModelViewFactory => container.Resolve<MapModelView.MapModelViewFactory>();
 		public IExternalCommands ExternalCommands { get; }
 
 		public ISettingsModelView SettingsModelView => container.Resolve<ISettingsModelView>();
 
 		public FindModelView FindModelView => container.Resolve<FindModelView>();
+	    public GroupStopsModelView GroupStopsModelView => container.Resolve<GroupStopsModelView>();
 
-		readonly ObservableCollection<string> resultString = new ObservableCollection<string>();
+        readonly ObservableCollection<string> resultString = new ObservableCollection<string>();
 
 		public ObservableCollection<string> AllLogs => resultString;
 

@@ -278,6 +278,11 @@ namespace MinskTrans.DesctopClient.Modelview
 	        OnPropertyChanged(nameof(FavouriteStopsCount));
 	    }
 
+        public virtual void NotifyTimeScheduleChanged()
+        {
+            OnPropertyChanged(nameof(TimeSchedule));
+        }
+
 	    public string DestinationStop
 		{
 			get { return destinationStop ?? (destinationStop = ""); }
@@ -285,8 +290,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				destinationStop = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(TimeSchedule));
-			}
+                NotifyTimeScheduleChanged();
+            }
 		}
 
 
@@ -299,7 +304,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				autoDay = value;
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(CurDay));
-				OnPropertyChanged(nameof(TimeSchedule));
+			    NotifyTimeScheduleChanged();
+
 			}
 		}
 
@@ -324,7 +330,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				curDay = value;
 				AutoDay = false;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(TimeSchedule));
+			    NotifyTimeScheduleChanged();
+
 			}
 		}
 
@@ -338,8 +345,8 @@ namespace MinskTrans.DesctopClient.Modelview
 					value = 0;
 				nowTimeHour = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(TimeSchedule));
-			}
+                NotifyTimeScheduleChanged();
+            }
 		}
 
 		public int NowTimeMin
@@ -357,8 +364,8 @@ namespace MinskTrans.DesctopClient.Modelview
 
 				nowTimeMin = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(TimeSchedule));
-			}
+                NotifyTimeScheduleChanged();
+            }
 		}
 
 		public bool AutoNowTime
@@ -369,7 +376,8 @@ namespace MinskTrans.DesctopClient.Modelview
 				if (value.Equals(autoNowTime)) return;
 				autoNowTime = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(TimeSchedule));
+			    NotifyTimeScheduleChanged();
+
 			}
 		}
 
@@ -483,6 +491,8 @@ namespace MinskTrans.DesctopClient.Modelview
 		{
 			get
 			{
+			    if (FilteredSelectedStop == null)
+			        return null;
 				return Context.GetStopTimeLine(FilteredSelectedStop, CurDay, CurTime - SettingsModelView.TimeInPast,
 					selectedTransport);
 			}
@@ -509,12 +519,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			});}
 		}
 
-		public virtual RelayCommand RefreshTimeSchedule
-		{
-			get { return new RelayCommand(() => OnPropertyChanged(nameof(TimeSchedule))); }
-		}
+		public virtual RelayCommand RefreshTimeSchedule => new RelayCommand(NotifyTimeScheduleChanged);
 
-		public RelayCommand<int> SetTimeInPast
+        public RelayCommand<int> SetTimeInPast
 		{
 			get { return new RelayCommand<int>(x=>settingsModelView.TimeInPast = x);}
 		}

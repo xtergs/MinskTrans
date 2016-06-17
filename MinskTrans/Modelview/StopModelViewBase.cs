@@ -33,7 +33,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			settings = newSettings;
 			newContext.PropertyChanged+= (sender, args) =>
 			{
-				if (args.PropertyName == "ActualStops" || args.PropertyName == "Stops")
+				if (args.PropertyName == "Stops")
 				    Refresh();
 			};
 			settings.PropertyChanged += (sender, args) =>

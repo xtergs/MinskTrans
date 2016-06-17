@@ -139,7 +139,16 @@ namespace MinskTrans.Universal.ModelView
 		}
 
 		#region RouteNums
-		public virtual IEnumerable<RoutWithDestinations> RouteNums
+
+	    public static IEnumerable<RoutWithDestinations> GetRouteNumsWithDestination(string numFilter, TransportType transport, IBussnessLogics context)
+	    {
+            IEnumerable<Rout> temp = context.Routs.Where(x => transport.HasFlag(x.Transport)).Distinct(new RoutsComparer());
+            if (numFilter != null)
+                temp = temp.Where(x => x.RouteNum.Contains(numFilter));
+	        return temp.Select(item => new RoutWithDestinations(item, context)).ToList();
+        }
+
+        public virtual IEnumerable<RoutWithDestinations> RouteNums
 		{
 			get
 			{
@@ -149,15 +158,7 @@ namespace MinskTrans.Universal.ModelView
 					{
 						return Context.Context.FavouriteRouts.Select(x => new RoutWithDestinations(x, Context));
 					}
-					IEnumerable<Rout> temp = Context.Routs.Where(x=> TypeTransport.HasFlag(x.Transport)).Distinct(new RoutsComparer());
-					if (RoutNum != null)
-						temp = temp.Where(x => x.RouteNum.Contains(routNum));
-					List<RoutWithDestinations> returnEnumerable = new List<RoutWithDestinations>();
-					foreach (var item in temp)
-					{
-						returnEnumerable.Add(new RoutWithDestinations(item, Context));
-					}
-					return returnEnumerable;
+				    return GetRouteNumsWithDestination(RoutNum, TypeTransport, Context);
 				}
 				return null;
 			}
@@ -485,12 +486,13 @@ namespace MinskTrans.Universal.ModelView
 	            var token = tokenSource.Token;
 	            var res = await Task.Run(async () =>
 	            {
+	                if (IsShowFavouriteRouts)
+	                    return Context.Context.FavouriteRouts;
+
 	                await Task.Delay(250, token);
 	                if (token.IsCancellationRequested)
 	                    return null;
 
-	                if (IsShowFavouriteRouts)
-	                    return Context.Context.FavouriteRouts;
 
 	                if (token.IsCancellationRequested)
 	                    return null;

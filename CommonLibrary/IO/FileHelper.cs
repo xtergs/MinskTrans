@@ -69,7 +69,7 @@ namespace CommonLibrary.IO
 			}
 			catch (FileNotFoundException)
 			{
-				Debug.WriteLine("SafeMoveSync: moving file " + from + " not found");
+                log?.Debug("SafeMoveSync: moving file " + from + " not found");
 			}
 		}
 

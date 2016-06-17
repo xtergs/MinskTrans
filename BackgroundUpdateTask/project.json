@@ -1,7 +1,5 @@
 ﻿{
-  "dependencies": {
-    "Microsoft.Bcl.Build": "1.0.21",
-  },
+  "dependencies": {},
   "frameworks": {
     "wp81": {},
     ".NETPortable,Version=v4.6,Profile=Profile32": {}

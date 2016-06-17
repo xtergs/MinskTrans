@@ -834,7 +834,12 @@
                     <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
                 </Grid>
             </PivotItem>-->
+            <PivotItem DataContext="{Binding SingFilterForAllDataModelView}" Header="Новый поиск" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
+                <view:SingFilterFieldView DataContext="{Binding}"></view:SingFilterFieldView>
+            </PivotItem>
         </Pivot>
+        
+
 
         <ProgressBar Height="10"
                      VerticalAlignment="Top"

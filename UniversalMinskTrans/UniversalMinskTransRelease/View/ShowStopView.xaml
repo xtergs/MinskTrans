@@ -151,7 +151,8 @@
                 </AppBarButton>
                 <AppBarButton Click="AppBarButton_Click"
                               Icon="Add"
-                              IsCompact="True">
+                              
+                              IsCompact="True" ToolTipService.ToolTip="Добавить в группу">
                     <AppBarButton.Flyout>
                         <Flyout>
                             <Interactivity:Interaction.Behaviors>
@@ -223,12 +224,14 @@
                               HorizontalContentAlignment="Left"
                               VerticalContentAlignment="Top"
                               Command="{Binding RefreshTimeSchedule}"
+                              ToolTipService.ToolTip="Обновить"
                               Icon="Sync"
                               IsCompact="True" />
                 <AppBarToggleButton HorizontalAlignment="Center"
                                     Command="{Binding AddRemoveFavouriteStop}"
                                     CommandParameter="{Binding FilteredSelectedStop}"
                                     Icon="Favorite"
+                                    ToolTipService.ToolTip="В избранное"
                                     IsChecked="{Binding IsStopFavourite,
                                                         Mode=TwoWay,
                                                         UpdateSourceTrigger=PropertyChanged}"
@@ -238,6 +241,7 @@
                               CommandParameter="{Binding FilteredSelectedStop}"
                               DataContext="{Binding}"
                               Icon="Map"
+                              ToolTipService.ToolTip="Показать на карте"
                               IsCompact="True"
                               Label="" />
             </controls:WrapPanel>
@@ -272,6 +276,8 @@
                               IsChecked="{Binding AutoDay,
                                                   Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}" />
+                    
+
 
                 </controls:WrapPanel>
             </Grid>

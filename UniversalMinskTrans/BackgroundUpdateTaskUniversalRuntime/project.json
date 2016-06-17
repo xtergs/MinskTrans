@@ -2,7 +2,6 @@
   "dependencies": {
     "Autofac": "3.5.2",
     "MetroLog": "1.0.1",
-    "Microsoft.Bcl.Build": "1.0.21",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
   },
   "frameworks": {

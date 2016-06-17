@@ -96,7 +96,6 @@ namespace MinskTrans.Context.Base.BaseModel
 		}
 
 		public Schedule Schedule { get; set; }
-
 		
 	}
 }

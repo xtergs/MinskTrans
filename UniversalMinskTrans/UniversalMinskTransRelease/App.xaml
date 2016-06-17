@@ -14,6 +14,7 @@
             </ResourceDictionary.MergedDictionaries>
             <converters:GridBoolHeightConverter x:Key="GridBoolHeightConverter" />
             <converters:ConcatStringCoverter x:Key="ConcatStringCoverter" />
+            <converters:IntToMinsConverter x:Key="IntToMinsConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

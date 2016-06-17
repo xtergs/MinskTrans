@@ -313,7 +313,7 @@ namespace MinskTrans.Universal.ModelView
 				Stop = stop;
 				TimeTable = timeTable;
 			}
-
+            public TimeSpan TimeOnStop { get; set; }
 			public Stop Stop { get; set; }
 			public List<Time> TimeTable { get; set; }
 		}
@@ -339,6 +339,17 @@ namespace MinskTrans.Universal.ModelView
 				return returnValue;
 			}
 		}
+
+        
+        public int SelectedDay { get; set; }
+        public int SelectedMins { get; set; }
+        public int SelectedTimeIndex { get; set; }
+
+	    public void FixUptTimeIndex()
+	    {
+            SelectedTimeIndex = Context.GetTimeIndex(RouteSelectedValue, StopSelectedValue, SelectedMins, SelectedDay);
+
+	    }
 
 		public List<KeyValuePair<Stop, List<Time>>> TimesObservableCollection
 		{

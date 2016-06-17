@@ -317,15 +317,25 @@ namespace MinskTrans.Context
             //return routeNums;
         }
 
-        
+        protected int GetTimeIndex(Schedule timee, Rout rout, Stop stop, int mins, int day)
+        {
+            int indexStop = rout.Stops.IndexOf(stop);
+            var time = timee.GetScheduleForStop(stopIndex: indexStop, day: day).Times;
+            int timeIndex = Array.IndexOf(time, mins);
+            return timeIndex;
+        }
+
+        public int GetTimeIndex(Rout rout, Stop stop, int mins, int day)
+        {
+            Schedule timee = GetRouteSchedule(rout.RoutId);
+            int timeIndex = GetTimeIndex(timee, rout, stop, mins, day);
+            return timeIndex;
+        }
 
         public List<StopTimePair> GetStopsTimesParis(Rout rout, Stop stop, int mins, int day)
         {
-            int indexStop = 0;
             Schedule timee = GetRouteSchedule(rout.RoutId);
-            indexStop = rout.Stops.IndexOf(stop);
-            var time = timee.GetScheduleForStop(stopIndex: indexStop, day: day).Times;
-            int timeIndex = Array.IndexOf(time, mins);
+            int timeIndex = GetTimeIndex(timee, rout, stop, mins, day);
             //for (int i = 0; i < rout.Stops.Count; i++)
             //{
             //   index = timee.Where(.First(x => x.Days.Contains(day.ToString())).Times.ToList().IndexOf(mins);
@@ -334,17 +344,14 @@ namespace MinskTrans.Context
             //        break;
             //    }
             //}
-            if (indexStop >= 0)
+            if (timeIndex >= 0)
             {
-                List<StopTimePair> pair = new List<StopTimePair>();
-                for (int i = 0; i < rout.Stops.Count; i++)
+                return rout.Stops.Select((t, i) => new StopTimePair
                 {
-                    StopTimePair p = new StopTimePair();
-                    p.Time = new TimeSpan(0,0, timee.GetScheduleForStop(stopIndex:i, day:day).Times[timeIndex], 0,0);
-                    p.Stop = rout.Stops[i];
-                    pair.Add(p);
-                }
-                return pair;
+                    Time = new TimeSpan(0, 0, timee.GetScheduleForStop(stopIndex: i, day: day)
+                                                   .Times[timeIndex], 0, 0),
+                    Stop = t
+                }).ToList();
             }
             return null;
         }

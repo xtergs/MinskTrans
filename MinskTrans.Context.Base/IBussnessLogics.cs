@@ -49,5 +49,7 @@ namespace MinskTrans.Context
 
         void ForsStopActivity();
         Schedule GetRouteSchedule(int routId);
+
+        int GetTimeIndex(Rout rout, Stop stop, int mins, int day);
     }
 }

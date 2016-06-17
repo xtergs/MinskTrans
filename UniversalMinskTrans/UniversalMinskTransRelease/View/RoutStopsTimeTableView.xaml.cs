@@ -23,5 +23,15 @@ namespace UniversalMinskTransRelease.View
         {
             this.InitializeComponent();
         }
+
+        private void ListView_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+        }
     }
 }

@@ -1,7 +1,11 @@
 ﻿{
-  "dependencies": {},
+  "dependencies": {
+    "Autofac": "3.5.2",
+    "MetroLog": "1.0.1",
+    "Microsoft.Bcl.Build": "1.0.21",
+    "Microsoft.Bcl.Build.Symbols": "1.0.20"
+  },
   "frameworks": {
-    "wp81": {},
     ".NETPortable,Version=v4.6,Profile=Profile32": {}
   },
   "supports": {}

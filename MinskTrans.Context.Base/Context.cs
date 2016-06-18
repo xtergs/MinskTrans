@@ -286,8 +286,7 @@ namespace MinskTrans.Context
                 Times = timeTable.TimeTable.Time.ToArray();
             }
             Debug.WriteLine($"{DateTime.UtcNow}UniversalContext loadfavourite started");
-            if (type.HasFlag(LoadType.LoadFavourite) &&
-                await FileHelper.FileExistAsync(files.FavouriteFile.Folder, files.FavouriteFile.FileName))
+            if (type.HasFlag(LoadType.LoadFavourite) )
             {
                 try
                 {
@@ -397,20 +396,26 @@ namespace MinskTrans.Context
 
         async Task<TimeTableSettings> LoadTimeTable()
         {
-            TimeTableSettings timeTable;
-            if (!await FileHelper.FileExistAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName))
-                return null;
+
             try
             {
-                string strTimeTable =
-                    await FileHelper.ReadAllTextAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName);
-                timeTable = JsonConvert.DeserializeObject<TimeTableSettings>(strTimeTable);
+                TimeTableSettings timeTable;
+                var serializer = new JsonSerializer();
+
+                using (var sr = new StreamReader(await FileHelper.OpenStream(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName)))
+                using (var jsonTextReader = new JsonTextReader(sr))
+                {
+                    timeTable =  serializer.Deserialize<TimeTableSettings>(jsonTextReader);
+                }
+                return timeTable;
+                //string strTimeTable =
+                //    await FileHelper.ReadAllTextAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName);
+                //timeTable = JsonConvert.DeserializeObject<TimeTableSettings>(strTimeTable);
             }
             catch (FileNotFoundException e)
             {
                 throw new TaskCanceledException(e.Message, e);
             }
-            return timeTable;
         }
 
         async Task<TimeTableSettings> LoadTimeTableV2()

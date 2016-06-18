@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MyLibrary
 {
-    public class FakeSettingsModelView: ISettingsModelView
+    public class FakeSettingsModelView : ISettingsModelView
     {
         #region Implementation of INotifyPropertyChanged
 
@@ -39,7 +40,6 @@ namespace MyLibrary
 
         public void UpdateNetworkData()
         {
-            
         }
 
         public int FontSize { get; set; }
@@ -47,5 +47,10 @@ namespace MyLibrary
         public string ChangeLog { get; }
 
         #endregion
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -20,116 +20,113 @@ using MinskTrans.Context.Base;
 
 namespace UniversalMinskTrans
 {
-	/// <summary>
-	/// Provides application-specific behavior to supplement the default Application class.
-	/// </summary>
-	sealed partial class App : Application
-	{
+    /// <summary>
+    /// Provides application-specific behavior to supplement the default Application class.
+    /// </summary>
+    sealed partial class App : Application
+    {
+        /// <summary>
+        /// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
+        /// </summary>
+        //public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
+        private ILogger log;
 
-		/// <summary>
-		/// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
-		/// </summary>
-		//public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
-
-		private ILogger log;
-
-		/// <summary>
-		/// Invoked when the application is launched normally by the end user.  Other entry points
-		/// will be used such as when the application is launched to open a specific file.
-		/// </summary>
-		/// <param name="e">Details about the launch request and process.</param>
-		protected override async void OnLaunched(LaunchActivatedEventArgs e)
-		{
-			log?.Debug("App.OnLaunched started");
+        /// <summary>
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
+        /// </summary>
+        /// <param name="e">Details about the launch request and process.</param>
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            log?.Debug("App.OnLaunched started");
 
 #if DEBUG
-			if (System.Diagnostics.Debugger.IsAttached)
-			{
-				this.DebugSettings.EnableFrameRateCounter = true;
-			}
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                this.DebugSettings.EnableFrameRateCounter = true;
+            }
 #endif
             Frame rootFrame = null;
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-			switch (backgroundAccessStatus)
-			{
-				case BackgroundAccessStatus.Denied:
-					log?.Warn("BackgroundAccessStatus:Denied");
-					// Windows: Background activity and updates for this app are disabled by the user.
-					//
-					// Windows Phone: The maximum number of background apps allowed across the system has been reached or
-					// background activity and updates for this app are disabled by the user.
-					break;
+            switch (backgroundAccessStatus)
+            {
+                case BackgroundAccessStatus.Denied:
+                    log?.Warn("BackgroundAccessStatus:Denied");
+                    // Windows: Background activity and updates for this app are disabled by the user.
+                    //
+                    // Windows Phone: The maximum number of background apps allowed across the system has been reached or
+                    // background activity and updates for this app are disabled by the user.
+                    break;
 
-				case BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity:
-					// Windows: Added to list of background apps; set up background tasks; 
-					// can use the network connectivity broker.
-					//
-					// Windows Phone: This value is never used on Windows Phone.
-					//break;
+                case BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity:
+                // Windows: Added to list of background apps; set up background tasks; 
+                // can use the network connectivity broker.
+                //
+                // Windows Phone: This value is never used on Windows Phone.
+                //break;
 
-				case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
-				case BackgroundAccessStatus.Unspecified:
-					// The user didn't explicitly disable or enable access and updates. 
-					var updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
-                        backgroundName, new TimeTrigger(15, false), new SystemCondition(SystemConditionType.InternetAvailable));
+                case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
+                case BackgroundAccessStatus.Unspecified:
+                    // The user didn't explicitly disable or enable access and updates. 
+                    var updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
+                        backgroundName, new TimeTrigger(15, false),
+                        new SystemCondition(SystemConditionType.InternetAvailable));
 
-					updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
-
-                   
-					break;
-			}
+                    updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
 
 
+                    break;
+            }
 
-			var model = MainModelView.MainModelViewGet;
 
-			
-		    rootFrame = Window.Current.Content as Frame;
+            var model = MainModelView.MainModelViewGet;
 
-		    // Do not repeat app initialization when the Window already has content,
-			// just ensure that the window is active
-			if (rootFrame == null)
-			{
-				log?.Info("RestoreAppState");
 
-				// Create a Frame to act as the navigation context and navigate to the first page
-				rootFrame = new Frame();
+            rootFrame = Window.Current.Content as Frame;
 
-				// TODO: change this value to a cache size that is appropriate for your application
-				rootFrame.CacheSize = 3;
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (rootFrame == null)
+            {
+                log?.Info("RestoreAppState");
 
-				if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-				{
-					log?.Info("Load after suspending");
-					// TODO: Load state from previously suspended application
-					//MainModelView.MainModelViewGet.Context.Load();
-				}
+                // Create a Frame to act as the navigation context and navigate to the first page
+                rootFrame = new Frame();
 
-				// Place the frame in the current Window
-				Window.Current.Content = rootFrame;
-				if (e.PreviousExecutionState != ApplicationExecutionState.Running)
-				{
-					log?.Info("Prev state != Running");
+                // TODO: change this value to a cache size that is appropriate for your application
+                rootFrame.CacheSize = 3;
 
-					model.Context.NeedUpdadteDB += TimeTabletOnNeedUpdadteDb;
-                    model.Context.LoadStarted+= TimeTableOnLoadStarted;
-				    model.Context.LoadEnded += TimeTableOnLoadEnded;
-				    model.Context.UpdateDBStarted += TimeTableOnLoadStarted;
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    log?.Info("Load after suspending");
+                    // TODO: Load state from previously suspended application
+                    //MainModelView.MainModelViewGet.Context.Load();
+                }
+
+                // Place the frame in the current Window
+                Window.Current.Content = rootFrame;
+                if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+                {
+                    log?.Info("Prev state != Running");
+
+                    model.Context.NeedUpdadteDB += TimeTabletOnNeedUpdadteDb;
+                    model.Context.LoadStarted += TimeTableOnLoadStarted;
+                    model.Context.LoadEnded += TimeTableOnLoadEnded;
+                    model.Context.UpdateDBStarted += TimeTableOnLoadStarted;
                     model.Context.UpdateDBEnded += TimeTableOnUpdateDbEnded;
-						
+
 
 #pragma warning disable 4014
-				    model.LoadAllData().ConfigureAwait(false);
+                    model.LoadAllData().ConfigureAwait(false);
 #pragma warning restore 4014
-				}
-			}
+                }
+            }
 
 
-
-			if (rootFrame.Content == null)
-			{
+            if (rootFrame.Content == null)
+            {
 #if WINDOWS_PHONE_APP
-				// Removes the turnstile navigation for startup.
+    // Removes the turnstile navigation for startup.
 				if (rootFrame.ContentTransitions != null)
 				{
 					this.transitions = new TransitionCollection();
@@ -143,71 +140,71 @@ namespace UniversalMinskTrans
 				rootFrame.Navigated += this.RootFrame_FirstNavigated;
 #endif
 
-				// When the navigation stack isn't restored navigate to the first page,
-				// configuring the new page by passing required information as a navigation
-				// parameter
-				if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
-				{
-					throw new Exception("Failed to create initial page");
-				}
-			}
-
-			log.Debug("Activate window");
-			// Ensure the current window is active
-			Window.Current.Activate();
-		}
-
-
-	    private async void UpdateTaskRegistrationOnCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
-	    {
-           log?.Debug("\nBackground task complited");
-                try
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                if (!rootFrame.Navigate(typeof (MainPage), e.Arguments))
                 {
-                    if (
-                        MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-                            TypeOfUpdate.Db))
-                    {
-                        try
-                        {
-                            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                                CoreDispatcherPriority.Normal, () =>
-                                {
+                    throw new Exception("Failed to create initial page");
+                }
+            }
 
-                                    MainModelView
-                                        .MainModelViewGet
-                                        .IsLoading
-                                        = true;
-                                });
-                            await MainModelView.MainModelViewGet.Context.Save(false);
-                            await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
-                            log?.Info("Background task complited, DB reloaded");
-                        }
-                        finally
-                        {
-                            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                            {
-                                MainModelView.MainModelViewGet.IsLoading = false;
-                            });
-                        }
-                    }
-                    if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
-                        TypeOfUpdate.News))
-                    {
-                        await MainModelView.MainModelViewGet.NewsManager.Load();
-                        log?.Info("Background task complited, news loaded");
-                    }
-                    //MainModelView.MainModelViewGet.AllNews = null;
-                }
-                catch (Exception ex)
-                {
-                    log?.Fatal("Backroudn complited", ex);
-                    //MainModelView.MainModelViewGet.NotifyHelper.ShowMessageAsync()
-                }
-                log?.Info("Background complited, OK");
+            log.Debug("Activate window");
+            // Ensure the current window is active
+            Window.Current.Activate();
         }
 
-	    private async void TimeTableOnUpdateDbEnded(object sender, EventArgs eventArgs)
-	    {
+
+        private async void UpdateTaskRegistrationOnCompleted(BackgroundTaskRegistration sender,
+            BackgroundTaskCompletedEventArgs args)
+        {
+            log?.Debug("\nBackground task complited");
+            try
+            {
+                if (
+                    MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
+                        TypeOfUpdate.Db))
+                {
+                    try
+                    {
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.Normal, () =>
+                            {
+                                MainModelView
+                                    .MainModelViewGet
+                                    .IsLoading
+                                    = true;
+                            });
+                        await MainModelView.MainModelViewGet.Context.Save(false);
+                        await MainModelView.MainModelViewGet.Context.LoadDataBase(LoadType.LoadAll);
+                        log?.Info("Background task complited, DB reloaded");
+                    }
+                    finally
+                    {
+                        await
+                            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                                CoreDispatcherPriority.Normal,
+                                () => { MainModelView.MainModelViewGet.IsLoading = false; });
+                    }
+                }
+                if (MainModelView.MainModelViewGet.SettingsModelView.LastUpdatedDataInBackground.HasFlag(
+                    TypeOfUpdate.News))
+                {
+                    await MainModelView.MainModelViewGet.NewsManager.Load();
+                    log?.Info("Background task complited, news loaded");
+                }
+                //MainModelView.MainModelViewGet.AllNews = null;
+            }
+            catch (Exception ex)
+            {
+                log?.Fatal("Backroudn complited", ex);
+                //MainModelView.MainModelViewGet.NotifyHelper.ShowMessageAsync()
+            }
+            log?.Info("Background complited, OK");
+        }
+
+        private async void TimeTableOnUpdateDbEnded(object sender, EventArgs eventArgs)
+        {
             var model = MainModelView.MainModelViewGet;
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal, () =>
@@ -217,177 +214,167 @@ namespace UniversalMinskTrans
                 });
         }
 
-	    private async void TimeTabletOnNeedUpdadteDb(object sender, EventArgs eventArgs)
-	    {
+        private async void TimeTabletOnNeedUpdadteDb(object sender, EventArgs eventArgs)
+        {
             var model = MainModelView.MainModelViewGet;
-           
-            log?.Info("App Need Update");
-                try
-                {
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        try
-                        {
-                            model.IsNeesUpdate = true;
-                        }
-                        catch (Exception ee)
-                        {
-                            log?.Fatal($"App need update: {ee.Message}", ee);
-                            throw;
-                        }
-                    });
 
-                }
-                catch (Exception ex)
-                {
-                    log?.Fatal($"App need update: {ex.Message}", ex);
-                    throw;
-                }
-            
+            log?.Info("App Need Update");
+            try
+            {
+                await
+                    Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        CoreDispatcherPriority.Normal, () =>
+                        {
+                            try
+                            {
+                                model.IsNeesUpdate = true;
+                            }
+                            catch (Exception ee)
+                            {
+                                log?.Fatal($"App need update: {ee.Message}", ee);
+                                throw;
+                            }
+                        });
+            }
+            catch (Exception ex)
+            {
+                log?.Fatal($"App need update: {ex.Message}", ex);
+                throw;
+            }
         }
 
-	    private async void TimeTableOnLoadStarted(object sender, EventArgs eventArgs)
-	    {
+        private async void TimeTableOnLoadStarted(object sender, EventArgs eventArgs)
+        {
+            var model = MainModelView.MainModelViewGet;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Normal, () => { model.IsLoading = true; });
+        }
+
+        private async void TimeTableOnLoadEnded(object sender, EventArgs eventArgs)
+        {
             var model = MainModelView.MainModelViewGet;
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal, () =>
                 {
-                    model.IsLoading = true;
-
+                    model.IsLoading = false;
+                    if (model.Context.Context.Stops?.Any() == true)
+                        model.IsNeesUpdate = false;
                 });
-
         }
 
-        private async void TimeTableOnLoadEnded(object sender, EventArgs eventArgs)
-	    {
+        /// <summary>
+        /// Invoked when Navigation to a certain page fails
+        /// </summary>
+        /// <param name="sender">The Frame which failed navigation</param>
+        /// <param name="e">Details about the navigation failure</param>
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+        }
+
+        /// <summary>
+        /// Invoked when application execution is being suspended.  Application state is saved
+        /// without knowing whether the application will be terminated or resumed with the contents
+        /// of memory still intact.
+        /// </summary>
+        /// <param name="sender">The source of the suspend request.</param>
+        /// <param name="e">Details about the suspend request.</param>
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            log.Info("Onsuspending");
+
+            var deferral = e.SuspendingOperation.GetDeferral();
             var model = MainModelView.MainModelViewGet;
-	        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-	            CoreDispatcherPriority.Normal, () =>
-	            {
-	                model.IsLoading = false;
-	                if (model.Context.Context.Stops?.Any() == true)
-	                    model.IsNeesUpdate = false;
-	            });
+            await model.Context.Save(saveAllDB: false);
+            //await model.NewsManager.SaveToFile();
+            //model.SettingsModelView.TypeError = Error.None;
+            if (!model.SettingsModelView.KeepTracking)
+                model.MapModelView.StopGPS();
+            deferral.Complete();
 
-	    }
-
-	    /// <summary>
-		/// Invoked when Navigation to a certain page fails
-		/// </summary>
-		/// <param name="sender">The Frame which failed navigation</param>
-		/// <param name="e">Details about the navigation failure</param>
-		void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-		{
-			throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-		}
-
-		/// <summary>
-		/// Invoked when application execution is being suspended.  Application state is saved
-		/// without knowing whether the application will be terminated or resumed with the contents
-		/// of memory still intact.
-		/// </summary>
-		/// <param name="sender">The source of the suspend request.</param>
-		/// <param name="e">Details about the suspend request.</param>
-		private async void OnSuspending(object sender, SuspendingEventArgs e)
-		{
-			log.Info("Onsuspending");
-
-			var deferral = e.SuspendingOperation.GetDeferral();
-			var model = MainModelView.MainModelViewGet;
-			await model.Context.Save(saveAllDB: false);
-			//await model.NewsManager.SaveToFile();
-			//model.SettingsModelView.TypeError = Error.None;
-			if (!model.SettingsModelView.KeepTracking)
-				model.MapModelView.StopGPS();
-			deferral.Complete();
-
-			log.Info("Onsuspending2");
-		}
+            log.Info("Onsuspending2");
+        }
 
 
+        private readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
+        private string backgroundAssembly = "BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask";
+        private string backgroundName = "UpdateBackground3";
 
-		readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
-	    private string backgroundAssembly = "BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask";
-	    private string backgroundName = "UpdateBackground";
-
-	    void CallBackReconnectPushServerTimer(object state)
-		{
-			//InitNotificationsAsync();
-		}
+        private void CallBackReconnectPushServerTimer(object state)
+        {
+            //InitNotificationsAsync();
+        }
 
 
-		//
-		// Register a background task with the specified taskEntryPoint, name, trigger,
-		// and condition (optional).
-		//
-		// taskEntryPoint: Task entry point for the background task.
-		// taskName: A name for the background task.
-		// trigger: The trigger for the background task.
-		// condition: Optional parameter. A conditional event that must be true for the task to fire.
-		//
-		public static BackgroundTaskRegistration RegisterBackgroundTask(string taskEntryPoint,
-																		string taskName,
-																		IBackgroundTrigger trigger,
-																		IBackgroundCondition condition)
-		{
-			//
-			// Check for existing registrations of this background task.
-			//
-		    BackgroundTaskRegistration registered = null;
-		    bool isRegistered = false;
-			foreach (var cur in BackgroundTaskRegistration.AllTasks)
-			{
-
-			    if (cur.Value.Name == taskName)
-			    {
+        //
+        // Register a background task with the specified taskEntryPoint, name, trigger,
+        // and condition (optional).
+        //
+        // taskEntryPoint: Task entry point for the background task.
+        // taskName: A name for the background task.
+        // trigger: The trigger for the background task.
+        // condition: Optional parameter. A conditional event that must be true for the task to fire.
+        //
+        public static BackgroundTaskRegistration RegisterBackgroundTask(string taskEntryPoint,
+            string taskName,
+            IBackgroundTrigger trigger,
+            IBackgroundCondition condition)
+        {
+            //
+            // Check for existing registrations of this background task.
+            //
+            BackgroundTaskRegistration registered = null;
+            bool isRegistered = false;
+            foreach (var cur in BackgroundTaskRegistration.AllTasks)
+            {
+                if (cur.Value.Name == taskName)
+                {
                     // 
                     // The task is already registered.
                     // 
-			        isRegistered = true;
+                    isRegistered = true;
 
-                    registered =  (BackgroundTaskRegistration) (cur.Value);
-			    }
-			    else
-			         cur.Value.Unregister(true);
+                    registered = (BackgroundTaskRegistration) (cur.Value);
+                }
+                else
+                    cur.Value.Unregister(true);
+            }
 
-			}
+            if (isRegistered)
+                return registered;
 
-		    if (isRegistered)
-		        return registered;
+            //
+            // Register the background task.
+            //
 
-			//
-			// Register the background task.
-			//
-
-			var builder = new BackgroundTaskBuilder();
+            var builder = new BackgroundTaskBuilder();
 
 
-			builder.Name = taskName;
-			builder.TaskEntryPoint = taskEntryPoint;
-			builder.SetTrigger(trigger);
+            builder.Name = taskName;
+            builder.TaskEntryPoint = taskEntryPoint;
+            builder.SetTrigger(trigger);
 
-			if (condition != null)
-			{
+            if (condition != null)
+            {
+                builder.AddCondition(condition);
+            }
 
-				builder.AddCondition(condition);
-			}
+            BackgroundTaskRegistration task = builder.Register();
 
-			BackgroundTaskRegistration task = builder.Register();
-
-			return task;
-		}
+            return task;
+        }
 
 
 #if WINDOWS_PHONE_APP
 		private TransitionCollection transitions;
 #endif
 
-		/// <summary>
-		/// Initializes the singleton application object.  This is the first line of authored code
-		/// executed, and as such is the logical equivalent of main() or WinMain().
-		/// </summary>
-		public App()
-		{
+        /// <summary>
+        /// Initializes the singleton application object.  This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// </summary>
+        public App()
+        {
             var configuration = new LoggingConfiguration();
 #if DEBUG
             configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
@@ -396,75 +383,72 @@ namespace UniversalMinskTrans
             configuration.IsEnabled = true;
 
             LogManagerFactory.DefaultConfiguration = configuration;
-   //         LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
-			//LogManagerFactory.DefaultConfiguration.IsEnabled = true;
-			log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
+            //         LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+            //LogManagerFactory.DefaultConfiguration.IsEnabled = true;
+            log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
 
-			log.Debug("\n\nApp constructor started");
+            log.Debug("\n\nApp constructor started");
 
-			//TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
+            //TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
 
-			this.InitializeComponent();
-			this.Suspending += this.OnSuspending;
+            this.InitializeComponent();
+            this.Suspending += this.OnSuspending;
 
-			GlobalCrashHandler.Configure();
+            //GlobalCrashHandler.Configure();
 
-			this.UnhandledException += OnUnhandledException;
+            this.UnhandledException += OnUnhandledException;
 
 
+            //MainModelView.Create(new UniversalContext(new FileHelper()));
 
-			//MainModelView.Create(new UniversalContext(new FileHelper()));
+            log.Debug("App ended");
+        }
 
-			log.Debug("App ended");
+        private async Task SaveToFile(string str)
+        {
+            var storage = await ApplicationData.Current.LocalFolder.CreateFileAsync("Error.txt");
+            await FileIO.AppendTextAsync(storage, str);
+        }
 
-		}
+        private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        {
+            var settings = MainModelView.MainModelViewGet.SettingsModelView;
 
-		async Task SaveToFile(string str)
-		{
-			var storage = await ApplicationData.Current.LocalFolder.CreateFileAsync("Error.txt");
-			await FileIO.AppendTextAsync(storage, str);
-		}
+            log?.Fatal($"App.OnUnhadledException: {unhandledExceptionEventArgs.Message}\n",
+                unhandledExceptionEventArgs.Exception);
 
-		private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
-		{
-			var settings = MainModelView.MainModelViewGet.SettingsModelView;
+            if (settings.TypeError == Error.Critical)
+                settings.TypeError = Error.Repeated;
+            else if (settings.TypeError == Error.Repeated)
+            {
+                await MainModelView.MainModelViewGet.Context.Context.Recover();
+            }
+            else
+            {
+                settings.TypeError = Error.Critical;
+            }
+        }
 
-			log?.Fatal($"App.OnUnhadledException: {unhandledExceptionEventArgs.Message}\n", unhandledExceptionEventArgs.Exception);		
+        #region Overrides of Application
 
-			if (settings.TypeError == Error.Critical)
-				settings.TypeError = Error.Repeated;
-			else if (settings.TypeError == Error.Repeated)
-			{
-				await MainModelView.MainModelViewGet.Context.Context.Recover();
-			}
-			else
-			{
-				settings.TypeError = Error.Critical;
-			}
-		}
+        protected override async void OnActivated(IActivatedEventArgs args)
+        {
+            log?.Debug("App OnActivated");
 
-		#region Overrides of Application
+            base.OnActivated(args);
+            await MainModelView.MainModelViewGet.LoadAllData();
 
-		protected override async void OnActivated(IActivatedEventArgs args)
-		{
-			log?.Debug("App OnActivated");
+            log?.Debug("App OnActivated, context loaded");
+        }
 
-			base.OnActivated(args);
-		    await MainModelView.MainModelViewGet.LoadAllData();
-
-			log?.Debug("App OnActivated, context loaded");
-		}
-
-		#endregion
-
-	
+        #endregion
 
 #if WINDOWS_PHONE_APP
-		/// <summary>
-		/// Restores the content transitions after the app has launched.
-		/// </summary>
-		/// <param name="sender">The object where the handler is attached.</param>
-		/// <param name="e">Details about the navigation event.</param>
+    /// <summary>
+    /// Restores the content transitions after the app has launched.
+    /// </summary>
+    /// <param name="sender">The object where the handler is attached.</param>
+    /// <param name="e">Details about the navigation event.</param>
 		private void RootFrame_FirstNavigated(object sender, NavigationEventArgs e)
 		{
 			var rootFrame = sender as Frame;
@@ -472,9 +456,5 @@ namespace UniversalMinskTrans
 			rootFrame.Navigated -= this.RootFrame_FirstNavigated;
 		}
 #endif
-
-	}
-
-
+    }
 }
-

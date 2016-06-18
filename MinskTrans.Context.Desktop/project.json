@@ -4,6 +4,7 @@
     "MetroLog.Targets.PortableFileTarget": "1.0.0",
     "Microsoft.Bcl": "1.1.10",
     "Microsoft.Bcl.Build": "1.0.21",
+    "Microsoft.Bcl.Build.Symbols": "1.0.20",
     "PCLStorage": "1.0.2"
   },
   "frameworks": {

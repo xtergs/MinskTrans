@@ -44,6 +44,7 @@
         }
       },
       "Microsoft.Bcl.Build/1.0.21": {},
+      "Microsoft.Bcl.Build.Symbols/1.0.20": {},
       "Microsoft.Bcl.Compression/3.9.83": {
         "dependencies": {
           "Microsoft.Bcl.Build": "1.0.14"
@@ -119,6 +120,7 @@
         }
       },
       "Microsoft.Bcl.Build/1.0.21": {},
+      "Microsoft.Bcl.Build.Symbols/1.0.20": {},
       "Microsoft.Bcl.Compression/3.9.83": {
         "dependencies": {
           "Microsoft.Bcl.Build": "1.0.14"
@@ -194,6 +196,7 @@
         }
       },
       "Microsoft.Bcl.Build/1.0.21": {},
+      "Microsoft.Bcl.Build.Symbols/1.0.20": {},
       "Microsoft.Bcl.Compression/3.9.83": {
         "dependencies": {
           "Microsoft.Bcl.Build": "1.0.14"
@@ -384,6 +387,15 @@
         "build/Microsoft.Bcl.Build.targets"
       ]
     },
+    "Microsoft.Bcl.Build.Symbols/1.0.20": {
+      "sha512": "2ux4T7VaS1Or7Ix1LPAezPtPzloFt0tnh2kjaRvFfJDrcdG10PSJQF8Kngr4LXAJfXyBvZLqZz57mQ3BkspYDQ==",
+      "type": "package",
+      "files": [
+        "Microsoft.Bcl.Build.Symbols.1.0.20.nupkg.sha512",
+        "Microsoft.Bcl.Build.Symbols.nuspec",
+        "build/Microsoft.Bcl.Build.Symbols.targets"
+      ]
+    },
     "Microsoft.Bcl.Compression/3.9.83": {
       "sha512": "c1Qq+8ZdgP2dYii6nW7CRweP5RIjF1EBMy9SY1S1GCurQ7W4db4TyRlvWWhS1dPpgHo6jfjYNSgDAlRzbJ42vA==",
       "type": "package",
@@ -482,6 +494,7 @@
       "MetroLog.Targets.PortableFileTarget >= 1.0.0",
       "Microsoft.Bcl >= 1.1.10",
       "Microsoft.Bcl.Build >= 1.0.21",
+      "Microsoft.Bcl.Build.Symbols >= 1.0.20",
       "PCLStorage >= 1.0.2"
     ],
     ".NETFramework,Version=v4.5.1": []

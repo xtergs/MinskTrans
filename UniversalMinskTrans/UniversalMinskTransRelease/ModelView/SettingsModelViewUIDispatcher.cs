@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel;
+﻿using System;
+using Windows.ApplicationModel;
 using Windows.UI.Core;
 using MinskTrans.Utilites.Base.Net;
 using MyLibrary;
@@ -31,11 +32,12 @@ namespace UniversalMinskTransRelease.ModelView
         }
 
         protected string changeLog = "- Веб поиск Яндекс Геолокатор API\n" +
-                                   "- Повышена производительность\n" +
-                                   "- Просмотр прибытия выбранного транспорта на остановки (Просмотр остановки)\n" +
-                                    "- Добавляю возможность выбора конкретного времени на вкладке транспорта\n" +
-                                   "- Изменен алгоритм отображения остановок на карте\n" +
-                                   "- Временно отключена вкладка Группы";
+                                     "- Повышена производительность\n" +
+                                     "- Просмотр прибытия выбранного транспорта на остановки (Просмотр остановки)\n" +
+                                     "- Добавляю возможность выбора конкретного времени на вкладке транспорта\n" +
+                                     "- Изменен алгоритм отображения остановок на карте\n" +
+                                     "- Временно отключена вкладка Группы";
+
         public override string ChangeLogOnce
         {
             get
@@ -55,7 +57,9 @@ namespace UniversalMinskTransRelease.ModelView
 
         protected override void OnPropertyChanged(string propertyName = null)
         {
-            dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { base.OnPropertyChanged(propertyName); });
+            dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { base.OnPropertyChanged(propertyName); })
+                .AsTask()
+                .ConfigureAwait(false);
         }
     }
 }

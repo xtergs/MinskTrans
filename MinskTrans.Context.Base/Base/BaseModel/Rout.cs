@@ -29,24 +29,24 @@ namespace MinskTrans.Context.Base.BaseModel
 				return;
 			if (String.IsNullOrWhiteSpace(RouteNum))
 				RouteNum = routR.RouteNum;
-			if (string.IsNullOrWhiteSpace(Authority))
-				Authority = routR.Authority;
-			if (string.IsNullOrWhiteSpace(City))
-				City = routR.City;
+			//if (string.IsNullOrWhiteSpace(Authority))
+			//	Authority = routR.Authority;
+			//if (string.IsNullOrWhiteSpace(City))
+			//	City = routR.City;
 			if (Transport == TransportType.None)
 				Transport = routR.Transport;
-			if (string.IsNullOrWhiteSpace(Operator))
-				Operator = routR.Operator;
-			if (string.IsNullOrWhiteSpace(ValidityPeriods))
-				ValidityPeriods = routR.ValidityPeriods;
-			if (string.IsNullOrWhiteSpace(SpecialDates))
+			//if (string.IsNullOrWhiteSpace(Operator))
+			//	Operator = routR.Operator;
+			//if (string.IsNullOrWhiteSpace(ValidityPeriods))
+			//	ValidityPeriods = routR.ValidityPeriods;
+			//if (string.IsNullOrWhiteSpace(SpecialDates))
 				SpecialDates = routR.SpecialDates;
-			if (string.IsNullOrWhiteSpace(RoutTag))
-				RoutTag = routR.RoutTag;
+			//if (string.IsNullOrWhiteSpace(RoutTag))
+			//	RoutTag = routR.RoutTag;
 			if (string.IsNullOrWhiteSpace(RoutType))
 				RoutType = routR.RoutType;
-			if (string.IsNullOrWhiteSpace(Commercial))
-				Commercial = routR.Commercial;
+			//if (string.IsNullOrWhiteSpace(Commercial))
+			//	Commercial = routR.Commercial;
 			if (string.IsNullOrWhiteSpace(RouteName))
 				RouteName = routR.RouteName;
 			if (string.IsNullOrWhiteSpace(Weekdays))
@@ -63,20 +63,27 @@ namespace MinskTrans.Context.Base.BaseModel
 		{
 			Inicialize(rout);
 			RouteNum = GetNext().Trim();
-			Authority = GetNext().Trim();
-			City = GetNext().Trim();
+            //Authority = 
+            GetNext();
+            //City = 
+            GetNext();
 			Transport = transportTypeDictionary[GetNext()];
-			Operator = GetNext().Trim();
-			ValidityPeriods = GetNext().Trim();
+            //Operator = 
+            GetNext();
+            //ValidityPeriods = 
+            GetNext().Trim();
 			SpecialDates = GetNext().Trim();
-			RoutTag = GetNext().Trim();
+            //RoutTag = 
+            GetNext().Trim();
 			RoutType = GetNext().Trim();
-			Commercial = GetNext().Trim();
+            //Commercial = 
+            GetNext().Trim();
 			RouteName = GetNext().Trim().Replace("  "," ").Replace("дс","ДС").Replace("д/с","ДС");
 			Weekdays = GetNext().Trim();
 			RoutId = int.Parse(GetNext());
 
-			Entry = GetNext();
+            //Entry = 
+            GetNext();
 			string[] temp = GetNext().Split(',');
 			RouteStops = new List<int>();
 			foreach (string s in temp)
@@ -85,8 +92,10 @@ namespace MinskTrans.Context.Base.BaseModel
 					continue;
 				RouteStops.Add(int.Parse(s));
 			}
-			Data = GetNext();
-			Datestart = GetNext();
+            //Data = 
+            GetNext();
+            Datestart = 
+            GetNext();
 			if (stops == null)
 				stops = new List<Stop>();
 		}

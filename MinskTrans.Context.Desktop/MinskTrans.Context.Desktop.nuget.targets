@@ -5,5 +5,6 @@
   </PropertyGroup>
   <ImportGroup>
     <Import Project="$(NuGetPackageRoot)\Microsoft.Bcl.Build\1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('$(NuGetPackageRoot)\Microsoft.Bcl.Build\1.0.21\build\Microsoft.Bcl.Build.targets')" />
+    <Import Project="$(NuGetPackageRoot)\Microsoft.Bcl.Build.Symbols\1.0.20\build\Microsoft.Bcl.Build.Symbols.targets" Condition="Exists('$(NuGetPackageRoot)\Microsoft.Bcl.Build.Symbols\1.0.20\build\Microsoft.Bcl.Build.Symbols.targets')" />
   </ImportGroup>
 </Project>

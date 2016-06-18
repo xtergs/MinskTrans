@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="EmitMSBuildWarning" BeforeTargets="Build">
-    <Warning Text="Packages containing MSBuild targets and props files cannot be fully installed in projects targeting multiple frameworks. The MSBuild targets and props files have been ignored." />
-  </Target>
+  <PropertyGroup Condition="'$(NuGetPackageRoot)' == ''">
+    <NuGetPackageRoot>$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+  </PropertyGroup>
+  <ImportGroup>
+    <Import Project="$(NuGetPackageRoot)\Microsoft.Bcl.Build\1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('$(NuGetPackageRoot)\Microsoft.Bcl.Build\1.0.21\build\Microsoft.Bcl.Build.targets')" />
+    <Import Project="$(NuGetPackageRoot)\Microsoft.Bcl.Build.Symbols\1.0.20\build\Microsoft.Bcl.Build.Symbols.targets" Condition="Exists('$(NuGetPackageRoot)\Microsoft.Bcl.Build.Symbols\1.0.20\build\Microsoft.Bcl.Build.Symbols.targets')" />
+  </ImportGroup>
 </Project>

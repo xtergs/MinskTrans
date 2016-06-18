@@ -1,2 +1,2 @@
-MainPackage=C:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\bin\x86\Debug\UniversalMinskTransRelease_2016.617.4.0_x86_Debug.appx
-SymbolPackage=d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\UniversalMinskTransRelease_2016.617.4.0_Debug_Test\UniversalMinskTransRelease_2016.617.4.0_x86_Debug.appxsym
+MainPackage=D:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\bin\x86\Release\UniversalMinskTransRelease_2016.617.19.0_x86.appx
+SymbolPackage=d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\UniversalMinskTransRelease_2016.617.19.0_Test\UniversalMinskTransRelease_2016.617.19.0_x86.appxsym

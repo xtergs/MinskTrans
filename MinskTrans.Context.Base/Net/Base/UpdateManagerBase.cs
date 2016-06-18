@@ -14,14 +14,14 @@ using Newtonsoft.Json;
 
 namespace MinskTrans.Net.Base
 {
-	public struct TimeTable
-	{
-		public IList<Rout> Routs;
-		public IList<Stop> Stops;
-		public IList<Schedule> Time;
-	}
+    public struct TimeTable
+    {
+        public IList<Rout> Routs;
+        public IList<Stop> Stops;
+        public IList<Schedule> Time;
+    }
 
-    struct Pair
+    internal struct Pair
     {
         public Pair(string fileName, TypeFolder folder, string link)
         {
@@ -29,39 +29,40 @@ namespace MinskTrans.Net.Base
             Folder = folder;
             Link = link;
         }
-        public string FileName { get;  }
+
+        public string FileName { get; }
         public TypeFolder Folder { get; }
         public string Link { get; }
     }
 
-    
-	public class UpdateManagerBase
-	{
-	    private FilePathsSettings filesPath;
-        
-		//protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
-		//{
-		//	new KeyValuePair<string, string>("stops.txt", @"http://www.minsktrans.by/city/minsk/stops.txt"),
-		//	new KeyValuePair<string, string>("routes.txt", @"http://www.minsktrans.by/city/minsk/routes.txt"),
-		//	new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
-		//};
 
-		//public TypeFolder Folder { get; set; } //= TypeFolder.Temp;
+    public class UpdateManagerBase
+    {
+        private FilePathsSettings filesPath;
 
-	    Task ClearDownloadedFiles(List<Pair> list)
-	    {
+        //protected readonly List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>
+        //{
+        //	new KeyValuePair<string, string>("stops.txt", @"http://www.minsktrans.by/city/minsk/stops.txt"),
+        //	new KeyValuePair<string, string>("routes.txt", @"http://www.minsktrans.by/city/minsk/routes.txt"),
+        //	new KeyValuePair<string, string>("times.txt", @"http://www.minsktrans.by/city/minsk/times.txt")
+        //};
+
+        //public TypeFolder Folder { get; set; } //= TypeFolder.Temp;
+
+        private Task ClearDownloadedFiles(List<Pair> list)
+        {
             List<Task> tasks = new List<Task>(list.Count);
-	        tasks.AddRange(list.Select(line => fileHelper.DeleteFile(line.Folder, line.FileName)));
+            tasks.AddRange(list.Select(line => fileHelper.DeleteFile(line.Folder, line.FileName)));
 
-	        return Task.WhenAll(tasks);
-	    }
+            return Task.WhenAll(tasks);
+        }
 
-	    public Task ApproveDonloadedFilesAsync()
-	    {
-	        return Task.WhenAll(
-	            fileHelper.SafeMoveAsync(folder: filesPath.StopsFile.Folder,
-	                from: filesPath.StopsFile.NewFileName,
-	                to: filesPath.StopsFile.FileName),
+        public Task ApproveDonloadedFilesAsync()
+        {
+            return Task.WhenAll(
+                fileHelper.SafeMoveAsync(folder: filesPath.StopsFile.Folder,
+                    from: filesPath.StopsFile.NewFileName,
+                    to: filesPath.StopsFile.FileName),
                 fileHelper.SafeMoveAsync(folder: filesPath.RouteFile.Folder,
                     from: filesPath.RouteFile.NewFileName,
                     to: filesPath.RouteFile.FileName),
@@ -69,27 +70,28 @@ namespace MinskTrans.Net.Base
                     from: filesPath.TimeFile.NewFileName,
                     to: filesPath.TimeFile.FileName)
                 );
-	    }
+        }
 
-	    public Task<bool> DownloadFormatedUpdateAsync(CancellationToken cancelToken)
-	    {
-	        try
-	        {
-	            Logger?.Debug($"{nameof(DownloadFormatedUpdateAsync)} is started");
+        public Task<bool> DownloadFormatedUpdateAsync(CancellationToken cancelToken)
+        {
+            try
+            {
+                Logger?.Debug($"{nameof(DownloadFormatedUpdateAsync)} is started");
                 List<Pair> list = new List<Pair>()
                 {
-                    new Pair(filesPath.StopsFile.NewFileName, filesPath.StopsFile.Folder, filesPath.StopsFile.SecondFormatedLink),
-                    new Pair(filesPath.RouteFile.NewFileName, filesPath.RouteFile.Folder, filesPath.RouteFile.SecondFormatedLink),
-                    new Pair(filesPath.TimeFile.NewFileName, filesPath.TimeFile.Folder, filesPath.TimeFile.SecondFormatedLink)
+                    new Pair(filesPath.StopsFile.NewFileName, filesPath.StopsFile.Folder,
+                        filesPath.StopsFile.SecondFormatedLink),
+                    new Pair(filesPath.RouteFile.NewFileName, filesPath.RouteFile.Folder,
+                        filesPath.RouteFile.SecondFormatedLink),
+                    new Pair(filesPath.TimeFile.NewFileName, filesPath.TimeFile.Folder,
+                        filesPath.TimeFile.SecondFormatedLink)
                 };
-	            return DownloadUpdateAsync(list, cancelToken);
-
-	        }
-	        finally
-	        {
-	        Logger?.Debug($"{nameof(DownloadFormatedUpdateAsync)} is ended");
-	            
-	        }
+                return DownloadUpdateAsync(list, cancelToken);
+            }
+            finally
+            {
+                Logger?.Debug($"{nameof(DownloadFormatedUpdateAsync)} is ended");
+            }
         }
 
         public Task<bool> DownloadOriginalUpdateAsync(CancellationToken cancelToken)
@@ -99,135 +101,150 @@ namespace MinskTrans.Net.Base
                 Logger?.Debug($"{nameof(DownloadOriginalUpdateAsync)} is started");
                 List<Pair> list = new List<Pair>()
                 {
-                    new Pair(filesPath.StopsFile.NewFileName, filesPath.StopsFile.Folder, filesPath.StopsFile.OriginalLink),
-                    new Pair(filesPath.RouteFile.NewFileName, filesPath.RouteFile.Folder, filesPath.RouteFile.OriginalLink),
+                    new Pair(filesPath.StopsFile.NewFileName, filesPath.StopsFile.Folder,
+                        filesPath.StopsFile.OriginalLink),
+                    new Pair(filesPath.RouteFile.NewFileName, filesPath.RouteFile.Folder,
+                        filesPath.RouteFile.OriginalLink),
                     new Pair(filesPath.TimeFile.NewFileName, filesPath.TimeFile.Folder, filesPath.TimeFile.OriginalLink)
                 };
                 return DownloadUpdateAsync(list, cancelToken);
-
             }
             finally
             {
                 Logger?.Debug($"{nameof(DownloadOriginalUpdateAsync)} is ended");
-
             }
         }
 
-        async Task<bool> DownloadUpdateAsync(List<Pair> list,  CancellationToken cancelToken)
-		{
-			OnDataBaseDownloadStarted();
+        private async Task<bool> DownloadUpdateAsync(List<Pair> list, CancellationToken cancelToken)
+        {
+            OnDataBaseDownloadStarted();
             Logger.Info("UpdadteManagerBase.DownloadUpdadte started");
-			//var folder = Folder;
-		    if (cancelToken.IsCancellationRequested)
-		        return false;
-			try
-			{
+            //var folder = Folder;
+            if (cancelToken.IsCancellationRequested)
+                return false;
+            try
+            {
                 await ClearDownloadedFiles(list);
-			    await Task.WhenAll(list.Select(x => internetHelper.Download(x.Link, x.FileName, x.Folder)));
-				OnDataBaseDownloadEnded();
-
-			}
-			catch (HttpRequestException)
-			{
-				OnErrorDownloading();
+                await Task.WhenAll(list.Select(x => internetHelper.Download(x.Link, x.FileName, x.Folder)));
+                OnDataBaseDownloadEnded();
+            }
+            catch (HttpRequestException)
+            {
+                OnErrorDownloading();
                 /*await*/
-			    ClearDownloadedFiles(list);
+                await ClearDownloadedFiles(list).ConfigureAwait(false);
 
                 return false;
-			}
-			catch (System.Net.WebException)
-			{
-				OnErrorDownloading();
+            }
+            catch (System.Net.WebException)
+            {
+                OnErrorDownloading();
                 /*await*/
-                ClearDownloadedFiles(list);
+                await ClearDownloadedFiles(list).ConfigureAwait(false);
                 return false;
-			}
-			catch (Exception e)
-			{
-				OnErrorDownloading();
+            }
+            catch (Exception e)
+            {
+                OnErrorDownloading();
                 Logger.Info("UpdadteManagerBase.DownloadUpdadte error");
                 Logger.Fatal("UpdadteManagerBase.DownloadUpdadte", e);
                 /*await*/
-                ClearDownloadedFiles(list);
+                await ClearDownloadedFiles(list).ConfigureAwait(false);
                 throw;
-			}
-		    //await
-		    //    fileHelper.SafeMoveAsync(folder: filesPath.StopsFile.Folder, 
-      //                                  from: filesPath.StopsFile.NewFileName,
-      //                                  to: filesPath.StopsFile.FileName);
+            }
+            //await
+            //    fileHelper.SafeMoveAsync(folder: filesPath.StopsFile.Folder, 
+            //                                  from: filesPath.StopsFile.NewFileName,
+            //                                  to: filesPath.StopsFile.FileName);
 
-		    if (cancelToken.IsCancellationRequested)
-		    {
-		        ClearDownloadedFiles(list);
-		        return false;
-		    }
+            if (cancelToken.IsCancellationRequested)
+            {
+                await ClearDownloadedFiles(list).ConfigureAwait(false);
+                return false;
+            }
             Logger.Info("UpdadteManagerBase.DownloadUpdadte ended");
             return true;
-		}
+        }
 
-		protected IList<Rout> Routs { get; set; }
-		protected IList<Stop> Stops { get; set; }
-		protected IList<Schedule> Time { get; set; }
+        protected IList<Rout> Routs { get; set; }
+        protected IList<Stop> Stops { get; set; }
+        protected IList<Schedule> Time { get; set; }
 
-		protected readonly FileHelperBase fileHelper;
-		protected readonly InternetHelperBase internetHelper;
-		protected readonly ITimeTableParser timeTableParser;
-	    protected readonly ILogger Logger;
-		public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser, ILogManager logger, FilePathsSettings filesPath)
-		{
-			if (helper == null)
-				throw new ArgumentNullException(nameof(helper));
-			if (internet == null)
-				throw new ArgumentNullException(nameof(internet));
-			if (parser == null)
-				throw new ArgumentNullException(nameof(parser));
-		    if (logger == null)
-		        throw new ArgumentNullException(nameof(logger));
-			fileHelper = helper;
-			internetHelper = internet;
-			//Folder = TypeFolder.Temp;
-			timeTableParser = parser;
-		    this.filesPath = filesPath;
-		    this.Logger = logger.GetLogger<UpdateManagerBase>();
-		}
+        protected readonly FileHelperBase fileHelper;
+        protected readonly InternetHelperBase internetHelper;
+        protected readonly ITimeTableParser timeTableParser;
+        protected readonly ILogger Logger;
 
-	    private async Task<List<string>> ReadFilesAsync()
-	    {
-	        string[] resList = new string[3];
-	        await Task.WhenAll(Task.Run(async () =>
-	        {
-	            resList[0] = await fileHelper.ReadAllTextAsync(filesPath.StopsFile.Folder, filesPath.StopsFile.NewFileName);
-	        }), Task.Run(async () =>
-	        {
-	            resList[1] = await fileHelper.ReadAllTextAsync(filesPath.RouteFile.Folder, filesPath.RouteFile.NewFileName);
-	        }), Task.Run(async () =>
-	        {
-	            resList[2] = await fileHelper.ReadAllTextAsync(filesPath.TimeFile.Folder, filesPath.TimeFile.NewFileName);
+        public UpdateManagerBase(FileHelperBase helper, InternetHelperBase internet, ITimeTableParser parser,
+            ILogManager logger, FilePathsSettings filesPath)
+        {
+            if (helper == null)
+                throw new ArgumentNullException(nameof(helper));
+            if (internet == null)
+                throw new ArgumentNullException(nameof(internet));
+            if (parser == null)
+                throw new ArgumentNullException(nameof(parser));
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+            fileHelper = helper;
+            internetHelper = internet;
+            //Folder = TypeFolder.Temp;
+            timeTableParser = parser;
+            this.filesPath = filesPath;
+            this.Logger = logger.GetLogger<UpdateManagerBase>();
+        }
 
-	        })
-	            );
-	        return resList.ToList();
-	    }
+        private async Task<List<string>> ReadFilesAsync()
+        {
+            string[] resList = new string[3];
+            await
+                Task.WhenAll(
+                    Task.Run(
+                        async () =>
+                        {
+                            resList[0] =
+                                await
+                                    fileHelper.ReadAllTextAsync(filesPath.StopsFile.Folder,
+                                        filesPath.StopsFile.NewFileName);
+                        }),
+                    Task.Run(
+                        async () =>
+                        {
+                            resList[1] =
+                                await
+                                    fileHelper.ReadAllTextAsync(filesPath.RouteFile.Folder,
+                                        filesPath.RouteFile.NewFileName);
+                        }),
+                    Task.Run(
+                        async () =>
+                        {
+                            resList[2] =
+                                await
+                                    fileHelper.ReadAllTextAsync(filesPath.TimeFile.Folder,
+                                        filesPath.TimeFile.NewFileName);
+                        })
+                    );
+            return resList.ToList();
+        }
 
-	    public async Task<TimeTable> GetTimeTableAsync()
-	    {
-
+        public async Task<TimeTable> GetTimeTableAsync()
+        {
             var list = await ReadFilesAsync();
-	        TimeTable table;
-	        try
-	        {
-	            table = GetTimeTableFromFormatedFile(list);
-	        }
-	        catch (Exception)
-	        {
-	            table = await GetTimeTable(list);
-	        }
-	        return table;
-	    }
+            TimeTable table;
+            try
+            {
+                table = GetTimeTableFromFormatedFile(list);
+            }
+            catch (Exception)
+            {
+                table = await GetTimeTable(list);
+            }
+            return table;
+        }
 
-	    TimeTable GetTimeTableFromFormatedFile(List<string> list)
-	    {
-	        IList<Stop> newStops = JsonConvert.DeserializeObject<IList<Stop>>(list[0]);
+        private TimeTable GetTimeTableFromFormatedFile(List<string> list)
+        {
+            IList<Stop> newStops = JsonConvert.DeserializeObject<IList<Stop>>(list[0]);
             IList<Rout> newRoutes = JsonConvert.DeserializeObject<IList<Rout>>(list[1]);
             IList<Schedule> newSchedule = JsonConvert.DeserializeObject<IList<Schedule>>(list[2]);
 
@@ -239,13 +256,13 @@ namespace MinskTrans.Net.Base
             };
         }
 
-        async Task<TimeTable> GetTimeTableFromFormatedFile()
+        private async Task<TimeTable> GetTimeTableFromFormatedFile()
         {
             var list = await ReadFilesAsync();
             return GetTimeTableFromFormatedFile(list);
         }
 
-        public async Task<TimeTable> GetTimeTable(List<string> list )
+        public async Task<TimeTable> GetTimeTable(List<string> list)
         {
             Logger.Info("UpdadteManagerBase.GetTimeTable started");
             IList<Stop> newStops = null;
@@ -285,7 +302,6 @@ namespace MinskTrans.Net.Base
                             Logger.Fatal("UpdadteManagerBase: ParseStops", e);
                             throw;
                         }
-
                     }),
                     Task.Run(() =>
                     {
@@ -300,7 +316,6 @@ namespace MinskTrans.Net.Base
                             Logger.Fatal("UpdadteManagerBase: ParseStops", e);
                             throw;
                         }
-
                     }));
                 Logger?.Info("UpdadteManagerBase: All threads ended");
                 //Debug.WriteLine("All threads ended");
@@ -331,7 +346,7 @@ namespace MinskTrans.Net.Base
         {
             if (token.IsCancellationRequested)
                 return new TimeTable();
-            var list =await ReadFilesAsync();
+            var list = await ReadFilesAsync();
             if (token.IsCancellationRequested)
                 return new TimeTable();
             TimeTable table;
@@ -344,30 +359,31 @@ namespace MinskTrans.Net.Base
                 table = await GetTimeTable(list);
             }
             return table;
-
         }
 
-		public event EventHandler DataBaseDownloadStarted;
-		public event EventHandler DataBaseDownloadEnded;
-		public event EventHandler ErrorDownloading;
+        public event EventHandler DataBaseDownloadStarted;
+        public event EventHandler DataBaseDownloadEnded;
+        public event EventHandler ErrorDownloading;
 
-		protected virtual void OnDataBaseDownloadStarted()
-		{
-			Logger.Debug("OnDBDownloadStarted");
-			var handler = DataBaseDownloadStarted;
-		    handler?.Invoke(this, EventArgs.Empty);
-		}
-		protected virtual void OnDataBaseDownloadEnded()
-		{
-			Logger.Debug("OnDBDownloadEnded");
-			var handler = DataBaseDownloadEnded;
-		    handler?.Invoke(this, EventArgs.Empty);
-		}
-		protected virtual void OnErrorDownloading()
-		{
-			Logger.Debug("OnErrorDonloading");
-			var handler = ErrorDownloading;
-		    handler?.Invoke(this, EventArgs.Empty);
-		}
-	}
+        protected virtual void OnDataBaseDownloadStarted()
+        {
+            Logger.Debug("OnDBDownloadStarted");
+            var handler = DataBaseDownloadStarted;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnDataBaseDownloadEnded()
+        {
+            Logger.Debug("OnDBDownloadEnded");
+            var handler = DataBaseDownloadEnded;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnErrorDownloading()
+        {
+            Logger.Debug("OnErrorDonloading");
+            var handler = ErrorDownloading;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+    }
 }

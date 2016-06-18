@@ -19,12 +19,12 @@ public class Stop : StopBase
 		{
 			if (stop == null)
 				return;
-			if (String.IsNullOrWhiteSpace(City))
-				City = stop.City;
-			if (String.IsNullOrWhiteSpace(Area))
-				Area = stop.Area;
-			if (String.IsNullOrWhiteSpace(Streat))
-				Streat = stop.Streat;
+			//if (String.IsNullOrWhiteSpace(City))
+			//	City = stop.City;
+			//if (String.IsNullOrWhiteSpace(Area))
+			//	Area = stop.Area;
+			//if (String.IsNullOrWhiteSpace(Streat))
+			//	Streat = stop.Streat;
 		    if (string.IsNullOrWhiteSpace(Name))
 		    {
 		        Name = stop.Name;
@@ -50,15 +50,18 @@ public class Stop : StopBase
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			City = GetStr().Trim();
+			//City = 
+                GetStr();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			Area = GetStr().Trim();
+			//Area = 
+                GetStr();
 
-			//indexStart = indexEnd + 1;
-			//indexEnd = str.IndexOf(sym, indexStart);
-			Streat = GetStr().Trim();
+            //indexStart = indexEnd + 1;
+            //indexEnd = str.IndexOf(sym, indexStart);
+            //Streat = 
+            GetStr();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
@@ -79,11 +82,13 @@ public class Stop : StopBase
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			StopsStr = GetStr().Trim();
+			StopsStr = 
+                GetStr();
 
 			//indexStart = indexEnd + 1;
 			//indexEnd = str.IndexOf(sym, indexStart);
-			StopNum = GetStr().Trim();
+			//StopNum =
+                GetStr();
 
 			Stops = new List<Stop>();
 			Routs = new List<Rout>();

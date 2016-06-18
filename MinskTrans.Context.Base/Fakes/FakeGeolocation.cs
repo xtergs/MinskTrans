@@ -7,7 +7,7 @@ using MinskTrans.Context.Base;
 
 namespace MinskTrans.Context.Fakes
 {
-    public class FakeGeolocation :IGeolocation
+    public class FakeGeolocation : IGeolocation
     {
         #region Implementation of IGeolocation
 
@@ -18,5 +18,15 @@ namespace MinskTrans.Context.Fakes
         public event StatusChangedEventArgs StatusChanged;
 
         #endregion
+
+        protected virtual void OnPositionChanged(PositionChangedEventArgsArgs args)
+        {
+            PositionChanged?.Invoke(this, args);
+        }
+
+        protected virtual void OnStatusChanged(StatusChangedEventArgsArgs args)
+        {
+            StatusChanged?.Invoke(this, args);
+        }
     }
 }

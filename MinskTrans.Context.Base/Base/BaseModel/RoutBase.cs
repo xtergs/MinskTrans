@@ -33,44 +33,44 @@ namespace MinskTrans.Context.Base.BaseModel
 		public RoutBase(RoutBase routbase)
 		{
 			RouteNum = routbase.RouteNum;
-			Authority = routbase.Authority;
-			City = routbase.City;
+			//Authority = routbase.Authority;
+			//City = routbase.City;
 			Transport = routbase.Transport;
-			Operator = routbase.Operator;
-			ValidityPeriods = routbase.ValidityPeriods;
+			//Operator = routbase.Operator;
+			//ValidityPeriods = routbase.ValidityPeriods;
 			SpecialDates = routbase.SpecialDates;
-			RoutTag = routbase.RoutTag;
+			//RoutTag = routbase.RoutTag;
 			RoutType = routbase.RoutType;
-			Commercial = routbase.Commercial;
+			//Commercial = routbase.Commercial;
 			RouteName = routbase.RouteName;
 			Weekdays = routbase.Weekdays;
 			RoutId = routbase.RoutId;
-			Entry = routbase.Entry;
+			//Entry = routbase.Entry;
 			RouteStops = routbase.RouteStops;
-			Data = routbase.Data;
-			Datestart = routbase.Datestart;
+			//Data = routbase.Data;
+			//Datestart = routbase.Datestart;
 		}
 
 		[JsonProperty]
 		public string RouteNum { get; set; }
 		//[JsonProperty]
-		public string Authority { get; set; }
+		//public string Authority { get; set; }
 		//[JsonProperty]
-		public string City { get; set; }
+		//public string City { get; set; }
 		[JsonProperty]
 		public TransportType Transport { get; set; }
 		//[JsonProperty]
-		public string Operator { get; set; }
+		//public string Operator { get; set; }
 		//[JsonProperty]
-		public string ValidityPeriods { get; set; }
+		//public string ValidityPeriods { get; set; }
 		[JsonProperty]
 		public string SpecialDates { get; set; }
 		//[JsonProperty]
-		public string RoutTag { get; set; }
+		//public string RoutTag { get; set; }
 		[JsonProperty]
 		public string RoutType { get; set; }
 		//[JsonProperty]
-		public string Commercial { get; set; }
+		//public string Commercial { get; set; }
 		[JsonProperty]
 		public string RouteName { get; set; }
 		[JsonProperty]
@@ -78,12 +78,12 @@ namespace MinskTrans.Context.Base.BaseModel
 		[JsonProperty]
 		public int RoutId { get; set; }
 		//[JsonProperty]
-		public string Entry { get; set; }
+		//public string Entry { get; set; }
 		[JsonProperty]
 		public List<int> RouteStops { get; set; }
 		//[JsonProperty]
-		public string Data { get; set; }
-		//[JsonProperty]
+		//public string Data { get; set; }
+		[JsonProperty]
 		public string Datestart { get; set; }
 	}
 }

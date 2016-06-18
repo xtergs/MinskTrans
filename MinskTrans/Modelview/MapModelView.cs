@@ -21,6 +21,7 @@ using MinskTrans.DesctopClient.Properties;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
+
 #else
 using Windows.UI.Xaml.Input;
 using MinskTrans.Universal;
@@ -32,132 +33,132 @@ using GalaSoft.MvvmLight.Command;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-	public class MapModelView: BaseModelView
-	{
-		private Stop currentStop;
-		private Rout currentRout;
-		private Location location;
-	    protected bool showAllPushpins = true;
-	    protected readonly Map map;
-	    protected List<PushpinLocation> allPushpins;
-		private Pushpin ipushpin;
-		private ObservableCollection<Pushpin> pushpins1;
-		private Pushpin startStopPushpin;
-		private Pushpin endStopPushpin;
-		private string resultString;
-		private ISettingsModelView settings;
+    public class MapModelView : BaseModelView
+    {
+        private Stop currentStop;
+        private Rout currentRout;
+        private Location location;
+        protected bool showAllPushpins = true;
+        protected readonly Map map;
+        protected List<PushpinLocation> allPushpins;
+        private Pushpin ipushpin;
+        private ObservableCollection<Pushpin> pushpins1;
+        private Pushpin startStopPushpin;
+        private Pushpin endStopPushpin;
+        private string resultString;
+        private ISettingsModelView settings;
 
-		private IGeolocation geolocator;
+        private IGeolocation geolocator;
 
-		public IGeolocation Geolocator => geolocator;
+        public IGeolocation Geolocator => geolocator;
 
-	    public delegate MapModelView MapModelViewFactory(Map map, PushPinBuilder pushPinBuilder);
+        public delegate MapModelView MapModelViewFactory(Map map, PushPinBuilder pushPinBuilder);
 
         private MapModelView(IBussnessLogics context)
-			:base(context)
-		{
-			
-		}
-
-		public static Style StylePushpin { get; set; }
-
-	    protected readonly PushPinBuilder pushBuilder;
-
-        //Design only!!!!
-	    public MapModelView()
-	    {
-	    }
-
-	    public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation, StopModelView stopModelView , PushPinBuilder pushPinBuilder = null)
-			: base(context)
-		{
-		    if (stopModelView == null)
-		        throw new ArgumentNullException(nameof(stopModelView));
-			this.map = map;
-		    this.StopModelView = stopModelView;
-	        StopModelView.PropertyChanged += (sender, args) =>
-	        {
-	            if (StopModelView.FilteredSelectedStop != null && 
-                args.PropertyName == nameof(StopModelView.FilteredSelectedStop)) 
-                    ShowStopCommand.Execute(StopModelView.FilteredSelectedStop);
-	        };
-			pushBuilder = pushPinBuilder;
-			Settings = newSettigns;
-			map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
-		    if (geolocation == null)
-		        throw new ArgumentNullException(nameof(geolocation));
-		    this.geolocator = geolocation;
-
-		    map.MinZoomLevel = 11;
-		    map.MaxZoomLevel = 19; 
-			MaxZoomLevel = 14;
-			map.ZoomLevel = 19;
-			map.Center = new Location(53.898532, 27.562501);
-			allPushpins = new List<PushpinLocation>();
-			RegistrMap(true);
-            StopModelView.Refresh();
-
+            : base(context)
+        {
         }
 
-	    public StopModelView StopModelView
-	    {
-	        get { return _stopModelView; }
-	        set
-	        {
-	            _stopModelView = value;
-	            OnPropertyChanged();
-	        }
-	    }
+        public static Style StylePushpin { get; set; }
 
-	    public void MarkPushPins(IEnumerable<Stop> stops, Style stylePushPin)
-		{
-			foreach (var pushpinLocation in allPushpins)
-			{
-				if (stops.Any(x => pushpinLocation.Stop.ID == x.ID))
-					pushpinLocation.Pushpin.Style = stylePushPin;
-			}
-		}
+        protected readonly PushPinBuilder pushBuilder;
 
-		private bool isActive = true;
+        //Design only!!!!
+        public MapModelView()
+        {
+        }
 
-		public void Disable()
-		{
-			if (isActive)
-			{
-				isActive = false;
-				RegistrMap(isActive);
-			}
-		}
+        public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation,
+            StopModelView stopModelView, PushPinBuilder pushPinBuilder = null)
+            : base(context)
+        {
+            if (stopModelView == null)
+                throw new ArgumentNullException(nameof(stopModelView));
+            this.map = map;
+            this.StopModelView = stopModelView;
+            StopModelView.PropertyChanged += (sender, args) =>
+            {
+                if (StopModelView.FilteredSelectedStop != null &&
+                    args.PropertyName == nameof(StopModelView.FilteredSelectedStop))
+                    ShowStopCommand.Execute(StopModelView.FilteredSelectedStop);
+            };
+            pushBuilder = pushPinBuilder;
+            Settings = newSettigns;
+            map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
+            if (geolocation == null)
+                throw new ArgumentNullException(nameof(geolocation));
+            this.geolocator = geolocation;
 
-		public void Activate()
-		{
-			if (!isActive)
-			{
-				isActive = true;
-				RegistrMap(isActive);
-			}
-		}
+            map.MinZoomLevel = 11;
+            map.MaxZoomLevel = 19;
+            MaxZoomLevel = 14;
+            map.ZoomLevel = 19;
+            map.Center = new Location(53.898532, 27.562501);
+            allPushpins = new List<PushpinLocation>();
+            RegistrMap(true);
+            StopModelView.Refresh();
+        }
 
-		private void RegistrMap(bool registr)
-		{
-			if (registr)
-			{
+        public StopModelView StopModelView
+        {
+            get { return _stopModelView; }
+            set
+            {
+                _stopModelView = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public void MarkPushPins(IEnumerable<Stop> stops, Style stylePushPin)
+        {
+            foreach (var pushpinLocation in allPushpins)
+            {
+                if (stops.Any(x => pushpinLocation.Stop.ID == x.ID))
+                    pushpinLocation.Pushpin.Style = stylePushPin;
+            }
+        }
+
+        private bool isActive = true;
+
+        public void Disable()
+        {
+            if (isActive)
+            {
+                isActive = false;
+                RegistrMap(isActive);
+            }
+        }
+
+        public void Activate()
+        {
+            if (!isActive)
+            {
+                isActive = true;
+                RegistrMap(isActive);
+            }
+        }
+
+        private void RegistrMap(bool registr)
+        {
+            if (registr)
+            {
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 				map.DoubleTapped += MapOnDoubleTapped;
 				map.PointerWheelChanged += MapOnPointerWheelChanged;
 #endif
-				SetGPS();
-			}
-			else
-			{
-				StopGPS();
+                SetGPS();
+            }
+            else
+            {
+                StopGPS();
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 
 				map.DoubleTapped -= MapOnDoubleTapped;
 				map.PointerWheelChanged -= MapOnPointerWheelChanged;
 #endif
-			}
-		}
+            }
+        }
+
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 
 		private void MapOnPointerWheelChanged(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
@@ -170,79 +171,79 @@ namespace MinskTrans.DesctopClient.Modelview
 			map.TargetZoomLevel += 1;
 		}
 #endif
-		public ISettingsModelView Settings
-		{
-			get { return settings; }
-			set
-			{
-				if (value == null)
-					return;
-				if (settings != null)
-					settings.PropertyChanged -= SettingsOnPropertyChanged;
-				settings = value;
 
-				settings.PropertyChanged += SettingsOnPropertyChanged;
-				OnPropertyChanged();
-			}
-		}
+        public ISettingsModelView Settings
+        {
+            get { return settings; }
+            set
+            {
+                if (value == null)
+                    return;
+                if (settings != null)
+                    settings.PropertyChanged -= SettingsOnPropertyChanged;
+                settings = value;
 
-		private void SettingsOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-		{
-			if (propertyChangedEventArgs.PropertyName == "UseGPS")
-			{
-				SetGPS();
-			}
-		}
+                settings.PropertyChanged += SettingsOnPropertyChanged;
+                OnPropertyChanged();
+            }
+        }
 
-		private async void SetGPS()
-		{
+        private void SettingsOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == "UseGPS")
+            {
+                SetGPS();
+            }
+        }
+
+        private void SetGPS()
+        {
 //#if WINDOWS_UAP
 //			var statusAccess = await Geolocator.RequestAccessAsync();
 //			if (statusAccess == GeolocationAccessStatus.Denied)
 //				return;
 //#endif
-			Context.SetGPS(settings.UseGPS);
-				if (settings.UseGPS)
-				{
-					StartGPS();
+            Context.SetGPS(settings.UseGPS);
+            if (settings.UseGPS)
+            {
+                StartGPS();
+            }
+            else
+            {
+                StopGPS();
+            }
+            ShowICommand.RaiseCanExecuteChanged();
+        }
 
-				}
-				else
-				{
-					StopGPS();
-				}
-			ShowICommand.RaiseCanExecuteChanged();
-		}
+        public void StartGPS()
+        {
+            try
+            {
+                geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
 
-		public void StartGPS()
-		{
-			try
-			{
-				geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
-
-				geolocator.ReportInterval = Settings.GPSInterval;
+                geolocator.ReportInterval = Settings.GPSInterval;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 				geolocator.StatusChanged  += GeolocatorOnStatusChanged;
 				geolocator.PositionChanged += GeolocatorOnPositionChanged;
 #endif
-			}
-			catch (Exception ex)
-			{
-				if (unchecked((uint)ex.HResult == 0x80004004))
-				{
-					// the application does not have the right capability or the location master switch is off
-					//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
-					//box.ShowAsync();
-				}
-				//else
-				{
-					// something else happened acquring the location
-				}
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                if (unchecked((uint) ex.HResult == 0x80004004))
+                {
+                    // the application does not have the right capability or the location master switch is off
+                    //MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+                    //box.ShowAsync();
+                }
+                //else
+                {
+                    // something else happened acquring the location
+                }
+            }
+        }
 
-		public void StopGPS()
-		{
+        public void StopGPS()
+        {
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 			Ipushpin = null;
 			ShowICommand.RaiseCanExecuteChanged();
@@ -252,7 +253,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 			geolocator = null;
 #endif
-		}
+        }
 
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 		private async void GeolocatorOnStatusChanged(object o, StatusChangedEventArgsArgs args)
@@ -287,58 +288,58 @@ namespace MinskTrans.DesctopClient.Modelview
 		}
 #endif
 
-		public Pushpin StartStopPushpin
-		{
-			get { return startStopPushpin; }
-			set
-			{
-				startStopPushpin = value;
-				OnPropertyChanged(nameof(StartStop));
-			}
-		}
+        public Pushpin StartStopPushpin
+        {
+            get { return startStopPushpin; }
+            set
+            {
+                startStopPushpin = value;
+                OnPropertyChanged(nameof(StartStop));
+            }
+        }
 
-		public Pushpin EndStopPushpin
-		{
-			get { return endStopPushpin; }
-			set
-			{
-				endStopPushpin = value; 
-				OnPropertyChanged(nameof(EndStop));
-			}
-		}
+        public Pushpin EndStopPushpin
+        {
+            get { return endStopPushpin; }
+            set
+            {
+                endStopPushpin = value;
+                OnPropertyChanged(nameof(EndStop));
+            }
+        }
 
-		public Stop StartStop => (Stop) StartStopPushpin?.Tag;
+        public Stop StartStop => (Stop) StartStopPushpin?.Tag;
 
-	    public Stop EndStop => (Stop) EndStopPushpin?.Tag;
+        public Stop EndStop => (Stop) EndStopPushpin?.Tag;
 
-	    protected void ShowOnMap()
-		{
+        protected void ShowOnMap()
+        {
             ShowOnMap(Pushpins.ToArray());
-		}
+        }
 
-	    protected void ShowOnMap(Pushpin[] toRemove, Pushpin[] toAdd)
-	    {
-	        foreach (var pushpin in toRemove)
-	        {
-	            map.Children.Remove(pushpin);
-	        }
-	        foreach (var pushpin in toAdd)
-	        {
-	            try
-	            {
-	                map.Children.Add(pushpin);
-	            }
-	            catch (COMException e)
-	            {
-	                Debug.WriteLine("Error while updating map\n");
-	                Debug.WriteLine(e.Message);
-	                //StopsOnMap.Add(pushpin);
-	            }
-	        }
-	    }
+        protected void ShowOnMap(Pushpin[] toRemove, Pushpin[] toAdd)
+        {
+            foreach (var pushpin in toRemove)
+            {
+                map.Children.Remove(pushpin);
+            }
+            foreach (var pushpin in toAdd)
+            {
+                try
+                {
+                    map.Children.Add(pushpin);
+                }
+                catch (COMException e)
+                {
+                    Debug.WriteLine("Error while updating map\n");
+                    Debug.WriteLine(e.Message);
+                    //StopsOnMap.Add(pushpin);
+                }
+            }
+        }
 
-	    protected void ShowOnMap(Pushpin[] pins)
-	    {
+        protected void ShowOnMap(Pushpin[] pins)
+        {
             var temp = map.Children.OfType<Pushpin>().ToArray();
             var except = temp.Except(pins).ToList();
             foreach (var pushpin in except)
@@ -356,342 +357,329 @@ namespace MinskTrans.DesctopClient.Modelview
             //    map.Children.Add(Ipushpin);
         }
 
-		public ObservableCollection<Pushpin> Pushpins
-		{
-		    get
-		    {
-		        return pushpins1 ?? (pushpins1 = new ObservableCollection<Pushpin>());
-		    }
-		    set
-			{
-				if (Equals(value, pushpins1)) return;
-				pushpins1 = value;
-				OnPropertyChanged();
-			}
-		}
+        public ObservableCollection<Pushpin> Pushpins
+        {
+            get { return pushpins1 ?? (pushpins1 = new ObservableCollection<Pushpin>()); }
+            set
+            {
+                if (Equals(value, pushpins1)) return;
+                pushpins1 = value;
+                OnPropertyChanged();
+            }
+        }
 
-	    protected Pushpin[] stopsOnMap = new Pushpin[0];
+        protected Pushpin[] stopsOnMap = new Pushpin[0];
 
         public int MaxZoomLevel { get; set; }
 
-		protected virtual PushpinLocation CreatePushpin(Stop st)
-		{
-			return new PushpinLocation
-			{
-				Location = new Location(st.Lat, st.Lng),
-				Stop = st,
-				
-			};
-		}
+        protected virtual PushpinLocation CreatePushpin(Stop st)
+        {
+            return new PushpinLocation
+            {
+                Location = new Location(st.Lat, st.Lng),
+                Stop = st,
+            };
+        }
 
-		protected virtual void PreperPushpinsForView(IEnumerable<Stop> needStops)
-		{
-			foreach (var needShowStop in needStops)
-			{
-				var tempPushpin = allPushpins.FirstOrDefault(push => push.Stop.ID == needShowStop.ID);
-				if (tempPushpin == null)
-				{
-					tempPushpin = CreatePushpin(needShowStop);
-					allPushpins.Add(tempPushpin);
-				}
-				Pushpins.Add(tempPushpin.Pushpin);
-			}
-		}
+        protected virtual void PreperPushpinsForView(IEnumerable<Stop> needStops)
+        {
+            foreach (var needShowStop in needStops)
+            {
+                var tempPushpin = allPushpins.FirstOrDefault(push => push.Stop.ID == needShowStop.ID);
+                if (tempPushpin == null)
+                {
+                    tempPushpin = CreatePushpin(needShowStop);
+                    allPushpins.Add(tempPushpin);
+                }
+                Pushpins.Add(tempPushpin.Pushpin);
+            }
+        }
 
-		public virtual void RefreshPushPinsAsync()
-		{
-
-			if (showAllPushpins && map != null && Context.Context.ActualStops != null)
-			{
-				double zoomLevel = map.ZoomLevel;
-				Pushpins.Clear();
-				if (zoomLevel <= MaxZoomLevel)
-				{
-					ShowOnMap();
-					return;
-				}
+        public virtual void RefreshPushPinsAsync()
+        {
+            if (showAllPushpins && map != null && Context.Context.ActualStops != null)
+            {
+                double zoomLevel = map.ZoomLevel;
+                Pushpins.Clear();
+                if (zoomLevel <= MaxZoomLevel)
+                {
+                    ShowOnMap();
+                    return;
+                }
 #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
                 var northWest = map.ViewportPointToLocation(new Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
+                var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
 #else
 				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
 				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
 				
 #endif
 
-				var needShowStops =
-					Context.Context.ActualStops.Where(child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
-					                                   child.Lat >= southEast.Latitude && child.Lng <= southEast.Longitude).ToList();
+                var needShowStops =
+                    Context.Context.ActualStops.Where(
+                        child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
+                                 child.Lat >= southEast.Latitude && child.Lng <= southEast.Longitude).ToList();
 
-				PreperPushpinsForView(needShowStops);
-				if (Ipushpin != null)
-					Pushpins.Add(Ipushpin);
-				ShowOnMap();
-			}
-		}
+                PreperPushpinsForView(needShowStops);
+                if (Ipushpin != null)
+                    Pushpins.Add(Ipushpin);
+                ShowOnMap();
+            }
+        }
 
-	    public string SearchPattern
-	    {
-	        get { return searchPattern; }
-	        set
-	        {
-	            searchPattern = value;
-	            OnPropertyChanged(nameof(FilteredStops));
-	        }
-	    }
+        public string SearchPattern
+        {
+            get { return searchPattern; }
+            set
+            {
+                searchPattern = value;
+                OnPropertyChanged(nameof(FilteredStops));
+            }
+        }
 
-	    public IList<Stop> FilteredStops
-	    {
-	        get
-	        {
-	            if (SearchPattern == null)
-	                SearchPattern = "";
-	            string filterPat = SearchPattern.ToLowerInvariant();
-	            return Context.FilteredStops(filterPat,  location: Context.Geolocation.CurLocation).ToList();
-	        }
-	    }
+        public IList<Stop> FilteredStops
+        {
+            get
+            {
+                if (SearchPattern == null)
+                    SearchPattern = "";
+                string filterPat = SearchPattern.ToLowerInvariant();
+                return Context.FilteredStops(filterPat, location: Context.Geolocation.CurLocation).ToList();
+            }
+        }
 
-		public Pushpin Ipushpin
-		{
-			get
-			{
-				return ipushpin;
-			}
-			set { ipushpin = value; }
-		}
+        public Pushpin Ipushpin
+        {
+            get { return ipushpin; }
+            set { ipushpin = value; }
+        }
 
-		public Stop CurrentStop
-		{
-			get { return currentStop; }
-			set
-			{
-				if (Equals(value, currentStop)) return;
-				currentStop = value;
-				OnPropertyChanged();
-			    if (value != null)
-			        ShowStopCommand.Execute(currentStop);
-			}
-		}
+        public Stop CurrentStop
+        {
+            get { return currentStop; }
+            set
+            {
+                if (Equals(value, currentStop)) return;
+                currentStop = value;
+                OnPropertyChanged();
+                if (value != null)
+                    ShowStopCommand.Execute(currentStop);
+            }
+        }
 
-		public Rout CurrentRout
-		{
-			get { return currentRout; }
-			set
-			{
-				if (Equals(value, currentRout)) return;
-				currentRout = value;
-				OnPropertyChanged();
-			}
-		}
+        public Rout CurrentRout
+        {
+            get { return currentRout; }
+            set
+            {
+                if (Equals(value, currentRout)) return;
+                currentRout = value;
+                OnPropertyChanged();
+            }
+        }
 
-		public Location Location
-		{
-			get { return location; }
-			set
-			{
-				//if (Equals(value, location)) return;
-				location = value;
-				OnPropertyChanged();
-			}
-		}
+        public Location Location
+        {
+            get { return location; }
+            set
+            {
+                //if (Equals(value, location)) return;
+                location = value;
+                OnPropertyChanged();
+            }
+        }
 
-		public string ResultString
-		{
-			get { return resultString; }
-			set
-			{
-				resultString = value; 
-				OnPropertyChanged();
-			}
-		}
+        public string ResultString
+        {
+            get { return resultString; }
+            set
+            {
+                resultString = value;
+                OnPropertyChanged();
+            }
+        }
 
-		public RelayCommand ShowAllStops
-		{
-			get
-			{
-				return new RelayCommand(() =>
-				{
-					showAllPushpins = true;
-				});
-			}
-		}
+        public RelayCommand ShowAllStops
+        {
+            get { return new RelayCommand(() => { showAllPushpins = true; }); }
+        }
 
-		private RelayCommand showICommand;
+        private RelayCommand showICommand;
 
-		public RelayCommand ShowICommand
-		{
-			get
-			{
-			    return showICommand ?? 
-                    (showICommand = new RelayCommand(() =>
-                    {
-                        ShowPushpin(Ipushpin);
-                    }, () => Ipushpin != null));
-			}
-		}
+        public RelayCommand ShowICommand
+        {
+            get
+            {
+                return showICommand ??
+                       (showICommand = new RelayCommand(() => { ShowPushpin(Ipushpin); }, () => Ipushpin != null));
+            }
+        }
 
-		async void ShowPushpin(Pushpin push)
-		{
+        private async void ShowPushpin(Pushpin push)
+        {
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
 			await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 			{
 				map.TargetCenter = MapPanel.GetLocation(push);
 			});
 #endif
-		}
+        }
 
-		public RelayCommand<Rout> ShowRoutCommand
-		{
-			get
-			{
-				return new RelayCommand<Rout>(rout =>
-				{
+        public RelayCommand<Rout> ShowRoutCommand
+        {
+            get
+            {
+                return new RelayCommand<Rout>(rout =>
+                {
+                    showAllPushpins = false;
 
-					showAllPushpins = false;
-					
-					Pushpins.Clear();
-					PreperPushpinsForView(rout.Stops);
-					ShowOnMap();
-					map.Center = new Location(rout.StartStop.Lat, rout.StartStop.Lng);
-				});
-			}
-		}
+                    Pushpins.Clear();
+                    PreperPushpinsForView(rout.Stops);
+                    ShowOnMap();
+                    map.Center = new Location(rout.StartStop.Lat, rout.StartStop.Lng);
+                });
+            }
+        }
 
-		public RelayCommand<Stop> ShowStopCommand
-		{
-			get
-			{
-				return new RelayCommand<Stop>(stop =>
-				{
-					showAllPushpins = true;
-					map.Center = new Location(stop.Lat, stop.Lng);
-					map.ZoomLevel = 19;
-				});
-			}
-		}
+        public RelayCommand<Stop> ShowStopCommand
+        {
+            get
+            {
+                return new RelayCommand<Stop>(stop =>
+                {
+                    showAllPushpins = true;
+                    map.Center = new Location(stop.Lat, stop.Lng);
+                    map.ZoomLevel = 19;
+                });
+            }
+        }
 
-		public RelayCommand<Pushpin> SetStartStop
-		{
-			get
-			{
-				return new RelayCommand<Pushpin>(pushpin =>
-				{
-					if (StartStopPushpin != null)
-						StartStopPushpin.Style = StylePushpin;
-					StartStopPushpin = pushpin;
-					OnStartStopSeted();
-				});
-			}
-		}
-		public RelayCommand<Pushpin> SetEndtStop
-		{
-			get
-			{
-				return new RelayCommand<Pushpin>(pushpin =>
-				{
-					if (EndStopPushpin != null)
-						EndStopPushpin.Style = StylePushpin;
-					EndStopPushpin = pushpin;
-					OnEndStopSeted();
-				});
-			}
-		}
+        public RelayCommand<Pushpin> SetStartStop
+        {
+            get
+            {
+                return new RelayCommand<Pushpin>(pushpin =>
+                {
+                    if (StartStopPushpin != null)
+                        StartStopPushpin.Style = StylePushpin;
+                    StartStopPushpin = pushpin;
+                    OnStartStopSeted();
+                });
+            }
+        }
 
-		public RelayCommand SwitchStopsCommand { get { return new RelayCommand(() =>
-		{
-			var tempStop = StartStopPushpin;
-			StartStopPushpin = EndStopPushpin;
-			EndStopPushpin = tempStop;
-		});} }
+        public RelayCommand<Pushpin> SetEndtStop
+        {
+            get
+            {
+                return new RelayCommand<Pushpin>(pushpin =>
+                {
+                    if (EndStopPushpin != null)
+                        EndStopPushpin.Style = StylePushpin;
+                    EndStopPushpin = pushpin;
+                    OnEndStopSeted();
+                });
+            }
+        }
 
-		private RelayCommand calculateCommand;
-	    private string searchPattern;
-	    private StopModelView _stopModelView;
+        public RelayCommand SwitchStopsCommand
+        {
+            get
+            {
+                return new RelayCommand(() =>
+                {
+                    var tempStop = StartStopPushpin;
+                    StartStopPushpin = EndStopPushpin;
+                    EndStopPushpin = tempStop;
+                });
+            }
+        }
 
-	    public RelayCommand CalculateRoutCommand
-		{
-			get
-			{
-			    return calculateCommand ?? (calculateCommand = new RelayCommand(() =>
-			    {
-			        CalculateRout calculator = new CalculateRout(Context.Context);
-			        calculator.CreateGraph();
-			        if (!calculator.FindPath(StartStop, EndStop))
-			            ResultString = "Bad";
-			        else
-			        {
-			            StringBuilder builder = new StringBuilder();
-			            foreach (var keyValuePair in calculator.resultRout)
-			            {
-			                builder.Append(keyValuePair.Key.Transport);
-			                builder.Append(" ");
-			                builder.Append(keyValuePair.Key);
-			                builder.Append('\n');
-			                foreach (var stop in keyValuePair.Value)
-			                {
-			                    builder.Append(stop.Name);
-			                    builder.Append(", ");
-			                }
-			                builder.Append("\n\n");
-			            }
-			        }
-			    }));
-			}
-		}
+        private RelayCommand calculateCommand;
+        private string searchPattern;
+        private StopModelView _stopModelView;
 
-		public bool IsActive
-		{
-			get { return isActive; }
-			set
-			{
-				if (isActive == value)
-					return;
-				isActive = value;
-				RegistrMap(isActive);
-				OnPropertyChanged();
-			}
-		}
+        public RelayCommand CalculateRoutCommand
+        {
+            get
+            {
+                return calculateCommand ?? (calculateCommand = new RelayCommand(() =>
+                {
+                    CalculateRout calculator = new CalculateRout(Context.Context);
+                    calculator.CreateGraph();
+                    if (!calculator.FindPath(StartStop, EndStop))
+                        ResultString = "Bad";
+                    else
+                    {
+                        StringBuilder builder = new StringBuilder();
+                        foreach (var keyValuePair in calculator.resultRout)
+                        {
+                            builder.Append(keyValuePair.Key.Transport);
+                            builder.Append(" ");
+                            builder.Append(keyValuePair.Key);
+                            builder.Append('\n');
+                            foreach (var stop in keyValuePair.Value)
+                            {
+                                builder.Append(stop.Name);
+                                builder.Append(", ");
+                            }
+                            builder.Append("\n\n");
+                        }
+                    }
+                }));
+            }
+        }
+
+        public bool IsActive
+        {
+            get { return isActive; }
+            set
+            {
+                if (isActive == value)
+                    return;
+                isActive = value;
+                RegistrMap(isActive);
+                OnPropertyChanged();
+            }
+        }
 
         public bool ShowStopsList { get; set; }
 
-	    public RelayCommand ChangeShowStopList
-	    {
-	        get { return new RelayCommand(() => ShowStopsList = ShowStopsList); }
-	    }
+        public RelayCommand ChangeShowStopList
+        {
+            get { return new RelayCommand(() => ShowStopsList = ShowStopsList); }
+        }
 
-	    protected Pushpin[] StopsOnMap
-	    {
-	        get { return stopsOnMap; }
-	        set
-	        {
-                Interlocked.Exchange(ref stopsOnMap,value);
-	        }
-	    }
+        protected Pushpin[] StopsOnMap
+        {
+            get { return stopsOnMap; }
+            set { Interlocked.Exchange(ref stopsOnMap, value); }
+        }
 
-	    #region events
+        #region events
 
-		public event EventHandler MapInicialized;
-		public event EventHandler StartStopSeted;
-		public event EventHandler EndStopSeted;
+        public event EventHandler MapInicialized;
+        public event EventHandler StartStopSeted;
+        public event EventHandler EndStopSeted;
 
-#endregion
+        #endregion
 
-		protected virtual void OnMapInicialized()
-		{
-			var handler = MapInicialized;
-		    handler?.Invoke(this, EventArgs.Empty);
-		}
+        protected virtual void OnMapInicialized()
+        {
+            var handler = MapInicialized;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
 
-		protected virtual void OnStartStopSeted()
-		{
-			var handler = StartStopSeted;
-		    handler?.Invoke(this, EventArgs.Empty);
-		}
+        protected virtual void OnStartStopSeted()
+        {
+            var handler = StartStopSeted;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
 
-		protected virtual void OnEndStopSeted()
-		{
-			var handler = EndStopSeted;
-		    handler?.Invoke(this, EventArgs.Empty);
-		}
-	}
+        protected virtual void OnEndStopSeted()
+        {
+            var handler = EndStopSeted;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+    }
 }

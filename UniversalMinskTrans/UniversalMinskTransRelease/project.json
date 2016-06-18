@@ -4,6 +4,8 @@
     "Autofac": "3.5.2",
     "MetroLog": "1.0.1",
     "Microsoft.Bcl": "1.1.10",
+    "Microsoft.Bcl.Build": "1.0.21",
+    "Microsoft.Bcl.Build.Symbols": "1.0.20",
     "Microsoft.Net.Http": "2.2.29",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "MvvmLight": "5.3.0",

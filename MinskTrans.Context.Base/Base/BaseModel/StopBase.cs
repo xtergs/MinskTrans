@@ -9,12 +9,12 @@ namespace MinskTrans.Context.Base.BaseModel
 
 		[JsonProperty]
 		public int ID { get; set; }
-		[JsonProperty]
-		public string City { get; set; }
 		//[JsonProperty]
-		public string Area { get; set; }
+		//public string City { get; set; }
 		//[JsonProperty]
-		public string Streat { get; set; }
+		//public string Area { get; set; }
+		//[JsonProperty]
+		//public string Streat { get; set; }
 		[JsonProperty]
 		public string Name
 		{
@@ -34,10 +34,10 @@ namespace MinskTrans.Context.Base.BaseModel
 		public double Lng { get; set; }
 		[JsonProperty]
 		public double Lat { get; set; }
-		[JsonProperty]
+		//[JsonProperty]
 		public string StopsStr { get; set; }
 		//[JsonProperty]
-		public string StopNum { get; set; }
+		//public string StopNum { get; set; }
 		
 	}
 }

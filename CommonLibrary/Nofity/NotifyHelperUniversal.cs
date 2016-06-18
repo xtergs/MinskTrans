@@ -17,7 +17,7 @@ namespace UniversalMinskTransRelease.Nofity
             
             Windows.UI.Popups.MessageDialog dialog = new MessageDialog("При обновлении новостей произошла ошибка, попробуйте обновить позже");
             pendingDialogs.Enqueue(dialog);
-            await ShowPendingMessaagesAsync();
+            ShowPendingMessaagesAsync().ConfigureAwait(false);
         }
 
         public async Task ShowMessageAsync(string text, List<KeyValuePair<string, RelayCommand>> commands = null)

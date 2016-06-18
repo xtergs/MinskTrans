@@ -314,10 +314,10 @@ namespace MinskTrans.Context
                             timeTable.Time as IList<Schedule>);
                     Context.AllPropertiesChanged();
                     await Context.Save(true);
+                    await updateManager.ApproveDonloadedFilesAsync();
+                    Settings.LastUpdateDbDateTimeUtc = utcNow;
+                    return true;
                 }
-                Settings.LastUpdateDbDateTimeUtc = utcNow;
-
-                return true;
             }
             catch (Exception e)
             {
@@ -334,6 +334,7 @@ namespace MinskTrans.Context
                 OnPropertyChanged(nameof(Context.Routs));
                 updatingTimeTable = false;
             }
+            return false;
         }
 
 

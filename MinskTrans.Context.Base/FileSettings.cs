@@ -35,7 +35,10 @@ namespace MinskTrans.Context
             LastUpdatedFile = new FilePathStruct("LastNews.txt", TypeFolder.Local, "", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4");
             HotNewsFile = new FilePathStruct("days.txt", TypeFolder.Local, @"http://www.minsktrans.by/ru/newsall/news/operativnaya-informatsiya.html", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2");
             MainNewsFile = new FilePathStruct("months.txt", TypeFolder.Local, @"http://www.minsktrans.by/ru/newsall/news/newscity.html", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8");
+
             TimeTableAllFile = new FilePathStruct("timetableall.json.v", TypeFolder.Local);
+            MainNewsFileV2 = new FilePathStruct("months.v2.txt", TypeFolder.Local, "");
+            HotNewsFileV2 = new FilePathStruct("days.v2.txt", TypeFolder.Local, "");
         }
         public FilePathStruct TimeFile { get; private set; }
         public FilePathStruct RouteFile { get; private set; }
@@ -48,6 +51,8 @@ namespace MinskTrans.Context
         public FilePathStruct LastUpdatedFile { get; private set; }
         public FilePathStruct HotNewsFile { get; private set; }
         public FilePathStruct MainNewsFile { get; private set; }
+        public FilePathStruct MainNewsFileV2 { get; private set; }
+        public FilePathStruct HotNewsFileV2 { get; private set; }
 
         public FilePathStruct TimeTableAllFile { get; private set; }
 

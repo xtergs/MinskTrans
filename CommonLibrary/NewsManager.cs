@@ -17,7 +17,7 @@ namespace CommonLibrary
 		
 
 		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files)
-			:base(fileHelper, internet, settings, logManager, files)
+			:base(fileHelper, internet, logManager, files)
 		{
 			
 		}
@@ -34,7 +34,7 @@ namespace CommonLibrary
 			throw new NotImplementedException();
 		}
 
-		public override Task CheckHotNewsAsync()
+		public override Task<bool> CheckHotNewsAsync()
 		{
 			throw new NotImplementedException();
 		}

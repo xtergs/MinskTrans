@@ -78,7 +78,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		public MainModelView(Map map)
 			: this()
 		{
-		    mapModelView = container.Resolve<MapModelView.MapModelViewFactory>()(map);
+		    //mapModelView = container.Resolve<MapModelView.MapModelViewFactory>()(map, );
 			model = this;
 		}
 

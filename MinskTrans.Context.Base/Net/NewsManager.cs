@@ -26,6 +26,16 @@ namespace MinskTrans.Net
         {
             JsonProperty property = base.CreateProperty(member, memberSerialization);
 
+            if ( property.PropertyName == nameof(ListWithDate.LastUpdateDateTimeUtc))
+            {
+                property.ShouldSerialize = (x) => true;
+                property.PropertyName = nameof(ListWithDate.LastUpdateDateTimeUtc);
+            } else
+            if (property.PropertyName == nameof(ListWithDate.NewsEntries))
+            {
+                property.ShouldSerialize = (x) => true;
+                property.PropertyName = nameof(ListWithDate.NewsEntries);
+            } else
             if (property.DeclaringType == typeof (NewsEntry) && property.PropertyName == "Message")
             {
                 property.ShouldSerialize = (x) => true;
@@ -55,32 +65,36 @@ namespace MinskTrans.Net
         }
     }
 
+    public class ListWithDate
+    {
+        public DateTime LastUpdateDateTimeUtc { get; set; } = new DateTime();
+        public List<NewsEntry> NewsEntries { get; set; } = new List<NewsEntry>(10);
+    }
 
     public abstract class NewsManagerBase : INotifyPropertyChanged
     {
         private ILogger log;
 
-        private List<NewsEntry> newDictionary;
-        protected List<NewsEntry> hotNewsDictionary;
+        protected ListWithDate allNews;
+        protected ListWithDate allHotNewsDictionary;
 
-        private List<NewsEntry> allNews;
-        protected List<NewsEntry> allHotNewsDictionary;
-
+        public DateTime NewNewsDateTimeUtc => allNews.LastUpdateDateTimeUtc;
         public List<NewsEntry> NewNews
         {
             get
             {
-                return allNews.OrderByDescending(key => key.PostedUtc).ThenByDescending(key => key.CollectedUtc).ToList();
+                return allNews.NewsEntries.OrderByDescending(key => key.PostedUtc).ThenByDescending(key => key.CollectedUtc).ToList();
             }
             set { OnPropertyChanged(); }
         }
 
+        public DateTime HotNewsDateTimeUtc => allHotNewsDictionary.LastUpdateDateTimeUtc;
         public List<NewsEntry> AllHotNews
         {
             get
             {
                 return
-                    allHotNewsDictionary.OrderByDescending(key => key.PostedUtc)
+                    allHotNewsDictionary.NewsEntries.OrderByDescending(key => key.PostedUtc)
                         .ThenByDescending(key => key.RepairedLineUtc)
                         .ToList();
             }
@@ -89,11 +103,11 @@ namespace MinskTrans.Net
 
 
         protected readonly InternetHelperBase internetHelper;
-        protected readonly ISettingsModelView settings;
+        //protected readonly ISettingsModelView settings;
 
         private FileHelperBase FileHelper { get; }
 
-        public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper, ISettingsModelView settings,
+        public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper,
             ILogManager logManager, FilePathsSettings files)
         {
             if (helper == null)
@@ -102,53 +116,60 @@ namespace MinskTrans.Net
             if (internetHelper == null)
                 throw new ArgumentNullException(nameof(internetHelper));
             this.internetHelper = internetHelper;
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
             if (logManager == null)
                 throw new ArgumentNullException(nameof(logManager));
             log = logManager.GetLogger<NewsManagerBase>();
-            this.settings = settings;
+            //this.settings = settings;
             this.Files = files;
             //LastNewsTime = new DateTime();
-            newDictionary = new List<NewsEntry>();
-            hotNewsDictionary = new List<NewsEntry>();
-            allHotNewsDictionary = new List<NewsEntry>();
-            allNews = new List<NewsEntry>();
+            //newDictionary = new ListWithDate();
+            //hotNewsDictionary = new ListWithDate();
+            allHotNewsDictionary = new ListWithDate();
+            allNews = new ListWithDate();
             log.Trace($"{nameof(NewsManagerBase)} is created");
         }
 
         public abstract Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate);
+        
 
-        public async Task CheckMainNewsAsync()
+        public async Task<bool> CheckMainNewsAsync()
         {
             log.Trace("CheckMainNewsAsync is started");
-            newDictionary =
+            var newDictionary =
                 (await CheckAsync(Files.MainNewsFile.OriginalLink, "div/p", "div/dl/div/table/tr/td[1]")).Where(
                     time => time.PostedUtc > new DateTime()).ToList();
             if (newDictionary.Count <= 0)
             {
                 log.Trace("CheckMainNewsAsync:new Main news have not been found");
-                return;
+                return false;
             }
-            settings.LastNewsTimeUtc = newDictionary.Max(key => key.PostedUtc);
-            log.Trace($"CheckMainNewsAsync: {nameof(settings.LastNewsTimeUtc)} is {settings.LastNewsTimeUtc}");
+            var currentUpdateTimeUtc = newDictionary.Max(key => key.PostedUtc);
+            if (currentUpdateTimeUtc <= allNews.LastUpdateDateTimeUtc)
+                return false;
+            log.Trace($"CheckMainNewsAsync: {nameof(allNews.LastUpdateDateTimeUtc)} is {allNews.LastUpdateDateTimeUtc}");
+            bool flagResult = false;
+            List<NewsEntry> newsToAdd = new List<NewsEntry>();
             foreach (var source in newDictionary)
             {
-                if (!allNews.Any(key => key.PostedUtc == source.PostedUtc))
+                if (allNews.NewsEntries.All(key => key.PostedUtc != source.PostedUtc))
                 {
-                    allNews.Add(source);
-                    log.Debug($"CheckMainNewsAsync: main news has been found: {source.CollectedUtc} {source.Message}");
+                    newsToAdd.Add(source);
+                    flagResult = true;
                 }
             }
+            allNews.NewsEntries.AddRange(newsToAdd);
+            allNews.LastUpdateDateTimeUtc = currentUpdateTimeUtc;
             NewNews = null;
+            return flagResult;
         }
 
-        public abstract Task CheckHotNewsAsync();
+        public abstract Task<bool> CheckHotNewsAsync();
 
 
         public async Task Load()
         {
-            allNews.Clear();
+            //allNews.NewsEntries.Clear();
+            
             log.Trace(
                 $"Load: read file for months {FileHelper.GetPath(Files.MainNewsFile.Folder)} + {Files.MainNewsFile.FileName}");
             JsonSerializer serializer = new JsonSerializer();
@@ -160,73 +181,66 @@ namespace MinskTrans.Net
                             await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
                 using (var textReader = new JsonTextReader(stream))
                 {
-                    var news = serializer.Deserialize<List<NewsEntry>>(textReader);
-                    allNews.AddRange(news);
+                    var news = serializer.Deserialize<ListWithDate>(textReader);
+                    allNews = news;
+                    //allNews.NewsEntries.AddRange(news);
                 }
-                log.Trace($"Load: has been readed {allNews.Count} news");
+                log.Trace($"Load: has been readed {allNews.NewsEntries.Count} news");
             }
             catch (FileNotFoundException e)
             {
                 Debug.WriteLine(e.Message);
+            }
+            catch (JsonSerializationException e)
+            {
+                log?.Trace(e.Message);
             }
 
             NewNews = null;
 
-            AllHotNews.Clear();
+            //AllHotNews.Clear();
             log.Trace($"read hot news");
             try
             {
-                using (var stream =new StreamReader(
-                            await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
+                using (var stream = new StreamReader(
+                    await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
                 using (var textReader = new JsonTextReader(stream))
                 {
                     serializer.ContractResolver = new ShouldSerializeContractResolver();
-                    var news = serializer.Deserialize<List<NewsEntry>>(textReader);
-                    allHotNewsDictionary.AddRange(news);
+                    var news = serializer.Deserialize<ListWithDate>(textReader);
+                    allHotNewsDictionary = news;
                 }
-                log.Trace($"Load: has been readed {allHotNewsDictionary.Count} hot news");
+                log.Trace($"Load: has been readed {allHotNewsDictionary.NewsEntries.Count} hot news");
             }
             catch (FileNotFoundException e)
             {
                 Debug.WriteLine(e.Message);
             }
+            catch (JsonSerializationException e)
+            {
+                log?.Trace(e.Message);
+            }
 
-            hotNewsDictionary = null;
+            //hotNewsDictionary = null;
             AllHotNews = null;
         }
 
-        private async Task SaveToFile(string filePath, TypeFolder folder, IEnumerable<NewsEntry> listToWrite)
+        private Task SaveToFile(string filePath, TypeFolder folder, ListWithDate listToWrite)
         {
-            if (!listToWrite.Any())
-                return;
-
             string jsonString = JsonConvert.SerializeObject(listToWrite,
                 new JsonSerializerSettings() {ContractResolver = new ShouldSerializeContractResolver()});
-            log.Trace($"SaveToFile {filePath}, JSON: {jsonString}");
-            await FileHelper.WriteTextAsync(folder, filePath, jsonString);
-            log.Trace($"SaveToFile successfully done");
+            return FileHelper.WriteTextAsync(folder, filePath, jsonString);
+        }
+        
+        public Task SaveToFile()
+        {
+            return SaveToFile(Files.MainNewsFile.FileName, Files.MainNewsFile.Folder,
+                    allNews);
         }
 
-        public async Task SaveToFile()
+        public Task SaveToFileHotNews()
         {
-            DateTime curDateTime = DateTime.UtcNow;
-            await
-                SaveToFile(Files.MainNewsFile.FileName, Files.MainNewsFile.Folder,
-                    newDictionary.Where(
-                        x =>
-                            x.PostedUtc.Month == curDateTime.Month ||
-                            x.PostedUtc.Month == (curDateTime.Subtract(new TimeSpan(31, 0, 0, 0, 0)).Month)).ToList());
-        }
-
-        public async Task SaveToFileHotNews()
-        {
-            DateTime curDay = DateTime.UtcNow;
-            var days =
-                allHotNewsDictionary.Where(
-                    key =>
-                        key.PostedUtc.Day == curDay.Day ||
-                        (key.PostedUtc.Day == (curDay.Subtract(new TimeSpan(1, 0, 0, 0))).Day)).ToList();
-            await SaveToFile(Files.HotNewsFile.FileName, Files.HotNewsFile.Folder, days);
+            return SaveToFile(Files.HotNewsFile.FileName, Files.HotNewsFile.Folder, allHotNewsDictionary);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -235,26 +249,6 @@ namespace MinskTrans.Net
         {
             var handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public DateTime LastUpdateMainNewsDateTimeUtc
-        {
-            get { return settings.LastNewsTimeUtc; }
-            set
-            {
-                settings.LastNewsTimeUtc = value;
-                log.Debug($"{nameof(LastUpdateMainNewsDateTimeUtc)} has seted to {settings.LastNewsTimeUtc}");
-            }
-        }
-
-        public DateTime LastUpdateHotNewsDateTimeUtc
-        {
-            get { return settings.LastUpdateHotNewsDateTimeUtc; }
-            set
-            {
-                settings.LastUpdateHotNewsDateTimeUtc = value;
-                log.Debug($"{nameof(LastUpdateHotNewsDateTimeUtc)} has seted to {settings.LastUpdateHotNewsDateTimeUtc}");
-            }
         }
 
         public FilePathsSettings Files { get; }

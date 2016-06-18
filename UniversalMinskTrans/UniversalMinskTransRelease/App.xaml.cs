@@ -11,8 +11,11 @@ using Windows.UI.Xaml.Navigation;
 using MinskTrans.Universal.ModelView;
 using Windows.ApplicationModel.Background;
 using System.Threading.Tasks;
+using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Popups;
+using Microsoft.WindowsAzure.Messaging;
 using MyLibrary;
 using MinskTrans.Context.Base;
 
@@ -31,6 +34,23 @@ namespace UniversalMinskTrans
         //public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
         private ILogger log;
 
+        private async void InitNotificationsAsync()
+        {
+            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+
+            var hub = new NotificationHub("minsktransnotificationhub", "Endpoint=sb://minsktransnamespace.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=bd6RpWgvIKjEBTe00X46JgCX1PVjR4ZfXEwSzwIGHF4=");
+            var result = await hub.RegisterNativeAsync(channel.Uri);
+
+            // Displays the registration ID so you know it was successful
+            if (result.RegistrationId != null)
+            {
+                var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
+                dialog.Commands.Add(new UICommand("OK"));
+                await dialog.ShowAsync();
+            }
+
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -39,6 +59,8 @@ namespace UniversalMinskTrans
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             log?.Debug("App.OnLaunched started");
+
+            InitNotificationsAsync();
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)

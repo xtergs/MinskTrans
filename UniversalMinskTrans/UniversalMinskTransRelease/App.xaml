@@ -11,7 +11,7 @@
         <ResourceDictionary Source="Resourse/Styles.xaml">
         </ResourceDictionary>
         <ResourceDictionary Source="Resourse/DataTemplates.xaml">
-          <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="using:UniversalMinskTransRelease.ViewModel" />
+        
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
       <converters:GridBoolHeightConverter x:Key="GridBoolHeightConverter" />

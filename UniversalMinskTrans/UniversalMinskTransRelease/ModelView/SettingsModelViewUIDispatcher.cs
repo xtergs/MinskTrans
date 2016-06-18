@@ -13,7 +13,7 @@ namespace UniversalMinskTransRelease.ModelView
         public SettingsModelViewUIDispatcher(IApplicationSettingsHelper helper, InternetHelperBase internetHelper)
             : base(helper, internetHelper)
         {
-            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+            dispatcher = CoreWindow.GetForCurrentThread()?.Dispatcher;
         }
 
         public static string GetAppVersion()

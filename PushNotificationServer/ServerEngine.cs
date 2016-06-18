@@ -19,6 +19,7 @@ using Autofac;
 using CommonLibrary.Notify;
 using MetroLog;
 using MetroLog.Targets;
+using Microsoft.Azure.NotificationHubs;
 using Microsoft.OneDrive.Sdk.WindowsForms;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
@@ -34,7 +35,6 @@ using MinskTrans.Utilites.Desktop;
 using MyLibrary;
 using OneDriveRestAPI;
 using OneDriveRestAPI.Model;
-using PCLStorage;
 using CredentialCache = Microsoft.OneDrive.Sdk.CredentialCache;
 using File = System.IO.File;
 using IContainer = Autofac.IContainer;
@@ -42,6 +42,17 @@ using IContainer = Autofac.IContainer;
 
 namespace PushNotificationServer
 {
+    public class NotifyTimeTableChanges
+    {
+        public async void SendNotificationAsync(string text)
+        {
+            NotificationHubClient hub = NotificationHubClient
+                .CreateClientFromConnectionString("Endpoint=sb://minsktransnamespace.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=FnUIrV6AXnVu/45Klip3lgdG2oNNSaofUtU7J7xEIXE=", "minsktransnotificationhub");
+            var toast = $@"<toast><visual><binding template=""ToastText01""><text id=""1"">{text}</text></binding></visual></toast>";
+            var result = await hub.SendWindowsNativeNotificationAsync(toast);
+            
+        }
+    }
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
@@ -51,6 +62,8 @@ namespace PushNotificationServer
 
 		private Timer timerNewsAutoUpdate;
 		readonly UpdateManagerBase updateManager;
+
+	    public bool PublishUpdates => false;
 
 		public static ServerEngine Engine
 		{
@@ -70,26 +83,36 @@ namespace PushNotificationServer
 			await BusnesLogic.LoadDataBase(LoadType.LoadDB);
 			BusnesLogic.Settings.LastUpdateDbDateTimeUtc = Settings.Default.DBUpdateTime;
 			OndeDriveController.Inicialize();
-			this.StopChecknews += (sender, args) => UploadAllToOneDrive();
+	        this.StopChecknews += (sender, args) =>
+	        {
+	            if (args)
+	            {
+	                UploadAllToOneDrive();
+	            }
+	        };
 		}
 
-		void UploadAllToOneDrive()
+		async void UploadAllToOneDrive()
 		{
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-			OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName);
-			OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName);
-			OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName);
-            OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName);
-            OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName);
-            OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        }
+		    if (!PublishUpdates)
+		        return;
+		    await Task.WhenAll(
+		        OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName),
+		        OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName),
+		        OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName),
+		        OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName),
+		        OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName),
+		        OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName),
+                OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName)).ConfigureAwait(false);
+		    container.Resolve<NotifyTimeTableChanges>().SendNotificationAsync("Time talbe is updated");
+
+		}
 
 		void SaveTime()
 		{
 		    var helper = container.Resolve<FileHelperBase>();
 			File.WriteAllText(Path.Combine(helper.GetPath(files.LastUpdatedFile.Folder), files.LastUpdatedFile.FileName),
-				NewsManager.LastUpdateMainNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) + Environment.NewLine + NewsManager.LastUpdateHotNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) +
+				NewsManager.NewNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) + Environment.NewLine + NewsManager.HotNewsDateTimeUtc.ToString(CultureInfo.InvariantCulture) +
 				Environment.NewLine + BusnesLogic.LastUpdateDbDateTimeUtc.ToString(CultureInfo.InvariantCulture));
 		}
 
@@ -126,6 +149,7 @@ namespace PushNotificationServer
             builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 		    builder.RegisterType<NotifyHelperDesctop>().As<INotifyHelper>().SingleInstance();
 		    builder.RegisterType<FilePathsSettings>().SingleInstance();
+	        builder.RegisterType<NotifyTimeTableChanges>().AsSelf().SingleInstance();
             container = builder.Build();
 
 			context = container.Resolve<IBussnessLogics>();
@@ -339,30 +363,34 @@ namespace PushNotificationServer
 		private bool Updating = false;
 
 		public event StartCheckNewsDelegate StartCheckNews;
-		public event StartCheckNewsDelegate StopChecknews;
+		public event EventHandler<bool> StopChecknews;
 
 		private static object o = new object();
 		private static object a = new object();
 	    private CancellationTokenSource tokenSource;
 
-		public async Task CheckNews()
+		public async Task<bool> CheckNews()
 		{
-			if (Updating)
-				return;
+		    if (Updating)
+		        return false;
 			Debug.WriteLine("Check news started");
-			Updating = true;
+		    Volatile.Write(ref Updating, true);
 			OnStartCheckNews();
+		    bool[] results = null;
 			try
 			{
 			    using (tokenSource = new CancellationTokenSource())
 			    {
-			        await Task.WhenAll(Task.Run(async () =>
+                    results = await Task<bool>.WhenAll(Task<bool>.Run(async () =>
 			        {
 			            try
 			            {
-			                await newsManager.CheckMainNewsAsync();
+			                if (await newsManager.CheckMainNewsAsync())
+			                {
 			                    await newsManager.SaveToFile();
-			               
+			                    return true;
+			                }
+
 			                //OndeDriveController.UploadFile(NewsManager.FileNameMonths, NewsManager.FileNameMonths);
 			            }
 			            catch (HttpRequestException ex)
@@ -375,15 +403,17 @@ namespace PushNotificationServer
 			                log.Error(e.Message, e);
 			                throw;
 			            }
-			        }), Task.Run(async () =>
+			            return false;
+			        }), Task<bool>.Run(async () =>
 			        {
 			            try
 			            {
-			                await newsManager.CheckHotNewsAsync();
-
+			                if (await newsManager.CheckHotNewsAsync())
+			                {
 
 			                    await newsManager.SaveToFileHotNews();
-
+			                    return true;
+			                }
 			            }
 			            catch (HttpRequestException ex)
 			            {
@@ -393,19 +423,25 @@ namespace PushNotificationServer
 			            {
 			                throw;
 			            }
+			            return false;
 			            //OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
-			        }), Task.Run((async () =>
+			        }), Task<bool>.Run((async () =>
 			        {
 			            try
 			            {
-			                await context.UpdateTimeTableAsync(tokenSource.Token, false, true);
+			                if (await context.UpdateTimeTableAsync(tokenSource.Token, false, true))
+			                {
+			                    return true;
+			                }
 			            }
 			            catch (Exception e)
 			            {
 			                log.Error("Error while updating timetable");
-			                await container.Resolve<INotifyHelper>()
-			                    .ReportErrorAsync(DateTime.Now + ": Error while updating timetable");
+			                container.Resolve<INotifyHelper>()
+			                    .ReportErrorAsync(DateTime.Now + $": Error while updating timetable\n{e.Message}").ConfigureAwait(false);
+                            
 			            }
+			            return false;
 			        }), tokenSource.Token));
 			    }
 
@@ -413,8 +449,9 @@ namespace PushNotificationServer
 			catch (TaskCanceledException e)
 			{
 				Updating = false;
-				OnStopChecknews();
+				OnStopChecknews(false);
 			    log.Error("CheckNews: TaskCancelException", e);
+			    return false;
 			    //throw;
 			}
 			catch (Exception e)
@@ -422,25 +459,32 @@ namespace PushNotificationServer
                 log.Error("CheckNews Error", e);
 				throw;
 			}
-			Settings.Default.LastUpdatedNews = newsManager.LastUpdateMainNewsDateTimeUtc;
-			Settings.Default.LastUpdatedHotNews = newsManager.LastUpdateMainNewsDateTimeUtc;
 			Settings.Default.DBUpdateTime = context.LastUpdateDbDateTimeUtc;
 			Settings.Default.Save();		
 			SaveTime();
-			Updating = false;
-			OnStopChecknews();
+		    Volatile.Write(ref Updating, false);
+		    OnStopChecknews(true);
 			Debug.WriteLine("Check news ended");
+		    return results != null && results.Any(x => x);
 		}
 
-		public RelayCommand ResetLastUpdatetime
+	    public RelayCommand<string> SentPushMessageCommand
+	    {
+	        get
+	        {
+	            return
+	                new RelayCommand<string>(
+	                    str => container.Resolve<NotifyTimeTableChanges>().SendNotificationAsync(str),
+	                    s => !string.IsNullOrWhiteSpace(s) && s.Length > 10);
+	        }
+	    }
+
+	    public RelayCommand ResetLastUpdatetime
 		{
 			get { return new RelayCommand(() =>
 			{
-				NewsManager.LastUpdateMainNewsDateTimeUtc = new DateTime();
-				NewsManager.LastUpdateHotNewsDateTimeUtc = new DateTime();
-				Settings.Default.LastUpdatedHotNews = new DateTime();
-				Settings.Default.LastUpdatedNews = new DateTime();
-				Settings.Default.Save();
+				
+				
 			});}
 		}
 
@@ -462,13 +506,13 @@ namespace PushNotificationServer
 		protected virtual void OnStartCheckNews()
 		{
 			var handler = StartCheckNews;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, EventArgs.Empty);
 		}
 
-		protected virtual void OnStopChecknews()
+		protected virtual void OnStopChecknews(bool haveUpdates)
 		{
 			var handler = StopChecknews;
-			if (handler != null) handler(this, EventArgs.Empty);
+		    handler?.Invoke(this, haveUpdates);
 		}
 
 		

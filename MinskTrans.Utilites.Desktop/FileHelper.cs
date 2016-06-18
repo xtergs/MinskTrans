@@ -126,7 +126,7 @@ namespace MinskTrans.Utilites.Desktop
 	    public async override Task<Stream> OpenStream(TypeFolder folder, string file)
 		{
 			string path = Folders[folder];
-			return File.Open(path, FileMode.Open);
+			return File.Open(Path.Combine(path, file), FileMode.Open);
 		}
 
 	    public override Task WriteTextAsync(TypeFolder folder, string file, Stream text)

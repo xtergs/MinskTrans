@@ -1,10 +1,8 @@
 ﻿{
   "dependencies": {
     "Autofac": "3.5.2",
-    "MetroLog": "1.0.1",
-    "Microsoft.Bcl.Build": "1.0.21",
-    "Microsoft.Bcl.Build.Symbols": "1.0.20",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "XAML.MapControl": "2.9.0"
   },
   "frameworks": {
     "uap10.0": {}

@@ -358,15 +358,15 @@
     <Language Code="zu-za" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>16444ArtemShaban.10196180472FB</MainPackageIdentityName>
+    <MainPackageIdentityName>16444ArtemShaban.beta</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>Минский Общественный Транспорт</ReservedName>
+      <ReservedName>Минский общественный транспорт beta</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>16444ArtemShaban.MinskPublickTransport</MainPackageIdentityName>
     <MainPackageIdentityName>16444ArtemShaban.580353B0D12F7</MainPackageIdentityName>
-    <MainPackageIdentityName>16444ArtemShaban.beta</MainPackageIdentityName>
+    <MainPackageIdentityName>16444ArtemShaban.10196180472FB</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH0C910" />
+  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH3W4H4" />
 </StoreAssociation>

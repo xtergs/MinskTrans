@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinskTrans.Context.Base\MinskTrans.Context.csproj">

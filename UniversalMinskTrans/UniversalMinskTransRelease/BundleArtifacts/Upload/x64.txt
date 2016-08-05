@@ -1,1 +1,6 @@
-MainPackage=D:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\bin\x64\Release\Upload\UniversalMinskTransRelease_2016.1.1.0_x64.appx
+MainPackage=C:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\bin\x64\Release\Upload\UniversalMinskTransRelease_2016.1.2.0_x64.appx
+SymbolPackage=d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\UniversalMinskTransRelease_2016.1.2.0\UniversalMinskTransRelease_2016.1.2.0_x64.appxsym
+ResourcePack=C:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\_scale-100.appx
+ResourcePack=C:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\_scale-125.appx
+ResourcePack=C:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\_scale-150.appx
+ResourcePack=C:\Programming\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\_scale-400.appx

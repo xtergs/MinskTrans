@@ -263,7 +263,7 @@ namespace MinskTrans.DesctopClient.Modelview
                 isShowFavouriteStops = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(FilteredStops));
-                FilterStopsAsync().ConfigureAwait(false);
+                FilterStopsAsync()?.ConfigureAwait(false);
                 FavouriteStopsCount = 1;
             }
         }

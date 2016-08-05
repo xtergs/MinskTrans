@@ -211,12 +211,12 @@
       <HintPath>..\..\UniversalMinskTrans\packages\MvvmLightLibs.5.3.0.0\lib\wpa81\GalaSoft.MvvmLight.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MapControl.WinRT, Version=2.9.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\wpa81\MapControl.WinRT.dll</HintPath>
+    <Reference Include="MapControl.WinRT, Version=2.11.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\XAML.MapControl.2.11.0\lib\wpa81\MapControl.WinRT.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\UniversalMinskTrans\packages\Newtonsoft.Json.8.0.3\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\UniversalMinskTrans\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

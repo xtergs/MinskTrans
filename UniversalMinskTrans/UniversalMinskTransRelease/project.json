@@ -1,8 +1,8 @@
 ﻿{
   "dependencies": {
     "Autofac": "3.5.2",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
-    "XAML.MapControl": "2.9.0"
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "XAML.MapControl": "2.11.0"
   },
   "frameworks": {
     "uap10.0": {}

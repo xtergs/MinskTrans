@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using MapControl;
+using MinskTrans.Context.AutoRouting;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.DesctopClient.Annotations;
 using MinskTrans.DesctopClient.Modelview;
@@ -70,7 +73,10 @@ namespace MinskTrans.DesctopClient
 			ShedulerModelView.Context.LoadEnded += (sender, args) => { Dispatcher.Invoke(() => { ShedulerModelView.Context.Context.AllPropertiesChanged(); }); };
 			ShedulerModelView.Context.LoadDataBase();
 
+			var builder = new PushPinBuilder();
+			ShedulerModelView.MapModelView = ShedulerModelView.MapModelViewFactory(map, builder);
 			//Map model view events
+
 			ShedulerModelView.MapModelView.StartStopSeted +=
 				(sender, args) => ShedulerModelView.MapModelView.StartStopPushpin.Style = (Style) Resources["PushpinStyleSelected"];
 			ShedulerModelView.MapModelView.EndStopSeted +=
@@ -95,7 +101,6 @@ namespace MinskTrans.DesctopClient
 				}
 			};
 
-			//BingMapsTileLayer.ApiKey = @"AixwFJQ_Vb2iTTrQjI__HkjjnECoGsCDRAR9pyA2Tz0ZqP1l4SyOZoSlwsVv-pXS";
 			
 			updateTime.Interval = new TimeSpan(0, 0, 1);
 			updateTime.Tick += (sender, args) =>
@@ -133,6 +138,7 @@ namespace MinskTrans.DesctopClient
 
 			//map.CredentialsProvider = new ApplicationIdCredentialsProvider(@"AoQ8eu3GasAHHCCsUjs25t6Os80fC_sx4wXi_tzY9hKwRV8U-lTkC5AcQzhFL9uk");
 
+			ShedulerModelView.MapModelView.LoadMapSettings();
 
 			DataContext = ShedulerModelView;
 			//timer = new Timer((x)=>{});
@@ -249,6 +255,7 @@ namespace MinskTrans.DesctopClient
 
 		private async void Window_Closed(object sender, EventArgs e)
 		{
+			ShedulerModelView.MapModelView.SaveMapSettings();
 			await ShedulerModelView.Context.Save();
 			timerr.Stop();
 			timerr.Dispose();
@@ -365,44 +372,34 @@ namespace MinskTrans.DesctopClient
 			//	ShedulerModelView.Context.ActualStops.First(stop => stop.ID == 15628));
 		}
 
-		private void Button_Click_2(object sender, RoutedEventArgs e)
+		private async void Button_Click_2(object sender, RoutedEventArgs e)
 		{
-			//CalculateRout calculator = new CalculateRout(ShedulerModelView.Context);
-			//string ResultString;
-			//calculator.CreateGraph();
-			//List<string> reusltList = new List<string>();
-			//if (!calculator.FindPath(ShedulerModelView.MapModelView.StartStop, ShedulerModelView.MapModelView.EndStop))
-			//	reusltList.Add("Bad");
-			//else
-			//{
-			//	StringBuilder builder = new StringBuilder();
-			//	foreach (var keyValuePair in calculator.resultRout)
-			//	{
-			//		builder.Append(keyValuePair.Key.Transport);
-			//		builder.Append(" ");
-			//		builder.Append(keyValuePair.Key);
-			//		builder.Append('\n');
-			//		foreach (var stop in keyValuePair.Value)
-			//		{
-			//			builder.Append(stop.Name);
-			//			builder.Append(", ");
-			//		}
-			//		reusltList.Add(builder.ToString());
-			//		builder.Clear();
-
-			//	}
-			//	ResultString = builder.ToString();
-			//}
-			//ResulTextBox.ItemsSource = reusltList;
-			//if (oldStops != null)
-			//	;
-			//oldStops = calculator.resultRout.SelectMany(x => x.Value).Distinct().ToList();
-			//MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
+			//CalculateRout calculator = new CalculateRout(ShedulerModelView.Context.Context);
+			string ResultString;
+			var calculator = ShedulerModelView.MapModelView.RouteCreator;
+			
+			List<string> reusltList = new List<string>();
+			progress.Visibility = Visibility.Visible;
+			var start = ShedulerModelView.MapModelView.StartStop;
+			var end = ShedulerModelView.MapModelView.EndStop;
+			await Task.Run(
+				() =>
+				{
+					calculator.CreateGraph();
+					calculator.FindPath(start, end );
+				});
+			progress.Visibility = Visibility.Collapsed;
+			ResulTextBox.ItemsSource = calculator.resultRouts2;
+			if (oldStops != null)
+				;
+			oldStops = calculator.resultRout.SelectMany(x => x.Value).Distinct().ToList();
+			MainModelView.Get().MapModelView.MarkPushPins(oldStops, (Style)Resources["PushpinStyleMarket"]);
+			MainModelView.Get().MapModelView.TraceStops(oldStops);
 		}
 
-/*
+
 		private List<Stop> oldStops;
-*/
+
 
 
 	}

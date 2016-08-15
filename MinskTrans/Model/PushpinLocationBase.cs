@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MapControl;
 using MinskTrans.Context.Base.BaseModel;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
@@ -8,6 +9,13 @@ using System.Windows;
 
 namespace MinskTrans.DesctopClient.Model
 {
+
+	public class MapPolylineEx : MapPolyline
+	{
+		public Stop StopStart { get; set; }
+		public Stop StopEnd { get; set; }
+		public List<Rout> Routs { get; set; } 
+	}
 	public abstract class PushpinLocationBase
 	{
 		public PushpinLocationBase() { }

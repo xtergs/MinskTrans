@@ -193,7 +193,7 @@ namespace MinskTrans.Context.Base.BaseModel
 
 	    public Time GetScheduleForStop(int stopIndex, int day)
 	    {
-	        return timesDictionary[stopIndex].Single(x => x.Days.Contains(day.ToString()));
+	        return TimesDictionary[stopIndex].FirstOrDefault(x => x.Days.Contains(day.ToString()));
 	    }
 
 		

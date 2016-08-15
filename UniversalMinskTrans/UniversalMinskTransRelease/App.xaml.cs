@@ -42,12 +42,12 @@ namespace UniversalMinskTrans
             var result = await hub.RegisterNativeAsync(channel.Uri);
 
             // Displays the registration ID so you know it was successful
-            if (result.RegistrationId != null)
-            {
-                var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
-                dialog.Commands.Add(new UICommand("OK"));
-                await dialog.ShowAsync();
-            }
+            //if (result.RegistrationId != null)
+            //{
+            //    var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
+            //    dialog.Commands.Add(new UICommand("OK"));
+            //    await dialog.ShowAsync();
+            //}
 
         }
 
@@ -81,20 +81,23 @@ namespace UniversalMinskTrans
                     break;
 
                 case BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity:
-                // Windows: Added to list of background apps; set up background tasks; 
-                // can use the network connectivity broker.
-                //
-                // Windows Phone: This value is never used on Windows Phone.
-                //break;
-
+				// Windows: Added to list of background apps; set up background tasks; 
+				// can use the network connectivity broker.
+				//
+				// Windows Phone: This value is never used on Windows Phone.
+				//break;
+				case BackgroundAccessStatus.AllowedSubjectToSystemPolicy:
+				case BackgroundAccessStatus.AlwaysAllowed:
                 case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
                 case BackgroundAccessStatus.Unspecified:
                     // The user didn't explicitly disable or enable access and updates. 
                     var updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
                         backgroundName, new TimeTrigger(15, false),
-                        new SystemCondition(SystemConditionType.InternetAvailable));
-
-                    updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
+                        new SystemCondition(SystemConditionType.InternetAvailable), new [] {backgroundPushName});
+					updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
+					updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
+						backgroundPushName, new PushNotificationTrigger(), 
+						new SystemCondition(SystemConditionType.InternetAvailable), new[] { backgroundName });
 
 
                     break;
@@ -320,7 +323,8 @@ namespace UniversalMinskTrans
 
         private readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
         private string backgroundAssembly = "BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask";
-        private string backgroundName = "UpdateBackground3";
+        private string backgroundName = "UpdateBackground1";
+	    private string backgroundPushName = "PushBackground2";
 
         private void CallBackReconnectPushServerTimer(object state)
         {
@@ -340,7 +344,8 @@ namespace UniversalMinskTrans
         public static BackgroundTaskRegistration RegisterBackgroundTask(string taskEntryPoint,
             string taskName,
             IBackgroundTrigger trigger,
-            IBackgroundCondition condition)
+            IBackgroundCondition condition,
+			string[] exclusive)
         {
             //
             // Check for existing registrations of this background task.
@@ -349,7 +354,7 @@ namespace UniversalMinskTrans
             bool isRegistered = false;
             foreach (var cur in BackgroundTaskRegistration.AllTasks)
             {
-                if (cur.Value.Name == taskName)
+                if (cur.Value.Name == taskName || !exclusive.Contains(cur.Value.Name))
                 {
                     // 
                     // The task is already registered.

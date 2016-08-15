@@ -781,8 +781,71 @@ namespace MinskTrans.Context
 
         public getStop GetStopDelegate { get; protected set; }
         public getDirection GetStopDirectionDelegate { get; }
+	    public List<Stop> GetAllStop(Rout r, Stop start, Stop end)
+	    {
+		    var sIndex = r.Stops.FindIndex(s => s.ID == start.ID);
+		    var eIndex = r.Stops.FindIndex(s => s.ID == end.ID);
+		    if (sIndex < 0 || eIndex < 0)
+			    return null;
+		    if (sIndex > eIndex)
+			    return null;
+		    var result = new List<Stop>(eIndex - sIndex + 1);
+		    for (int i = sIndex; i <= eIndex; i++)
+			    result.Add(r.Stops[i]);
+		    return result;
+		    //return r.Stops.SkipWhile(s => s.ID != start.ID).TakeWhile(s => s.ID != end.ID).ToList();
+	    }
 
-        protected virtual void OnLoadStarted()
+	    public int GetRoutInterval(Rout rout, DateTime currentTime, Stop stop, int dayOfWeek)
+	    {
+		    var totalMins = currentTime.TimeOfDay.TotalMinutes;
+		    var times = rout.Time.GetScheduleForStop(rout.Stops.IndexOf(stop), dayOfWeek);
+		    var index = times.Times.Select(delegate(int i, int i1) { return new {Index = i, Diff = i1 - totalMins}; })
+			    .Where(x => x.Diff >= 0).OrderBy(x => x.Diff).Select(x=> x.Index).First();
+
+		    return times.Times[index + 1] - times.Times[index];
+	    }
+
+	    private int GetStopIndex(Rout rout, Stop stop)
+	    {
+		    return rout.Stops.IndexOf(rout.Stops.First(x => x.ID == stop.ID));
+	    }
+
+	    public int GetRoutTime(Rout rout, DateTime currentTime, Stop stop1, Stop stop2, int dayOfWeek)
+	    {
+			var totalMins = currentTime.TimeOfDay.TotalMinutes;
+		    var index1 = GetStopIndex(rout, stop1);
+		    var time = Times.FirstOrDefault(x => x.RoutId == rout.RoutId);
+		    var times1 = time?.GetScheduleForStop(index1, dayOfWeek);
+		    if (times1 == null)
+			    return -1;
+			var index = times1.Times.Select(delegate (int i, int i1) { return new { Index = i1, Diff = i - totalMins }; })
+				.Where(x => x.Diff >= 0).OrderBy(x => x.Diff).Select(x => x.Index).FirstOrDefault();
+		    var times2 = time.GetScheduleForStop(GetStopIndex(rout, stop2), dayOfWeek);
+		    if (times2 == null)
+			    return -1;
+		    return Math.Abs(times2.Times[index] - times1.Times[index]);
+	    }
+
+	    public double GetAvgRoutTime(Stop stop1, Stop stop2)
+	    {
+			var routes = stop1.Routs.Intersect(stop2.Routs).Where(x => x.Weekdays.Contains('1')).ToList();
+		    if (!routes.Any())
+			    return 0;
+			DateTime timeOfDay = new DateTime(2016, 6, 15, 12, 0, 0, 0);
+			return routes.Average(x => GetRoutTime(x, timeOfDay, stop1, stop2, 1));
+		}
+
+	    public double GetAvgRoutIntervalBetweenStops(Stop stop1, Stop stop2)
+	    {
+			var routes = stop1.Routs.Intersect(stop2.Routs).Where(x => x.Weekdays.Contains('1')).ToList();
+			if (!routes.Any())
+				return 0;
+			DateTime timeOfDay = new DateTime(2016, 6, 15, 12, 0, 0, 0);
+			return routes.Average(x => GetRoutInterval(x, timeOfDay, stop1, 1));
+	    }
+
+	    protected virtual void OnLoadStarted()
         {
             var handler = LoadStarted;
             handler?.Invoke(this, EventArgs.Empty);

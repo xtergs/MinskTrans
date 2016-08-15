@@ -56,7 +56,12 @@ namespace MinskTrans.Context.Base
 		bool IsFavouriteRout(Rout rout);
 		getStop GetStopDelegate { get; }
         getDirection GetStopDirectionDelegate { get; }
-	   
+
+		List<Stop> GetAllStop(Rout r, Stop start, Stop end);
+		int GetRoutTime(Rout rout, DateTime currentTime, Stop stop1, Stop stop2, int dayOfWeek);
+		double GetAvgRoutTime(Stop stop1, Stop stop2);
+		double GetAvgRoutIntervalBetweenStops(Stop stop1, Stop stop2);
+
 	}
 
     public delegate void ErrorLoadingDelegate(object sender, ErrorLoadingDelegateArgs args);

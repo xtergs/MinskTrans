@@ -188,7 +188,7 @@ namespace MinskTrans.Utilites.Desktop
 			return returnDictionary;
 		}
 
-		public NewsManagerDesktop(FileHelperBase helper, InternetHelperBase internetHelper, ILogManager logManager, FilePathsSettings files) : base(helper, internetHelper, logManager, files)
+		public NewsManagerDesktop(FileHelperBase helper, InternetHelperBase internetHelper, ILogManager logManager, FilePathsSettings files, INewsContext context) : base(helper, internetHelper, logManager, files, context)
 		{
 			log = logManager.GetLogger<NewsManagerDesktop>();
 		}

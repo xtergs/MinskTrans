@@ -82,6 +82,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DistanceTests.cs" />
     <Compile Include="FileHelperDesktopUnitTest.cs" />
     <Compile Include="InternetHelperDesktopUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

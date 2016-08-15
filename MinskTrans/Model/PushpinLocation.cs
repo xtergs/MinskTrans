@@ -23,4 +23,6 @@ namespace MinskTrans.DesctopClient.Model
 
 		
 	}
+
+	
 }

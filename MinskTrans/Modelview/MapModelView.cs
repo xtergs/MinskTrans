@@ -5,14 +5,26 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media;
+#if (WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+using Windows.UI.Xaml.Media;
+#endif
 using MapControl;
+using MinskTrans.AutoRouting.AutoRouting;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context;
+using MinskTrans.Context.AutoRouting;
+using MinskTrans.Context.Comparer;
 using MinskTrans.DesctopClient.Model;
+using Newtonsoft.Json;
+using PropertyChanged;
 using CalculateRout = MinskTrans.Context.AutoRouting.CalculateRout;
 using Location = MapControl.Location;
 #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
@@ -33,9 +45,17 @@ using GalaSoft.MvvmLight.Command;
 
 namespace MinskTrans.DesctopClient.Modelview
 {
-    public class MapModelView : BaseModelView
-    {
-        private Stop currentStop;
+	public struct StartEndRout
+	{
+		public Stop StartStop { get; set; }
+		public Stop EndStop { get; set; }
+	}
+	[ImplementPropertyChanged]
+	public class MapModelView : BaseModelView
+	{
+		private string settingFile = "settings.json";
+		public ObservableCollection<StartEndRout> SavedPath { get; private set; } = new ObservableCollection<StartEndRout>();
+		private Stop currentStop;
         private Rout currentRout;
         private Location location;
         protected bool showAllPushpins = true;
@@ -47,6 +67,8 @@ namespace MinskTrans.DesctopClient.Modelview
         private Pushpin endStopPushpin;
         private string resultString;
         private ISettingsModelView settings;
+
+	    private CalculateRout routeCreator;
 
         private IGeolocation geolocator;
 
@@ -83,6 +105,7 @@ namespace MinskTrans.DesctopClient.Modelview
                     ShowStopCommand.Execute(StopModelView.FilteredSelectedStop);
             };
             pushBuilder = pushPinBuilder;
+			pushPinBuilder.Tapped += Tapped;
             Settings = newSettigns;
             map.ViewportChanged += (sender, args) => RefreshPushPinsAsync();
             if (geolocation == null)
@@ -97,9 +120,110 @@ namespace MinskTrans.DesctopClient.Modelview
             allPushpins = new List<PushpinLocation>();
             RegistrMap(true);
             StopModelView.Refresh();
+
+			routeCreator = new CalculateRout(base.context.Context);
+			routeCreator.CreateGraph();
+
         }
 
-        public StopModelView StopModelView
+#if WINDOWS_UWP && WINDOWS_PHONE_APP
+		private void Tapped(object sender, TappedRoutedEventArgs tappedRoutedEventArgs)
+		{
+			throw new NotImplementedException();
+		}
+#else
+		private void Tapped(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+		{
+			var source = (Pushpin) sender;
+			ContextMenu menu = new ContextMenu();
+			menu.Items.Add(new MenuItem() {Header = ((Stop) source.Tag).ID});
+			menu.Items.Add(new MenuItem() {Header = "start Stop", Command = SetStartStop, CommandParameter = source});
+			menu.Items.Add(new MenuItem() {Header = "End stop", Command = SetEndtStop, CommandParameter = source });
+			
+			menu.PlacementTarget = source;
+			menu.IsOpen = true;
+		}
+#endif
+
+		struct MapSerializeSettings
+		{
+			public CalculateParameters Parameter;
+			public ObservableCollection<StartEndRout> routes;
+		}
+
+		public void LoadMapSettings()
+		{
+			if (!File.Exists(settingFile))
+			{
+				routeCreator.Params = new CalculateParameters();
+				return;
+			}
+			var json = File.ReadAllText(settingFile);
+			var obj = JsonConvert.DeserializeObject<MapSerializeSettings>(json);
+
+			routeCreator.Params = obj.Parameter;
+			SavedPath = obj.routes;
+
+			OnPropertyChanged(nameof(MaxHumanStops));
+			OnPropertyChanged(nameof(MaxHumanDistanceM));
+			OnPropertyChanged(nameof(HumanMultipl));
+
+			routeCreator.CreateGraph();
+		}
+
+		public void SaveMapSettings()
+		{
+			var obj = new MapSerializeSettings()
+			{
+				Parameter = routeCreator.Params,
+				routes = SavedPath
+			};
+			var json = JsonConvert.SerializeObject(obj);
+			File.WriteAllText(settingFile, json);
+		}
+
+		public StartEndRout SelectedLine { get; set; }
+		public RelayCommand AddToRoutes
+		{
+			get
+			{
+				return new RelayCommand(() =>
+				{
+					SavedPath.Add(new StartEndRout() { StartStop = StartStop, EndStop = EndStop});
+				}, ()=>
+				{
+					return StartStop != null && EndStop != null &&
+					       !SavedPath.Any(x => x.StartStop.ID == StartStop.ID && x.EndStop.ID == EndStop.ID);
+				});
+			}
+		}
+
+		public RelayCommand RemoveFromRoutes
+		{
+			get { return new RelayCommand(() =>
+			{
+				SavedPath.Remove(SelectedLine);
+			}, ()=> SavedPath.Any(x=> x.StartStop?.ID == SelectedLine.StartStop?.ID && x.EndStop?.ID == SelectedLine.EndStop?.ID));}
+		}
+
+		public RelayCommand SetCurrentRout
+		{
+			get
+			{
+				return new RelayCommand(() =>
+				{
+
+					StartStopPushpin = allPushpins.First(p => p.Stop.ID == SelectedLine.StartStop?.ID).Pushpin;
+					EndStopPushpin = allPushpins.First(p => p.Stop.ID == SelectedLine.EndStop?.ID).Pushpin;
+				}, () =>
+				{
+					return allPushpins != null && allPushpins.Any(p => p.Stop.ID == SelectedLine.StartStop?.ID) &&
+					       allPushpins.Any(p => p.Stop.ID == SelectedLine.EndStop?.ID);
+				});
+			}
+		}
+
+		public StopModelView StopModelView
         {
             get { return _stopModelView; }
             set
@@ -109,12 +233,21 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
+		private List<PushpinLocation> markedStops = new List<PushpinLocation>(); 
         public void MarkPushPins(IEnumerable<Stop> stops, Style stylePushPin)
         {
+	        foreach (var p in markedStops)
+	        {
+		        p.Pushpin.Style = StylePushpin;
+	        }
+	        markedStops.Clear();
             foreach (var pushpinLocation in allPushpins)
             {
-                if (stops.Any(x => pushpinLocation.Stop.ID == x.ID))
-                    pushpinLocation.Pushpin.Style = stylePushPin;
+	            if (stops.Any(x => pushpinLocation.Stop.ID == x.ID))
+	            {
+		            pushpinLocation.Pushpin.Style = stylePushPin;
+		            markedStops.Add(pushpinLocation);
+	            }
             }
         }
 
@@ -315,6 +448,9 @@ namespace MinskTrans.DesctopClient.Modelview
         protected void ShowOnMap()
         {
             ShowOnMap(Pushpins.ToArray());
+			if (IsShowStopConnections)
+				DrawStopsWeb();
+
         }
 
         protected void ShowOnMap(Pushpin[] toRemove, Pushpin[] toAdd)
@@ -374,11 +510,16 @@ namespace MinskTrans.DesctopClient.Modelview
 
         protected virtual PushpinLocation CreatePushpin(Stop st)
         {
-            return new PushpinLocation
+            var xx =  new PushpinLocation
             {
                 Location = new Location(st.Lat, st.Lng),
                 Stop = st,
+			
             };
+
+	        xx.Pushpin.MouseRightButtonUp += Tapped;
+
+	        return xx;
         }
 
         protected virtual void PreperPushpinsForView(IEnumerable<Stop> needStops)
@@ -525,7 +666,21 @@ namespace MinskTrans.DesctopClient.Modelview
 #endif
         }
 
-        public RelayCommand<Rout> ShowRoutCommand
+		public bool IsShowStopConnections
+		{
+			get { return _isShowStopConnections; }
+			set
+			{
+				if (!value)
+					ClearDrawedStops();
+				else
+					DrawStopsWeb();
+				_isShowStopConnections = value;
+			}
+		}
+
+
+		public RelayCommand<Rout> ShowRoutCommand
         {
             get
             {
@@ -598,8 +753,19 @@ namespace MinskTrans.DesctopClient.Modelview
         private RelayCommand calculateCommand;
         private string searchPattern;
         private StopModelView _stopModelView;
+		private bool _isShowStopConnections;
+		private int _maxHumanStops;
+		private int _thickness = 1;
 
-        public RelayCommand CalculateRoutCommand
+		public RelayCommand RecreateGraphCommand
+		{
+			get { return new RelayCommand(() =>
+			{
+				routeCreator.CreateGraph();
+			});}
+		}
+
+		public RelayCommand CalculateRoutCommand
         {
             get
             {
@@ -643,6 +809,175 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
+	    public RelayCommand DrawStopsWebCommand => new RelayCommand(DrawStopsWeb);
+
+	    List<string> RoutsToList(IEnumerable<Rout> list)
+	    {
+		    var grouped = list.GroupBy(x => x.Transport).ToList();
+			List<string> strings = new List<string>(grouped.Count());
+		    foreach (var group in grouped)
+		    {
+			    string str = "\n" + group.Key.ToString() + "\n";
+			    foreach (var tr in group.Distinct(new RoutNameComparer()).ToList())
+			    {
+				    str += $"{tr.RouteNum},";
+			    }
+				strings.Add(str);
+		    }
+		    return strings;
+	    }
+
+		public CalculateRout RouteCreator {
+			get { return routeCreator; }
+		}
+
+		public int MaxHumanStops
+		{
+			get { return routeCreator.Params.MaxHumanStops; }
+			set
+			{
+				routeCreator.Params.MaxHumanStops = value;
+			}
+		}
+
+		public double HumanMultipl
+		{
+			get { return routeCreator.Params.HumanMultipl; }
+			set { routeCreator.Params.HumanMultipl = value; }
+		}
+		public int MaxHumanDistanceM
+		{
+			get { return routeCreator.Params.MaxHumanDistanceM; }
+			set { routeCreator.Params.MaxHumanDistanceM = value; }
+		}
+
+		public int Thickness
+		{
+			get { return _thickness; }
+			set
+			{
+				_thickness = value;
+				ReWrawStopsWeb();
+			}
+		}
+		
+
+		public void ReWrawStopsWeb()
+		{
+			if (!IsShowStopConnections)
+				return;
+			foreach(var line in linesOnMap)
+			{
+				map.Children.Remove(line);
+			}
+			linesOnMap.Clear();
+			DrawStopsWeb();
+		}
+
+		private List<MapPolylineEx> tracedLines = new List<MapPolylineEx>();
+
+		public async void TraceStops(List<Stop> stops)
+		{
+			foreach (var line in tracedLines.Where(x=> !stops.Any(s=> s.ID == x.StopStart.ID)).ToList())
+			{
+				map.Children.Remove(line);
+				tracedLines.Remove(line);
+			}
+
+			tracedLines = await DrawStopsWeb(stops);
+		}
+		private async Task<List<MapPolylineEx>> DrawStopsWeb(List<Stop> stops)
+		{
+			var currentLInes = map.Children.OfType<MapPolylineEx>().ToList();
+			List<MapPolylineEx> toDelete = null;
+			IEnumerable<MapPolylineEx> noNeedToAdd = null;
+			List<MapPolylineEx> needLines = new List<MapPolylineEx>();
+
+			Random rand = new Random();
+			byte[] rgb = new byte[3];
+
+			try
+			{
+				foreach (var st in stops)
+
+					foreach (var stopConnection in routeCreator.StopConnections[st.ID])
+					{
+						rand.NextBytes(rgb);
+						var routs = Context.GetIntersectionRoutsByStops(st, stopConnection.Stop);
+						MapPolylineEx poly = new MapPolylineEx()
+						{
+							Locations =
+								new[]
+								{
+									new Location(st.Lat, st.Lng),
+									new Location() {Latitude = stopConnection.Stop.Lat, Longitude = stopConnection.Stop.Lng}
+								},
+							StrokeThickness = Thickness,
+
+							Stroke = new SolidColorBrush(Color.FromRgb(rgb[0], rgb[1], rgb[2]))
+							,
+							StopStart = st,
+							StopEnd = stopConnection.Stop,
+							ContextMenu = new ContextMenu()
+							{
+								ItemsSource = RoutsToList(routs).Select(x => new MenuItem() {Header = x}).Concat(new[]
+								{
+									new MenuItem() {Header = $"Distance: {stopConnection.Distance}"},
+									new MenuItem() {Header = $"Time: {Context.Context.GetAvgRoutTime(st, stopConnection.Stop)}"},
+									new MenuItem()
+									{
+										Header = $"Distance by Time: {Context.Context.GetAvgRoutTime(st, stopConnection.Stop)*(20*1000/60)}"
+									},
+								}).ToList(),
+
+							}
+						};
+
+						if (stopConnection.Type == ConnectionType.Human)
+							poly.StrokeDashArray = new DoubleCollection() {2, 2};
+
+						needLines.Add(poly);
+					}
+			}
+			catch (NullReferenceException e)
+			{
+
+				throw;
+			}
+
+			var comparer = new PolylineComparer();
+
+			var intersect = needLines.Intersect(currentLInes, comparer).ToList();
+			toDelete = intersect.Except(currentLInes, comparer).ToList();
+			noNeedToAdd = needLines.Except(intersect, comparer);
+			foreach (var mapPolyline in toDelete)
+			{
+				map.Children.Remove(mapPolyline);
+			}
+			foreach (var source in noNeedToAdd)
+			{
+				map.Children.Add(source);
+			}
+
+			return needLines;
+		}
+
+		private List<MapPolylineEx> linesOnMap = new List<MapPolylineEx>();
+		public async void DrawStopsWeb()
+	    {
+			var puhs = map.Children.OfType<Pushpin>().ToList();
+			linesOnMap = await DrawStopsWeb(puhs.Select(p => allPushpins.First(x => x.Pushpin == p).Stop).ToList());
+	    }
+
+		public void ClearDrawedStops()
+		{
+			var currentLInes = map.Children.OfType<MapPolylineEx>().ToList();
+			foreach (var line in currentLInes)
+			{
+				map.Children.Remove(line);
+			}
+		}
+
         public bool ShowStopsList { get; set; }
 
         public RelayCommand ChangeShowStopList
@@ -656,13 +991,13 @@ namespace MinskTrans.DesctopClient.Modelview
             set { Interlocked.Exchange(ref stopsOnMap, value); }
         }
 
-        #region events
+#region events
 
         public event EventHandler MapInicialized;
         public event EventHandler StartStopSeted;
         public event EventHandler EndStopSeted;
 
-        #endregion
+#endregion
 
         protected virtual void OnMapInicialized()
         {
@@ -682,4 +1017,17 @@ namespace MinskTrans.DesctopClient.Modelview
             handler?.Invoke(this, EventArgs.Empty);
         }
     }
+
+	class PolylineComparer : IEqualityComparer<MapPolylineEx>
+	{
+		public bool Equals(MapPolylineEx x, MapPolylineEx y)
+		{
+			return x.StopStart.ID == y.StopStart.ID && x.StopEnd.ID == y.StopEnd.ID;
+		}
+
+		public int GetHashCode(MapPolylineEx obj)
+		{
+			return 0;
+		}
+	}
 }

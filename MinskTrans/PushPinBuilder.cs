@@ -1,4 +1,6 @@
-﻿using MapControl;
+﻿using System;
+using System.Windows.Input;
+using MapControl;
 #if WINDOWS_PHONE_APP
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
@@ -14,6 +16,8 @@ namespace MinskTrans.DesctopClient
 #if WINDOWS_PHONE_APP
 
 		public TappedEventHandler Tapped { get; set; }
+#else
+		public MouseButtonEventHandler Tapped { get; set; } 
 #endif
 		public Pushpin CreatePushPin(Location location)
 		{
@@ -24,6 +28,8 @@ namespace MinskTrans.DesctopClient
 			MapPanel.SetLocation(tempPush, location);
 #if WINDOWS_PHONE_APP
 			tempPush.Tapped += Tapped;
+#else
+			tempPush.MouseRightButtonUp += Tapped;
 #endif
 			return tempPush;
 		}

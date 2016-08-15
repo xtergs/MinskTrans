@@ -137,6 +137,7 @@ namespace PushNotificationServer
             builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
             //builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
             builder.RegisterType<Context>().As<IContext>().SingleInstance();
+		    builder.RegisterType<NewsSqlContext>().As<INewsContext>();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
 			builder.RegisterType<OneDriveController>().As<ICloudStorageController>().SingleInstance();

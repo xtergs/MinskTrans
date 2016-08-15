@@ -7,6 +7,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:minskTrans="clr-namespace:MinskTrans.DesctopClient"
         xmlns:modelview="clr-namespace:MinskTrans.DesctopClient.Modelview"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:baseModel="clr-namespace:MinskTrans.Context.Base.BaseModel;assembly=MinskTrans.Context"
+        xmlns:generic="clr-namespace:System.Collections.Generic;assembly=mscorlib"
         Title="MainWindow"
         Width="937"
         Height="418"
@@ -15,6 +18,45 @@
         d:DataContext="{d:DesignInstance modelview:MainModelView}"
         mc:Ignorable="d">
     <Window.Resources>
+        <mapControl:TileLayerCollection x:Key="TileLayers">
+            <!--
+                TileLayers with OpenStreetMap data.
+            -->
+            <mapControl:TileLayer SourceName="OpenStreetMap"
+        		Description="Maps © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
+        		MaxZoomLevel="19">
+                <mapControl:TileSource UriFormat="http://{c}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="Thunderforest OpenCycleMap"
+        		Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="Thunderforest Landscape"
+        		Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="Thunderforest Outdoors"
+        		Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="Thunderforest Transport"
+        		Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/transport/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="Thunderforest Transport Dark"
+        		Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
+        		Foreground="White" Background="Black">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="MapQuest OpenStreetMap"
+        		Description="Maps © [MapQuest](http://www.mapquest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)">
+                <mapControl:TileSource UriFormat="http://otile{n}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg"/>
+            </mapControl:TileLayer>
+            <mapControl:TileLayer SourceName="Seamarks" Description="© OpenSeaMap Contributors"
+        		MinZoomLevel="10" MaxZoomLevel="18">
+                <mapControl:TileSource UriFormat="http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"/>
+            </mapControl:TileLayer>
+        </mapControl:TileLayerCollection>
         <converters:TransportToImageConverter x:Key="TransportToImageConverter" />
         <AlternationConverter x:Key="AlternationConverter" />
         <converters:MinsLeftFromTimeSpanConverter x:Key="MinsLeftConverter" />
@@ -754,6 +796,7 @@
                         <CheckBox Content="Tram" Visibility="Collapsed" />
                     </WrapPanel>
                     <WrapPanel Grid.Column="1">
+                        <Button Content="Draw web" Command="{Binding DrawStopsWebCommand}"/>
                         <TextBlock Text="Start stop: " />
                         <TextBox IsReadOnly="True" Text="{Binding StartStop.Name, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Command="{Binding SwitchStopsCommand}" Content="&lt;-&gt;" />
@@ -761,21 +804,140 @@
                         <TextBox IsReadOnly="True" Text="{Binding EndStop.Name, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Click="Button_Click_2" Content="Calculate" />
                     </WrapPanel>
+                    <WrapPanel>
+                        <CheckBox IsChecked="{Binding IsShowStopConnections, Mode=TwoWay}" Content="Show stop connections"/>
+                        <TextBlock Text="     Thickness of lines:"></TextBlock>
+                        <xctk:IntegerUpDown Value="{Binding Thickness, Mode=TwoWay, FallbackValue=1, Delay=100}" />
+                        <TextBlock Text="     Human path:"/>
+                        <xctk:IntegerUpDown Value="{Binding MaxHumanStops, Mode=TwoWay, FallbackValue=10}" />
+                        <TextBlock Text="     Max human distance:"/>
+                        <xctk:IntegerUpDown Value="{Binding MaxHumanDistanceM, Mode=TwoWay, FallbackValue=500}" />
+                        <TextBlock Text="     Human multpl:"/>
+                        <xctk:DoubleUpDown Value="{Binding HumanMultipl, Mode=TwoWay, FallbackValue=1}" />
+                        <TextBlock >
+                            <Run Text="   Current Center:"></Run>
+                            <Run Text="{Binding ElementName=map, Path=Center, Mode=OneWay}"></Run>
+                        </TextBlock>
+                    </WrapPanel>
+
                     <mapControl:Map x:Name="map"
                                     Grid.Row="1"
                                     Margin="0"
-                                    ViewportChanged="map_ViewportChanged"
-                                    ZoomLevel="7">
+                                    ZoomLevel="7" TileLayer="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}">
                         <mapControl:Map.Center>
                             <mapControl:Location Latitude="27" Longitude="53" />
                         </mapControl:Map.Center>
-
+                        <mapControl:Map.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{Binding Center, ElementName=map, Mode=OneWay}">
+                                    <MenuItem.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Run Text="{Binding Latitude}"/>
+                                                <Run Text="{Binding Longitude}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </MenuItem.HeaderTemplate>
+                                </MenuItem>
+                                <MenuItem Header="Calculate" Click="Button_Click_2" />
+                                <MenuItem Header="&lt;-&gt;" Command="{Binding SwitchStopsCommand}"/>
+                            </ContextMenu>
+                        </mapControl:Map.ContextMenu>
                     </mapControl:Map>
+                    <Expander Header="Save routes for calculation" Grid.Column="0" Grid.Row="1" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ListView Grid.ColumnSpan="3" ItemsSource="{Binding SavedPath}" SelectedItem="{Binding SelectedLine, Mode=TwoWay}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridView.Columns>
+                                            <GridViewColumn DisplayMemberBinding="{Binding StartStop.Name}"/>
+                                            <GridViewColumn>
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="-&gt;"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn DisplayMemberBinding="{Binding EndStop.Name}"/>
+                                        </GridView.Columns>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <Button Grid.Row="1" Content="Add" Command="{Binding AddToRoutes}"/>
+                            <Button Grid.Row="1" Grid.Column="1" Content="Remove" Command="{Binding RemoveFromRoutes}"/>
+                            <Button Grid.Row="1" Grid.Column="2" Content="Set" Command="{Binding SetCurrentRout}"/>
+                        </Grid>
+                    </Expander>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        <ComboBox Width="200" Margin="10" VerticalAlignment="Center"
+						SelectedValuePath="Tag" SelectedValue="{Binding TileLayer, ElementName=map, Mode=TwoWay}">
+                            <ComboBoxItem Tag="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}" Content="OpenStreetMap"/>
+                            <ComboBoxItem Tag="{Binding [Thunderforest OpenCycleMap], Source={StaticResource TileLayers}}" Content="OpenCycleMap"/>
+                            <ComboBoxItem Tag="{Binding [Thunderforest Landscape], Source={StaticResource TileLayers}}" Content="Landscape"/>
+                            <ComboBoxItem Tag="{Binding [Thunderforest Outdoors], Source={StaticResource TileLayers}}" Content="Outdoors"/>
+                            <ComboBoxItem Tag="{Binding [Thunderforest Transport], Source={StaticResource TileLayers}}" Content="Transport"/>
+                            <ComboBoxItem Tag="{Binding [Thunderforest Transport Dark], Source={StaticResource TileLayers}}" Content="Transport Dark"/>
+                            <ComboBoxItem Tag="{Binding [MapQuest OpenStreetMap], Source={StaticResource TileLayers}}" Content="MapQuest Open"/>
+                            <!--<ComboBoxItem Tag="{Binding [Bing Maps Road], Source={StaticResource TileLayers}}">Bing Maps Road</ComboBoxItem>
+                    <ComboBoxItem Tag="{Binding [Bing Maps Aerial], Source={StaticResource TileLayers}}">Bing Maps Aerial</ComboBoxItem>
+                    <ComboBoxItem Tag="{Binding [Bing Maps Hybrid], Source={StaticResource TileLayers}}">Bing Maps Hybrid</ComboBoxItem>-->
+                        </ComboBox>
+                    </StackPanel>
                     <DockPanel Grid.Row="1" Grid.Column="1">
+                        <ProgressBar DockPanel.Dock="Top" Visibility="Collapsed" IsIndeterminate="True" x:Name="progress"></ProgressBar>
                         <TextBlock DockPanel.Dock="Top" Text="Result: " />
                         <ListBox x:Name="ResulTextBox"
                                  DockPanel.Dock="Top"
-                                 ScrollViewer.CanContentScroll="True" />
+                                 ScrollViewer.CanContentScroll="True">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <ListView ItemsSource="{Binding Value}" DisplayMemberPath="Name">
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel IsItemsHost="True"/>
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                        </ListView>
+                                        <ListView Grid.Row="1" ItemsSource="{Binding Key}">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding RouteNum}" x:Name="TextBlock">
+                                                        <TextBlock.Triggers >
+                                                            <!--<DataTrigger  Binding="{Binding Transport}" Value="{x:Static baseModel:TransportType.Trol}">
+                                                                <Setter TargetName="TextBlock"  Property="Foreground" Value="Blue"/>
+                                                            </DataTrigger>-->
+                                                            <!--<DataTrigger  Binding="{Binding}" Value="20">
+                                                                <Setter TargetName="TextBlock"   Property="Foreground" Value="Red"/>
+                                                            </DataTrigger>-->
+                                                        </TextBlock.Triggers>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel IsItemsHost="True"></WrapPanel>
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                        </ListView>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </DockPanel>
                 </Grid>
             </TabItem>

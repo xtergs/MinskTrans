@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Windows.ApplicationModel.Background;
+using Windows.Networking.PushNotifications;
 using Windows.UI.Notifications;
 using Autofac;
 using CommonLibrary;
@@ -27,18 +28,6 @@ namespace BackgroundUpdateTaskUniversalRuntime
 {
     public sealed class UpdateBackgroundTask : IBackgroundTask
     {
-/*
-		private string urlUpdateDates = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4";
-*/
-/*
-		private string urlUpdateNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8";
-*/
-/*
-		private string urlUpdateHotNews = @"https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2";
-*/
-/*
-		private string fileNews = "datesNews.dat";
-*/
         private bool _cancelRequested = false;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private BackgroundTaskCancellationReason _cancelReason;
@@ -59,7 +48,15 @@ namespace BackgroundUpdateTaskUniversalRuntime
             LogManagerFactory.DefaultConfiguration = configuration;
             ILogger Log = null;
 
-            try
+	        var details = taskInstance.TriggerDetails as RawNotification;
+
+			if (details != null)
+			{
+				
+				// Perform tasks
+			}
+
+			try
             {
                 //Debug.WriteLine("Background task started");
                 if (_cancelRequested)

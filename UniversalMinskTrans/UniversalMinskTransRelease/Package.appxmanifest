@@ -35,6 +35,7 @@
         <Extension Category="windows.backgroundTasks" EntryPoint="BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask">
           <BackgroundTasks>
             <Task Type="timer" />
+            <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
       </Extensions>

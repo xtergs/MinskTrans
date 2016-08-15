@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Autofac;
 using CommonLibrary.Notify;
 using MetroLog;
+using MetroLog.Targets;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Desktop;
@@ -40,6 +41,18 @@ namespace MinskTrans.DesctopClient.Modelview
 
 		private MainModelView()
 		{
+			 var configuration = new LoggingConfiguration();
+			//#if DEBUG
+						configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
+			//#endif
+						configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new StreamingFileTarget() {FileNamingParameters = {  CreationMode = FileCreationMode.AppendIfExisting}});
+						configuration.IsEnabled = true;
+
+						LogManagerFactory.DefaultConfiguration = configuration;
+			//LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new FileStreamingTarget());
+
+			LogManagerFactory.DefaultConfiguration.IsEnabled = true;
+
 			var builder = new ContainerBuilder();
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().SingleInstance().WithParameter("connectionString", @"Data Source=(localdb)\ProjectsV12;Initial Catalog=Entity6_Test_MinskTrans;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=True").SingleInstance();
@@ -82,13 +95,10 @@ namespace MinskTrans.DesctopClient.Modelview
 			model = this;
 		}
 
-		public MapModelView MapModelView
-		{
-			get
-			{
-				return mapModelView;
-			}
-		}
+		public MapModelView MapModelView { get; set; }
+
+		public MapModelView.MapModelViewFactory MapModelViewFactory
+			=> container.Resolve<MapModelView.MapModelViewFactory>();
 
 		public FindModelView FindModelView
 		{

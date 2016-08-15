@@ -71,12 +71,22 @@ namespace MinskTrans.Net
         public List<NewsEntry> NewsEntries { get; set; } = new List<NewsEntry>(10);
     }
 
-    public abstract class NewsManagerBase : INotifyPropertyChanged
+	public interface INewsContext
+	{
+		ListWithDate MainNews { get; }
+		ListWithDate HotNews { get; }
+		void LoadData();
+		void Save();
+	}
+
+
+	public abstract class NewsManagerBase : INotifyPropertyChanged
     {
         private ILogger log;
+	    private INewsContext context;
 
-        protected ListWithDate allNews;
-        protected ListWithDate allHotNewsDictionary;
+		protected ListWithDate allNews => context.MainNews;
+		protected ListWithDate allHotNewsDictionary => context.HotNews;
 
         public DateTime NewNewsDateTimeUtc => allNews.LastUpdateDateTimeUtc;
         public List<NewsEntry> NewNews
@@ -108,8 +118,10 @@ namespace MinskTrans.Net
         private FileHelperBase FileHelper { get; }
 
         public NewsManagerBase(FileHelperBase helper, InternetHelperBase internetHelper,
-            ILogManager logManager, FilePathsSettings files)
+            ILogManager logManager, FilePathsSettings files, INewsContext context)
         {
+	        if (context == null)
+		        throw new ArgumentNullException(nameof(context));
             if (helper == null)
                 throw new ArgumentNullException(nameof(helper));
             FileHelper = helper;
@@ -121,11 +133,12 @@ namespace MinskTrans.Net
             log = logManager.GetLogger<NewsManagerBase>();
             //this.settings = settings;
             this.Files = files;
+	        this.context = context;
             //LastNewsTime = new DateTime();
             //newDictionary = new ListWithDate();
             //hotNewsDictionary = new ListWithDate();
-            allHotNewsDictionary = new ListWithDate();
-            allNews = new ListWithDate();
+            //allHotNewsDictionary = new ListWithDate();
+            //allNews = new ListWithDate();
             log.Trace($"{nameof(NewsManagerBase)} is created");
         }
 
@@ -172,64 +185,67 @@ namespace MinskTrans.Net
             
             log.Trace(
                 $"Load: read file for months {FileHelper.GetPath(Files.MainNewsFile.Folder)} + {Files.MainNewsFile.FileName}");
-            JsonSerializer serializer = new JsonSerializer();
-            try
-            {
-                using (
-                    var stream =
-                        new StreamReader(
-                            await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
-                using (var textReader = new JsonTextReader(stream))
-                {
-                    var news = serializer.Deserialize<ListWithDate>(textReader);
-                    allNews = news;
-                    //allNews.NewsEntries.AddRange(news);
-                }
-                log.Trace($"Load: has been readed {allNews.NewsEntries.Count} news");
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-            catch (JsonSerializationException e)
-            {
-                log?.Trace(e.Message);
-            }
+				context.LoadData();
+    //        JsonSerializer serializer = new JsonSerializer();
+    //        try
+    //        {
+    //            //using (
+    //            //    var stream =
+    //            //        new StreamReader(
+    //            //            await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
+    //            //using (var textReader = new JsonTextReader(stream))
+    //            //{
+    //            //    var news = serializer.Deserialize<ListWithDate>(textReader);
+    //            //    allNews = news;
+    //            //    //allNews.NewsEntries.AddRange(news);
+    //            //}
+    //            log.Trace($"Load: has been readed {allNews.NewsEntries.Count} news");
+    //        }
+    //        catch (FileNotFoundException e)
+    //        {
+    //            Debug.WriteLine(e.Message);
+    //        }
+    //        catch (JsonSerializationException e)
+    //        {
+    //            log?.Trace(e.Message);
+    //        }
 
-            NewNews = null;
 
-            //AllHotNews.Clear();
-            log.Trace($"read hot news");
-            try
-            {
-                using (var stream = new StreamReader(
-                    await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
-                using (var textReader = new JsonTextReader(stream))
-                {
-                    serializer.ContractResolver = new ShouldSerializeContractResolver();
-                    var news = serializer.Deserialize<ListWithDate>(textReader);
-                    allHotNewsDictionary = news;
-                }
-                log.Trace($"Load: has been readed {allHotNewsDictionary.NewsEntries.Count} hot news");
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-            catch (JsonSerializationException e)
-            {
-                log?.Trace(e.Message);
-            }
+    //        //AllHotNews.Clear();
+    //        log.Trace($"read hot news");
+    //        try
+    //        {
+				//context.LoadData();
+    //            //using (var stream = new StreamReader(
+    //            //    await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
+    //            //using (var textReader = new JsonTextReader(stream))
+    //            //{
+    //            //    serializer.ContractResolver = new ShouldSerializeContractResolver();
+    //            //    var news = serializer.Deserialize<ListWithDate>(textReader);
+    //            //    allHotNewsDictionary = news;
+    //            //}
+    //            log.Trace($"Load: has been readed {allHotNewsDictionary.NewsEntries.Count} hot news");
+    //        }
+    //        catch (FileNotFoundException e)
+    //        {
+    //            Debug.WriteLine(e.Message);
+    //        }
+    //        catch (JsonSerializationException e)
+    //        {
+    //            log?.Trace(e.Message);
+    //        }
 
             //hotNewsDictionary = null;
+            NewNews = null;
             AllHotNews = null;
         }
 
-        private Task SaveToFile(string filePath, TypeFolder folder, ListWithDate listToWrite)
+        private async Task SaveToFile(string filePath, TypeFolder folder, ListWithDate listToWrite)
         {
-            string jsonString = JsonConvert.SerializeObject(listToWrite,
-                new JsonSerializerSettings() {ContractResolver = new ShouldSerializeContractResolver()});
-            return FileHelper.WriteTextAsync(folder, filePath, jsonString);
+			context.Save();
+            //string jsonString = JsonConvert.SerializeObject(listToWrite,
+            //    new JsonSerializerSettings() {ContractResolver = new ShouldSerializeContractResolver()});
+            //return FileHelper.WriteTextAsync(folder, filePath, jsonString);
         }
         
         public Task SaveToFile()

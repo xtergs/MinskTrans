@@ -36,6 +36,7 @@ namespace MinskTrans.Context
         Task<bool> UpdateNewsTableAsync(CancellationToken token);
         Task<bool> UpdateTimeTableAsync(CancellationToken token, bool withLightCheck = false, bool tryOnlyOriginalLink = false);
         IEnumerable<Rout> GetDirectionsStop(Stop FilteredSelectedStop);
+	    IEnumerable<Rout> GetIntersectionRoutsByStops(Stop stop1, Stop stop2); 
         void SetGPS(bool useGPS);
         event EventHandler<EventArgs> LoadEnded;
         event EventHandler<EventArgs> LoadStarted;

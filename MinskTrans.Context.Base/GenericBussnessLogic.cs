@@ -279,10 +279,15 @@ namespace MinskTrans.Context
         {
             if (FilteredSelectedStop == null)
                 return null;
-            return Context.Routs.Where(x => x.Stops.Contains(FilteredSelectedStop)).Distinct();
+            return Context.Routs.Where(x => x.Stops.Any(y=> y.ID ==  FilteredSelectedStop.ID)).Distinct();
         }
 
-        public void SetGPS(bool useGPS)
+	    public IEnumerable<Rout> GetIntersectionRoutsByStops(Stop stop1, Stop stop2)
+	    {
+		    return stop1.Routs.Intersect(stop2.Routs, new RoutComparer()).ToList();
+	    }
+
+		public void SetGPS(bool useGPS)
         {
             if (useGPS)
             {

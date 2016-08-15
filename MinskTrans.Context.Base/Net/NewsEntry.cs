@@ -4,9 +4,10 @@ using System.Text;
 
 namespace MinskTrans.Net
 {
-	public struct NewsEntry
+	public class NewsEntry
 	{
-		public NewsEntry(DateTime dateTimeNews, string decodedString) : this()
+		public NewsEntry() { }
+		public NewsEntry(DateTime dateTimeNews, string decodedString)
 		{
 			PostedUtc = dateTimeNews;
 			Message = decodedString.Replace("  ", " ").Trim();

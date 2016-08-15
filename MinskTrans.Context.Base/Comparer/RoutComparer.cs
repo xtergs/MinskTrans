@@ -1,8 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using MinskTrans.Context.Base.BaseModel;
 
 namespace MinskTrans.Context.Comparer
 {
+	public class RoutNameComparer : IEqualityComparer<Rout>
+	{
+		public bool Equals(Rout x, Rout y)
+		{
+			return (x.Transport == y.Transport) && (x.RouteNum == y.RouteNum);
+		}
+
+		public int GetHashCode(Rout obj)
+		{
+			return 0;
+		}
+	}
     class RoutComparer : IEqualityComparer<Rout>
     {
         #region Implementation of IEqualityComparer<in Rout>

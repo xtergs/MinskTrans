@@ -48,11 +48,17 @@ namespace UniversalMinskTransRelease.View
                 await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
             };
 
-
-            DataContext = model.MapModelView;
+	        CheckToggleButton();
+			this.SizeChanged += OnSizeChanged;
+			DataContext = model.MapModelView;
         }
 
-        void CreateContextMenuForPushPin()
+	    private void OnSizeChanged(object sender, SizeChangedEventArgs sizeChangedEventArgs)
+	    {
+		    CheckToggleButton();
+	    }
+
+	    void CreateContextMenuForPushPin()
         {
             
         }
@@ -144,5 +150,44 @@ namespace UniversalMinskTransRelease.View
             DataContext = model;
             //TileImageLoader.Cache = new MapControl.Caching.FileDbCache();
         }
+
+	    private void Grid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	    {
+		    if (ActualWidth >= 800)
+			    return;
+		    Grid.SetColumn((FrameworkElement) sender, 1);
+		    appBarToggleButton.IsChecked = false;
+		    CheckToggleButton();
+	    }
+
+	    private void CheckToggleButton()
+	    {
+			if (appBarToggleButton.IsChecked.Value && ActualWidth <= 800)
+			{
+				map.Visibility = Visibility.Collapsed;
+				Grid.SetColumn(grid, 0);
+			}
+			else
+			{
+				map.Visibility = Visibility.Visible;
+				Grid.SetColumn(grid, 1);
+			}
+
+		    if (appBarToggleButton.IsChecked.Value)
+				grid.Visibility = Visibility.Visible;
+			else
+				grid.Visibility = Visibility.Collapsed;
+		}
+
+	    private void AppBarToggleButton_OnChecked(object sender, RoutedEventArgs e)
+	    {
+		    CheckToggleButton();
+
+	    }
+
+	    private void AppBarToggleButton_OnUnchecked(object sender, RoutedEventArgs e)
+	    {
+		    CheckToggleButton();
+	    }
     }
 }

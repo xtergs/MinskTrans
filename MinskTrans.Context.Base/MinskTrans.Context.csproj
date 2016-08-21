@@ -67,6 +67,7 @@
     <Compile Include="GenericBussnessLogic.cs" />
     <Compile Include="Geopositioning\WebSeacher.cs" />
     <Compile Include="IBussnessLogics.cs" />
+    <Compile Include="Map\PushPinBuilderBase.cs" />
     <Compile Include="Net\Base\ITimeTableParser.cs" />
     <Compile Include="Net\Base\UpdateManagerBase.cs" />
     <Compile Include="Net\NewsEntry.cs" />

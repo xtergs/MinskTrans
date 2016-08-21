@@ -180,6 +180,7 @@
     <Compile Include="ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\XamlMapService.cs" />
     <Compile Include="ViewModel\DesktopApplicationHelper.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

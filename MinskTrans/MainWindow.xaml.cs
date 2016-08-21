@@ -85,13 +85,13 @@ namespace MinskTrans.DesctopClient
 			{
 				foreach (var pushpin in ShedulerModelView.MapModelView.Pushpins)
 				{
-					pushpin.MouseLeftButtonDown += (o, argsr) =>
-					{
-						Pushpin tempPushpin = (Pushpin) o;
-						Stop tmStop = (Stop) tempPushpin.Tag;
-						ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
-						stopTabItem.Focus();
-					};
+					//pushpin.MouseLeftButtonDown += (o, argsr) =>
+					//{
+					//	Pushpin tempPushpin = (Pushpin) o;
+					//	Stop tmStop = (Stop) tempPushpin.Tag;
+					//	ShedulerModelView.StopMovelView.FilteredSelectedStop = tmStop;
+					//	stopTabItem.Focus();
+					//};
 					//pushpin.MouseRightButtonDown += (o, eventArgs) =>
 					//{
 					//	Pushpin tempPushpin = (Pushpin)o;

@@ -1,6 +1,7 @@
 ﻿using MyLibrary;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MinskTrans.Context;
@@ -25,7 +26,7 @@ namespace MinskTrans.DesctopClient.Modelview
 {
     public class ListStopTimePair
     {
-        public ListStopTimePair(IList<StopTimePair> stopTimePairs, Rout rout)
+        public ListStopTimePair(IList<StopTimePair> stopTimePairs, Rout rout, TimeSpan SelectedIndex)
         {
             if (stopTimePairs == null)
                 throw new ArgumentNullException(nameof(stopTimePairs));
@@ -33,9 +34,11 @@ namespace MinskTrans.DesctopClient.Modelview
                 throw new ArgumentNullException(nameof(rout));
             StopTimePairs = stopTimePairs;
             Rout = rout;
+	        this.SelectedIndex = StopTimePairs.IndexOf(StopTimePairs.First(x => x.Time == SelectedIndex));
         }
 
         public Rout Rout { get; }
+		public int SelectedIndex { get; set; }
         public IList<StopTimePair> StopTimePairs { get; }
     }
 
@@ -89,7 +92,7 @@ namespace MinskTrans.DesctopClient.Modelview
             this.webSeacher = webSeacher;
             this.commands = commands;
 
-            settingsModelView.PropertyChanged += async (sender, args) =>
+            settingsModelView.PropertyChanged += (sender, args) =>
             {
                 switch (args.PropertyName)
                 {
@@ -97,9 +100,12 @@ namespace MinskTrans.DesctopClient.Modelview
                         Refresh();
                         break;
                     case "UseGPS":
-                        await SetGPS();
+                        SetGPS();
                         //OnStatusGPSChanged();
                         break;
+					case nameof(ISettingsModelView.ConsiderDistanceSortStops):
+						this.Refresh();
+		                break;
                     default:
                         break;
                 }
@@ -110,90 +116,91 @@ namespace MinskTrans.DesctopClient.Modelview
             IsShowFavouriteStops = false;
         }
 
-        private Task SetGPS()
+        private void SetGPS()
         {
-            return null;
-            //	var geolocationStatus = await Geolocator.RequestAccessAsync();
-            //	if (geolocationStatus == GeolocationAccessStatus.Denied)
-            //		return;
-            //try
-            //{
-            //	if (geolocator == null)
-            //	{
-            //		//geolocator = new Geolocator();
-            //		geolocator.StatusChanged += GeolocatorOnStatusChanged;
-            //	}
-            //}
-            //catch (Exception ex)
-            //{
-            //	if (unchecked((uint)ex.HResult == 0x80004004))
-            //	{
-            //		// the application does not have the right capability or the location master switch is off
-            //		//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
-            //		//box.ShowAsync();
-            //	}
-            //	//else
-            //	{
-            //		// something else happened acquring the location
-            //	}
-            //}
-            //if (Settings.UseGPS)
-            //{
-            //		geolocator.MovementThreshold = Settings.GPSThreshholdMeters;
+			//return null;
 
-            //		geolocator.ReportInterval = Settings.GPSInterval;
-            //		geolocator.PositionChanged += OnGeolocatorOnPositionChanged;
+			//	var geolocationStatus = await Geolocator.RequestAccessAsync();
+			//	if (geolocationStatus == GeolocationAccessStatus.Denied)
+			//		return;
+			try
+			{
+				if (Context.Geolocation == null)
+				{
+					//geolocator = new Geolocator();
+					//geolocator.StatusChanged += GeolocatorOnStatusChanged;
+					return;
+				}
+			}
+			catch (Exception ex)
+			{
+				if (unchecked((uint)ex.HResult == 0x80004004))
+				{
+					// the application does not have the right capability or the location master switch is off
+					//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
+					//box.ShowAsync();
+				}
+				//else
+				{
+					// something else happened acquring the location
+				}
+			}
+			if (Settings.UseGPS)
+			{
+				
+				Context.Geolocation.MovementThreshold = Settings.GPSThreshholdMeters;
 
-            //}
-            //else
-            //{
-            //	if (geolocator == null)
-            //		return;
-            //	geolocator.PositionChanged -= OnGeolocatorOnPositionChanged;
-            //	//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+				Context.Geolocation.ReportInterval = Settings.GPSInterval;
+				Context.Geolocation.PositionChanged += OnGeolocatorOnPositionChanged;
 
-            //	//geolocator = null;
+			}
+			else
+			{
+				if (Context.Geolocation == null)
+					return;
+				Context.Geolocation.PositionChanged -= OnGeolocatorOnPositionChanged;
+				//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
 
-            //	LocationXX.Get().Latitude = defaultLocation.Latitude;
-            //	LocationXX.Get().Longitude = defaultLocation.Longitude;
-            //}
-        }
+				//geolocator = null;
 
-        //private void OnGeolocatorOnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
-        //{
-        //	LocationXX.Get().Latitude = args.Latitude;
-        //	LocationXX.Get().Longitude = args.Position.Coordinate.Longitude;
+				//Context.Geolocation.Get().Latitude = defaultLocation.Latitude;
+				//LocationXX.Get().Longitude = defaultLocation.Longitude;
+			}
+		}
 
-        //	OnStatusGPSChanged();
-        //}
+		private void OnGeolocatorOnPositionChanged(object o, PositionChangedEventArgsArgs positionChangedEventArgsArgs)
+		{
+			this.Refresh();
+			OnStatusGPSChanged();
+		}
 
-        //private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
-        //{
-        //	if (args.Status == PositionStatus.Ready)
-        //	{
-        //		OnStatusGPSChanged();
-        //	}
-        //	else if (args.Status == PositionStatus.Disabled ||
-        //			 args.Status == PositionStatus.NotAvailable)
-        //	{
-        //		LocationXX.Get().Latitude = defaultLocation.Latitude;
-        //		LocationXX.Get().Longitude = defaultLocation.Longitude;
+		//private void GeolocatorOnStatusChanged(Geolocator sender, StatusChangedEventArgs args)
+		//{
+		//	if (args.Status == PositionStatus.Ready)
+		//	{
+		//		OnStatusGPSChanged();
+		//	}
+		//	else if (args.Status == PositionStatus.Disabled ||
+		//			 args.Status == PositionStatus.NotAvailable)
+		//	{
+		//		LocationXX.Get().Latitude = defaultLocation.Latitude;
+		//		LocationXX.Get().Longitude = defaultLocation.Longitude;
 
-        //		OnStatusGPSChanged();
-        //	}
-        //}
+		//		OnStatusGPSChanged();
+		//	}
+		//}
 
-        //public event EventHandler<EventArgs> StatusGPSChanged;
+		public event EventHandler<EventArgs> StatusGPSChanged;
 
-        //public void OnStatusGPSChanged()
-        //{
-        //	var handler = StatusGPSChanged;
-        //	if (handler != null)
-        //		handler(this, new EventArgs());
-        //}
+		public void OnStatusGPSChanged()
+		{
+			var handler = StatusGPSChanged;
+			if (handler != null)
+				handler(this, new EventArgs());
+		}
 
 
-        public bool fuzzySearch;
+		public bool fuzzySearch;
         private bool isShowFavouriteStops;
         private TimeLineModel _selectedTimeLineModel;
         private bool _isWorking = false;
@@ -238,12 +245,10 @@ namespace MinskTrans.DesctopClient.Modelview
             {
                 var token = sourceToken.Token;
 
-                var res =
-                    await
-                        Context.FilteredStopsAsync(StopNameFilter, token, selectedTransport,
+                var res = await Context.FilteredStopsAsync(StopNameFilter, token, selectedTransport,
                             Context.Geolocation.CurLocation, FuzzySearch);
                 if (token.IsCancellationRequested)
-                    return null;
+                    return new Stop[0];
                 FilteredStopsStore = res;
                 sourceToken = null;
                 IsWorking = false;
@@ -450,7 +455,7 @@ namespace MinskTrans.DesctopClient.Modelview
                 selectedTransport ^= flag;
             OnPropertyChanged(nameof(FilteredStops));
             OnPropertyChanged(nameof(TimeSchedule));
-            FilterStopsAsync().ConfigureAwait(false);
+            FilterStopsAsync();
         }
 
         #endregion
@@ -476,6 +481,8 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
+	    public int ShortTimeInPast = 10;
+
         public virtual IEnumerable<TimeLineModel> TimeSchedule
         {
             get
@@ -496,7 +503,7 @@ namespace MinskTrans.DesctopClient.Modelview
                 return new ListStopTimePair(
                     Context.GetStopsTimesParis(SelectedTimeLineModel.Rout, FilteredSelectedStop,
                         (int) SelectedTimeLineModel.Time.TotalMinutes,
-                        CurDay), SelectedTimeLineModel.Rout);
+                        CurDay), SelectedTimeLineModel.Rout, SelectedTimeLineModel.Time);
             }
         }
 

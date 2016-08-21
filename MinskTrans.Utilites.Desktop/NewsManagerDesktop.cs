@@ -122,7 +122,7 @@ namespace MinskTrans.Utilites.Desktop
 							key.PostedUtc == newsEntry.PostedUtc && key.RepairedLineUtc != newsEntry.RepairedLineUtc &&
 							(newsEntry.Message.ToLowerInvariant().Contains(key.Message.ToLowerInvariant()) && key.Message.Length != newsEntry.Message.Length));
 
-				if (tempNode.Message != null)
+				if( tempNode != null && tempNode.Message != null)
 				{
 					allHotNewsDictionary.NewsEntries.Remove(tempNode);
 				}

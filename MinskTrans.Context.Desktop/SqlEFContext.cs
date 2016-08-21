@@ -10,6 +10,7 @@ using MinskTrans.Context.Base.BaseModel;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata;
 using MinskTrans.Net;
+using MinskTrans.Utilites.Base.IO;
 
 namespace MinskTrans.Context.Desktop
 {
@@ -85,6 +86,21 @@ namespace MinskTrans.Context.Desktop
 			MainNews = new ListWithDate() {NewsEntries = main, LastUpdateDateTimeUtc = DateTime.MinValue};
 			main = News.Where(x => x.Type == TypeNews.HotNews).Select(x => (NewsEntry)x).ToList();
 			HotNews = new ListWithDate() { NewsEntries = main, LastUpdateDateTimeUtc = DateTime.MinValue };
+		}
+
+		public Task LoadDataAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task LoadDataAsync(TypeFolder folder, string file)
+		{
+			throw new NotImplementedException();
+		}
+
+		Task INewsContext.Save(TypeFolder folder, string file)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void Save()

@@ -21,10 +21,10 @@ namespace DesktopUnitTests
 		   //ToDO cont.Routs = new [] {rout};;
 
             //Act
-            await cont.AddFavouriteRout(cont.Routs.First());
+			await cont.AddFavouriteRout(rout);
 
             //Assert
-		    Assert.AreEqual(cont.FavouriteRouts.Count, 1);
+		    Assert.AreEqual(1, cont.FavouriteRouts.Count);
 		    Assert.IsTrue(cont.IsFavouriteRout(cont.Routs.First()));
 		}
 

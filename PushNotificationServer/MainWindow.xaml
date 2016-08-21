@@ -1,84 +1,149 @@
-﻿<Window x:Name="window" x:Class="PushNotificationServer.MainWindow"
+﻿<Window x:Class="PushNotificationServer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        x:Name="window"
+        Title="Server Minsktrans Notificator v3"
+        Width="525"
+        Height="350">
 
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid" Margin="5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <ToolBarPanel>
 
-            <Menu >
-                <MenuItem Header="Reset last update time" Command="{Binding ResetLastUpdatetime}"></MenuItem>
+            <Menu>
+                <MenuItem Command="{Binding ResetLastUpdatetime}" Header="Reset last update time" />
             </Menu>
         </ToolBarPanel>
-        <Grid Grid.Row="1" DataContext="{Binding ElementName=window}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              DataContext="{Binding ElementName=window}">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="1">
-                <CheckBox Grid.Column="1" Content="Autorun" IsChecked="{Binding Autorun, ElementName=window}"></CheckBox>
-                <CheckBox x:Name="AutoUpdateNewsCheckBox" Grid.Column="1" Content="AutoUpdateNews" IsChecked="{Binding Engine.NewsAutoUpdate, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
-                <TextBlock Text="UpdateInterval"/>
-                <TextBox HorizontalAlignment="Stretch" InputScope="Number" Text="{Binding Engine.DbUpdateMins, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock x:Name="Counter" Text="{Binding Time}"></TextBlock>
-            </StackPanel>
-            <TextBlock Grid.Row="0" Text="{Binding BusnesLogic.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}">
-
-            </TextBlock>
+            <Expander Grid.Column="1" IsExpanded="False">
+                <StackPanel Grid.Column="1">
+                    <CheckBox Grid.Column="1"
+                              Content="Autorun"
+                              IsChecked="{Binding Autorun,
+                                                  ElementName=window}" />
+                    <CheckBox x:Name="AutoUpdateNewsCheckBox"
+                              Grid.Column="1"
+                              Content="AutoUpdateNews"
+                              IsChecked="{Binding Engine.NewsAutoUpdate,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="UpdateInterval" />
+                    <TextBox HorizontalAlignment="Stretch"
+                             InputScope="Number"
+                             Text="{Binding Engine.DbUpdateMins,
+                                            UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock x:Name="Counter" Text="{Binding Time}" />
+                </StackPanel>
+            </Expander>
+            <TextBlock Grid.Row="0" Text="{Binding BusnesLogic.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}" />
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="textBox" Text="Test text Notification !!!"></TextBox>
-                <Button Grid.Column="1" Content="Send PushNotification" Command="{Binding Engine.SentPushMessageCommand}" CommandParameter="{Binding Text, ElementName=textBox}"></Button>
+                <TextBox x:Name="textBox" Text="Test text Notification !!!" />
+                <Button Grid.Column="1"
+                        Command="{Binding Engine.SentPushMessageCommand}"
+                        CommandParameter="{Binding Text,
+                                                   ElementName=textBox}"
+                        Content="Send PushNotification" />
             </Grid>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <ListBox Name="NewsTextBlock" ItemsSource="{Binding NewNews, UpdateSourceTrigger=PropertyChanged}"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+                <ListBox Name="NewsTextBlock"
+                         ItemsSource="{Binding NewNews,
+                                               UpdateSourceTrigger=PropertyChanged}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <ItemContainerTemplate>
-                            <TextBlock Width="{Binding Width, ElementName=NewsTextBlock}" TextWrapping="Wrap" Text="{Binding}"/>
+                            <TextBlock Width="{Binding Width,
+                                                       ElementName=NewsTextBlock}"
+                                       Text="{Binding}"
+                                       TextWrapping="Wrap" />
                         </ItemContainerTemplate>
 
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <ListBox Grid.Column="1" Name="HotNewsTextBlock" ItemsSource="{Binding AllHotNews, UpdateSourceTrigger=PropertyChanged}"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+                <ListBox Name="HotNewsTextBlock"
+                         Grid.Column="1"
+                         ItemsSource="{Binding AllHotNews,
+                                               UpdateSourceTrigger=PropertyChanged}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <ItemContainerTemplate>
                             <DockPanel>
-                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding CollectedLocal}"/>
-                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding}"/>
-                                <TextBlock DockPanel.Dock="Top" Width="{Binding Width, ElementName=HotNewsTextBlock}" TextWrapping="Wrap" Text="{Binding RepairedLineLocal}"/>
+                                <TextBlock Width="{Binding Width,
+                                                           ElementName=HotNewsTextBlock}"
+                                           DockPanel.Dock="Top"
+                                           Text="{Binding CollectedLocal}"
+                                           TextWrapping="Wrap" />
+                                <TextBlock Width="{Binding Width,
+                                                           ElementName=HotNewsTextBlock}"
+                                           DockPanel.Dock="Top"
+                                           Text="{Binding}"
+                                           TextWrapping="Wrap" />
+                                <TextBlock Width="{Binding Width,
+                                                           ElementName=HotNewsTextBlock}"
+                                           DockPanel.Dock="Top"
+                                           Text="{Binding RepairedLineLocal}"
+                                           TextWrapping="Wrap" />
                             </DockPanel>
                         </ItemContainerTemplate>
 
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
-            <Button x:Name="UpdateNewsButton" Grid.Row="3" Content="CheckNews" Click="CheckNewsButtonClick"/>
+            <WebBrowser x:Name="Browser"
+                        Grid.Row="2"
+                        Grid.RowSpan="5"
+                        Grid.Column="1"
+                        Width="Auto"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="UpdateNewsButton"
+                        Margin="5"
+                        Click="CheckNewsButtonClick"
+                        Content="CheckNews" />
+                <Button Grid.Column="1"
+                        Margin="5"
+                        Command="{Binding UploadAllToOneDriveCommand}"
+                        Content="Reupload data" />
+            </Grid>
 
-            <ProgressBar x:Name="Progress" Grid.Row="4" Visibility="Collapsed"></ProgressBar>
-            <WebBrowser Grid.RowSpan="5" x:Name="Browser" Grid.Column="1" HorizontalAlignment="Stretch"  Grid.Row="2" VerticalAlignment="Stretch" Width="Auto"/>
-
+            <ProgressBar x:Name="Progress"
+                         Grid.Row="4"
+                         Visibility="Collapsed" />
+            <GridSplitter Grid.Row="5" Height="2" />
+            <ListView x:Name="output" Grid.Row="6" />
 
         </Grid>
     </Grid>

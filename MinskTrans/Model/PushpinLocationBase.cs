@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Windows.Controls;
 using MapControl;
 using MinskTrans.Context.Base.BaseModel;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
@@ -16,7 +17,7 @@ namespace MinskTrans.DesctopClient.Model
 		public Stop StopEnd { get; set; }
 		public List<Rout> Routs { get; set; } 
 	}
-	public abstract class PushpinLocationBase
+	public abstract class PushpinLocationBase 
 	{
 		public PushpinLocationBase() { }
 
@@ -34,6 +35,18 @@ namespace MinskTrans.DesctopClient.Model
 		{
 			Pushpin = pin;
 			Location = MapPanel.GetLocation(pin);
+		}
+
+		public void Init(Stop newStop)
+		{
+			this.Stop = newStop;
+			Location.Latitude = newStop.Lat;
+			Location.Longitude = newStop.Lng;
+		}
+
+		public void ResetLocation()
+		{
+			MapPanel.SetLocation(Pushpin, Location);
 		}
 
 		public Pushpin Pushpin

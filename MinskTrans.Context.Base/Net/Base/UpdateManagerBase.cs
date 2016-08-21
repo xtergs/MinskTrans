@@ -14,6 +14,15 @@ using Newtonsoft.Json;
 
 namespace MinskTrans.Net.Base
 {
+	[Flags]
+	public enum TypeOfUpdates
+	{
+		None,
+		TimeTable,
+		HotNews,
+		MainNews,
+		All = TimeTable | HotNews | MainNews
+	}
     public struct TimeTable
     {
         public IList<Rout> Routs;

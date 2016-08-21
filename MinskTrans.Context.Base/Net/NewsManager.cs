@@ -2,69 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MetroLog;
-using MetroLog.Layouts;
 using MinskTrans.Context;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
-using MyLibrary;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace MinskTrans.Net
 {
-    public class ShouldSerializeContractResolver : DefaultContractResolver
-    {
-        public static readonly ShouldSerializeContractResolver Instance = new ShouldSerializeContractResolver();
-
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-        {
-            JsonProperty property = base.CreateProperty(member, memberSerialization);
-
-            if ( property.PropertyName == nameof(ListWithDate.LastUpdateDateTimeUtc))
-            {
-                property.ShouldSerialize = (x) => true;
-                property.PropertyName = nameof(ListWithDate.LastUpdateDateTimeUtc);
-            } else
-            if (property.PropertyName == nameof(ListWithDate.NewsEntries))
-            {
-                property.ShouldSerialize = (x) => true;
-                property.PropertyName = nameof(ListWithDate.NewsEntries);
-            } else
-            if (property.DeclaringType == typeof (NewsEntry) && property.PropertyName == "Message")
-            {
-                property.ShouldSerialize = (x) => true;
-                property.PropertyName = "Message";
-            }
-            else if (property.DeclaringType == typeof (NewsEntry) && property.PropertyName == "PostedUtc")
-            {
-                property.ShouldSerialize = (x) => true;
-                property.PropertyName = "Posted";
-            }
-            else if (property.DeclaringType == typeof (NewsEntry) && property.PropertyName == "CollectedUtc")
-            {
-                property.ShouldSerialize = (x) => true;
-                property.PropertyName = "Collected";
-            }
-            else if (property.DeclaringType == typeof (NewsEntry) && property.PropertyName == "RepairedLineUtc")
-            {
-                property.ShouldSerialize = (x) => true;
-                property.PropertyName = "RepairedLIne";
-            }
-            else
-            {
-                property.Ignored = true;
-                property.ShouldSerialize = (x) => false;
-            }
-            return property;
-        }
-    }
-
     public class ListWithDate
     {
         public DateTime LastUpdateDateTimeUtc { get; set; } = new DateTime();
@@ -75,8 +23,71 @@ namespace MinskTrans.Net
 	{
 		ListWithDate MainNews { get; }
 		ListWithDate HotNews { get; }
-		void LoadData();
-		void Save();
+		Task LoadDataAsync(TypeFolder folder, string file);
+		Task Save(TypeFolder folder, string file);
+	}
+
+	public class BaseNewsContext : INewsContext
+	{
+		private ILogger log;
+		private FileHelperBase fileHelerp;
+		public BaseNewsContext(FileHelperBase fileHelper, ILogManager logManager)
+		{
+			this.fileHelerp = fileHelper;
+			this.log = logManager.GetLogger<BaseNewsContext>();
+		}
+		public ListWithDate MainNews { get; private set; }
+		public ListWithDate HotNews { get; private set; }
+
+		readonly object saveLocker = new object();
+		public async Task LoadDataAsync(TypeFolder folder, string file)
+		{
+			if (!await fileHelerp.FileExistAsync(folder, file).ConfigureAwait(false))
+			{
+				MainNews = new ListWithDate();
+				HotNews = new ListWithDate();
+				return;
+			}
+			var data = await fileHelerp.ReadAllTextAsync(folder, file).ConfigureAwait(false);
+			if (string.IsNullOrWhiteSpace(data))
+			{
+				MainNews = new ListWithDate();
+				HotNews = new ListWithDate();
+				return;
+			}
+			try
+			{
+				var result = JsonConvert.DeserializeObject<ListWithDate[]>(data);
+				lock (saveLocker)
+				{
+					MainNews = result[0];
+					HotNews = result[1];
+				}
+			}
+			catch (JsonReaderException e)
+			{
+				MainNews = new ListWithDate();
+				HotNews = new ListWithDate();
+				Debug.WriteLine("NewsContext: not corrent json format data");
+			}
+		}
+
+		public Task Save(TypeFolder folder, string file)
+		{
+			try
+			{
+				string str = "";
+				lock(saveLocker)
+					str = JsonConvert.SerializeObject(new[] {MainNews, HotNews});
+				return fileHelerp.WriteTextAsync(folder, file, str);
+			}
+			catch (JsonSerializationException e)
+			{
+				log.Error($"News context: can't serialize data:{e.Message} \n {MainNews}{HotNews}");
+			}
+			return null;
+		}
+
 	}
 
 
@@ -93,7 +104,7 @@ namespace MinskTrans.Net
         {
             get
             {
-                return allNews.NewsEntries.OrderByDescending(key => key.PostedUtc).ThenByDescending(key => key.CollectedUtc).ToList();
+                return allNews?.NewsEntries.OrderByDescending(key => key.PostedUtc).ThenByDescending(key => key.CollectedUtc).ToList();
             }
             set { OnPropertyChanged(); }
         }
@@ -104,7 +115,7 @@ namespace MinskTrans.Net
             get
             {
                 return
-                    allHotNewsDictionary.NewsEntries.OrderByDescending(key => key.PostedUtc)
+                    allHotNewsDictionary?.NewsEntries.OrderByDescending(key => key.PostedUtc)
                         .ThenByDescending(key => key.RepairedLineUtc)
                         .ToList();
             }
@@ -134,11 +145,6 @@ namespace MinskTrans.Net
             //this.settings = settings;
             this.Files = files;
 	        this.context = context;
-            //LastNewsTime = new DateTime();
-            //newDictionary = new ListWithDate();
-            //hotNewsDictionary = new ListWithDate();
-            //allHotNewsDictionary = new ListWithDate();
-            //allNews = new ListWithDate();
             log.Trace($"{nameof(NewsManagerBase)} is created");
         }
 
@@ -185,78 +191,25 @@ namespace MinskTrans.Net
             
             log.Trace(
                 $"Load: read file for months {FileHelper.GetPath(Files.MainNewsFile.Folder)} + {Files.MainNewsFile.FileName}");
-				context.LoadData();
-    //        JsonSerializer serializer = new JsonSerializer();
-    //        try
-    //        {
-    //            //using (
-    //            //    var stream =
-    //            //        new StreamReader(
-    //            //            await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
-    //            //using (var textReader = new JsonTextReader(stream))
-    //            //{
-    //            //    var news = serializer.Deserialize<ListWithDate>(textReader);
-    //            //    allNews = news;
-    //            //    //allNews.NewsEntries.AddRange(news);
-    //            //}
-    //            log.Trace($"Load: has been readed {allNews.NewsEntries.Count} news");
-    //        }
-    //        catch (FileNotFoundException e)
-    //        {
-    //            Debug.WriteLine(e.Message);
-    //        }
-    //        catch (JsonSerializationException e)
-    //        {
-    //            log?.Trace(e.Message);
-    //        }
-
-
-    //        //AllHotNews.Clear();
-    //        log.Trace($"read hot news");
-    //        try
-    //        {
-				//context.LoadData();
-    //            //using (var stream = new StreamReader(
-    //            //    await FileHelper.OpenStream(Files.MainNewsFile.Folder, Files.MainNewsFile.FileName)))
-    //            //using (var textReader = new JsonTextReader(stream))
-    //            //{
-    //            //    serializer.ContractResolver = new ShouldSerializeContractResolver();
-    //            //    var news = serializer.Deserialize<ListWithDate>(textReader);
-    //            //    allHotNewsDictionary = news;
-    //            //}
-    //            log.Trace($"Load: has been readed {allHotNewsDictionary.NewsEntries.Count} hot news");
-    //        }
-    //        catch (FileNotFoundException e)
-    //        {
-    //            Debug.WriteLine(e.Message);
-    //        }
-    //        catch (JsonSerializationException e)
-    //        {
-    //            log?.Trace(e.Message);
-    //        }
-
-            //hotNewsDictionary = null;
+				await context.LoadDataAsync(Files.AllNewsFileV3.Folder, Files.AllNewsFileV3.FileName);
             NewNews = null;
             AllHotNews = null;
         }
 
         private async Task SaveToFile(string filePath, TypeFolder folder, ListWithDate listToWrite)
         {
-			context.Save();
-            //string jsonString = JsonConvert.SerializeObject(listToWrite,
-            //    new JsonSerializerSettings() {ContractResolver = new ShouldSerializeContractResolver()});
-            //return FileHelper.WriteTextAsync(folder, filePath, jsonString);
+			await context.Save(folder, filePath);
         }
         
         public Task SaveToFile()
         {
-            return SaveToFile(Files.MainNewsFile.FileName, Files.MainNewsFile.Folder,
+            return SaveToFile(Files.AllNewsFileV3.FileName, Files.AllNewsFileV3.Folder,
                     allNews);
         }
 
         public Task SaveToFileHotNews()
         {
-            return SaveToFile(Files.HotNewsFile.FileName, Files.HotNewsFile.Folder, allHotNewsDictionary);
+            return SaveToFile(Files.AllNewsFileV3.FileName, Files.AllNewsFileV3.Folder, allHotNewsDictionary);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,22 +1,139 @@
-<Application RequestedTheme="Dark" x:Class="UniversalMinskTrans.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:UniversalMinskTrans" xmlns:converters="using:MinskTrans.Universal.Converters" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d1p1:Ignorable="d" xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Default" Source="Resourse/Brushes.xaml">
+<Application x:Class="UniversalMinskTrans.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:base="using:MinskTrans.Context.Base"
+             xmlns:converters="using:MinskTrans.Universal.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:expanderControl="using:ExpanderControl"
+             xmlns:local="using:UniversalMinskTrans"
+             xmlns:universal="using:MinskTrans.Universal"
+             d1p1:Ignorable="d"
+             RequestedTheme="Dark">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default" Source="Resourse/Brushes.xaml" />
+                <ResourceDictionary x:Key="Light" Source="Resourse/BrushesLight.xaml" />
+            </ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resourse/Styles.xaml" />
+                <ResourceDictionary Source="Resourse/DataTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:GridBoolHeightConverter x:Key="GridBoolHeightConverter" />
+            <converters:ConcatStringCoverter x:Key="ConcatStringCoverter" />
+            <converters:IntToMinsConverter x:Key="IntToMinsConverter" />
+            <converters:IntToStringDayOfWeek x:Key="IntToStringDayOfWeekdaysToStrConverter" />
+            <!--  d:DataContext="{d:DesignInstance modelview:StopModelView}"  -->
+            <converters:TransportToColor x:Key="TransportToColor" />
+            <converters:RoutsToNumStrConverter x:Key="RoutsToNumStrConverter" />
+            <converters:StopsToStr x:Key="StopsToStr" />
+            <converters:TransportToImageConverter x:Key="TransportToImageConverter" />
+            <universal:MinsLeftFromTimeSpanConverter x:Key="MinsLeftConverter" />
+            <universal:MinsToTimeFromTimeSpanConverter x:Key="MinsToTimeConverter" />
+
+            <DataTemplate x:Key="RoutForStopDataTemplate">
+                <Grid x:Name="Grid"
+                      Margin="0,5"
+                      d:DataContext="{d:DesignInstance base:TimeLineModel}">
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+
+
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+
+                    </Grid.RowDefinitions>
+                    <Image Grid.RowSpan="3"
+                           Height="{Binding ActualHeight,
+                                            ElementName=StackPanel}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Source="{Binding Rout.Transport,
+                                            Converter={StaticResource TransportToImageConverter}}"
+                           Stretch="Uniform" />
+                    <StackPanel Grid.Column="1"
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Left">
+                        <StackPanel x:Name="StackPanel">
+                            <TextBlock Grid.Column="1"
+                                       FontSize="28"
+                                       Padding="0"
+                                       Text="{Binding Rout.RouteNum}" />
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="1"
+                                       FontSize="14"
+                                       Foreground="{StaticResource GreyGroundSolidColorBrush}"
+                                       Text="{Binding Rout.StartStop.Name}"
+                                       TextTrimming="WordEllipsis" />
+                            <TextBlock Grid.Row="2"
+                                       Grid.Column="1"
+                                       FontSize="18"
+                                       Text="{Binding Rout.DestinationStop.Name}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" HorizontalAlignment="Right">
+                        <TextBlock HorizontalAlignment="Right"
+                                   FontSize="28"
+                                   Text="{Binding Time,
+                                                  Converter={StaticResource MinsToTimeConverter}}" />
+                        <TextBlock HorizontalAlignment="Right"
+                                   FontSize="18"
+                                   Foreground="{Binding Rout.Transport,
+                                                        Converter={StaticResource TransportToColor}}"
+                                   Text="{Binding Time,
+                                                  Converter={StaticResource MinsLeftConverter}}" />
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="SlimRoutForStopDataTemplate">
+                <Grid x:Name="Grid"
+                      Margin="0,5"
+                      d:DataContext="{d:DesignInstance base:TimeLineModel}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Image Height="{Binding ActualHeight,
+                                            ElementName=StackPanel}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Source="{Binding Rout.Transport,
+                                            Converter={StaticResource TransportToImageConverter}}"
+                           Stretch="Uniform" />
+                    <StackPanel x:Name="StackPanel"
+                                Grid.Column="1"
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal">
+                        <TextBlock MinWidth="100"
+                                   FontSize="28"
+                                   Padding="0"
+                                   Text="{Binding Rout.RouteNum}" />
+                        <StackPanel Margin="5,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Vertical">
+                            <TextBlock HorizontalAlignment="Left"
+                                       FontSize="18"
+                                       Foreground="{Binding Rout.Transport,
+                                                            Converter={StaticResource TransportToColor}}"
+                                       Text="{Binding Time,
+                                                      Converter={StaticResource MinsLeftConverter}}" />
+                            <TextBlock FontSize="18"
+                                       Text="{Binding Rout.DestinationStop.Name}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+            <expanderControl:BooleanToNotVisibilityConverter x:Key="BooleanToNotVisibilityConverter" />
         </ResourceDictionary>
-        <ResourceDictionary x:Key="Light" Source="Resourse/BrushesLight.xaml">
-        </ResourceDictionary>
-      </ResourceDictionary.ThemeDictionaries>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Resourse/Styles.xaml">
-        </ResourceDictionary>
-        <ResourceDictionary Source="Resourse/DataTemplates.xaml">
-        
-        </ResourceDictionary>
-      </ResourceDictionary.MergedDictionaries>
-      <converters:GridBoolHeightConverter x:Key="GridBoolHeightConverter" />
-      <converters:ConcatStringCoverter x:Key="ConcatStringCoverter" />
-      <converters:IntToMinsConverter x:Key="IntToMinsConverter" />
-    </ResourceDictionary>
-  </Application.Resources>
+    </Application.Resources>
 </Application>

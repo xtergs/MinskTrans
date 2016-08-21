@@ -16,8 +16,8 @@ namespace CommonLibrary
 	{
 		
 
-		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files)
-			:base(fileHelper, internet, logManager, files)
+		public NewsManager(FileHelperBase fileHelper, InternetHelperBase internet, ISettingsModelView settings, ILogManager logManager, FilePathsSettings files, INewsContext context)
+			:base(fileHelper, internet, logManager, files, context)
 		{
 			
 		}

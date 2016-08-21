@@ -11,9 +11,12 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media;
 #if (WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+using Windows.UI;
 using Windows.UI.Xaml.Media;
+#else
+using System.Windows.Media;
+using PropertyChanged;
 #endif
 using MapControl;
 using MinskTrans.AutoRouting.AutoRouting;
@@ -126,10 +129,10 @@ namespace MinskTrans.DesctopClient.Modelview
 
         }
 
-#if WINDOWS_UWP && WINDOWS_PHONE_APP
+#if WINDOWS_UWP || WINDOWS_PHONE_APP
 		private void Tapped(object sender, TappedRoutedEventArgs tappedRoutedEventArgs)
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 #else
 		private void Tapped(object sender, MouseButtonEventArgs mouseButtonEventArgs)
@@ -448,8 +451,8 @@ namespace MinskTrans.DesctopClient.Modelview
         protected void ShowOnMap()
         {
             ShowOnMap(Pushpins.ToArray());
-			if (IsShowStopConnections)
-				DrawStopsWeb();
+			//if (IsShowStopConnections)
+			//	DrawStopsWeb();
 
         }
 
@@ -517,7 +520,7 @@ namespace MinskTrans.DesctopClient.Modelview
 			
             };
 
-	        xx.Pushpin.MouseRightButtonUp += Tapped;
+	       // xx.Pushpin.MouseRightButtonUp += Tapped;
 
 	        return xx;
         }
@@ -666,18 +669,7 @@ namespace MinskTrans.DesctopClient.Modelview
 #endif
         }
 
-		public bool IsShowStopConnections
-		{
-			get { return _isShowStopConnections; }
-			set
-			{
-				if (!value)
-					ClearDrawedStops();
-				else
-					DrawStopsWeb();
-				_isShowStopConnections = value;
-			}
-		}
+		
 
 
 		public RelayCommand<Rout> ShowRoutCommand
@@ -752,7 +744,7 @@ namespace MinskTrans.DesctopClient.Modelview
 
         private RelayCommand calculateCommand;
         private string searchPattern;
-        private StopModelView _stopModelView;
+		private StopModelView _stopModelView;
 		private bool _isShowStopConnections;
 		private int _maxHumanStops;
 		private int _thickness = 1;
@@ -809,7 +801,7 @@ namespace MinskTrans.DesctopClient.Modelview
             }
         }
 
-	    public RelayCommand DrawStopsWebCommand => new RelayCommand(DrawStopsWeb);
+	    
 
 	    List<string> RoutsToList(IEnumerable<Rout> list)
 	    {
@@ -851,6 +843,20 @@ namespace MinskTrans.DesctopClient.Modelview
 			set { routeCreator.Params.MaxHumanDistanceM = value; }
 		}
 
+#if !WINDOWS_UWP
+		public bool IsShowStopConnections
+		{
+			get { return _isShowStopConnections; }
+			set
+			{
+				if (!value)
+					ClearDrawedStops();
+				else
+					DrawStopsWeb();
+				_isShowStopConnections = value;
+			}
+		}
+		public RelayCommand DrawStopsWebCommand => new RelayCommand(DrawStopsWeb);
 		public int Thickness
 		{
 			get { return _thickness; }
@@ -860,7 +866,6 @@ namespace MinskTrans.DesctopClient.Modelview
 				ReWrawStopsWeb();
 			}
 		}
-		
 
 		public void ReWrawStopsWeb()
 		{
@@ -978,7 +983,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
-        public bool ShowStopsList { get; set; }
+#endif
+
+		public bool ShowStopsList { get; set; } = false;
 
         public RelayCommand ChangeShowStopList
         {
@@ -1018,6 +1025,7 @@ namespace MinskTrans.DesctopClient.Modelview
         }
     }
 
+#if !WINDOWS_UWP
 	class PolylineComparer : IEqualityComparer<MapPolylineEx>
 	{
 		public bool Equals(MapPolylineEx x, MapPolylineEx y)
@@ -1030,4 +1038,5 @@ namespace MinskTrans.DesctopClient.Modelview
 			return 0;
 		}
 	}
+#endif
 }

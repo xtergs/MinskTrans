@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,7 @@ using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
+using UniversalMinskTransRelease.ViewModel;
 
 namespace UniversalMinskTransRelease.ModelView
 {
@@ -26,10 +28,12 @@ namespace UniversalMinskTransRelease.ModelView
             IExternalCommands commands, WebSeacher seacher, bool UseGPS = false)
             : base(newContext, settings, commands, seacher, UseGPS)
         {
-            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+	        dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+	        updateTimeLineTimer = new Timer((obj) => UpdateTimeScheduleAsync().ConfigureAwait(false), null, int.MaxValue,
+		        int.MaxValue);
         }
 
-        public override Task<IEnumerable<Stop>> FilterStopsAsync()
+	    public override Task<IEnumerable<Stop>> FilterStopsAsync()
         {
             UpdateStopsAsync().ConfigureAwait(false);
             return null;
@@ -49,8 +53,9 @@ namespace UniversalMinskTransRelease.ModelView
                     await
                         Task.Run(
                             () =>
-                                Context.FilteredStops(filter, selectedTransport, Context.Geolocation.CurLocation,
-                                    FuzzySearch), token).ConfigureAwait(false);
+                                Context.FilteredStops(filter, selectedTransport, 
+								Settings.ConsiderDistanceSortStops ? Context.Geolocation.CurLocation : null,
+                                    FuzzySearch, Settings.ConsiderFrequencySortStops), token).ConfigureAwait(false);
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
                 sourceToken = null;
@@ -59,18 +64,36 @@ namespace UniversalMinskTransRelease.ModelView
             }
         }
 
+	    private Timer updateFavourite;
         public async Task UpdateStopsAsync()
         {
             if (IsShowFavouriteStops)
             {
-                FilteredStopsStore = Context.Context.FavouriteStops;
+                FilteredStopsStore = Context.Context.FavouriteStops.Select(x=> new FavouriteStop()
+                {
+	                Stop = x,
+					CurrentRouts = Context.GetStopTimeLine(x.ID, CurDay, CurTime, null, Settings.PrevFavouriteRouts, Settings.NextFavouriteRouts )
+				});
+				if (updateFavourite == null)
+					updateFavourite = new Timer((obj) =>
+					{
+						foreach (var favourite in FilteredStopsStore.OfType<FavouriteStop>())
+						{
+							favourite.CurrentRouts =
+									Context.GetStopTimeLine(favourite.ID, CurDay, CurTime, null, Settings.PrevFavouriteRouts, Settings.NextFavouriteRouts)
+										;
+						}
+					}, null, new TimeSpan(0,0,0,30), new TimeSpan(0,0,0,30) );
                 return;
             }
+			updateFavourite?.Dispose();
+	        updateFavourite = null;
             FilteredStopsStore = await UpdateStopsAsync(StopNameFilter);
 
             await GetWebResultsAsync().ConfigureAwait(false);
         }
 
+	    private Timer updateTimeLineTimer;
         public override Stop FilteredSelectedStop
         {
             get { return base.FilteredSelectedStop; }
@@ -79,6 +102,11 @@ namespace UniversalMinskTransRelease.ModelView
                 base.FilteredSelectedStop = value;
                 OnPropertyChanged();
                 UpdateTimeScheduleAsync().ConfigureAwait(false);
+	            if (value != null)
+	            {
+		            updateTimeLineTimer.Change(30*1000, 30*1000);
+	            }else 
+		            updateTimeLineTimer.Change(int.MaxValue, int.MaxValue);
             }
         }
 

@@ -14,6 +14,8 @@ namespace MinskTrans.Context
         public Stop Stop { get; set; }
 
         public TimeSpan Time { get; set; }
+
+	    public bool InPast => Time < DateTime.Now.TimeOfDay;
     }
     public interface IBussnessLogics : INotifyPropertyChanged
     {
@@ -23,13 +25,17 @@ namespace MinskTrans.Context
         IEnumerable<Rout> Routs { get; }
         Task LoadDataBase(LoadType loadType = LoadType.LoadAll);
         Task Save(bool saveAllDB = true);
-        IEnumerable<Stop> FilteredStops(string StopNameFilter, TransportType selectedTransport = TransportType.All, Location location = null,bool FuzzySearch = false);
+        IEnumerable<Stop> FilteredStops(string StopNameFilter, TransportType selectedTransport = TransportType.All, Location location = null,bool FuzzySearch = false, bool considerFrequency = true);
         Task<IEnumerable<Stop>> FilteredStopsAsync(string StopNameFilter, CancellationToken token, TransportType selectedTransport = TransportType.All, Location location = null, bool FuzzySearch = false);
         void SetGPS(bool v, object useGPS);
 
         TimeLineModel[] GetStopTimeLine(Stop stp, int day, int startingTime, TransportType selectedTransportType = TransportType.All,
             int endTime = int.MaxValue);
-        Stop GetStop(int stopId);
+
+	    TimeLineModel[] GetStopTimeLine(int StopId, int day, int currentTimeMin, List<Rout> routs = null,
+		    int prevCount = 1, int nexCount = 3);
+
+		Stop GetStop(int stopId);
         IEnumerable<Stop> GetDirection(int stopID, int count);
         void AddRemoveFavouriteStop(Stop stop);
         void AddRemoveFavouriteRoute(Rout route);

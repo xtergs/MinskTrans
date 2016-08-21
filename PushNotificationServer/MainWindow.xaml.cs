@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using MetroLog;
+using Microsoft.AspNet.Razor.Text;
 using Microsoft.Win32;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Net.Base;
 using PushNotificationServer.Properties;
 
 namespace PushNotificationServer
@@ -61,6 +66,8 @@ namespace PushNotificationServer
 			};
 
 			SetAutoUpdateTimer(NewsAutoUpdate);
+
+			output.ItemsSource = debugOutput;
 		}
 
 		
@@ -132,15 +139,32 @@ namespace PushNotificationServer
 			}
 		}
 
-		TimeSpan time = new TimeSpan();
-		private readonly static TimeSpan addingTime = new TimeSpan(0, 0, 0, 1);
+		private ObservableCollection<string> debugOutput = new ObservableCollection<string>();
 
+		 TimeSpan time = new TimeSpan();
+		private readonly static TimeSpan addingTime = new TimeSpan(0, 0, 0, 1);
+		private Timer logingTimer;
 		public void SetAutoUpdateTimer(bool turnOn)
 		{
 			timerNewsAutoUpdate = new Timer((key) =>
 			{
 				Time = time.Add(addingTime);
 			}, null, new TimeSpan(), addingTime);
+
+			logingTimer = new Timer((ar) =>
+			{
+				Dispatcher.InvokeAsync( async () =>
+				{
+					debugOutput.Clear();
+					using (TextReader reader = new StreamReader((await LogManagerFactory.DefaultLogManager.GetCompressedLogs())))
+					{
+						var line = reader.ReadLine();
+						if (string.IsNullOrEmpty(line))
+							return;
+						debugOutput.Add(line);
+					}
+				});
+			}, null, 1000, 1000*30);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -173,6 +197,11 @@ namespace PushNotificationServer
 		private async void Button_Click(object sender, RoutedEventArgs e)
 		{
 			//await ServerEngine.Engine.TestOndeDrive();
+		}
+
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			//ServerEngine.Engine.UploadAllToOneDrive(TypeOfUpdates.All);
 		}
 	}
 }

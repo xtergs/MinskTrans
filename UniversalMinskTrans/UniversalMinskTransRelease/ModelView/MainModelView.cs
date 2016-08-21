@@ -106,6 +106,7 @@ namespace MinskTrans.Universal.ModelView
             builder.RegisterType<ShedulerParser>().As<ITimeTableParser>();
             builder.RegisterType<InternetHelperUniversal>().As<InternetHelperBase>();
             builder.RegisterType<NewsManager>().As<NewsManagerBase>().SingleInstance();
+	        builder.RegisterType<BaseNewsContext>().As<INewsContext>().SingleInstance();
             builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
             builder.RegisterType<UniversalApplicationSettingsHelper>().As<IApplicationSettingsHelper>();
             var conv =  new LoggingConfiguration();

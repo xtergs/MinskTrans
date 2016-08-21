@@ -23,6 +23,7 @@ namespace MyLibrary
 	}
 	public interface ISettingsModelView:INotifyPropertyChanged
 	{
+		int[] SimpleArray { get; }
 		int TimeInPast { get; set; }
 		bool Develop { get; set; }
 		bool CurrentDate { get; set; }
@@ -49,6 +50,13 @@ namespace MyLibrary
 
         string ChangeLogOnce { get; }
         string ChangeLog { get; }
+
+		int PrevFavouriteRouts { get; set; }
+		int NextFavouriteRouts { get; set; }
+
+		bool ConsiderDistanceSortStops { get; set; }
+		bool ConsiderFrequencySortStops { get; set; }
+		bool NotifyAboutNews { get; set; }
 	}
 
 	public enum Error

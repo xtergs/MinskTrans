@@ -22,6 +22,7 @@ namespace MinskTrans.Context
     class TimeTableSettings
     {
         public int SettingsVersion { get; set; }
+		public DateTime TimeTableUpdateTimeUtc { get; set; }
         public TimeTable TimeTable { get; set; }
     }
     public class Context : IContext
@@ -174,7 +175,7 @@ namespace MinskTrans.Context
                     TimeTable timeTable = new TimeTable() {Routs = Routs, Stops = Stops, Time = Times};
                     TimeTableSettings toSave = new TimeTableSettings()
                     {
-                        TimeTable = timeTable, SettingsVersion = 3
+                        TimeTable = timeTable, SettingsVersion = 3, TimeTableUpdateTimeUtc = UpdateDateTimeUtc
                     };
                     var strTimeTable = JsonConvert.SerializeObject(toSave);
                     var file = files.TimeTableAllFile;
@@ -929,7 +930,8 @@ namespace MinskTrans.Context
         }
 
         public IList<GroupStop> Groups { get; protected set; }
-        protected IList<int> favouriteStops { get; set; }
+	    public DateTime UpdateDateTimeUtc { get; set; }
+	    protected IList<int> favouriteStops { get; set; }
 
         public IList<Stop> FavouriteStops
         {

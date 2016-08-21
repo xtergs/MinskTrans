@@ -6,9 +6,8 @@
              xmlns:local="using:UniversalMinskTransRelease.View"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:modelView="using:UniversalMinskTransRelease.ModelView"
-             DataContext="{Binding}"
+             d:DataContext="{d:DesignInstance modelView:NewsModelView}"
              d:DesignHeight="300"
-             d:DesignSource="{d:DesignInstance modelView:NewsModelView}"
              d:DesignWidth="400"
              mc:Ignorable="d">
 
@@ -16,13 +15,35 @@
         <Converters:DateToString x:Key="DateToString" />
     </UserControl.Resources>
 
-    <Grid DataContext="{Binding}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <ListBox ItemsSource="{Binding ListOfDatesStrings}" SelectedIndex="{Binding SelectedDateIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <ListBox Grid.Column="1" ItemsSource="{Binding FilteredStops, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+        <ComboBox x:Name="comboBox"
+                  Grid.ColumnSpan="2"
+                  HorizontalAlignment="Right"
+                  ItemsSource="{Binding ListOfDatesStrings}"
+                  SelectedIndex="{Binding SelectedDateIndex,
+                                          Mode=TwoWay,
+                                          UpdateSourceTrigger=PropertyChanged}"
+                  Visibility="Collapsed" />
+        <ListBox x:Name="listBox"
+                 Grid.Row="0"
+                 Grid.RowSpan="2"
+                 ItemsSource="{Binding ListOfDatesStrings}"
+                 SelectedIndex="{Binding SelectedDateIndex,
+                                         Mode=TwoWay,
+                                         UpdateSourceTrigger=PropertyChanged}" />
+        <ListBox Grid.Row="1"
+                 Grid.Column="1"
+                 ItemsSource="{Binding FilteredStops,
+                                       UpdateSourceTrigger=PropertyChanged,
+                                       Mode=OneWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Margin="5,5"
@@ -31,5 +52,27 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="WideVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="listBox.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="comboBox.(UIElement.Visibility)" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="CompactVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="listBox.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="comboBox.(UIElement.Visibility)" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </UserControl>

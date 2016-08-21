@@ -3,12 +3,87 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -278,6 +353,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.native.System.IO.Compression/4.1.0": {
@@ -2039,7 +2125,7 @@
           }
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -2049,12 +2135,87 @@
       }
     },
     "UAP,Version=v10.0/win10-arm": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -2272,6 +2433,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -4165,7 +4337,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -4175,12 +4347,87 @@
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -4399,6 +4646,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -6330,7 +6588,7 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -6340,12 +6598,87 @@
       }
     },
     "UAP,Version=v10.0/win10-x64": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -6567,6 +6900,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -8465,7 +8809,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -8475,12 +8819,87 @@
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -8703,6 +9122,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -10639,7 +11069,7 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -10649,12 +11079,87 @@
       }
     },
     "UAP,Version=v10.0/win10-x86": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -10876,6 +11381,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -12774,7 +13290,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -12784,12 +13300,87 @@
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
-      "Autofac/3.5.2": {
+      "Autofac/4.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+        },
         "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
         },
         "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll": {}
+          "lib/uap10.0/Autofac.dll": {}
+        }
+      },
+      "Fody/1.29.2": {},
+      "HockeySDK.Core/4.1.3": {
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
+        }
+      },
+      "HockeySDK.UWP/4.1.3": {
+        "dependencies": {
+          "HockeySDK.Core": "4.1.3"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights/2.1.0": {
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Diagnostics.Tools": "4.0.0",
+          "System.Diagnostics.Tracing": "4.0.20",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.IO.Compression": "4.0.0",
+          "System.Linq": "4.0.0",
+          "System.Net.Http": "4.0.0",
+          "System.Reflection": "4.0.10",
+          "System.Reflection.Extensions": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Text.Encoding.Extensions": "4.0.10",
+          "System.Text.RegularExpressions": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Threading.Tasks": "4.0.10",
+          "System.Xml.XDocument": "4.0.10"
+        },
+        "compile": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.ApplicationInsights.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "1.2.3"
+        },
+        "compile": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        },
+        "runtime": {
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.2.3]",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.2.3]"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.1": {
@@ -13012,6 +13603,17 @@
         },
         "compile": {
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
+        }
+      },
+      "PropertyChanged.Fody/1.51.3": {
+        "dependencies": {
+          "Fody": "1.29.2"
+        },
+        "compile": {
+          "Lib/dotnet/PropertyChanged.dll": {}
+        },
+        "runtime": {
+          "Lib/dotnet/PropertyChanged.dll": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -14948,7 +15550,7 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "XAML.MapControl/2.11.0": {
+      "XAML.MapControl/2.12.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
         },
@@ -14959,16 +15561,114 @@
     }
   },
   "libraries": {
-    "Autofac/3.5.2": {
-      "sha512": "pGR5LjY8T/16x6SkJNd7u6EjQnE4C7JS0BZJ7Yl7pt313gIUZ/2ZnPSOIM5eaIA7ArxaudlyyLvAT4ayX5UJ/A==",
+    "Autofac/4.0.0": {
+      "sha512": "SCKzdkxEhyP0ahU4j2Fl3SQEO3BzAgGl1WpXe7oNHdDiVKRJ6DRpumfSekABPaBygeWwjDt88PBqe2nRToRrYA==",
       "type": "package",
       "files": [
-        "Autofac.3.5.2.nupkg.sha512",
+        "Autofac.4.0.0.nupkg.sha512",
         "Autofac.nuspec",
-        "lib/net40/Autofac.dll",
-        "lib/net40/Autofac.xml",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.dll",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Autofac.xml"
+        "lib/net451/Autofac.dll",
+        "lib/net451/Autofac.xml",
+        "lib/netstandard1.1/Autofac.dll",
+        "lib/netstandard1.1/Autofac.xml",
+        "lib/uap10.0/Autofac.dll",
+        "lib/uap10.0/Autofac.xml"
+      ]
+    },
+    "Fody/1.29.2": {
+      "sha512": "7SoewNkJQFedmOiJHD5P1akJ1fRow+tFjj/M4QlJ5M5RTHdnDXxEnuSKF2t22aSxTmn9+4wO3FbtOrJYy31xmA==",
+      "type": "package",
+      "files": [
+        "Content/FodyWeavers.xml",
+        "Fody.1.29.2.nupkg.sha512",
+        "Fody.dll",
+        "Fody.nuspec",
+        "Fody.pdb",
+        "FodyCommon.dll",
+        "FodyCommon.pdb",
+        "FodyIsolated.dll",
+        "FodyIsolated.pdb",
+        "Mono.Cecil.Mdb.dll",
+        "Mono.Cecil.Pdb.dll",
+        "Mono.Cecil.Rocks.dll",
+        "Mono.Cecil.dll",
+        "build/dotnet/Fody.targets",
+        "build/portable-net+sl+win+wpa+wp/Fody.targets"
+      ]
+    },
+    "HockeySDK.Core/4.1.3": {
+      "sha512": "FdJXZ2oWnijwCYcKRnGyEUL5qqX2QE3v5pZdNhOX5B4qogoDYjcG/75xO3SXKG1IdzenDPxFYjT2x14wTWJ2yg==",
+      "type": "package",
+      "files": [
+        "HockeySDK.Core.4.1.3.nupkg.sha512",
+        "HockeySDK.Core.nuspec",
+        "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll",
+        "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll.CodeAnalysisLog.xml",
+        "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll.lastcodeanalysissucceeded",
+        "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.XML"
+      ]
+    },
+    "HockeySDK.UWP/4.1.3": {
+      "sha512": "BRzV7TcYkw9Yzhd6ek/HAxSoEdnk3UVXPZ44GV7faCdS6IygGUeokEWQ8t0RUYxx47JyDdqH7KezZXbwfjhiYA==",
+      "type": "package",
+      "files": [
+        "HockeySDK.UWP.4.1.3.nupkg.sha512",
+        "HockeySDK.UWP.nuspec",
+        "lib/uap10.0/Microsoft.HockeyApp.Kit.dll",
+        "lib/uap10.0/Microsoft.HockeyApp.Kit.dll.CodeAnalysisLog.xml",
+        "lib/uap10.0/Microsoft.HockeyApp.Kit.dll.lastcodeanalysissucceeded",
+        "lib/uap10.0/Microsoft.HockeyApp.Kit.pri",
+        "lib/uap10.0/Microsoft.HockeyApp.Kit/Properties/Microsoft.HockeyApp.Kit.rd.xml",
+        "tools/Init.ps1"
+      ]
+    },
+    "Microsoft.ApplicationInsights/2.1.0": {
+      "sha512": "mviO8PLQd3r22Pmv8JfjYzTCQ9ByhkU9wdC4fwd6WmAARwAMgMw9HEbHeYS3r+8pB3w+fZMi7p4LKijzgNybRQ==",
+      "type": "package",
+      "files": [
+        "Microsoft.ApplicationInsights.2.1.0.nupkg.sha512",
+        "Microsoft.ApplicationInsights.nuspec",
+        "lib/dotnet5.4/Microsoft.ApplicationInsights.XML",
+        "lib/dotnet5.4/Microsoft.ApplicationInsights.dll",
+        "lib/net40/Microsoft.ApplicationInsights.XML",
+        "lib/net40/Microsoft.ApplicationInsights.dll",
+        "lib/net45/Microsoft.ApplicationInsights.XML",
+        "lib/net45/Microsoft.ApplicationInsights.dll",
+        "lib/net46/Microsoft.ApplicationInsights.XML",
+        "lib/net46/Microsoft.ApplicationInsights.dll",
+        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll",
+        "lib/uap10.0/Microsoft.ApplicationInsights.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.dll"
+      ]
+    },
+    "Microsoft.ApplicationInsights.PersistenceChannel/1.2.3": {
+      "sha512": "5MGcvPQVaGlGyAVh9adg4sSkIVSYDKn+H3+YnZa9hi1gH/g6UsRt4HLc8vp/IxjlbmXbJyAB7dYJV/NHmAGAgA==",
+      "type": "package",
+      "files": [
+        "Microsoft.ApplicationInsights.PersistenceChannel.1.2.3.nupkg.sha512",
+        "Microsoft.ApplicationInsights.PersistenceChannel.nuspec",
+        "lib/net40/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "lib/net40/Microsoft.ApplicationInsights.PersistenceChannel.dll",
+        "lib/net45/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "lib/net45/Microsoft.ApplicationInsights.PersistenceChannel.dll",
+        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "lib/wp8/Microsoft.ApplicationInsights.PersistenceChannel.dll"
+      ]
+    },
+    "Microsoft.ApplicationInsights.WindowsApps/1.1.1": {
+      "sha512": "Orj0UQrjQ2z0aWZZoexl734Ge7Q4oVev3VFSsk6t8l2kImrfJ1eygkJWtQ1d7u0kF6MLLrvUvsMSxo+0rgPiMQ==",
+      "type": "package",
+      "files": [
+        "Microsoft.ApplicationInsights.WindowsApps.1.1.1.nupkg.sha512",
+        "Microsoft.ApplicationInsights.WindowsApps.nuspec",
+        "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
+        "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
+        "lib/wp8/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
+        "lib/wpa81/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
+        "lib/wpa81/Microsoft.ApplicationInsights.Extensibility.Windows.dll"
       ]
     },
     "Microsoft.CSharp/4.0.1": {
@@ -15260,6 +15960,22 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._"
+      ]
+    },
+    "PropertyChanged.Fody/1.51.3": {
+      "sha512": "cjITfxajbGzLUqkS9cvNgrSAmK3S8vTuu4a58tv6hHFUub79nJwUs7aNhzdu6R8WxJuHKyl06lBQMFIjkQ/1+Q==",
+      "type": "package",
+      "files": [
+        "Lib/dotnet/PropertyChanged.dll",
+        "Lib/dotnet/PropertyChanged.xml",
+        "Lib/portable-net4+sl4+wp8+win8+wpa81+MonoAndroid16+MonoTouch40/PropertyChanged.dll",
+        "Lib/portable-net4+sl4+wp8+win8+wpa81+MonoAndroid16+MonoTouch40/PropertyChanged.xml",
+        "PropertyChanged.Fody.1.51.3.nupkg.sha512",
+        "PropertyChanged.Fody.dll",
+        "PropertyChanged.Fody.nuspec",
+        "PropertyChanged.Fody.pdb",
+        "Tools/install.ps1",
+        "Tools/uninstall.ps1"
       ]
     },
     "runtime.any.System.Collections/4.0.11": {
@@ -20975,11 +21691,11 @@
         "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll"
       ]
     },
-    "XAML.MapControl/2.11.0": {
-      "sha512": "5cyuPxObD0ZTwhFFvmcU38cBRjyVlaYTcco6vWMGo7o+Ygp7KzXr9l5F6nNAFQrcqV6zhvWj1dVMdzO4yYMjJQ==",
+    "XAML.MapControl/2.12.0": {
+      "sha512": "6qnKMRTK2Zr8I5+R1CTU8AQaRJAlhf5JlmYoraghd75lLnUUGojt3crTN6+XYU7vOUQwUpHYThi9/6XTXurSPA==",
       "type": "package",
       "files": [
-        "XAML.MapControl.2.11.0.nupkg.sha512",
+        "XAML.MapControl.2.12.0.nupkg.sha512",
         "XAML.MapControl.nuspec",
         "lib/net45/FileDb.dll",
         "lib/net45/FileDb.xml",
@@ -21000,9 +21716,13 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Autofac >= 3.5.2",
+      "Autofac >= 4.0.0",
+      "HockeySDK.UWP >= 4.1.3",
+      "Microsoft.ApplicationInsights >= 2.1.0",
+      "Microsoft.ApplicationInsights.WindowsApps >= 1.1.1",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.2.2",
-      "XAML.MapControl >= 2.11.0"
+      "PropertyChanged.Fody >= 1.51.3",
+      "XAML.MapControl >= 2.12.0"
     ],
     "UAP,Version=v10.0": []
   }

@@ -10,7 +10,8 @@ namespace MyLibrary
     {
         protected readonly IApplicationSettingsHelper helper;
         private InternetHelperBase internetHelper;
-
+		int[] simpleArray = new int[] { 1, 2, 3, 4, 5, 6 };
+		public int[] SimpleArray => simpleArray;
 
         public SettingsModelView(IApplicationSettingsHelper helper, InternetHelperBase internetHelper)
             : base()
@@ -75,9 +76,65 @@ namespace MyLibrary
 
         public virtual string ChangeLogOnce => "";
         public virtual string ChangeLog => "";
+	    public int PrevFavouriteRouts {
+			get { return helper.SimpleGet(1); }
+
+			set
+			{
+				helper.SimpleSet(value);
+				OnPropertyChanged();
+			}
+		}
+	    public int NextFavouriteRouts {
+			get { return helper.SimpleGet(2); }
+
+			set
+			{
+				helper.SimpleSet(value);
+				OnPropertyChanged();
+			}
+		}
+
+	    public bool ConsiderDistanceSortStops {
+			get
+			{
+				return helper.SimpleGet(true);
+			}
+
+			set
+			{
+				helper.SimpleSet(value);
+				OnPropertyChanged();
+			}
+		}
+	    public bool ConsiderFrequencySortStops {
+			get
+			{
+				return helper.SimpleGet(true);
+			}
+
+			set
+			{
+				helper.SimpleSet(value);
+				OnPropertyChanged();
+			}
+		}
+
+	    public bool NotifyAboutNews {
+			get
+			{
+				return helper.SimpleGet(true);
+			}
+
+			set
+			{
+				helper.SimpleSet(value);
+				OnPropertyChanged();
+			}
+		}
 
 
-        public TypeOfUpdate LastUpdatedDataInBackground
+	    public TypeOfUpdate LastUpdatedDataInBackground
         {
             get
             {

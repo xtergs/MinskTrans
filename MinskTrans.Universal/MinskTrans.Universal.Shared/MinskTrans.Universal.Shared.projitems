@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToOpacityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ConcatStringCoverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DateToString.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\GridBoolHeightConverter.cs" />

@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="MinskTrans.Utilites.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MinskTrans.Utilites.Desktop\bin\Release\MinskTrans.Utilites.Desktop.dll</HintPath>
+      <HintPath>..\..\MinskTrans.Utilites.Desktop\bin\Debug\MinskTrans.Utilites.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Moq, Version=4.5.16.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.5.16\lib\net45\Moq.dll</HintPath>

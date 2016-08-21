@@ -27,19 +27,22 @@ namespace MinskTrans.Context
     {
         public FilePathsSettings()
         {
-            StopsFile = new FilePathStruct("stops.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/stops.txt", "https://hvwkqw-ch3302.files.1drv.com/y3m2ue-xZZv20EqnyXbRVUm4b-tcnCLWCre5b4x0GCTbHBDePahmL9QOhVlDOgUKEDQ1Y6CqQw1YEvwOy5r9qppgCz3m5vcGOH0PRARy_Q_9NWL4TyD79IZOQYJvwWXvPMoecy_GRWduwvvbXD4La4nlQ/stops.dat?download&psid=1");
-            RouteFile = new FilePathStruct("route.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/routes.txt", "https://hvwjqw-ch3302.files.1drv.com/y3m8mbmVT4Gkn5aulSslqUvBtdTBxKUt-zsZhhn2TufEX15tkVxq-b-pEzNQN2pjxtP-XwWalZ1ZZIP7CT89D6inMs2tsbU6DdD3JIU2xzu4XzBlGPPd5q-jHqJBRCPG81l74HRPmb9a3FY0ctSQM0aEQ/route.dat?download&psid=1");
-            TimeFile = new FilePathStruct("time.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/times.txt", "https://hvwlqw-ch3302.files.1drv.com/y3mZL6AQnCsRop9AfJY6gA6jfsLyxelQabA_KQZYM0XX0ldZPjhjzlUCj2xMIVRzenoY0CY4fCYBDkWnJuofDQnDfcnDkMp38-j-xIkkud__o6Np1Wpl54Me9omwMA6O8ygoOx0WPYfWiz1jjGqMI0rzA/time.dat?download&psid=1");
-            FavouriteFile = new FilePathStruct("favourite.dat", TypeFolder.Roaming);
+            StopsFile = new FilePathStruct("stops.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/stops.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116855&authkey=AN0rfhVuMuxHT68");
+			RouteFile = new FilePathStruct("route.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/routes.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116854&authkey=ABcKVzT0ApakBiY");
+			TimeFile = new FilePathStruct("time.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/times.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116856&authkey=AOKR4i0KOtmFo58");
+			FavouriteFile = new FilePathStruct("favourite.dat", TypeFolder.Roaming);
             StatisticFile = new FilePathStruct("statistics.dat", TypeFolder.Roaming);
             LastUpdatedFile = new FilePathStruct("LastNews.txt", TypeFolder.Local, "", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111529&authkey=%21ADs9KNHO9TDPE3Q&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D4");
             HotNewsFile = new FilePathStruct("days.txt", TypeFolder.Local, @"http://www.minsktrans.by/ru/newsall/news/operativnaya-informatsiya.html", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2");
             MainNewsFile = new FilePathStruct("months.txt", TypeFolder.Local, @"http://www.minsktrans.by/ru/newsall/news/newscity.html", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8");
 
-            TimeTableAllFile = new FilePathStruct("timetableall.json.v", TypeFolder.Local);
-            MainNewsFileV2 = new FilePathStruct("months.v2.txt", TypeFolder.Local, "");
+			TimeTableAllFile = new FilePathStruct("timetableall.json.v", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116977&authkey=ACy2zEe1xRXErhM");
+			MainNewsFileV2 = new FilePathStruct("months.v2.txt", TypeFolder.Local, "");
             HotNewsFileV2 = new FilePathStruct("days.v2.txt", TypeFolder.Local, "");
-        }
+
+			AllNewsFileV3 = new FilePathStruct("news.json_v3", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117176&authkey=AIeOI5DJwJDd2n0");
+
+		}
         public FilePathStruct TimeFile { get; private set; }
         public FilePathStruct RouteFile { get; private set; }
         public FilePathStruct StopsFile { get; private set; }
@@ -53,6 +56,7 @@ namespace MinskTrans.Context
         public FilePathStruct MainNewsFile { get; private set; }
         public FilePathStruct MainNewsFileV2 { get; private set; }
         public FilePathStruct HotNewsFileV2 { get; private set; }
+		public FilePathStruct AllNewsFileV3 { get; private set; }
 
         public FilePathStruct TimeTableAllFile { get; private set; }
 

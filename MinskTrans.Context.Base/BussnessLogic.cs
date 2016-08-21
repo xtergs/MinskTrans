@@ -132,26 +132,25 @@ namespace MinskTrans.Context
 
                 var timeShtaps = resultStr.Split('\n');
                 var utcNow = DateTime.Parse(timeShtaps[0], CultureInfo.InvariantCulture);
-                //NewsManager manager = new NewsManager();
-                //await newManager.Load();
-                DateTime oldMonthTime = settings.LastNewsTimeUtc;
-                DateTime oldDaylyTime = settings.LastUpdateHotNewsDateTimeUtc;
+				var utcNow2 = DateTime.Parse(timeShtaps[1], CultureInfo.InvariantCulture);
+				DateTime oldMonthTime = settings.LastNewsTimeUtc;
                 bool isHaveNews = false;
-                if (utcNow > oldMonthTime)
+                if (utcNow > oldMonthTime || utcNow2 > oldMonthTime)
                 {
                     try
                     {
-                        await fileHelper.DeleteFile(files.MainNewsFile.Folder, files.MainNewsFile.NewFileName);
+                        await fileHelper.DeleteFile(files.AllNewsFileV3.Folder, files.AllNewsFileV3.NewFileName);
                         await
-                            internetHelper.Download(files.MainNewsFile.SecondFormatedLink,
-                                files.MainNewsFile.NewFileName,
-                                files.MainNewsFile.Folder);
+                            internetHelper.Download(files.AllNewsFileV3.SecondFormatedLink,
+                                files.AllNewsFileV3.NewFileName,
+                                files.AllNewsFileV3.Folder);
                         await
-                            fileHelper.SafeMoveAsync(files.MainNewsFile.Folder,
-                                from: files.MainNewsFile.NewFileName,
-                                to: files.MainNewsFile.FileName);
+                            fileHelper.SafeMoveAsync(files.AllNewsFileV3.Folder,
+                                from: files.AllNewsFileV3.NewFileName,
+                                to: files.AllNewsFileV3.FileName);
                         settings.LastNewsTimeUtc = utcNow;
-                        isHaveNews = true;
+						settings.LastUpdateHotNewsDateTimeUtc = utcNow;
+						isHaveNews = true;
                         //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
                     }
                     catch (Exception e)
@@ -169,34 +168,34 @@ namespace MinskTrans.Context
                 if (token.IsCancellationRequested)
                     return false;
 
-                utcNow = DateTime.Parse(timeShtaps[1], CultureInfo.InvariantCulture);
-                if (utcNow > oldDaylyTime)
-                {
-                    try
-                    {
-                        await fileHelper.DeleteFile(files.HotNewsFile.Folder, files.HotNewsFile.NewFileName);
-                        await
-                            internetHelper.Download(files.HotNewsFile.SecondFormatedLink, files.HotNewsFile.NewFileName,
-                                files.HotNewsFile.Folder);
-                        await
-                            fileHelper.SafeMoveAsync(files.HotNewsFile.Folder,
-                                from: files.HotNewsFile.NewFileName,
-                                to: files.HotNewsFile.FileName);
-                        settings.LastUpdateHotNewsDateTimeUtc = utcNow;
-                        isHaveNews = true;
-                        //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
-                    }
-                    catch (Exception e)
-                    {
-                        string message =
-                            new StringBuilder("News manager download days exception").AppendLine(e.ToString())
-                                .AppendLine(e.Message)
-                                .AppendLine(e.StackTrace)
-                                .ToString();
-                        Debug.WriteLine(message);
-                        log?.Error(message, e);
-                    }
-                }
+                
+                //if (utcNow > oldDaylyTime)
+                //{
+                //    try
+                //    {
+                //        await fileHelper.DeleteFile(files.HotNewsFile.Folder, files.HotNewsFile.NewFileName);
+                //        await
+                //            internetHelper.Download(files.HotNewsFile.SecondFormatedLink, files.HotNewsFile.NewFileName,
+                //                files.HotNewsFile.Folder);
+                //        await
+                //            fileHelper.SafeMoveAsync(files.HotNewsFile.Folder,
+                //                from: files.HotNewsFile.NewFileName,
+                //                to: files.HotNewsFile.FileName);
+                //        settings.LastUpdateHotNewsDateTimeUtc = utcNow;
+                //        isHaveNews = true;
+                //        //TODO settings.LastUpdatedDataInBackground |= SettingsModelView.TypeOfUpdate.News;
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        string message =
+                //            new StringBuilder("News manager download days exception").AppendLine(e.ToString())
+                //                .AppendLine(e.Message)
+                //                .AppendLine(e.StackTrace)
+                //                .ToString();
+                //        Debug.WriteLine(message);
+                //        log?.Error(message, e);
+                //    }
+                //}
 
                 if (token.IsCancellationRequested)
                     return false;
@@ -313,7 +312,8 @@ namespace MinskTrans.Context
                         Context.ApplyUpdate(timeTable.Routs as IEnumerable<Rout>, timeTable.Stops as IList<Stop>,
                             timeTable.Time as IList<Schedule>);
                     Context.AllPropertiesChanged();
-                    await Context.Save(true);
+	                Context.UpdateDateTimeUtc = utcNow;
+					await Context.Save(true);
                     await updateManager.ApproveDonloadedFilesAsync();
                     Settings.LastUpdateDbDateTimeUtc = utcNow;
                     return true;

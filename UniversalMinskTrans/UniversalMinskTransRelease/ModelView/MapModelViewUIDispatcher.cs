@@ -31,6 +31,7 @@ namespace UniversalMinskTransRelease.ModelView
                 _cancelPrepareStops.Cancel();
             _cancelPrepareStops = new CancellationTokenSource();
             List<Pushpin> pushs = new List<Pushpin>(10);
+	        List<PushpinLocation> tempLocaton = new List<PushpinLocation>(10);
             List<Pushpin> toRemove = new List<Pushpin>(10);
             List<Pushpin> toAdd = new List<Pushpin>(10);
             var token = _cancelPrepareStops.Token;
@@ -44,15 +45,19 @@ namespace UniversalMinskTransRelease.ModelView
                         tempPushpin = await CreatePushpin(needShowStop);
                         allPushpins.Add(tempPushpin);
                     }
-                    await dispatcher?.RunAsync(CoreDispatcherPriority.Normal, () => {
-                        pushs.Add(tempPushpin.Pushpin);
-                    });
+
+					tempLocaton.Add(tempPushpin);
+                   
                     if (token.IsCancellationRequested)
                         return;
                 }
-                //stopsOnMap.AddRange(Pushpins);
-                //var temp = map.Children.OfType<Pushpin>().ToArray();
-                var except = StopsOnMap.Concat(Pushpins).Except(pushs).ToList();
+	            var asyncAction = dispatcher?.RunAsync(CoreDispatcherPriority.Normal, () => { pushs.AddRange(tempLocaton.Select(tempPushpin => tempPushpin.Pushpin)); });
+	            if (
+		            asyncAction != null)
+		            await asyncAction;
+	            //stopsOnMap.AddRange(Pushpins);
+				//var temp = map.Children.OfType<Pushpin>().ToArray();
+				var except = StopsOnMap.Concat(Pushpins).Except(pushs).ToList();
                 toRemove.AddRange(except);
                 except = pushs.Except(StopsOnMap).ToList();
                 toAdd.AddRange(except);

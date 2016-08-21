@@ -25,6 +25,7 @@
     <AppxBundle>Always</AppxBundle>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <HockeyAppResourceId>566821d63dcd405a8cdaaa5432f8cde3</HockeyAppResourceId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -102,7 +103,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="ApplicationInsights.config" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="app.config" />
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
@@ -111,6 +114,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="project.json" />
+    <None Include="Service References\HockeyApp\ConnectedService.json" />
     <None Include="UniversalMinskTransRelease_StoreKey.pfx" />
     <None Include="UniversalMinskTrans_TemporaryKey.pfx" />
   </ItemGroup>
@@ -144,6 +148,8 @@
     <Compile Include="ModelView\SingFilterForAllDataModelView.cs" />
     <Compile Include="ModelView\StopModelViewUIDispatcher.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="TemplateSelectors\StopsItemSelector.cs" />
+    <Compile Include="ViewModel\FavouriteStop.cs" />
     <Compile Include="View\MyTextBox.xaml.cs">
       <DependentUpon>MyTextBox.xaml</DependentUpon>
     </Compile>
@@ -234,6 +240,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Resource Include="FodyWeavers.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +363,9 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="..\..\MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

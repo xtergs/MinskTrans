@@ -9,23 +9,23 @@
       xmlns:local="using:MinskTrans.Universal"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:modelView="using:MinskTrans.Universal.ModelView"
+      xmlns:system="using:System"
       xmlns:view="using:UniversalMinskTransRelease.View"
       x:Name="mainPage"
+      d:DataContext="{d:DesignInstance modelView:MainModelView}"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       KeyDown="mainPage_KeyDown"
       Loaded="Page_Loaded"
       PointerPressed="mainPage_PointerPressed"
       SizeChanged="mainPage_SizeChanged"
       Unloaded="Page_Unloaded"
-      d:DataContext="{d:DesignInstance modelView:MainModelView}"
       mc:Ignorable="d">
     <Page.Resources>
-       
+
         <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <local:MinsLeftConverter x:Key="MinsLeftConverter" />
         <local:MinsToTimeConverter x:Key="MinsToTimeConverter" />
-        
-        <DataTemplate x:Key="DataTemplate2"> 
+        <DataTemplate x:Key="DataTemplate2">
             <Grid Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -77,7 +77,7 @@
             </Grid>
         </DataTemplate>
 
-        
+
         <DataTemplate x:Key="DataTemplate3">
             <StackPanel>
                 <TextBlock FontSize="15" Text="{Binding RouteName}" />
@@ -89,12 +89,466 @@
     </Page.Resources>
 
     <Grid x:Name="GgGrid">
+        <Pivot x:Name="Pivot"
+               Margin="0,0,0,0"
+               HorizontalContentAlignment="Stretch"
+               VerticalContentAlignment="Stretch"
+               Background="{ThemeResource BackGroundSolidColorBrush}"
+               Padding="0"
+               PointerWheelChanged="Pivot_PointerWheelChanged"
+               SelectionChanged="Pivot_SelectionChanged">
+
+            <PivotItem x:Name="SearchPivotItem"
+                       Margin="0"
+                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       BorderThickness="0,10,0,0"
+                       DataContext="{Binding FindModelView}"
+                       Header="Поиск"
+                       Padding="0">
+                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition x:Name="secondColumn" Width="Auto" />
+                            <ColumnDefinition x:Name="thriedColumn" Width="Auto" />
+
+                        </Grid.ColumnDefinitions>
+
+                        <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <HyperlinkButton x:Uid="StopsButton"
+                                             x:Name="StopsHyperlinkButton"
+                                             Command="{Binding TogleToShowStopsFindViewCommand}"
+                                             Content="Остановки"
+                                             IsEnabled="False">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="IsEnabledChanged">
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </HyperlinkButton>
+                            <HyperlinkButton x:Name="RoutsHyperlinkButton"
+                                             Grid.Column="1"
+                                             Command="{Binding TogleToShowRoutsFindViewCommand}"
+                                             Content="Транспорт"
+                                             RequestedTheme="Dark">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="IsEnabledChanged">
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </HyperlinkButton>
+                        </Grid>
+                        <view:RoutStopsTimeTableView x:Name="RoutViews"
+                                                     Grid.Row="0"
+                                                     Grid.RowSpan="3"
+                                                     Grid.ColumnSpan="3"
+                                                     Margin="10,0"
+                                                     DataContext="{Binding RoutsModelView}"
+                                                     Visibility="Collapsed" />
+
+                        <local:ShowStopView x:Name="ShowStop"
+                                            Grid.Row="0"
+                                            Grid.RowSpan="2"
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            DataContext="{Binding StopModelView}"
+                                            ShowStatusBar="Visible"
+                                            Visibility="Collapsed" />
+
+
+                        <view:StopsListView x:Name="ShowStopsGrid"
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="1"
+                                            Margin="10,0"
+                                            DataContext="{Binding StopModelView}">
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                        </view:StopsListView>
+
+                        <Grid x:Name="ShowRoutsGrid"
+                              Grid.Row="1"
+                              Grid.ColumnSpan="2"
+                              Margin="10,0"
+                              Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+
+                            <view:RoutNumsView x:Name="RoutsListView"
+                                               Grid.Row="1"
+                                               Grid.RowSpan="2"
+                                               Grid.ColumnSpan="2"
+                                               DataContext="{Binding RoutsModelView}">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </view:RoutNumsView>
+
+                            <Grid x:Name="ShowRoutsListGrid"
+                                  Grid.Row="1"
+                                  Grid.ColumnSpan="2"
+                                  DataContext="{Binding RoutsModelView}"
+                                  Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Height="{Binding ActualHeight,
+                                                            ElementName=TransportTextBlock,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                           MinWidth="15"
+                                           MinHeight="15"
+                                           Source="{Binding RouteNumSelectedValue.Transport,
+                                                            Converter={StaticResource TransportToImageConverter}}" />
+                                    <TextBlock x:Name="TransportTextBlock"
+                                               Grid.Column="1"
+                                               FontSize="20"
+                                               Text="{Binding RouteNumSelectedValue.RouteNum}" />
+                                </Grid>
+
+
+                                <ListView x:Name="ShowRoutsListView"
+                                          Grid.Row="1"
+                                          Grid.ColumnSpan="2"
+                                          ItemTemplate="{StaticResource DataTemplate3}"
+                                          ItemsSource="{Binding RouteNames,
+                                                                UpdateSourceTrigger=PropertyChanged}"
+                                          SelectedItem="{Binding RouteSelectedValue,
+                                                                 Mode=TwoWay,
+                                                                 UpdateSourceTrigger=PropertyChanged}">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                            <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <!--<Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                            <Core:GoToStateAction StateName="ShowRoutVisualState" />
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>-->
+                                </ListView>
+                            </Grid>
+
+                        </Grid>
+
+                        <Button x:Name="UpdateButton"
+                                Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Command="{Binding MainView.UpdateDataCommand,
+                                                  ElementName=mainPage}"
+                                Content="Обновить расписание"
+                                Visibility="{Binding MainView.IsNeesUpdate,
+                                                     Mode=OneWay,
+                                                     UpdateSourceTrigger=PropertyChanged,
+                                                     Converter={StaticResource BooleanToVisibilityConverter},
+                                                     ElementName=mainPage}" />
+                    </Grid>
+                </Border>
+
+            </PivotItem>
+            <PivotItem Name="TestNewsView"
+                       Margin="0"
+                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       DataContext="{Binding NewsModelView}"
+                       GotFocus="PivotItem_GotFocus_1"
+                       Header="Новости"
+                       Padding="0">
+                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+                    <Grid>
+                        <Button Grid.ColumnSpan="2"
+                                Command="{Binding MainView.UpdateDataCommand,
+                                                  ElementName=mainPage}"
+                                Content="Проверить обновления"
+                                Visibility="{Binding IsNotHaveAnyNews,
+                                                     UpdateSourceTrigger=PropertyChanged,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <view:NewsView DataContext="{Binding UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Visibility="{Binding IsHaveAnyNews, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </Border>
+            </PivotItem>
+
+
+            <PivotItem Name="GroupsPivtoItem"
+                       Margin="0"
+                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       DataContext="{Binding GroupStopsModelView}"
+                       Header="Группы"
+                       Padding="0">
+
+                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <ListBox Name="GroupsListView"
+                                 Grid.ColumnSpan="2"
+                                 Background="{x:Null}"
+                                 DisplayMemberPath="Name"
+                                 FontSize="18"
+                                 Foreground="White"
+                                 IsDoubleTapEnabled="False"
+                                 ItemsSource="{Binding Context.Context.Groups,
+                                                       UpdateSourceTrigger=PropertyChanged}"
+                                 SelectedItem="{Binding SelectedGroupStop,
+                                                        Mode=TwoWay,
+                                                        UpdateSourceTrigger=PropertyChanged}"
+                                 SelectionChanged="GroupSelectedListView">
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="Holding">
+                                    <Core:GoToStateAction StateName="SelectToDeleteVisualState" />
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <!--<Interactivity:Interaction.Behaviors>
+                        		<Core:EventTriggerBehavior EventName="SelectionChanged">
+                        			<Core:GoToStateAction StateName="ShowGroupVisualState"/>
+                        		</Core:EventTriggerBehavior>
+                        	</Interactivity:Interaction.Behaviors>-->
+
+
+                        </ListBox>
+
+                        <!--<ListView DataContext="{Binding ElementName=GroupsListView, Path=SelectedItem}" DisplayMemberPath="Stops" Visibility="Collapsed"/>-->
+                        <local:ShowStopView x:Name="showStopView"
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            DataContext="{Binding}"
+                                            ShowStatusBar="Collapsed"
+                                            Visibility="Collapsed" />
+                        <Border Grid.Row="1"
+                                Margin="-10,0"
+                                VerticalAlignment="Bottom"
+                                Background="#FF5D5959">
+                            <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <AppBarButton x:Name="RefreshCurGroupShow"
+                                              Command="{Binding RefreshTimeSchedule}"
+                                              Icon="Sync"
+                                              IsCompact="True"
+                                              Visibility="Collapsed" />
+                                <AppBarButton x:Name="AddGroupAppBarButton"
+                                              HorizontalAlignment="Center"
+                                              Click="AppBarButton_Click"
+                                              Icon="Add"
+                                              IsCompact="True">
+                                    <AppBarButton.Flyout>
+                                        <Flyout Placement="Bottom">
+                                            <StackPanel>
+                                                <TextBlock FontSize="18" Text="Название группы" />
+                                                <local:MyTextBox Name="NameTextBox" />
+                                                <Button Command="{Binding CreateGroup}"
+                                                        CommandParameter="{Binding ElementName=NameTextBox,
+                                                                                   Path=Text,
+                                                                                   Mode=TwoWay,
+                                                                                   UpdateSourceTrigger=PropertyChanged}"
+                                                        Content="Добавить" />
+                                            </StackPanel>
+                                        </Flyout>
+                                    </AppBarButton.Flyout>
+                                </AppBarButton>
+                                <AppBarButton x:Name="appBarButton"
+                                              HorizontalAlignment="Center"
+                                              Command="{Binding DeleteGroups}"
+                                              CommandParameter="{Binding SelectedGroupStop,
+                                                                         UpdateSourceTrigger=PropertyChanged}"
+                                              Icon="Delete"
+                                              IsCompact="True"
+                                              Label=""
+                                              Visibility="Collapsed" />
+                            </Controls:WrapPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </PivotItem>
+
+            <PivotItem x:Name="MapPivotItem"
+                       Margin="0"
+                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       DataContext="{Binding MapModelView}"
+                       Header="Карта"
+                       Padding="0">
+                <view:MapViewControll x:Name="map"
+                                      x:DeferLoadStrategy="Lazy"
+                                      DataContext="{Binding}" />
+            </PivotItem>
+
+            <PivotItem x:Name="SettingsPivotItem"
+                       Margin="0"
+                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       DataContext="{Binding SettingsModelView}"
+                       Header="Настройки"
+                       Padding="0">
+                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
+                    <ListView MinHeight="0"
+                              Margin="5,0,5,0"
+                              IsItemClickEnabled="False"
+                              ItemContainerStyle="{StaticResource FullListViewItem}"
+                              SelectionMode="None">
+
+                        <Button Command="{Binding UpdateDataCommand}"
+                                Content="Обновить расписание"
+                                DataContext="{Binding MainView,
+                                                      ElementName=mainPage}" />
+                        <ToggleSwitch IsOn="{Binding UpdateOnWiFi,
+                                                     Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged}"
+                                      OffContent="Не использовать WiFi"
+                                      OnContent="Использовать WiFi" />
+                        <ToggleSwitch IsOn="{Binding UpdateOnMobileData,
+                                                     Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged}"
+                                      OffContent="Не использовать мобильное соединение"
+                                      OnContent="Использовать мобильное соединение" />
+                        <ToggleSwitch IsOn="{Binding UseGPS,
+                                                     Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged}"
+                                      OffContent="Не использовать GPS"
+                                      OnContent="Использовать GPS" />
+
+                        <ToggleSwitch IsOn="{Binding ConsiderDistanceSortStops,
+                                                     Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged}"
+                                      OffContent="Не учитывать расстояние при сортировке остановок"
+                                      OnContent="Учитывать расстояние при сортировке остановок" />
+
+                        <ToggleSwitch IsOn="{Binding ConsiderFrequencySortStops,
+                                                     Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged}"
+                                      OffContent="Не учитывать частоту при сортировке остановок"
+                                      OnContent="Учитывать частоту при сортировке остановок" />
+
+                        <ToggleSwitch IsOn="{Binding NotifyAboutNews,
+                                                     Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged}"
+                                      OffContent="Не оповещать о новостях"
+                                      OnContent="Оповещать о новостях" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Дата обновления расписания" />
+                            <TextBlock Grid.Row="1" Text="{Binding LastUpdateDbDateTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Взгляд в прошлое " />
+                                <TextBlock Grid.Column="1" Text="{Binding TimeInPast, Mode=OneWay, UpdateSourceTrigger=Default}" />
+                                <TextBlock Grid.Column="2" Text=" мин" />
+
+
+                            </Grid>
+                            <ComboBox Grid.Row="1"
+                                      ItemsSource="{Binding PreDefMins}"
+                                      SelectedValue="{Binding TimeInPast,
+                                                              Mode=TwoWay,
+                                                              UpdateSourceTrigger=Default}" />
+                        </Grid>
+                        <StackPanel>
+                            <TextBlock Text="Макс колво транспорта для избранного" />
+                            <ComboBox ItemsSource="{Binding SimpleArray}" SelectedItem="{Binding NextFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Макс колво транспорта для избранного" />
+                            <ComboBox ItemsSource="{Binding SimpleArray}" SelectedItem="{Binding PrevFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <Button Click="ShowChangelog" Content="Изменения" />
+                        <Button Click="ShowInStore" Content="Оставить отзыв" />
+                        <Button Name="ChatWithDeveloper"
+                                Click="StartEmailToDeveloper"
+                                Content="Связь с разработчиком" />
+                        <Button Click="OnOffLocationServises" Content="Настройка сервисов местоположения" />
+                        <Button Click="ShowPolicity" Content="Политика безопасности" />
+                        <Button Click="SendLog" Content="Отправить лог разработчику" />
+                        <!--<CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox SelectedValue="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                            <ComboBoxItem>15</ComboBoxItem>
+                            <ComboBoxItem>16</ComboBoxItem>
+                            <ComboBoxItem>17</ComboBoxItem>
+                            <ComboBoxItem>18</ComboBoxItem>
+                            <ComboBoxItem>19</ComboBoxItem>
+                            <ComboBoxItem>20</ComboBoxItem>
+                            <ComboBoxItem>21</ComboBoxItem>
+                        </ComboBox>-->
+                    </ListView>
+                </Border>
+            </PivotItem>
+            <!--<PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Обновить" Command="{Binding RefreshLogsCommand}"/>
+                    <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
+                </Grid>
+            </PivotItem>-->
+            <PivotItem BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+                       DataContext="{Binding SingFilterForAllDataModelView}"
+                       Header="Новый поиск">
+                <view:SingFilterFieldView DataContext="{Binding}" />
+            </PivotItem>
+        </Pivot>
+
+
+
+        <ProgressBar Height="10"
+                     VerticalAlignment="Top"
+                     IsEnabled="True"
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsLoading,
+                                          Converter={StaticResource BooleanToVisibilityConverter},
+                                          UpdateSourceTrigger=PropertyChanged,
+                                          Mode=OneWay}" />
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
 
                 <VisualState x:Name="StopsVisualState">
                     <VisualState.Setters>
-                        
+
                         <Setter Target="ShowStop.(Grid.Column)" Value="1" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="secondColumn.Width" Value="1*" />
@@ -133,7 +587,7 @@
                 </VisualState>
                 <VisualState x:Name="StopsCompactVisualState">
                     <VisualState.Setters>
-                        
+
                         <Setter Target="ShowStop.(Grid.Column)" Value="0" />
                         <Setter Target="ShowStop.Visibility" Value="Collapsed" />
                         <Setter Target="ShowStop.(Grid.ColumnSpan)" Value="2" />
@@ -251,7 +705,7 @@
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
-                       
+
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
@@ -312,7 +766,7 @@
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
-                       
+
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopsHyperlinkButton" Storyboard.TargetProperty="(Control.IsEnabled)">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
@@ -405,7 +859,7 @@
                 </VisualState>
                 <VisualState x:Name="ShowGroupWideVisualState">
                     <VisualState.Setters>
-                        <Setter Target="GroupsListView.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="GroupsListView.(Grid.ColumnSpan)" Value="1" />
                     </VisualState.Setters>
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GroupsListView" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -439,413 +893,7 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
-            
+
         </VisualStateManager.VisualStateGroups>
-
-        <Pivot x:Name="Pivot"
-               Margin="0,0,0,0"
-               HorizontalContentAlignment="Stretch"
-               VerticalContentAlignment="Stretch"
-               Background="{ThemeResource BackGroundSolidColorBrush}"
-               Padding="0"
-               PointerWheelChanged="Pivot_PointerWheelChanged" SelectionChanged="Pivot_SelectionChanged">
-
-            <PivotItem x:Name="SearchPivotItem"
-                       Margin="0"
-                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
-                       BorderThickness="0,10,0,0"
-                       DataContext="{Binding FindModelView}"
-                       Header="Поиск"
-                       Padding="0">
-                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition x:Name="secondColumn" Width="Auto" />
-                            <ColumnDefinition x:Name="thriedColumn" Width="Auto" />
-
-                        </Grid.ColumnDefinitions>
-
-                        <Grid x:Name="FindHyperButtonGrid" Margin="10,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <HyperlinkButton x:Uid="StopsButton"
-                                             x:Name="StopsHyperlinkButton"
-                                             Command="{Binding TogleToShowStopsFindViewCommand}"
-                                             Content="Остановки"
-                                             IsEnabled="False">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="IsEnabledChanged">
-                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                            </HyperlinkButton>
-                            <HyperlinkButton x:Name="RoutsHyperlinkButton"
-                                             Grid.Column="1"
-                                             Command="{Binding TogleToShowRoutsFindViewCommand}"
-                                             Content="Транспорт"
-                                             RequestedTheme="Dark">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="IsEnabledChanged">
-                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                            </HyperlinkButton>
-                        </Grid>
-                        <view:RoutStopsTimeTableView x:Name="RoutViews"
-                              Grid.Row="0"
-                              Grid.RowSpan="3"
-                              Grid.ColumnSpan="3"
-                              Margin="10,0"
-                              DataContext="{Binding RoutsModelView}"
-                              Visibility="Collapsed"/>
-
-                        <local:ShowStopView x:Name="ShowStop"
-                                            Grid.Row="0"
-                                            Grid.RowSpan="2"
-                                            Grid.Column="1"
-                                            Grid.ColumnSpan="2"
-                                            DataContext="{Binding StopModelView}"
-                                            ShowStatusBar="Visible"
-                                            Visibility="Collapsed" />
-
-
-                        <view:StopsListView x:Name="ShowStopsGrid" DataContext="{Binding StopModelView}"
-                              Grid.Row="1"
-                              Grid.ColumnSpan="1"
-                              Margin="10,0">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                    <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </view:StopsListView>
-
-                        <Grid x:Name="ShowRoutsGrid"
-                              Grid.Row="1"
-                              Grid.ColumnSpan="2"
-                              Margin="10,0"
-                              Visibility="Collapsed">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            
-
-                            <view:RoutNumsView x:Name="RoutsListView"
-                                      Grid.Row="1" Grid.RowSpan="2"
-                                      Grid.ColumnSpan="2"
-                                      DataContext="{Binding RoutsModelView}">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                            </view:RoutNumsView>
-
-                            <Grid x:Name="ShowRoutsListGrid"
-                                  Grid.Row="1"
-                                  Grid.ColumnSpan="2"
-                                  DataContext="{Binding RoutsModelView}"
-                                  Visibility="Collapsed">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Height="{Binding ActualHeight,
-                                                            ElementName=TransportTextBlock,
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                           MinWidth="15"
-                                           MinHeight="15"
-                                           Source="{Binding RouteNumSelectedValue.Transport,
-                                                            Converter={StaticResource TransportToImageConverter}}" />
-                                    <TextBlock x:Name="TransportTextBlock"
-                                               Grid.Column="1"
-                                               FontSize="20"
-                                               Text="{Binding RouteNumSelectedValue.RouteNum}" />
-                                </Grid>
-
-
-                                <ListView x:Name="ShowRoutsListView"
-                                          Grid.Row="1"
-                                          Grid.ColumnSpan="2"
-                                          ItemTemplate="{StaticResource DataTemplate3}"
-                                          ItemsSource="{Binding RouteNames,
-                                                                UpdateSourceTrigger=PropertyChanged}"
-                                          SelectedItem="{Binding RouteSelectedValue,
-                                                                 Mode=TwoWay,
-                                                                 UpdateSourceTrigger=PropertyChanged}">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                            <Core:CallMethodAction MethodName="SelectVisualState" TargetObject="{Binding ElementName=mainPage}" />
-                                        </Core:EventTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>
-                                    <!--<Interactivity:Interaction.Behaviors>
-                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                            <Core:GoToStateAction StateName="ShowRoutVisualState" />
-                                        </Core:EventTriggerBehavior>
-                                    </Interactivity:Interaction.Behaviors>-->
-                                </ListView>
-                            </Grid>
-                            
-                        </Grid>
-                        
-                        <Button x:Name="UpdateButton"
-                        	Grid.Row="1"
-                        	HorizontalAlignment="Center"
-                        	Content="Обновить расписание"
-                        	Command="{Binding MainView.UpdateDataCommand, ElementName=mainPage}"
-                        	Visibility="{Binding MainView.IsNeesUpdate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=mainPage}" />
-                    </Grid>
-                </Border>
-
-            </PivotItem>
-            <PivotItem Name="TestNewsView"
-                       Margin="0"
-                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
-                       DataContext="{Binding NewsModelView}"
-                       Header="Новости"
-                        GotFocus="PivotItem_GotFocus_1"
-                       Padding="0">
-                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <Grid>
-                        <Button Content="Проверить обновления" Visibility="{Binding IsNotHaveAnyNews, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Command="{Binding MainView.UpdateDataCommand, ElementName=mainPage}"/>
-                        <view:NewsView Visibility="{Binding IsHaveAnyNews, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" DataContext="{Binding  UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                    </Grid>
-                </Border>
-            </PivotItem>
-
-
-            <PivotItem Name="GroupsPivtoItem"
-                       Margin="0"
-                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
-                       DataContext="{Binding GroupStopsModelView}"
-                       Header="Группы"
-                       Padding="0">
-
-                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <ListBox Name="GroupsListView"
-                                 Background="{x:Null}"
-                                 DisplayMemberPath="Name"
-                                 FontSize="18"
-                                 Foreground="White"
-                                 IsDoubleTapEnabled="False"
-                                 ItemsSource="{Binding Context.Context.Groups,
-                                                       UpdateSourceTrigger=PropertyChanged}"
-                                 SelectedItem="{Binding SelectedGroupStop,
-                                                        Mode=TwoWay,
-                                                        UpdateSourceTrigger=PropertyChanged}"
-                                 SelectionChanged="GroupSelectedListView" Grid.ColumnSpan="2">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="Holding">
-                                    <Core:GoToStateAction StateName="SelectToDeleteVisualState" />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                            <!--<Interactivity:Interaction.Behaviors>
-                        		<Core:EventTriggerBehavior EventName="SelectionChanged">
-                        			<Core:GoToStateAction StateName="ShowGroupVisualState"/>
-                        		</Core:EventTriggerBehavior>
-                        	</Interactivity:Interaction.Behaviors>-->
-
-
-                        </ListBox>
-
-                        <!--<ListView DataContext="{Binding ElementName=GroupsListView, Path=SelectedItem}" DisplayMemberPath="Stops" Visibility="Collapsed"/>-->
-                        <local:ShowStopView Grid.Column="1" x:Name="showStopView"
-                                            DataContext="{Binding}"
-                                            ShowStatusBar="Collapsed"
-                                            Visibility="Collapsed" Grid.ColumnSpan="2" />
-                        <Border Grid.Row="1"
-                                Margin="-10,0"
-                                VerticalAlignment="Bottom"
-                                Background="#FF5D5959">
-                            <Controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                <AppBarButton x:Name="RefreshCurGroupShow"
-                                              Command="{Binding RefreshTimeSchedule}"
-                                              Icon="Sync"
-                                              IsCompact="True"
-                                              Visibility="Collapsed" />
-                                <AppBarButton x:Name="AddGroupAppBarButton"
-                                              HorizontalAlignment="Center"
-                                              Click="AppBarButton_Click"
-                                              Icon="Add"
-                                              IsCompact="True">
-                                    <AppBarButton.Flyout>
-                                        <Flyout Placement="Bottom">
-                                            <StackPanel>
-                                                <TextBlock FontSize="18" Text="Название группы" />
-                                                <local:MyTextBox Name="NameTextBox" />
-                                                <Button Command="{Binding CreateGroup}"
-                                                        CommandParameter="{Binding ElementName=NameTextBox,
-                                                                                   Path=Text,
-                                                                                   Mode=TwoWay,
-                                                                                   UpdateSourceTrigger=PropertyChanged}"
-                                                        Content="Добавить" />
-                                            </StackPanel>
-                                        </Flyout>
-                                    </AppBarButton.Flyout>
-                                </AppBarButton>
-                                <AppBarButton x:Name="appBarButton"
-                                              HorizontalAlignment="Center"
-                                              Command="{Binding DeleteGroups}"
-                                              CommandParameter="{Binding SelectedGroupStop,
-                                                                         UpdateSourceTrigger=PropertyChanged}"
-                                              Icon="Delete"
-                                              IsCompact="True"
-                                              Label=""
-                                              Visibility="Collapsed" />
-                            </Controls:WrapPanel>
-                        </Border>
-                    </Grid>
-                </Border>
-            </PivotItem>
-
-            <PivotItem x:Name="MapPivotItem"
-                       Margin="0"
-                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
-                       DataContext="{Binding MapModelView}"
-                       Header="Карта"
-                       Padding="0">
-                <view:MapViewControll x:DeferLoadStrategy="Lazy"  DataContext="{Binding}" x:Name="map"></view:MapViewControll>
-            </PivotItem>
-
-            <PivotItem x:Name="SettingsPivotItem"
-                       Margin="0"
-                       BorderBrush="{StaticResource LightBlueSolidColorBrush}"
-                       DataContext="{Binding SettingsModelView}"
-                       Header="Настройки"
-                       Padding="0">
-                <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <ListView MinHeight="0"
-                              Margin="5,0,5,0"
-                              IsItemClickEnabled="False"
-                              ItemContainerStyle="{StaticResource FullListViewItem}">
-
-                        <Button Command="{Binding UpdateDataCommand}"
-                                Content="Обновить расписание"
-                                DataContext="{Binding MainView,
-                                                      ElementName=mainPage}" />
-                        <ToggleSwitch IsOn="{Binding UpdateOnWiFi,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не использовать WiFi"
-                                      OnContent="Использовать WiFi" />
-                        <ToggleSwitch IsOn="{Binding UpdateOnMobileData,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не использовать мобильное соединение"
-                                      OnContent="Использовать мобильное соединение" />
-                        <ToggleSwitch IsOn="{Binding UseGPS,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не использовать GPS"
-                                      OnContent="Использовать GPS" />
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="Дата обновления расписания" />
-                            <TextBlock Grid.Row="1" Text="{Binding LastUpdateDbDateTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="Взгляд в прошлое " />
-                                <TextBlock Grid.Column="1" Text="{Binding TimeInPast, Mode=OneWay, UpdateSourceTrigger=Default}" />
-                                <TextBlock Grid.Column="2" Text=" мин" />
-
-
-                            </Grid>
-                            <ComboBox Grid.Row="1"
-                                      ItemsSource="{Binding PreDefMins}"
-                                      SelectedValue="{Binding TimeInPast,
-                                                              Mode=TwoWay,
-                                                              UpdateSourceTrigger=Default}" />
-                        </Grid>
-                        <Button Click="ShowChangelog" Content="Изменения"/>
-                        <Button Click="ShowInStore" Content="Оставить отзыв" />
-                        <Button Name="ChatWithDeveloper"
-                                Click="StartEmailToDeveloper"
-                                Content="Связь с разработчиком" />
-                        <Button Click="OnOffLocationServises" Content="Настройка сервисов местоположения" />
-                        <Button Click="ShowPolicity" Content="Политика безопасности" />
-                        <Button Click="SendLog" Content="Отправить лог разработчику" />
-                        <!--<CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <ComboBox SelectedValue="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                            <ComboBoxItem>15</ComboBoxItem>
-                            <ComboBoxItem>16</ComboBoxItem>
-                            <ComboBoxItem>17</ComboBoxItem>
-                            <ComboBoxItem>18</ComboBoxItem>
-                            <ComboBoxItem>19</ComboBoxItem>
-                            <ComboBoxItem>20</ComboBoxItem>
-                            <ComboBoxItem>21</ComboBoxItem>
-                        </ComboBox>-->
-                    </ListView>
-                </Border>
-            </PivotItem>
-            <!--<PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Button Content="Обновить" Command="{Binding RefreshLogsCommand}"/>
-                    <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
-                </Grid>
-            </PivotItem>-->
-            <PivotItem DataContext="{Binding SingFilterForAllDataModelView}" Header="Новый поиск" BorderBrush="{StaticResource LightBlueSolidColorBrush}">
-                <view:SingFilterFieldView DataContext="{Binding}"></view:SingFilterFieldView>
-            </PivotItem>
-        </Pivot>
-        
-
-
-        <ProgressBar Height="10"
-                     VerticalAlignment="Top"
-                     IsEnabled="True"
-                     IsIndeterminate="True"
-                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-
     </Grid>
 </Page>

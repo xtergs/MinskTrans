@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MinskTrans.Context.Base.BaseModel;
 
 namespace MyLibrary
 {
@@ -20,7 +21,12 @@ namespace MyLibrary
 		//int SimleGet(int defValue = 0, [CallerMemberName] string key = null);
 		DateTime SimbleGet(DateTime value = default(DateTime), [CallerMemberName] string key = null);
 		void SimpleSet(DateTime value, [CallerMemberName] string key = null);
+	    T SimpleEnumGet<T>(Enum defValue = default(Enum), [CallerMemberName] string key = null);
+	    void SimpleEnumSet<T>(Enum value, [CallerMemberName] string key = null);
+
+
 	}
+
 	public interface ISettingsModelView:INotifyPropertyChanged
 	{
 		int[] SimpleArray { get; }
@@ -57,6 +63,13 @@ namespace MyLibrary
 		bool ConsiderDistanceSortStops { get; set; }
 		bool ConsiderFrequencySortStops { get; set; }
 		bool NotifyAboutNews { get; set; }
+        bool UseWebSeacher { get; set; }
+	    TimeSpan CachedCalculatorKeepAliveInterval { get; set; }
+
+        bool IsShowStops { get; set; }
+        bool IsShowFavouriteStops { get; set; }
+        bool IsShowFavouriteRoutes { get; set; }
+	    TransportType RoutsSelectedTransportType { get; set; }
 	}
 
 	public enum Error

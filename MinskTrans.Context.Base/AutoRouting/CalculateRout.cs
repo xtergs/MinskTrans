@@ -185,7 +185,7 @@ namespace MinskTrans.Context.AutoRouting
 					.ToList();
 			tempList.Add(stop);
 					
-            resultRout.Add(new KeyValuePair<Rout, IEnumerable<Stop>>(new Rout() {RouteName = "пешком"},tempList));
+			resultRout.Add(new KeyValuePair<Rout, IEnumerable<Stop>>(new Rout() {RouteName = "пешком"},tempList));
 		}
 
 		bool FindRout( IEnumerable<Stop> stops, int index)

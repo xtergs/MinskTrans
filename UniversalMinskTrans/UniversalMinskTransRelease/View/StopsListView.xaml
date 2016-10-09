@@ -57,7 +57,7 @@
             <RowDefinition />
             <RowDefinition Height="{Binding IsShowWebResuls, Converter={StaticResource GridBoolHeightConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+
 
         </Grid.RowDefinitions>
 
@@ -94,6 +94,7 @@
                             Grid.Row="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
+                            Click="ToggleFavourite"
                             Content="FavouriteStop"
                             Icon="Favorite"
                             IsChecked="{Binding IsShowFavouriteStops,
@@ -117,7 +118,7 @@
             <TextBlock Grid.Column="1" Text="{Binding StreetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="0">
                 <TextBlock.Text>
-                    Web results for:
+                    Возможные остановки:
                 </TextBlock.Text>
             </TextBlock>
             <ListView x:Name="WebStopsList"
@@ -145,20 +146,34 @@
         <AppBar x:Name="appBar"
                 Grid.Row="3"
                 DataContext="{Binding}"
+                IsOpen="False"
                 Visibility="{Binding IsShowFavouriteStops,
                                      Mode=TwoWay,
                                      UpdateSourceTrigger=PropertyChanged,
                                      Converter={StaticResource BooleanToNotVisibilityConverter}}">
             <VariableSizedWrapGrid Orientation="Horizontal">
-                <CheckBox Content="Автобус"
+                <CheckBox Click="ToggleCheckBoxBus"
+                          Content="Автобус"
                           IsChecked="{Binding Bus,
                                               Mode=TwoWay,
                                               UpdateSourceTrigger=PropertyChanged}"
                           IsDoubleTapEnabled="False"
                           IsHoldingEnabled="False" />
-                <CheckBox Content="Тролейбус" IsChecked="{Binding Trol, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <CheckBox Content="Трамвай" IsChecked="{Binding Tram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <CheckBox Content="Метро" IsChecked="{Binding Metro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Click="ToggleCheckBoxTrol"
+                          Content="Тролейбус"
+                          IsChecked="{Binding Trol,
+                                              Mode=TwoWay,
+                                              UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Click="ButtonBase_OnClick"
+                          Content="Трамвай"
+                          IsChecked="{Binding Tram,
+                                              Mode=TwoWay,
+                                              UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Click="ToggleCheckBoxMetro"
+                          Content="Метро"
+                          IsChecked="{Binding Metro,
+                                              Mode=TwoWay,
+                                              UpdateSourceTrigger=PropertyChanged}" />
                 <!--<CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								<CheckBox Content="Favourite" IsChecked="{Binding IsShowFavouriteStops, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
 

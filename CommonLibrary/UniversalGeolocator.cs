@@ -1,4 +1,6 @@
-﻿using Windows.Devices.Geolocation;
+﻿using System;
+using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
@@ -22,7 +24,7 @@ namespace CommonLibrary
     }
     public class UniversalGeolocator:IGeolocation
     {
-        readonly Geolocator geolocator = new Geolocator();
+        protected readonly Geolocator geolocator = new Geolocator();
 
         public UniversalGeolocator()
         {
@@ -55,8 +57,15 @@ namespace CommonLibrary
             geolocator.ReportInterval = value;
         } }
         public Location CurLocation { get; protected set; }
+        public virtual async Task<Permision> CheckPermision()
+        {
+            OnPermissionChanged(Permision.Allow);
+            return Permision.Allow;
+        }
+
         public event PositionChangedEventArgs PositionChanged;
         public event StatusChangedEventArgs StatusChanged;
+        public event EventHandler<Permision> PermissionChanged;
 
         #endregion
 
@@ -68,6 +77,11 @@ namespace CommonLibrary
         protected virtual void OnStatusChanged(StatusChangedEventArgsArgs args)
         {
             StatusChanged?.Invoke(this, args);
+        }
+
+        protected virtual void OnPermissionChanged(Permision e)
+        {
+            PermissionChanged?.Invoke(this, e);
         }
     }
 }

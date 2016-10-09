@@ -69,8 +69,15 @@ namespace MinskTrans.Context
 				await LoadDataBase(token);
 			}
 			loadDataSource = null;
-			OnPropertyChanged(nameof(Context.Stops));
-			OnPropertyChanged(nameof(Context.Routs));
+		    try
+		    {
+		        OnPropertyChanged(nameof(Context.Stops));
+		        OnPropertyChanged(nameof(Context.Routs));
+		    }
+		    catch
+		    {
+		        
+		    }
 		}
 
 		public async Task LoadDataBase(CancellationToken token, LoadType loadType = LoadType.LoadAll)
@@ -137,7 +144,81 @@ namespace MinskTrans.Context
 			return null;
 		}
 
-		public async Task<IEnumerable<Stop>> FilteredStopsAsync(string StopNameFilter, CancellationToken token,
+        public IEnumerable<StopSearchResult> FilteredStopsEx(string StopNameFilter,
+            TransportType selectedTransport = TransportType.All, Location location = null, bool FuzzySearch = false, bool considerFrequency = true)
+        {
+            IEnumerable<Stop> returnList = Context.ActualStops;
+            if (returnList != null)
+                returnList = returnList.Where(x => x.Routs.Any(d => selectedTransport.HasFlag(d.Transport))).ToList();
+            if (!string.IsNullOrWhiteSpace(StopNameFilter) && returnList != null)
+            {
+                var tempSt = StopNameFilter.ToLower();
+                IEnumerable<StopSearchResult> temp = new List<StopSearchResult>(20);
+                //if (FuzzySearch)
+                //    //TODO
+                //    //temp = Levenshtein.Search(tempSt, (List<Stop>) returnList.ToList(), 0.4);
+                //    ;
+                //else
+                temp = returnList.Select(
+                    x =>
+                    {
+                        return new StopSearchResult()
+                        {
+                            Stop = x,
+                             StartMatch = x.SearchName.IndexOf(tempSt, StringComparison.Ordinal),
+                            FoundInRout = x.Routs.Any(r => r.RouteNum.Contains(tempSt)),
+                            MatchLength = tempSt.Length
+                    };
+                    }).Where(x => x.StartMatch >= 0 || x.FoundInRout)
+                    ;
+                if (location != null)
+                    return
+                        SmartSort(temp, location);
+                //Enumerable.OrderBy<Stop, double>(temp, (Func<Stop, double>) this.Distance)
+                //	.ThenByDescending((Func<Stop, uint>) Context.GetCounter);
+                else if (considerFrequency)
+                    return
+                        temp.Select(d =>
+                        {
+                            d.Frequency = Context.GetCounter(d.Stop);
+                            return d;
+                        }).OrderByDescending(x=> x.Frequency)
+                            .ThenBy(x => x.StartMatch);
+                return temp.OrderBy(x => x.StartMatch);
+            }
+            if (returnList != null)
+                if (location == null)
+                    if (considerFrequency)
+                        return returnList.Select(r =>
+                        {
+                            return new StopSearchResult()
+                            {
+                                Frequency = Context.GetCounter(r),
+                                Distance = null,
+                                FoundInRout = false,
+                                Stop = r
+                            };
+                        }).OrderByDescending(s=> s.Frequency).ThenBy(x => x.Stop.SearchName);
+                    else
+                        return returnList.Select(d=> {
+                            return new StopSearchResult()
+                            {
+                                Frequency = null,
+                                Distance = null,
+                                FoundInRout = false,
+                                Stop = d
+                            };
+                        }).OrderBy(x => x.Stop.SearchName);
+                else
+                    return SmartSort(returnList.Select(x=> new StopSearchResult()
+                    {
+                        Stop = x,
+                        Frequency = Context.GetCounter(x)
+                    }), location);
+            return null;
+        }
+
+        public async Task<IEnumerable<Stop>> FilteredStopsAsync(string StopNameFilter, CancellationToken token,
 			TransportType selectedTransport = TransportType.All, Location location = null, bool FuzzySearch = false)
 		{
 			if (token.IsCancellationRequested)
@@ -201,7 +282,20 @@ namespace MinskTrans.Context
 			return result;
 		}
 
-		public void SetGPS(bool v, object useGPS)
+        private IEnumerable<StopSearchResult> SmartSort(IEnumerable<StopSearchResult> stops, Location location)
+        {
+            IEnumerable<StopSearchResult> enumerable = stops as IList<StopSearchResult> ?? stops.ToList();
+            foreach (var item in enumerable)
+                item.Distance = Distance(item.Stop, location);
+            //var result = enumerable.OrderByDescending(x => x.Frequency)
+            //    .Select((x, i) => new { x, byCounter = i, byDistance = x.Distance })
+            //    .OrderBy(x => x.byCounter + x.byDistance)
+            //    .Select(x => x.x)
+            //    .ToList();
+            return enumerable.OrderBy(x => x.Distance);
+        }
+
+        public void SetGPS(bool v, object useGPS)
 		{
 		}
 

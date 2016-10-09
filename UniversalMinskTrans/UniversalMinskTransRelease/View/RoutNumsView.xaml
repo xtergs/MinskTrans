@@ -1,59 +1,70 @@
-﻿<UserControl
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniversalMinskTransRelease.View"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:universal="using:MinskTrans.Universal"
-    xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
-    xmlns:modelView="using:MinskTrans.Universal.ModelView"
-    xmlns:ExpanderControl="using:ExpanderControl"
-    x:Class="UniversalMinskTransRelease.View.RoutNumsView"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
-    d:DataContext="{d:DesignInstance modelView:RoutsModelView}"
-    >
+﻿<UserControl x:Class="UniversalMinskTransRelease.View.RoutNumsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ExpanderControl="using:ExpanderControl"
+             xmlns:baseModel="using:MinskTrans.Context.Base.BaseModel"
+             xmlns:controls="using:NumberConverter.WinRTXamlToolkit.Controls"
+             xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+             xmlns:local="using:UniversalMinskTransRelease.View"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:modelView="using:MinskTrans.Universal.ModelView"
+             xmlns:universal="using:MinskTrans.Universal"
+             d:DataContext="{d:DesignInstance modelView:RoutsModelView}"
+             d:DesignHeight="300"
+             d:DesignWidth="400"
+             mc:Ignorable="d">
     <UserControl.Resources>
-        <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <universal:MyTextBox x:Name="FindTrans"
-                                             Grid.Row="0"
-                                             InputScope="Number"
-                                             Text="{Binding RoutNumAsync,
-                                                            Mode=TwoWay,
-                                                            UpdateSourceTrigger=PropertyChanged}" />
-        <AppBarToggleButton MinHeight="10" MinWidth="10" Padding="-5,-5" Margin="5,-10"   IsCompact="True" Grid.Column="1" Icon="Setting" IsChecked="{Binding IsShowAdditionFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-        <universal:MyTextBox  Visibility="{Binding IsShowAdditionFilter, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                             Grid.Row="1"
-                                             
-                                             Text="{Binding AdditionStopFilter,
-                                                            Mode=TwoWay,
-                                                            UpdateSourceTrigger=PropertyChanged}" />
-        <GridView  x:Name="RoutsListView"
-			Grid.Row="2"
-                   Grid.ColumnSpan="2"
-                   VirtualizingStackPanel.VirtualizationMode="Recycling"
-			DataContext="{Binding}"
-			ItemTemplate="{StaticResource GroupTransportList}"
-			ItemsSource="{Binding RouteNumsAsync, UpdateSourceTrigger=PropertyChanged}"
-			SelectedItem="{Binding RouteNumSelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                             Grid.Row="0"
+                             InputScope="Number"
+                             Text="{Binding RoutNumAsync,
+                                            Mode=TwoWay,
+                                            UpdateSourceTrigger=PropertyChanged}" />
+        <AppBarToggleButton Grid.Column="1"
+                            MinWidth="10"
+                            MinHeight="10"
+                            Margin="5,-10"
+                            Icon="Setting"
+                            IsChecked="{Binding IsShowAdditionFilter,
+                                                UpdateSourceTrigger=PropertyChanged,
+                                                Mode=TwoWay}"
+                            IsCompact="True"
+                            Padding="-5,-5" />
+        <universal:MyTextBox Grid.Row="1"
+                             Text="{Binding AdditionStopFilter,
+                                            Mode=TwoWay,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                             Visibility="{Binding IsShowAdditionFilter,
+                                                  Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <GridView x:Name="RoutsListView"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="2"
+                  DataContext="{Binding}"
+                  ItemTemplate="{StaticResource GroupTransportList}"
+                  ItemsSource="{Binding RouteNumsAsync,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding RouteNumSelectedValue,
+                                         Mode=TwoWay,
+                                         UpdateSourceTrigger=PropertyChanged}"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling">
             <FlyoutBase.AttachedFlyout>
-                <MenuFlyout >
-                    <ToggleMenuFlyoutItem Text="Избранное" IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <MenuFlyout>
+                    <ToggleMenuFlyoutItem IsChecked="{Binding IsShowFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Text="Избранное" />
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
 
@@ -61,33 +72,112 @@
             <interactivity:Interaction.Behaviors>
 
                 <core:EventTriggerBehavior EventName="RightTapped">
-                    <universal:OpenFlyoutAction/>
+                    <universal:OpenFlyoutAction />
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
 
         </GridView>
-        <AppBar Grid.Row="3" Grid.ColumnSpan="2" IsOpen="False">
-            <StackPanel Orientation="Horizontal">
-                <AppBarToggleButton Checked="ToggleButton_OnChecked" x:Name="AllTogleButton" IsChecked="True" Margin="5,0" Width="Auto" Content="Все" Command="{Binding ShowAllTransportCommand}" IsCompact="True"/>
-                <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TrolTogleButton" Margin="5,0" Width="Auto" Grid.Column="1" Content="Тролейбус" Command="{Binding ShowTrolCommand}" IsCompact="True"/>
-                <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="BusTogleButton" Margin="5,0" Width="Auto" Grid.Column="2" Content="Автобус" Command="{Binding ShowBusCommand}" IsCompact="True"/>
-                <AppBarToggleButton Checked="ToggleButton_OnChecked"  x:Name="TramTogleButton" Margin="5,0" Width="Auto" Grid.Column="3" Content="Трамвай" Command="{Binding ShowTramCommand}" IsCompact="True"/>
-            </StackPanel>
 
-        </AppBar>
         <AppBarToggleButton x:Name="appBarToggleButton1"
-                                                Grid.Row="2"
+                            Grid.Row="2"
                             Grid.ColumnSpan="2"
-                                                VerticalAlignment="Bottom"
-                                                HorizontalAlignment="Right"
-                                                Content="FavouriteRout"
-                                                Icon="Favorite"
-                                                Visibility="{Binding FavouriteRoutsCount, Converter={StaticResource IntToVisibleConverter}, UpdateSourceTrigger=PropertyChanged}"
-                                                IsChecked="{Binding IsShowFavouriteRouts,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                                IsCompact="True" />
-        <ProgressBar Grid.Row="2" IsIndeterminate="True" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Content="FavouriteRout"
+                            Icon="Favorite"
+                            IsChecked="{Binding IsShowFavouriteRouts,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                            IsCompact="True"
+                            Visibility="{Binding FavouriteRoutsCount,
+                                                 Converter={StaticResource IntToVisibleConverter},
+                                                 UpdateSourceTrigger=PropertyChanged}" />
+        <ProgressBar Grid.Row="2"
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsWorking,
+                                          Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <CommandBar Grid.Row="3"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    VerticalAlignment="Bottom"
+                    ClosedDisplayMode="Compact"
+                    IsOpen="False">
+            <AppBarToggleButton x:Name="AllTogleButton"
+                                Width="Auto"
+                                Margin="5,0"
+                                Checked="ToggleButton_OnChecked"
+                                Command="{Binding ChangeTransport}"
+                                Content="Все"
+                                IsChecked="{Binding IsAllChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged}"
+                                IsCompact="True"
+                                IsEnabled="{Binding IsAllChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    Converter={StaticResource BoolNoConverter}}">
+                <AppBarToggleButton.CommandParameter>
+                    <baseModel:TransportType>All</baseModel:TransportType>
+                </AppBarToggleButton.CommandParameter>
+            </AppBarToggleButton>
+            <AppBarToggleButton x:Name="TrolTogleButton"
+                                Grid.Column="1"
+                                Width="Auto"
+                                Margin="5,0"
+                                Checked="ToggleButton_OnChecked"
+                                Command="{Binding ChangeTransport}"
+                                Content="Тролейбус"
+                                IsChecked="{Binding IsTrolChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged}"
+                                IsCompact="True"
+                                IsEnabled="{Binding IsTrolChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    Converter={StaticResource BoolNoConverter}}">
+                <AppBarToggleButton.CommandParameter>
+                    <baseModel:TransportType>Trol</baseModel:TransportType>
+                </AppBarToggleButton.CommandParameter>
+            </AppBarToggleButton>
+            <AppBarToggleButton x:Name="BusTogleButton"
+                                Grid.Column="2"
+                                Width="Auto"
+                                Margin="5,0"
+                                Checked="ToggleButton_OnChecked"
+                                Command="{Binding ChangeTransport}"
+                                Content="Автобус"
+                                IsChecked="{Binding IsBusChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged}"
+                                IsCompact="True"
+                                IsEnabled="{Binding IsBusChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    Converter={StaticResource BoolNoConverter}}">
+                <AppBarToggleButton.CommandParameter>
+                    <baseModel:TransportType>Bus</baseModel:TransportType>
+                </AppBarToggleButton.CommandParameter>
+            </AppBarToggleButton>
+            <AppBarToggleButton x:Name="TramTogleButton"
+                                Grid.Column="3"
+                                Width="Auto"
+                                Margin="5,0"
+                                Checked="ToggleButton_OnChecked"
+                                Command="{Binding ChangeTransport}"
+                                Content="Трамвай"
+                                IsChecked="{Binding IsTramChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged}"
+                                IsCompact="True"
+                                IsEnabled="{Binding IsTramChecked,
+                                                    Mode=OneWay,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    Converter={StaticResource BoolNoConverter}}">
+                <AppBarToggleButton.CommandParameter>
+                    <baseModel:TransportType>Tram</baseModel:TransportType>
+                </AppBarToggleButton.CommandParameter>
+            </AppBarToggleButton>
 
+        </CommandBar>
     </Grid>
 </UserControl>

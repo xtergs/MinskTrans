@@ -32,11 +32,32 @@ namespace UniversalMinskTransRelease.View
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             //FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "ShowStopsDetails", "", 0);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            
+        }
 
+        private void AppBarToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Favourite", "SetFavourite", "", 0);
+        }
+
+        private void FavouriteToggle(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "FavouriteToggle", "", 0);
+        }
+
+        private void ShowOnMapToggle(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "ShowRoutOnMap", "", 0);
+        }
+
+        private void ShowHideRoutStopTimeTable(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "Show/HideRout'sStopDetail", "", 0);
         }
     }
 }

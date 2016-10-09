@@ -13,16 +13,20 @@ using Windows.UI.Xaml.Navigation;
 using MinskTrans.Universal.ModelView;
 using Windows.ApplicationModel.Background;
 using System.Threading.Tasks;
+using Windows.Foundation.Metadata;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Popups;
+using GoogleAnalytics;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.WindowsAzure.Messaging;
 using MyLibrary;
 using MinskTrans.Context.Base;
+using Microsoft.HockeyApp;
+using UniversalMinskTransRelease.Helpers;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -37,13 +41,14 @@ namespace UniversalMinskTrans
 		/// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
 		/// </summary>
 		public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
+
 		private ILogger log;
 
 		private async Task<bool> InitNotificationsAsync()
 		{
 			var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
 
-			var hub = new NotificationHub("minsktransnotificationhub", "Endpoint=sb://minsktransnamespace.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=bd6RpWgvIKjEBTe00X46JgCX1PVjR4ZfXEwSzwIGHF4=");
+			var hub = new NotificationHub(AppConstants.PushNotificationChanelHubName, AppConstants.PushNotificationChanelEndPoint);
 			var result = await hub.RegisterNativeAsync(channel.Uri);
 			return result.RegistrationId != null;
 
@@ -56,6 +61,30 @@ namespace UniversalMinskTrans
 			//}
 
 		}
+
+        public static string GetAppVersion()
+        {
+
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+
+            return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+
+        }
+
+        private void SetupAnalitics()
+	    {
+	        var config = new EasyTrackerConfig();
+	        //config.AppName = "MinskTransUWP";
+            //config.AppVersion = GetAppVersion();
+            config.TrackingId = "UA-85431708-1";
+#if DEBUG
+            config.Debug = true;
+#endif
+            GoogleAnalytics.EasyTracker.Current.Config = config;
+
+	    }
 
 		/// <summary>
 		/// Invoked when the application is launched normally by the end user.  Other entry points
@@ -94,15 +123,14 @@ namespace UniversalMinskTrans
 						break;
 
 					case BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity:
-					// Windows: Added to list of background apps; set up background tasks; 
-					// can use the network connectivity broker.
-					//
-					// Windows Phone: This value is never used on Windows Phone.
-					//break;
-					case BackgroundAccessStatus.AllowedSubjectToSystemPolicy:
-					case BackgroundAccessStatus.AlwaysAllowed:
+                    // Windows: Added to list of background apps; set up background tasks; 
+                    // can use the network connectivity broker.
+                    //
+                    // Windows Phone: This value is never used on Windows Phone.
+                    //break;
 					case BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity:
 					case BackgroundAccessStatus.Unspecified:
+                    default:
 						// The user didn't explicitly disable or enable access and updates. 
 						BackgroundTaskRegistration updateTaskRegistration = null;
 						if (!isPushNotificationHubRegistered)
@@ -362,8 +390,8 @@ namespace UniversalMinskTrans
 
 		private readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
 		private string backgroundAssembly = "BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask";
-		private string backgroundName = "UpdateBackground5";
-		private string backgroundPushName = "PushBackground6";
+		private string backgroundName = "UpdateBackground7";
+		private string backgroundPushName = "PushBackground8";
 
 		private void CallBackReconnectPushServerTimer(object state)
 		{
@@ -442,7 +470,9 @@ namespace UniversalMinskTrans
 		/// </summary>
 		public App()
 		{
-			var configuration = new LoggingConfiguration();
+			HockeyClient.Current.Configure(AppConstants.HockeyAppId);
+		    SetupAnalitics();
+            var configuration = new LoggingConfiguration();
 #if DEBUG
 			configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new DebugTarget());
 #endif
@@ -455,9 +485,9 @@ namespace UniversalMinskTrans
 			log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
 
 			log.Debug("\n\nApp constructor started");
-			TelemetryConfiguration.Active.InstrumentationKey = "21fc407a-013d-402a-b0de-6ab3157af6bf";
+			Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Active.InstrumentationKey = AppConstants.InsightsTelemetry;
 
-			TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient(TelemetryConfiguration.Active);
+			TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Active);
 
 
 			string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;

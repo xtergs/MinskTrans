@@ -91,18 +91,17 @@ namespace MinskTrans.DesctopClient.Modelview
             settingsModelView = settings;
             this.webSeacher = webSeacher;
             this.commands = commands;
-
+            IsShowFavouriteStops = settings.IsShowFavouriteStops;
             settingsModelView.PropertyChanged += (sender, args) =>
             {
                 switch (args.PropertyName)
                 {
-                    case "TimeInPast":
-                        Refresh();
-                        break;
-                    case "UseGPS":
+                    case nameof(ISettingsModelView.UseGPS):
                         SetGPS();
                         //OnStatusGPSChanged();
                         break;
+                    case nameof(ISettingsModelView.TimeInPast):
+                    case nameof(ISettingsModelView.ConsiderFrequencySortStops):
 					case nameof(ISettingsModelView.ConsiderDistanceSortStops):
 						this.Refresh();
 		                break;
@@ -113,10 +112,10 @@ namespace MinskTrans.DesctopClient.Modelview
             if (UseGPS)
                 SetGPS();
 
-            IsShowFavouriteStops = false;
+            //IsShowFavouriteStops = false;
         }
 
-        private void SetGPS()
+        public void SetGPS()
         {
 			//return null;
 
@@ -270,6 +269,7 @@ namespace MinskTrans.DesctopClient.Modelview
                 OnPropertyChanged(nameof(FilteredStops));
                 FilterStopsAsync()?.ConfigureAwait(false);
                 FavouriteStopsCount = 1;
+                Settings.IsShowFavouriteStops = value;
             }
         }
 

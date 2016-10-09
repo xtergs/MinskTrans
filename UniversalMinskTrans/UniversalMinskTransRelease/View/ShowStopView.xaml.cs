@@ -51,7 +51,8 @@ namespace MinskTrans.Universal
 			flyout = ((AppBarButton)sender).Flyout;
 			flyout.ShowAt((FrameworkElement) sender);
 			GroupsListView.SelectedIndex = -1;
-		}
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("ShowStop", "AddToGroup", "", 0);
+        }
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
 		{
@@ -74,18 +75,34 @@ namespace MinskTrans.Universal
 
 		private void BackButtonClick(object sender, RoutedEventArgs e)
 		{
-			
-            
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("ShowStop", "Back", "", 0);
+
         }
 
         private void tesstListview_ItemClick(object sender, ItemClickEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("ShowStop", "ShowRoutInDetail", "", 0);
         }
 
         private void tesstListview_Tapped(object sender, TappedRoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
-    }
+
+	    private void ShowOnMapClick(object sender, RoutedEventArgs e)
+	    {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("ShowStop", "ShowOnMap", "", 0);
+        }
+
+	    private void FavouriteToggle(object sender, RoutedEventArgs e)
+	    {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("ShowStop", "FavouriteToggle", "", 0);
+        }
+
+	    private void RefreshManualyClick(object sender, RoutedEventArgs e)
+	    {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("ShowStop", "RefreshManualy", "", 0);
+        }
+	}
 }

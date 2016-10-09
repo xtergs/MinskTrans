@@ -168,11 +168,13 @@
                 <AppBarButton HorizontalAlignment="Center"
                               HorizontalContentAlignment="Left"
                               VerticalContentAlignment="Top"
+                              Click="RefreshManualyClick"
                               Command="{Binding RefreshTimeSchedule}"
                               Icon="Sync"
                               IsCompact="True"
                               ToolTipService.ToolTip="Обновить" />
                 <AppBarToggleButton HorizontalAlignment="Center"
+                                    Click="FavouriteToggle"
                                     Command="{Binding AddRemoveFavouriteStop}"
                                     CommandParameter="{Binding FilteredSelectedStop}"
                                     Icon="Favorite"
@@ -182,6 +184,7 @@
                                     IsCompact="True"
                                     ToolTipService.ToolTip="В избранное" />
                 <AppBarButton HorizontalAlignment="Center"
+                              Click="ShowOnMapClick"
                               Command="{Binding ShowStopMap}"
                               CommandParameter="{Binding FilteredSelectedStop}"
                               DataContext="{Binding}"
@@ -192,40 +195,25 @@
             </controls:WrapPanel>
         </Border>
         <AppBar Grid.Row="3" IsOpen="False">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <!--<TextBlock Text="День недели: " />-->
-
-                <controls:WrapPanel Grid.Row="1" Grid.ColumnSpan="10">
-                    <Slider Grid.Row="1"
-                            MinWidth="200"
-                            Margin="5,0"
-                            Maximum="7"
-                            Minimum="1"
-                            Value="{Binding CurDay,
-                                            Mode=TwoWay}" />
-                    <CheckBox Grid.Row="1"
-                              Grid.Column="1"
-                              Margin="5,0"
-                              Content="Автоматически"
-                              IsChecked="{Binding AutoDay,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+            <VariableSizedWrapGrid Grid.Row="1" Grid.ColumnSpan="10">
+                <Slider Grid.Row="1"
+                        MinWidth="200"
+                        Margin="5,0"
+                        Maximum="7"
+                        Minimum="1"
+                        Value="{Binding CurDay,
+                                        Mode=TwoWay}" />
+                <CheckBox Grid.Row="1"
+                          Grid.Column="1"
+                          Margin="5,0"
+                          Content="Автоматически"
+                          IsChecked="{Binding AutoDay,
+                                              Mode=TwoWay,
+                                              UpdateSourceTrigger=PropertyChanged}" />
 
 
 
-                </controls:WrapPanel>
-            </Grid>
+            </VariableSizedWrapGrid>
         </AppBar>
     </Grid>
 </UserControl>

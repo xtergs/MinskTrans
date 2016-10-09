@@ -3,6 +3,7 @@ using Windows.UI.Core;
 using MinskTrans.Context;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Universal.ModelView;
+using MyLibrary;
 
 namespace UniversalMinskTransRelease.ModelView
 {
@@ -10,7 +11,7 @@ namespace UniversalMinskTransRelease.ModelView
     {
         private CoreDispatcher dispatcher;
 
-        public RoutsModelViewUIDispatcher(IBussnessLogics context, IExternalCommands commands) : base(context, commands)
+        public RoutsModelViewUIDispatcher(IBussnessLogics context, IExternalCommands commands, ISettingsModelView settings) : base(context, commands, settings)
         {
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }

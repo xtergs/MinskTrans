@@ -52,8 +52,13 @@ namespace BackgroundUpdateTaskUniversalRuntime
 
 			//configuration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new StreamingFileTarget());
 			configuration.IsEnabled = true;
-			LogManagerFactory.DefaultConfiguration = configuration;
-			ILogger Log = null;
+		    try
+		    {
+		        LogManagerFactory.DefaultConfiguration = configuration;
+		    }
+            catch(Exception e)
+            { }
+		    ILogger Log = null;
 			TypeOfUpdates updateTypes = TypeOfUpdates.All;
 			var details = taskInstance.TriggerDetails as RawNotification;
 

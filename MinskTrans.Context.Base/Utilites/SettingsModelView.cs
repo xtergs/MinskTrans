@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Utilites.Base.Net;
 
 namespace MyLibrary
@@ -133,8 +134,74 @@ namespace MyLibrary
 			}
 		}
 
+        public bool UseWebSeacher
+        {
+            get
+            {
+                return helper.SimpleGet(true);
+            }
 
-	    public TypeOfUpdate LastUpdatedDataInBackground
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public TimeSpan CachedCalculatorKeepAliveInterval { get; set; } = new TimeSpan(0, 0, 5, 0);
+        public bool IsShowStops {
+            get
+            {
+                return helper.SimpleGet(true);
+            }
+
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+        public bool IsShowFavouriteStops {
+            get
+            {
+                return helper.SimpleGet(false);
+            }
+
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+        public bool IsShowFavouriteRoutes {
+            get
+            {
+                return helper.SimpleGet(false);
+            }
+
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public TransportType RoutsSelectedTransportType
+        {
+            get
+            {
+                return helper.SimpleEnumGet<TransportType>(TransportType.All);
+            }
+
+            set
+            {
+                helper.SimpleEnumSet<TransportType>(value);
+                OnPropertyChanged();
+            }
+        }
+
+
+        public TypeOfUpdate LastUpdatedDataInBackground
         {
             get
             {
@@ -239,6 +306,7 @@ namespace MyLibrary
             }
 
         }
+
 
         public TimeSpan ReconnectPushServerTimeSpan => new TimeSpan(0, 0, 1, 0);
 
@@ -350,8 +418,8 @@ namespace MyLibrary
             get
             {
 #if DEBUG
-
-                return helper.SimpleGet(true);
+                return false;
+                //return helper.SimpleGet(true);
 #else
 			    return false;
 #endif

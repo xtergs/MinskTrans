@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MinskTrans.Context.Base;
 
@@ -14,8 +11,14 @@ namespace MinskTrans.Context.Fakes
         public int MovementThreshold { get; set; }
         public uint ReportInterval { get; set; }
         public Location CurLocation { get; }
+        public async Task<Permision> CheckPermision()
+        {
+            return Permision.Allow;
+        }
+
         public event PositionChangedEventArgs PositionChanged;
         public event StatusChangedEventArgs StatusChanged;
+        public event EventHandler<Permision> PermissionChanged;
 
         #endregion
 

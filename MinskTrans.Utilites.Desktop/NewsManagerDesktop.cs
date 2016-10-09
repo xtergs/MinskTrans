@@ -27,89 +27,89 @@ namespace MinskTrans.Utilites.Desktop
 	{
 		private ILogger log;
 
-	    private async Task<List<NewsEntry>> GetHotNewsEntries(string link)
-	    {
-            List<NewsEntry> returnDictionary = new List<NewsEntry>();
-            string text = await internetHelper.Download(link);
-            HtmlDocument document = new HtmlDocument();
-            document.LoadHtml(text);
-            log.Debug($"html downloaded and loaded");
-            var nodesNews = document.DocumentNode.SelectNodes("//*[@id=\"main\"]/div[2]/div");
-            if (nodesNews == null)
-            {
-                log.Error("CheckHotNewsAsync: Don't have nodes with news");
-                return null;
-            }
-            foreach (var nodesNew in nodesNews)
-            {
-                try
-                {
-                    var node = nodesNew.SelectSingleNode("div/p/strong");
-                    if (node == null)
-                        continue;
-                    string dateNews = node.InnerText.DecodeHtml();
-                    dateNews = dateNews.Trim('.').Split('\n')[0].Trim();
-                    DateTime dateTimeNews = DateTime.Parse(dateNews).ToUniversalTime();
-                    var firstLine = nodesNew.SelectNodes("div/p").Skip(1).ToList();
-                    if (firstLine == null)
-                        continue;
-                    //var secondLine = nodesNew.SelectSingleNode("div/p[3]");
-                    StringBuilder builder = new StringBuilder();
-                    foreach (var htmlNode in firstLine)
-                    {
-                        builder.Append(htmlNode.InnerText.DecodeHtml());
-                    }
-                    var allText = builder.Replace("  ", " ").Replace("  ", " ").ToString().Trim();
-                    log.Debug($"CheckHotNewsAsync: Get news text: {allText}");
-                    string possibleRepairTime =
-                        firstLine.Select(x => x.InnerText.DecodeHtml().Trim())
-                            .Last(x => !String.IsNullOrWhiteSpace(x))
-                            .Replace('.', ' ')
-                            .Replace(" ", "")
-                            .Trim();
-                    var match = Regex.Match(possibleRepairTime.Substring(possibleRepairTime.Length / 2), @"[0-2]?[0-9][-:][0-6][0-9]",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
-                    DateTime possibleDateTime;
-                    string decodedString = allText.Replace("  ", " ").Trim();
-                    if (DateTime.TryParse(match.Value.Replace('-', ':'), out possibleDateTime))
-                    {
-                        log.Debug($"Posible repair time: {possibleDateTime.TimeOfDay}");
-                        returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString, dateTimeNews.Add(possibleDateTime.TimeOfDay)));
-                    }
-                    //dateTimeNews = dateTimeNews.Add(possibleDateTime.TimeOfDay);
-                    else
-                    {
+		private async Task<List<NewsEntry>> GetHotNewsEntries(string link)
+		{
+			List<NewsEntry> returnDictionary = new List<NewsEntry>();
+			string text = await internetHelper.Download(link);
+			HtmlDocument document = new HtmlDocument();
+			document.LoadHtml(text);
+			log.Debug($"html downloaded and loaded");
+			var nodesNews = document.DocumentNode.SelectNodes("//*[@id=\"main\"]/div[2]/div");
+			if (nodesNews == null)
+			{
+				log.Error("CheckHotNewsAsync: Don't have nodes with news");
+				return null;
+			}
+			foreach (var nodesNew in nodesNews)
+			{
+				try
+				{
+					var node = nodesNew.SelectSingleNode("div/p/strong");
+					if (node == null)
+						continue;
+					string dateNews = node.InnerText.DecodeHtml();
+					dateNews = dateNews.Trim('.').Split('\n')[0].Trim();
+					DateTime dateTimeNews = DateTime.Parse(dateNews).ToUniversalTime();
+					var firstLine = nodesNew.SelectNodes("div/p").Skip(1).ToList();
+					if (firstLine == null)
+						continue;
+					//var secondLine = nodesNew.SelectSingleNode("div/p[3]");
+					StringBuilder builder = new StringBuilder();
+					foreach (var htmlNode in firstLine)
+					{
+						builder.Append(htmlNode.InnerText.DecodeHtml());
+					}
+					var allText = builder.Replace("  ", " ").Replace("  ", " ").ToString().Trim();
+					log.Debug($"CheckHotNewsAsync: Get news text: {allText}");
+					string possibleRepairTime =
+						firstLine.Select(x => x.InnerText.DecodeHtml().Trim())
+							.Last(x => !String.IsNullOrWhiteSpace(x))
+							.Replace('.', ' ')
+							.Replace(" ", "")
+							.Trim();
+					var match = Regex.Match(possibleRepairTime.Substring(possibleRepairTime.Length / 2), @"[0-2]?[0-9][-:][0-6][0-9]",
+					RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+					DateTime possibleDateTime;
+					string decodedString = allText.Replace("  ", " ").Trim();
+					if (DateTime.TryParse(match.Value.Replace('-', ':'), out possibleDateTime))
+					{
+						log.Debug($"Posible repair time: {possibleDateTime.TimeOfDay}");
+						returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString, dateTimeNews.Add(possibleDateTime.TimeOfDay)));
+					}
+					//dateTimeNews = dateTimeNews.Add(possibleDateTime.TimeOfDay);
+					else
+					{
 
-                        returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString));
-                    }
+						returnDictionary.Add(new NewsEntry(dateTimeNews, decodedString));
+					}
 
-                }
-                catch (NullReferenceException e)
-                {
-                    log.Error("CheckHotNewsAsync", e);
-                    return null;
-                }
-                catch (Exception e)
-                {
-                    log.Fatal("CheckHotNewsAsync", e);
-                    throw;
-                }
-            }
-	        return returnDictionary;
-	    } 
+				}
+				catch (NullReferenceException e)
+				{
+					log.Error("CheckHotNewsAsync", e);
+					return null;
+				}
+				catch (Exception e)
+				{
+					log.Fatal("CheckHotNewsAsync", e);
+					throw;
+				}
+			}
+			return returnDictionary;
+		} 
 
 		public override async Task<bool> CheckHotNewsAsync()
 		{
 			log.Debug("CheckHotNewsAsync started");
-		    var returnDictionary = await GetHotNewsEntries(Files.HotNewsFile.OriginalLink);
-           
-            bool flagResult = false;
+			var returnDictionary = await GetHotNewsEntries(Files.HotNewsFile.OriginalLink);
+		   
+			bool flagResult = false;
 
-		    List<NewsEntry> newsToAdd = new List<NewsEntry>();
+			List<NewsEntry> newsToAdd = new List<NewsEntry>();
 			foreach (var newsEntry in returnDictionary)
 			{
 				if (
-                    allHotNewsDictionary.NewsEntries.Any(
+					allHotNewsDictionary.NewsEntries.Any(
 						key =>
 							key.PostedUtc == newsEntry.PostedUtc && key.RepairedLineUtc == newsEntry.RepairedLineUtc &&
 							key.Message.Length == newsEntry.Message.Length && key.Message == newsEntry.Message))
@@ -117,7 +117,7 @@ namespace MinskTrans.Utilites.Desktop
 					continue;
 				}
 				var tempNode =
-                    allHotNewsDictionary.NewsEntries.FirstOrDefault(
+					allHotNewsDictionary.NewsEntries.FirstOrDefault(
 						key =>
 							key.PostedUtc == newsEntry.PostedUtc && key.RepairedLineUtc != newsEntry.RepairedLineUtc &&
 							(newsEntry.Message.ToLowerInvariant().Contains(key.Message.ToLowerInvariant()) && key.Message.Length != newsEntry.Message.Length));
@@ -126,21 +126,21 @@ namespace MinskTrans.Utilites.Desktop
 				{
 					allHotNewsDictionary.NewsEntries.Remove(tempNode);
 				}
-                newsToAdd.Add(newsEntry);
-			    flagResult = true;
+				newsToAdd.Add(newsEntry);
+				flagResult = true;
 			}
-		    if (newsToAdd.Count == 0)
-		        return false;
-		    allHotNewsDictionary.NewsEntries.AddRange(newsToAdd);
-            allHotNewsDictionary.LastUpdateDateTimeUtc = newsToAdd.Max(key => key.CollectedUtc);
+			if (newsToAdd.Count == 0)
+				return false;
+			allHotNewsDictionary.NewsEntries.AddRange(newsToAdd);
+			allHotNewsDictionary.LastUpdateDateTimeUtc = newsToAdd.Max(key => key.CollectedUtc);
 			log.Info($"{nameof(allHotNewsDictionary.LastUpdateDateTimeUtc)} is {allHotNewsDictionary.LastUpdateDateTimeUtc}");
 			//hotNewsDictionary.Clear();
 			AllHotNews = null;
 			log.Trace("CheckHotNews ended");
-		    return flagResult;
+			return flagResult;
 		}
 
-        public override async Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
+		public override async Task<List<NewsEntry>> CheckAsync(string uri, string XpathSelectInfo, string XpathSelectDate)
 		{
 			log.Trace("CheckAsync started");
 			List<NewsEntry> returnDictionary = new List<NewsEntry>();
@@ -186,6 +186,11 @@ namespace MinskTrans.Utilites.Desktop
 			}
 			log.Trace("CheckNews ended");
 			return returnDictionary;
+		}
+
+		private void ProcessMessage(NewsEntry entry)
+		{
+			
 		}
 
 		public NewsManagerDesktop(FileHelperBase helper, InternetHelperBase internetHelper, ILogManager logManager, FilePathsSettings files, INewsContext context) : base(helper, internetHelper, logManager, files, context)

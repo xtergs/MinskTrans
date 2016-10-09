@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Email;
 using Windows.Phone.UI.Input;
 using Windows.Storage;
@@ -12,6 +13,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using MapControl;
 using MetroLog;
@@ -115,6 +117,7 @@ namespace MinskTrans.Universal
                 }
                 if (model.FindModelView.IsShowStopsView)
                 {
+                    GoogleAnalytics.EasyTracker.GetTracker().SendView("ShowStops");
                     if (this.ActualWidth >= 800)
                     {
                         if (ShowStopsGrid.SelectedItem == null)
@@ -125,6 +128,7 @@ namespace MinskTrans.Universal
                         }
                         else
                         {
+                            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("SearchTab", "Stops", "ShowStop", 0);
                             if (curState == StopsVisualState)
                                 return;
                             VisualStateManager.GoToState(mainPage, nameof(StopsVisualState), true);
@@ -140,6 +144,7 @@ namespace MinskTrans.Universal
 
                         if (ShowStopsGrid.SelectedItem != null)
                         {
+                            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("SearchTab", "Stops", "ShowStop", 0);
                             if (curState == ShowStopVisualState)
                                 return;
                             VisualStateManager.GoToState(mainPage, nameof(ShowStopVisualState), true);
@@ -154,6 +159,7 @@ namespace MinskTrans.Universal
                 }
                 else if (model.FindModelView.IsShowTransportsView)
                 {
+                    GoogleAnalytics.EasyTracker.GetTracker().SendView("ShowTransports");
                     // var curState = VisualStateGroup.CurrentState;
                     if (this.ActualWidth >= 800)
                     {
@@ -192,6 +198,7 @@ namespace MinskTrans.Universal
             }
             else if (Pivot.SelectedItem == MapPivotItem)
             {
+                GoogleAnalytics.EasyTracker.GetTracker().SendView("Map");
                 if (map == null)
                     FindName(nameof(map));
                 map.ResetVisualState();
@@ -324,6 +331,7 @@ namespace MinskTrans.Universal
                 SendLog();
             }
 
+            model.FindModelView.StopModelView.Refresh();
             //await model.NewsManager.Load();
             //MainModelView.MainModelViewGet.AllNews = null;
 
@@ -467,6 +475,7 @@ namespace MinskTrans.Universal
 
         private async void ShowInStore(object sender, RoutedEventArgs e)
         {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "ShowInStore", "", 0);
             await
                 Launcher.LaunchUriAsync(
                     new Uri("http://www.windowsphone.com/s?appid=0f081fb8-a7c4-4b93-b40b-d71e64dd0412"));
@@ -536,14 +545,68 @@ namespace MinskTrans.Universal
             //MainModelView.MainModelViewGet.NewsModelView.NotifyChanges();
         }
 
-        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        Stopwatch watch = new Stopwatch();
+        private object currentState = null;
+        private async void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            watch.Stop();
+            if (watch.ElapsedMilliseconds > 0)
+                GoogleAnalytics.EasyTracker.GetTracker()
+                    .SendEvent("TabViewLengthSec", (Pivot.SelectedItem as PivotItem).Header.ToString(),
+                        (((int) watch.ElapsedMilliseconds/1000)).ToString(), 0);
+            watch.Restart();
             SelectVisualState();
+
         }
 
         private void ShowChangelog(object sender, RoutedEventArgs e)
         {
             model.NotifyHelper.ShowMessageAsync(model.SettingsModelView.ChangeLog);
+        }
+
+        private void OpenSettingsClick(object sender, TappedRoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendView("Settings");
+        }
+
+        private void UpdateScheduleManualClick(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "UpdateScheduleManual", "", 0);
+        }
+
+        private void NoNotifyAboutNewsToggled(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "NotifyAboutNews", (e.OriginalSource as ToggleSwitch)?.IsOn.ToString(), 0);
+        }
+
+        private void NoConsiderDistanceWhenSortToggle(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "ConsiderDistanceWhenSortToggle", (e.OriginalSource as ToggleSwitch)?.IsOn.ToString(), 0);
+        }
+
+        private void NoConsiderFrequensyWhenSortToggle(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "ConsiderFrequencyWhenSortToggle", (e.OriginalSource as ToggleSwitch)?.IsOn.ToString(), 0);
+        }
+
+        private void NotUseGPSToggle(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "UseGps", (e.OriginalSource as ToggleSwitch)?.IsOn.ToString(), 0);
+        }
+
+        private void SelectedLookAtBackChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Settings", "LookAtBackChanged", (e.OriginalSource as ComboBox)?.SelectedValue?.ToString(), 0);
+        }
+
+        private void StopsClick(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("SearchTab", "Stops", "", 0);
+        }
+
+        private void ShowTransport(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("SearchTab", "Transports", "", 0);
         }
     }
 

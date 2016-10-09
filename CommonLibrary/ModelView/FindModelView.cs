@@ -46,6 +46,7 @@ namespace MinskTrans.Universal.ModelView
             IsShowStopsView = true;
             MainSettings = settingsModelView;
 			StopModelView = stopModelView;
+            StopModelView.SetGPS();
 			RoutsModelView = routsModelView;
 		}
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MinskTrans.Context.Base.BaseModel;
 
 namespace MyLibrary
 {
@@ -51,8 +52,14 @@ namespace MyLibrary
 		public bool ConsiderDistanceSortStops { get; set; }
 		public bool ConsiderFrequencySortStops { get; set; }
 		public bool NotifyAboutNews { get; set; }
+	    public bool UseWebSeacher { get; set; }
+	    public TimeSpan CachedCalculatorKeepAliveInterval { get; set; }
+	    public bool IsShowStops { get; set; }
+	    public bool IsShowFavouriteStops { get; set; }
+	    public bool IsShowFavouriteRoutes { get; set; }
+	    public TransportType RoutsSelectedTransportType { get; set; }
 
-		#endregion
+	    #endregion
 
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{

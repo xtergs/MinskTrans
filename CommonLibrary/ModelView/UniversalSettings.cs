@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using MinskTrans.Utilites.Base.Net;
     using MinskTrans.Universal.Annotations;
@@ -37,7 +38,7 @@ namespace MinskTrans.DesctopClient.Modelview
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
                 {
                     var backField =
-                        DateTime.Parse(ApplicationData.Current.LocalSettings.Values[key].ToString());
+                        DateTime.Parse(ApplicationData.Current.LocalSettings.Values[key].ToString(), CultureInfo.InvariantCulture);
                     dateTimeDictionary.Add(key, backField);
                     return backField;
                 }
@@ -61,6 +62,21 @@ namespace MinskTrans.DesctopClient.Modelview
             return (T)ApplicationData.Current.LocalSettings.Values[key];
         }
 
+        public void SimpleEnumSet<T>(Enum value, [CallerMemberName] string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
+            else
+                ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
+        }
+
+        public T SimpleEnumGet<T>(Enum defValue = default(Enum), [CallerMemberName] string key = null)
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
+                ApplicationData.Current.LocalSettings.Values.Add(key, defValue.ToString());
+            return (T)Enum.Parse(typeof(T),(string)ApplicationData.Current.LocalSettings.Values[key]);
+        }
+
         public Error SimpleGet(Error defValue = default(Error), [CallerMemberName] string key = null)
         {
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
@@ -72,14 +88,15 @@ namespace MinskTrans.DesctopClient.Modelview
         {
             if (dateTimeDictionary.ContainsKey(key) && dateTimeDictionary[key] == value)
                 return;
+            var val = value.ToString(CultureInfo.InvariantCulture);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
             {
-                ApplicationData.Current.LocalSettings.Values.Add(key, value.ToString());
+                ApplicationData.Current.LocalSettings.Values.Add(key, val);
                 dateTimeDictionary.Add(key, value);
             }
             else
             {
-                ApplicationData.Current.LocalSettings.Values[key] = value.ToString();
+                ApplicationData.Current.LocalSettings.Values[key] = val;
                 dateTimeDictionary[key] = value;
             }
         }

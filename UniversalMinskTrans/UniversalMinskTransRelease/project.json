@@ -1,12 +1,14 @@
 ﻿{
   "dependencies": {
-    "Autofac": "4.0.0",
-    "HockeySDK.UWP": "4.1.3",
+    "Autofac": "4.1.1",
+    "GoogleAnalyticsSDK": "1.3.0",
+    "HockeySDK.UWP": "4.1.5",
     "Microsoft.ApplicationInsights": "2.1.0",
     "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "PropertyChanged.Fody": "1.51.3",
-    "XAML.MapControl": "2.12.0"
+    "PostSharp": "4.3.21",
+    "PostSharp.Patterns.Model": "4.3.21",
+    "XAML.MapControl": "2.13.0"
   },
   "frameworks": {
     "uap10.0": {}

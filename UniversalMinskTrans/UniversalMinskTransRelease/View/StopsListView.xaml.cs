@@ -42,5 +42,30 @@ namespace UniversalMinskTransRelease.View
         {
             SelectionChanged?.Invoke(this, e);
         }
+
+        private void ToggleFavourite(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Stops", "ToggleFavourite", "", 0);
+        }
+
+        private void ToggleCheckBoxBus(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Stops", "TransportBus", (sender as CheckBox)?.IsChecked.ToString(), 0);
+        }
+
+        private void ToggleCheckBoxTrol(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Stops", "TransportTrol", (sender as CheckBox)?.IsChecked.ToString(), 0);
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Stops", "TransportTram", (sender as CheckBox)?.IsChecked.ToString(), 0);
+        }
+
+        private void ToggleCheckBoxMetro(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("Stops", "TransportMetro", (sender as CheckBox)?.IsChecked.ToString(), 0);
+        }
     }
 }

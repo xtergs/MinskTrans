@@ -129,6 +129,7 @@
                                              x:Name="StopsHyperlinkButton"
                                              Command="{Binding TogleToShowStopsFindViewCommand}"
                                              Content="Остановки"
+                                             Click="StopsClick"
                                              IsEnabled="False">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="IsEnabledChanged">
@@ -138,6 +139,7 @@
                             </HyperlinkButton>
                             <HyperlinkButton x:Name="RoutsHyperlinkButton"
                                              Grid.Column="1"
+                                             Click="ShowTransport"
                                              Command="{Binding TogleToShowRoutsFindViewCommand}"
                                              Content="Транспорт"
                                              RequestedTheme="Dark">
@@ -164,7 +166,6 @@
                                             DataContext="{Binding StopModelView}"
                                             ShowStatusBar="Visible"
                                             Visibility="Collapsed" />
-
 
                         <view:StopsListView x:Name="ShowStopsGrid"
                                             Grid.Row="1"
@@ -416,7 +417,8 @@
                               ItemContainerStyle="{StaticResource FullListViewItem}"
                               SelectionMode="None">
 
-                        <Button Command="{Binding UpdateDataCommand}"
+                        <Button Click="UpdateScheduleManualClick"
+                                Command="{Binding UpdateDataCommand}"
                                 Content="Обновить расписание"
                                 DataContext="{Binding MainView,
                                                       ElementName=mainPage}" />
@@ -434,25 +436,42 @@
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                                       OffContent="Не использовать GPS"
-                                      OnContent="Использовать GPS" />
-
+                                      OnContent="Использовать GPS"
+                                      Toggled="NotUseGPSToggle" />
+                        <TextBlock x:Name="LocationDisabledMessage"
+                                   Margin="0,15,0,0"
+                                   FontStyle="Italic"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding PermissionDeniedToUseGeolocation,
+                                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                                        UpdateSourceTrigger=PropertyChanged,
+                                                        Mode=OneWay}">
+                            <Run Text="This app is not able to access Location. Go to " />
+                            <Hyperlink NavigateUri="ms-settings:privacy-location">
+                                <Run Text="Settings" />
+                            </Hyperlink>
+                            <Run Text=" to check the location privacy settings." />
+                        </TextBlock>
                         <ToggleSwitch IsOn="{Binding ConsiderDistanceSortStops,
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                                       OffContent="Не учитывать расстояние при сортировке остановок"
-                                      OnContent="Учитывать расстояние при сортировке остановок" />
+                                      OnContent="Учитывать расстояние при сортировке остановок"
+                                      Toggled="NoConsiderDistanceWhenSortToggle" />
 
                         <ToggleSwitch IsOn="{Binding ConsiderFrequencySortStops,
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                                       OffContent="Не учитывать частоту при сортировке остановок"
-                                      OnContent="Учитывать частоту при сортировке остановок" />
+                                      OnContent="Учитывать частоту при сортировке остановок"
+                                      Toggled="NoConsiderFrequensyWhenSortToggle" />
 
                         <ToggleSwitch IsOn="{Binding NotifyAboutNews,
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                                       OffContent="Не оповещать о новостях"
-                                      OnContent="Оповещать о новостях" />
+                                      OnContent="Оповещать о новостях"
+                                      Toggled="NoNotifyAboutNewsToggled" />
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -485,7 +504,8 @@
                                       ItemsSource="{Binding PreDefMins}"
                                       SelectedValue="{Binding TimeInPast,
                                                               Mode=TwoWay,
-                                                              UpdateSourceTrigger=Default}" />
+                                                              UpdateSourceTrigger=Default}"
+                                      SelectionChanged="SelectedLookAtBackChanged" />
                         </Grid>
                         <StackPanel>
                             <TextBlock Text="Макс колво транспорта для избранного" />
@@ -883,7 +903,7 @@
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddGroupAppBarButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddGroup" Storyboard.TargetProperty="(UIElement.Visibility)">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
                                     <Visibility>Collapsed</Visibility>

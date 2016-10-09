@@ -10,12 +10,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Windows.Devices.Geolocation;
 #if (WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
+using Windows.Devices.Geolocation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 #else
+using System.Windows.Input;
 using System.Windows.Media;
 using PropertyChanged;
 #endif
@@ -28,12 +28,12 @@ using MinskTrans.Context.AutoRouting;
 using MinskTrans.Context.Comparer;
 using MinskTrans.DesctopClient.Model;
 using Newtonsoft.Json;
-using PropertyChanged;
+//using PropertyChanged;
 using CalculateRout = MinskTrans.Context.AutoRouting.CalculateRout;
 using Location = MapControl.Location;
 using PositionStatus = MinskTrans.Context.Base.PositionStatus;
 #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
-using PositionStatus = MinskTrans.Context.Base.PositionStatus;
+//using PositionStatus = MinskTrans.Context.Base.PositionStatus;
 using MinskTrans.DesctopClient.Properties;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -45,6 +45,7 @@ using MinskTrans.Universal;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Command;
+using PostSharp.Patterns.Model;
 #endif
 //using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
@@ -55,8 +56,12 @@ namespace MinskTrans.DesctopClient.Modelview
 		public Stop StartStop { get; set; }
 		public Stop EndStop { get; set; }
 	}
-	[ImplementPropertyChanged]
-	public class MapModelView : BaseModelView
+#if !WINDOWS_UWP
+    [ImplementPropertyChanged]
+#else
+    [NotifyPropertyChanged]
+#endif
+    public class MapModelView : BaseModelView
 	{
 		private string settingFile = "settings.json";
 		public ObservableCollection<StartEndRout> SavedPath { get; private set; } = new ObservableCollection<StartEndRout>();
@@ -84,18 +89,20 @@ namespace MinskTrans.DesctopClient.Modelview
 		private MapModelView(IBussnessLogics context)
 			: base(context)
 		{
+		    chachedCalculateRoutTimer = new Timer(Callback,null, int.MaxValue, int.MaxValue);
 		}
 
-		public static Style StylePushpin { get; set; }
+	    public static Style StylePushpin { get; set; }
 
 		protected readonly PushPinBuilder pushBuilder;
 
 		//Design only!!!!
 		public MapModelView()
 		{
+		    chachedCalculateRoutTimer = new Timer(Callback, null, int.MaxValue, int.MaxValue);
 		}
 
-		public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation,
+	    public MapModelView(IBussnessLogics context, Map map, ISettingsModelView newSettigns, IGeolocation geolocation,
 			StopModelView stopModelView, PushPinBuilder pushPinBuilder = null)
 			: base(context)
 		{
@@ -123,11 +130,17 @@ namespace MinskTrans.DesctopClient.Modelview
 			map.ZoomLevel = 19;
 			map.Center = new Location(53.898532, 27.562501);
 			allPushpins = new List<PushpinLocation>();
-			RegistrMap(true);
+	        chachedCalculateRoutTimer = new Timer(Callback, null, int.MaxValue, int.MaxValue);
+	        RegistrMap(true);
 			StopModelView.Refresh();
 
-			routeCreator = new CalculateRout(base.context.Context);
-			routeCreator.CreateGraph();
+		    context.Context.PropertyChanged += (sender, args) =>
+		    {
+
+		    };
+
+		    //routeCreator = new CalculateRout(base.context.Context);
+		    //routeCreator.CreateGraph();
 
 		}
 
@@ -339,12 +352,9 @@ namespace MinskTrans.DesctopClient.Modelview
 			Context.SetGPS(settings.UseGPS);
 			if (settings.UseGPS)
 			{
-			#if WINDOWS_UAP
-			var statusAccess = await Windows.Devices.Geolocation.Geolocator.RequestAccessAsync();
-		if (statusAccess == GeolocationAccessStatus.Denied)
-				return;
-#endif
 				StartGPS();
+			   if (await geolocator.CheckPermision() == Permision.Denied)
+					return;
 			}
 			else
 			{
@@ -361,9 +371,12 @@ namespace MinskTrans.DesctopClient.Modelview
 
 				geolocator.ReportInterval = Settings.GPSInterval;
 #if WINDOWS_PHONE_APP || WINDOWS_UAP
-				geolocator.StatusChanged  += GeolocatorOnStatusChanged;
+                geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+                geolocator.StatusChanged  += GeolocatorOnStatusChanged;
 				geolocator.PositionChanged += GeolocatorOnPositionChanged;
 #endif
+				SetIPushPinLocation(geolocator.CurLocation);
+
 			}
 			catch (Exception ex)
 			{
@@ -373,36 +386,32 @@ namespace MinskTrans.DesctopClient.Modelview
 					//MessageDialog box = new MessageDialog("location  is disabled in phone settings");
 					//box.ShowAsync();
 				}
-				//else
+				else
 				{
-					// something else happened acquring the location
+					throw;
 				}
 			}
 		}
 
 		public void StopGPS()
 		{
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP || WINDOWS_UWP
 			Ipushpin = null;
+			ConstantPushpins.Remove(Ipushpin);
 			ShowICommand.RaiseCanExecuteChanged();
 			if (geolocator == null)
 				return;
 			geolocator.PositionChanged -= GeolocatorOnPositionChanged;
-			geolocator.StatusChanged -= GeolocatorOnStatusChanged;
-			geolocator = null;
+			//geolocator.StatusChanged -= GeolocatorOnStatusChanged;
+			//geolocator = null;
 #endif
 		}
 
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+
 		private async void GeolocatorOnStatusChanged(object o, StatusChangedEventArgsArgs args)
 		{
 			if (args.Status == PositionStatus.Ready)
 			{
-				await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-				{
-					ipushpin = new Pushpin();
-					ipushpin.Content = "Я";
-				});
 				ShowICommand.RaiseCanExecuteChanged();
 			}
 			else if (args.Status == PositionStatus.Disabled ||
@@ -413,25 +422,49 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+		private void SetIPushPinLocation(Context.Location loc)
+		{
+		    if (loc == null)
+		        return;
+			if (Ipushpin == null)
+			{
+				ipushpin = pushBuilder.CreateIPushPin(new Location(loc.Latitude, loc.Longitude));
+				ipushpin.Content = "Я";
+				ConstantPushpins.Add(Ipushpin);
+			}
+
+			MapPanel.SetLocation(Ipushpin,
+				new Location(loc.Latitude, loc.Longitude));
+			RefreshPushPinsAsync();
+		}
+
 		private async void GeolocatorOnPositionChanged(object o, PositionChangedEventArgsArgs args)
 		{
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
 			await map.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
 			{
-				if (Ipushpin == null)
-					return;
-				MapPanel.SetLocation(Ipushpin,
-					new Location(args.NewLocation.Latitude, args.NewLocation.Longitude));
-				RefreshPushPinsAsync();
+				SetIPushPinLocation(args.NewLocation);
+
 			});
-		}
 #endif
+		}
 
 		public Pushpin StartStopPushpin
 		{
 			get { return startStopPushpin; }
 			set
 			{
+				if (startStopPushpin != null)
+				{
+					startStopPushpin.Style = pushBuilder.Style;
+					ConstantPushpins.Remove(startStopPushpin);
+				}
 				startStopPushpin = value;
+				if (value != null)
+				{
+					startStopPushpin.Style = pushBuilder.StartPositon;
+					ConstantPushpins.Add(startStopPushpin);
+				}
 				OnPropertyChanged(nameof(StartStop));
 			}
 		}
@@ -441,7 +474,18 @@ namespace MinskTrans.DesctopClient.Modelview
 			get { return endStopPushpin; }
 			set
 			{
+				if (endStopPushpin != null)
+				{
+					endStopPushpin.Style = pushBuilder.Style;
+					ConstantPushpins.Remove(endStopPushpin);
+				}
 				endStopPushpin = value;
+				if (value != null)
+				{
+					endStopPushpin.Style = pushBuilder.EndPosition;
+					ConstantPushpins.Add(endStopPushpin);
+				}
+
 				OnPropertyChanged(nameof(EndStop));
 			}
 		}
@@ -498,6 +542,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			//    map.Children.Add(Ipushpin);
 		}
 
+		public List<Pushpin> ConstantPushpins { get; } = new List<Pushpin>(10);
+
 		public ObservableCollection<Pushpin> Pushpins
 		{
 			get { return pushpins1 ?? (pushpins1 = new ObservableCollection<Pushpin>()); }
@@ -541,35 +587,49 @@ namespace MinskTrans.DesctopClient.Modelview
 			}
 		}
 
+		public double Performance
+		{
+			get { return _performance; }
+			set
+			{
+				_performance = value;
+				OnPropertyChanged();
+			}
+		}
+
+		protected Stopwatch watch = new Stopwatch();
+
 		public virtual void RefreshPushPinsAsync()
 		{
 			if (showAllPushpins && map != null && Context.Context.ActualStops != null)
 			{
-				double zoomLevel = map.ZoomLevel;
-				Pushpins.Clear();
-				if (zoomLevel <= MaxZoomLevel)
-				{
-					ShowOnMap();
-					return;
-				}
+				
+					double zoomLevel = map.ZoomLevel;
+					Pushpins.Clear();
+					if (zoomLevel <= MaxZoomLevel)
+					{
+						ShowOnMap();
+						return;
+					}
 #if !(WINDOWS_PHONE_APP || WINDOWS_AP || WINDOWS_UWP)
 				var northWest = map.ViewportPointToLocation(new Point(0, 0));
 				var southEast = map.ViewportPointToLocation(new Point(map.ActualWidth, map.ActualHeight));
 #else
-				var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
-				var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
-				
+					var northWest = map.ViewportPointToLocation(new Windows.Foundation.Point(0, 0));
+					var southEast = map.ViewportPointToLocation(new Windows.Foundation.Point(map.ActualWidth, map.ActualHeight));
+
 #endif
 
-				var needShowStops =
-					Context.Context.ActualStops.Where(
-						child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
-								 child.Lat >= southEast.Latitude && child.Lng <= southEast.Longitude).ToList();
+					var needShowStops =
+						Context.Context.ActualStops.Where(
+							child => child.Lat <= northWest.Latitude && child.Lng >= northWest.Longitude &&
+									 child.Lat >= southEast.Latitude && child.Lng <= southEast.Longitude).ToList();
 
-				PreperPushpinsForView(needShowStops);
-				if (Ipushpin != null)
-					Pushpins.Add(Ipushpin);
-				ShowOnMap();
+					PreperPushpinsForView(needShowStops);
+					if (Ipushpin != null)
+						Pushpins.Add(Ipushpin);
+					ShowOnMap();
+				
 			}
 		}
 
@@ -709,9 +769,8 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				return new RelayCommand<Pushpin>(pushpin =>
 				{
-					if (StartStopPushpin != null)
-						StartStopPushpin.Style = StylePushpin;
 					StartStopPushpin = pushpin;
+					
 					OnStartStopSeted();
 				});
 			}
@@ -723,8 +782,6 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				return new RelayCommand<Pushpin>(pushpin =>
 				{
-					if (EndStopPushpin != null)
-						EndStopPushpin.Style = StylePushpin;
 					EndStopPushpin = pushpin;
 					OnEndStopSeted();
 				});
@@ -737,9 +794,21 @@ namespace MinskTrans.DesctopClient.Modelview
 			{
 				return new RelayCommand(() =>
 				{
-					var tempStop = StartStopPushpin;
-					StartStopPushpin = EndStopPushpin;
-					EndStopPushpin = tempStop;
+					var tempStop = startStopPushpin;
+					startStopPushpin = endStopPushpin;
+					endStopPushpin = tempStop;
+				});
+			}
+		}
+
+		public RelayCommand ClearStartEndStops
+		{
+			get
+			{
+				return new RelayCommand(() =>
+				{
+					StartStopPushpin = null;
+					EndStopPushpin = null;
 				});
 			}
 		}
@@ -750,6 +819,7 @@ namespace MinskTrans.DesctopClient.Modelview
 		private bool _isShowStopConnections;
 		private int _maxHumanStops;
 		private int _thickness = 1;
+		private double _performance;
 
 		public RelayCommand RecreateGraphCommand
 		{
@@ -759,38 +829,64 @@ namespace MinskTrans.DesctopClient.Modelview
 			});}
 		}
 
-		public RelayCommand CalculateRoutCommand
-		{
-			get
-			{
-				return calculateCommand ?? (calculateCommand = new RelayCommand(() =>
-				{
-					CalculateRout calculator = new CalculateRout(Context.Context);
-					calculator.CreateGraph();
-					if (!calculator.FindPath(StartStop, EndStop))
-						ResultString = "Bad";
-					else
-					{
-						StringBuilder builder = new StringBuilder();
-						foreach (var keyValuePair in calculator.resultRout)
-						{
-							builder.Append(keyValuePair.Key.Transport);
-							builder.Append(" ");
-							builder.Append(keyValuePair.Key);
-							builder.Append('\n');
-							foreach (var stop in keyValuePair.Value)
-							{
-								builder.Append(stop.Name);
-								builder.Append(", ");
-							}
-							builder.Append("\n\n");
-						}
-					}
-				}));
-			}
-		}
+	    private volatile bool isCalculating = false;
+		public RelayCommand CalculateRoutCommand => calculateCommand ?? (calculateCommand = new RelayCommand(CalculateRouteExecute, () => !isCalculating));
+	    private CalculateRout cachedCalculator;
+        Timer chachedCalculateRoutTimer;
 
-		public bool IsActive
+	    private void Callback(object state)
+	    {
+	        if (isCalculating)
+	        {
+	            return;
+	        }
+	        cachedCalculator = null;
+	        chachedCalculateRoutTimer.Change(int.MaxValue, int.MaxValue);
+	    }
+
+	    private void CalculateRouteExecute()
+	    {
+	        isCalculating = true;
+	        try
+	        {
+                
+	            CalculateRout calculator = cachedCalculator;
+                if (calculator == null)
+	                calculator = new CalculateRout(Context.Context);
+	            CalculateParameters param = new CalculateParameters() {MaxHumanDistanceM = 1000};
+	            calculator.Params = param;
+
+	            calculator.CreateGraph();
+	            if (!calculator.FindPath(StartStop, EndStop))
+	                ResultString = "Bad";
+	            else
+	            {
+	                StringBuilder builder = new StringBuilder();
+	                foreach (var keyValuePair in calculator.resultRout)
+	                {
+	                    builder.Append(keyValuePair.Key.Transport);
+	                    builder.Append(" ");
+	                    builder.Append(keyValuePair.Key);
+	                    builder.Append('\n');
+	                    foreach (var stop in keyValuePair.Value)
+	                    {
+	                        builder.Append(stop.Name);
+	                        builder.Append(", ");
+	                    }
+	                    builder.Append("\n\n");
+	                }
+	            }
+	            cachedCalculator = calculator;
+	            chachedCalculateRoutTimer.Change(Settings.CachedCalculatorKeepAliveInterval,
+	                Settings.CachedCalculatorKeepAliveInterval);
+	        }
+	        finally
+	        {
+	            isCalculating = false;
+	        }
+	    }
+
+	    public bool IsActive
 		{
 			get { return isActive; }
 			set

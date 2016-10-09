@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
-using PropertyChanged;
+using PostSharp.Patterns.Model;
+
+//using PropertyChanged;
 
 namespace UniversalMinskTransRelease.ViewModel
 {
-	[ImplementPropertyChanged]
+	[NotifyPropertyChanged]
 	public class FavouriteStop : Stop
 	{
 		private Stop _stop;

@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
 using UniversalMinskTransRelease.ViewModel;
 
@@ -12,7 +13,9 @@ namespace UniversalMinskTransRelease.TemplateSelectors
 
 		protected override DataTemplate SelectTemplateCore(object item)
 		{
-			if (item is FavouriteStop)
+            if (item is StopSearchResult)
+                return SimpleStop;
+            if (item is FavouriteStop)
 				return FavouriteStop;
 			if (item is Stop)
 				return SimpleStop;

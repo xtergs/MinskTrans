@@ -17,7 +17,9 @@ namespace MinskTrans.DesctopClient
 
 		public TappedEventHandler Tapped { get; set; }
 #else
-		public MouseButtonEventHandler Tapped { get; set; } 
+		public MouseButtonEventHandler Tapped { get; set; }
+	    public Style StartPositon { get; set; }
+	    public Style EndPosition { get; set; }
 #endif
 		public Pushpin CreatePushPin(Location location)
 		{
@@ -33,5 +35,10 @@ namespace MinskTrans.DesctopClient
 #endif
 			return tempPush;
 		}
+
+	    public Pushpin CreateIPushPin(Location location)
+	    {
+	        throw new NotImplementedException();
+	    }
 	}
 }

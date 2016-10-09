@@ -73,6 +73,8 @@ namespace MinskTrans.Net
 				return RepairedLineUtc.ToLocalTime();
 			}
 		}
+
+		public string[] Tags { get; set; }
 	}
 
 	public class NewsEntryEqualityComparer: IEqualityComparer<NewsEntry>

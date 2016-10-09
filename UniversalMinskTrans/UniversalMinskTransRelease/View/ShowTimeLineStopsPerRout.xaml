@@ -18,14 +18,17 @@
                                                Opacity="0.5" />
             <DataTemplate x:Key="litViewDataTemplate">
                 <Border Margin="5">
-                    <Grid x:Name="grid" Opacity="{Binding InPast, Converter={StaticResource BoolToOpacityConverter}}">
+                    <Grid x:Name="grid"
+                          HorizontalAlignment="Stretch"
+                          Opacity="{Binding InPast,
+                                            Converter={StaticResource BoolToOpacityConverter}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -35,12 +38,19 @@
                         <TextBlock Grid.Row="0"
                                    Grid.RowSpan="3"
                                    Grid.Column="2"
+                                   Margin="5,0,5,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
                                    FontSize="25"
                                    Text="{Binding Time,
                                                   Converter={StaticResource MinsToTimeConverter}}" />
-                        <TextBlock Grid.Row="1" Text="Прибудет через: " />
+                        <TextBlock Grid.Row="1"
+                                   Foreground="{StaticResource GreyGroundSolidColorBrush}"
+                                   Text="Прибудет через: " />
                         <TextBlock Grid.Row="1"
                                    Grid.Column="1"
+                                   Foreground="{Binding Rout.Transport,
+                                                        Converter={StaticResource TransportToColor}}"
                                    Text="{Binding Time,
                                                   Converter={StaticResource MinsLeftConverter}}" />
                     </Grid>
@@ -49,48 +59,28 @@
             <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}" />
-                <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}" />
                 <Setter Property="TabNavigation" Value="Local" />
                 <Setter Property="IsHoldingEnabled" Value="True" />
                 <Setter Property="Padding" Value="12,0,12,0" />
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}" />
                 <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}" />
                 <Setter Property="AllowDrop" Value="False" />
                 <Setter Property="UseSystemFocusVisuals" Value="True" />
-                <Setter Property="FocusVisualMargin" Value="0" />
-                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
-                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
-                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
-                <Setter Property="FocusVisualSecondaryThickness" Value="1" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ListViewItem">
                             <ListViewItemPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                   CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                                   CheckBrush="{ThemeResource ListViewItemCheckBrush}"
-                                                   CheckMode="{ThemeResource ListViewItemCheckMode}"
                                                    ContentMargin="{TemplateBinding Padding}"
                                                    ContentTransitions="{TemplateBinding ContentTransitions}"
                                                    Control.IsTemplateFocusTarget="True"
-                                                   DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                                   DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                                   DisabledOpacity="{TemplateBinding Opacity}"
                                                    DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                   FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                                   FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                                   PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                                   PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                                   PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                                   PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
                                                    ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                   SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                                   SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                                   SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                                   SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                                   SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}" />
+                                                   SelectedBackground="{ThemeResource SystemControlBackgroundAccentBrush}" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

@@ -50,7 +50,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -74,7 +74,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -99,7 +99,10 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
+    <EnableGatekeeperAnalysis>true</EnableGatekeeperAnalysis>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
@@ -136,10 +139,16 @@
     </Compile>
     <Compile Include="Class.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="Converter\BoolNoConverter.cs" />
+    <Compile Include="Converter\HightlightConverter.cs" />
+    <Compile Include="Converter\TransportTypeToBoolConverter.cs" />
+    <Compile Include="Helpers\AppConstants.cs" />
+    <Compile Include="Helpers\TextBlockFormatter.cs" />
     <Compile Include="LocationX.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModelView\GroupStopsModelViewUIDispatcher.cs" />
     <Compile Include="ModelView\MainModelView.cs" />
     <Compile Include="ModelView\MapModelViewUIDispatcher.cs" />
     <Compile Include="ModelView\NewsModelViewUIDispatcher.cs" />
@@ -148,6 +157,7 @@
     <Compile Include="ModelView\SingFilterForAllDataModelView.cs" />
     <Compile Include="ModelView\StopModelViewUIDispatcher.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Service\UWPGeolocator.cs" />
     <Compile Include="TemplateSelectors\StopsItemSelector.cs" />
     <Compile Include="ViewModel\FavouriteStop.cs" />
     <Compile Include="View\MyTextBox.xaml.cs">
@@ -367,6 +377,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\MinskTrans.Universal\MinskTrans.Universal.Shared\MinskTrans.Universal.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -73,6 +73,16 @@ namespace MinskTrans.DesctopClient.ViewModel
             settings[key] = (DateTime)value;
         }
 
+        public T SimpleEnumGet<T>(Enum defValue = null, string key = null)
+        {
+            return SimpleGet<T>(default(T), key);
+        }
+
+        public void SimpleEnumSet<T>(Enum value, string key = null)
+        {
+            SimpleSet<Enum>(value, key);
+        }
+
         #endregion
     }
 }

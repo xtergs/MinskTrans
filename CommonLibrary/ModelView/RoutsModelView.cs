@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.Capture;
+using Windows.UI.Xaml.Documents;
 using CommonLibrary.Comparer;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
@@ -12,6 +14,7 @@ using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
+using MyLibrary;
 
 
 namespace MinskTrans.Universal.ModelView
@@ -45,18 +48,22 @@ namespace MinskTrans.Universal.ModelView
         private IEnumerable<Rout> _routeNumsAsync;
         private bool _isShowAdditionFilter = false;
         private string _additionStopFilter = "";
+        private readonly ISettingsModelView _settings;
 
         //public RoutesModelview()
         //{
         //	OnPropertyChanged("RouteNums");
         //}
 
-        public RoutsModelView(IBussnessLogics context, IExternalCommands commands)
+        public RoutsModelView(IBussnessLogics context, IExternalCommands commands, ISettingsModelView settings)
             : base(context)
         {
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
             if (commands == null)
                 throw new ArgumentNullException("commands");
             this.commands = commands;
+            this._settings = settings;
             Context.Context.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "Routs")
@@ -70,6 +77,8 @@ namespace MinskTrans.Universal.ModelView
             OnPropertyChanged("RouteNums");
             OnPropertyChanged(nameof(RouteNumsAsync));
             FavouriteRoutsCount = 1;
+            IsShowFavouriteRouts = settings.IsShowFavouriteRoutes;
+            TypeTransport = settings.RoutsSelectedTransportType;
         }
 
         public bool ShowFavourite { get; set; }
@@ -90,6 +99,11 @@ namespace MinskTrans.Universal.ModelView
             set { OnPropertyChanged(); }
         }
 
+        public bool IsAllChecked => TypeTransport == TransportType.All;
+        public bool IsTrolChecked => TypeTransport == TransportType.Trol;
+        public bool IsBusChecked => TypeTransport == TransportType.Bus;
+        public bool IsTramChecked => TypeTransport == TransportType.Tram;
+
         public TransportType TypeTransport
         {
             get
@@ -104,10 +118,20 @@ namespace MinskTrans.Universal.ModelView
                 if (value == typeTransport)
                     return;
                 typeTransport = value;
-                RouteNumsFilterAsync().ConfigureAwait(false);
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsAllChecked));
+                OnPropertyChanged(nameof(IsTrolChecked));
+                OnPropertyChanged(nameof(IsTramChecked));
+                OnPropertyChanged(nameof(IsBusChecked));
+                //ChangeState.RaiseCanExecuteChanged();
                 OnPropertyChanged(nameof(RouteNums));
                 OnPropertyChanged(nameof(RouteNumSelectedValue));
+                ShowAllTransportCommand.RaiseCanExecuteChanged();
+                ShowBusCommand.RaiseCanExecuteChanged();
+                ShowTramCommand.RaiseCanExecuteChanged();
+                ShowTrolCommand.RaiseCanExecuteChanged();
+                RouteNumsFilterAsync();
+                _settings.RoutsSelectedTransportType = value;
             }
         }
 
@@ -131,6 +155,7 @@ namespace MinskTrans.Universal.ModelView
                 RouteNumsFilterAsync().ConfigureAwait(false);
                 OnPropertyChanged(nameof(RouteNums));
                 FavouriteRoutsCount = 1;
+                _settings.IsShowFavouriteRoutes = value;
             }
         }
 
@@ -544,14 +569,61 @@ namespace MinskTrans.Universal.ModelView
         //	}
         //}
 
+        public RelayCommand<string> ChangeState
+        {
+            get
+            {
+
+                    return  new RelayCommand<string>(type =>
+                    {
+                        //TypeTransport = type;
+                    }, type => true
+                    //type != TypeTransport
+                    );
+            }
+        }
+
+        public RelayCommand<int> ChangeTransport
+        {
+            get
+            {
+                if (_changeTransport == null)
+                    _changeTransport = new RelayCommand<int>((en) =>
+                    {
+                        var type = (TransportType) en;
+                        TypeTransport = type;
+                    }, (en) =>
+                    {
+                        return true;
+                        var type = (TransportType) en;
+                        return TypeTransport != type;
+                    });
+                return _changeTransport;
+            }
+        }
+
+
+        private RelayCommand showAllTransportCommand;
+
         public RelayCommand ShowAllTransportCommand
         {
-            get { return new RelayCommand(() => TypeTransport = TransportType.All); }
+            get
+            {
+                if (showAllTransportCommand == null)
+                    showAllTransportCommand = new RelayCommand(() => TypeTransport = TransportType.All,
+                        () => TypeTransport != TransportType.All);
+                return showAllTransportCommand;
+            }
         }
+
+        private RelayCommand showBusCommand;
+        private RelayCommand<int> _changeTransport;
 
         public RelayCommand ShowBusCommand
         {
-            get { return new RelayCommand(() => TypeTransport = TransportType.Bus); }
+            get {
+                return showBusCommand ?? (showBusCommand = new RelayCommand(() => TypeTransport = TransportType.Bus, ()=> TypeTransport != TransportType.Bus));
+            }
         }
 
         public RelayCommand ShowTrolCommand

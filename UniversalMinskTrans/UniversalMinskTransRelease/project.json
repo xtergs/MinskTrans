@@ -8,6 +8,8 @@
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "PostSharp": "4.3.21",
     "PostSharp.Patterns.Model": "4.3.21",
+    "WindowsAzure.Messaging": "0.1.7.4",
+    "WindowsAzure.Messaging.Managed": "0.1.7.9",
     "XAML.MapControl": "2.13.0"
   },
   "frameworks": {

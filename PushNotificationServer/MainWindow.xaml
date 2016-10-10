@@ -32,11 +32,7 @@
                 <RowDefinition Height="Auto" />
 
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Expander Grid.Column="1" IsExpanded="False">
+            <Expander Grid.Column="0" IsExpanded="False">
                 <StackPanel Grid.Column="1">
                     <CheckBox Grid.Column="1"
                               Content="Autorun"
@@ -55,7 +51,21 @@
                     <TextBlock x:Name="Counter" Text="{Binding Time}" />
                 </StackPanel>
             </Expander>
-            <TextBlock Grid.Row="0" Text="{Binding BusnesLogic.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Grid.Row="0">
+                <TextBlock Grid.Row="0" Text="{Binding BusnesLogic.LastUpdateDataDateTime, UpdateSourceTrigger=PropertyChanged}" />
+                <ListView ItemsSource="{Binding UploadedFiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Key}" />
+                                <TextBox IsReadOnly="True"
+                                         IsReadOnlyCaretVisible="True"
+                                         Text="{Binding Value}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -116,13 +126,6 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
-            <WebBrowser x:Name="Browser"
-                        Grid.Row="2"
-                        Grid.RowSpan="5"
-                        Grid.Column="1"
-                        Width="Auto"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" />
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -135,7 +138,9 @@
                         Content="CheckNews" />
                 <Button Grid.Column="1"
                         Margin="5"
-                        Command="{Binding UploadAllToOneDriveCommand}"
+                        Command="{Binding UploadAllToOneDriveCommand,
+                                          Mode=OneWay,
+                                          UpdateSourceTrigger=PropertyChanged}"
                         Content="Reupload data" />
             </Grid>
 

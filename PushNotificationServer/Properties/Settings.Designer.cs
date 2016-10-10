@@ -69,5 +69,17 @@ namespace PushNotificationServer.Properties {
                 this["DbUpdateInterval"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CloudToken {
+            get {
+                return ((string)(this["CloudToken"]));
+            }
+            set {
+                this["CloudToken"] = value;
+            }
+        }
     }
 }

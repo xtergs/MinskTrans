@@ -32,7 +32,7 @@ namespace PushNotificationServer
 		{
 			InitializeComponent();
 
-			Browser.Navigate(@"https://login.live.com/oauth20_authorize.srf?pretty=false&client_id=0000000040158EFF&scope=wl.basic+wl.signin+wl.skydrive&response_type=code&redirect_uri=");
+			//Browser.Navigate(@"https://login.live.com/oauth20_authorize.srf?pretty=false&client_id=0000000040158EFF&scope=wl.basic+wl.signin+wl.skydrive&response_type=code&redirect_uri=");
 			NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			HotNewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			AutoUpdateNewsCheckBox.DataContext = ServerEngine.Engine;

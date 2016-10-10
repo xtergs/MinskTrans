@@ -1,29 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Navigation;
 using GalaSoft.MvvmLight.CommandWpf;
 using PushNotificationServer.Properties;
 using Task = System.Threading.Tasks.Task;
 using Autofac;
 using CommonLibrary.Notify;
 using MetroLog;
-using MetroLog.Targets;
 using Microsoft.Azure.NotificationHubs;
+using Microsoft.Graph;
+using Microsoft.OneDrive.Sdk;
+using Microsoft.OneDrive.Sdk.Authentication;
 //using Microsoft.OneDrive.Sdk.WindowsForms;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
-using MinskTrans.Context.Desktop;
 using MinskTrans.Context.Fakes;
 using MinskTrans.Context.UniversalModelView;
 using MinskTrans.Net;
@@ -34,8 +34,8 @@ using MinskTrans.Utilites.Base.Net;
 using MinskTrans.Utilites.Desktop;
 using MyLibrary;
 using OneDriveRestAPI;
-using OneDriveRestAPI.Model;
-using PCLStorage;
+using PropertyChanged;
+using UniversalMinskTransRelease.Helpers;
 //using CredentialCache = Microsoft.OneDrive.Sdk.CredentialCache;
 using File = System.IO.File;
 using IContainer = Autofac.IContainer;
@@ -45,10 +45,15 @@ namespace PushNotificationServer
 {
 	public class NotifyTimeTableChanges
 	{
+	    private NotificationHubClient GetHub()
+	    {
+            NotificationHubClient hub = NotificationHubClient
+                .CreateClientFromConnectionString(AppServerConstants.PushNotificationChanelEndPoint, AppServerConstants.PushNotificationChanelHubName);
+	        return hub;
+	    }
 		public async void SendNotificationAsync(string text)
 		{
-			NotificationHubClient hub = NotificationHubClient
-				.CreateClientFromConnectionString("Endpoint=sb://minsktransnamespace.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=FnUIrV6AXnVu/45Klip3lgdG2oNNSaofUtU7J7xEIXE=", "minsktransnotificationhub");
+		    var hub = GetHub();
 			var toast = $@"<toast><visual><binding template=""ToastText01""><text id=""1"">{text}</text></binding></visual></toast>";
 			var result = await hub.SendWindowsNativeNotificationAsync(toast);
 			
@@ -56,8 +61,7 @@ namespace PushNotificationServer
 
 		public async void SendNotificationAsync(TypeOfUpdates updates)
 		{
-			NotificationHubClient hub = NotificationHubClient
-			   .CreateClientFromConnectionString("Endpoint=sb://minsktransnamespace.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=FnUIrV6AXnVu/45Klip3lgdG2oNNSaofUtU7J7xEIXE=", "minsktransnotificationhub");
+		    var hub = GetHub();
 			var toast = $@"{updates}";
 			var notification = new WindowsNotification(toast);
 			notification.ContentType = "application/octet-stream";
@@ -65,6 +69,22 @@ namespace PushNotificationServer
 			var result  = await hub.SendNotificationAsync(notification);
 		}
 	}
+
+    public interface ICloudSettings
+    {
+        string CloudToken { get; set; }
+    }
+
+    public class CloudSeettings : ICloudSettings
+    {
+        public string CloudToken
+        {
+            get { return Settings.Default.CloudToken; }
+            set { Settings.Default.CloudToken = value; }
+        }
+    }
+
+    [ImplementPropertyChanged]
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
@@ -115,7 +135,7 @@ namespace PushNotificationServer
 			IsFilesBlocked = true;
 			try
 			{
-				await Task.WhenAll(
+				var result = await Task.WhenAll(
 					//OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName),
 					//OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName),
 					OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName),
@@ -123,9 +143,12 @@ namespace PushNotificationServer
 					OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName),
 					OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName),
 					OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName),
-					OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName))
-					.ConfigureAwait(false);
+					OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName));
 				container.Resolve<NotifyTimeTableChanges>().SendNotificationAsync(updates);
+                UploadedFiles.Clear();
+			    for (int i = 0; i < result.Length; i++)
+			        UploadedFiles.Add(result[i]);
+
 			}
 			finally
 			{
@@ -133,6 +156,8 @@ namespace PushNotificationServer
 			}
 
 		}
+
+        public readonly ObservableCollection<KeyValuePair<string,string>> UploadedFiles = new ObservableCollection<KeyValuePair<string, string>>();
 
 		void SaveTime()
 		{
@@ -170,7 +195,7 @@ namespace PushNotificationServer
 			builder.RegisterType<BaseNewsContext>().As<INewsContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
-			builder.RegisterType<OneDriveController>().As<ICloudStorageController>().SingleInstance();
+			builder.RegisterType<OneDriveControllerOfficial>().As<ICloudStorageController>().SingleInstance();
 			builder.RegisterType<NewsManagerDesktop>().As<NewsManagerBase>().SingleInstance();
 			builder.RegisterType<ShedulerParser>().As<ITimeTableParser>().SingleInstance();
 			builder.RegisterType<BussnessLogic>().As<IBussnessLogics>().SingleInstance();
@@ -180,6 +205,7 @@ namespace PushNotificationServer
 			builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 			builder.RegisterType<NotifyHelperDesctop>().As<INotifyHelper>().SingleInstance();
 			builder.RegisterType<FilePathsSettings>().SingleInstance();
+		    builder.RegisterType<CloudSeettings>().As<ICloudSettings>();
 			builder.RegisterType<NotifyTimeTableChanges>().AsSelf().SingleInstance();
 			container = builder.Build();
 
@@ -193,158 +219,266 @@ namespace PushNotificationServer
 			files = container.Resolve<FilePathsSettings>();
 		}
 
-		public class OneDriveController : ICloudStorageController
-		{
-			private ILogger log;
-			public OneDriveController(ILogManager logManager)
-			{
-				if (logManager == null)
-					throw new ArgumentNullException(nameof(logManager));
-				log = logManager.GetLogger<OneDriveController>();
-			}
-			private Options options;
+	    public class OneDriveControllerOfficial : ICloudStorageController
+	    {
+            static class OneDriveErrors
+            {
+                public const string ItemNotFound = "itemNotFound";
+            }
 
-			private WebBrowser browser;
+            public string SubFolder { get; } = "/MinskTransRelease";
+	        private Options options;
 
-			private UserToken token;
+	        public OneDriveControllerOfficial(ICloudSettings settings)
+	        {
+                if (settings == null)
+                    throw new ArgumentNullException(nameof(settings));
+	            _settings = settings;
+	            Token = settings.CloudToken;
+	        }
 
-			// Initialize a new Client (without an Access/Refresh tokens
-			Client client;
-			public void Inicialize()
-			{
-				options = new Options
-				{
-					ClientId = "0000000040158EFF",
-					ClientSecret = "2QIsVS59PY9HZM--yq9W7PPeaya-q0lO",
-					AutoRefreshTokens = true
-				};
+	        public async Task Inicialize()
+	        {
+	            if (string.IsNullOrWhiteSpace(Token))
+	            {
+	                Auth();
+	                return;
+	            }
 
-				client = new Client(options);
-
-				// Get the OAuth Request Url
-				var authRequestUrl = client.GetAuthorizationRequestUrl(new[] { Scope.Basic, Scope.Signin, Scope.SkyDrive });
-
-
-
-
-				HttpClient clientHttp = new HttpClient();
-				//clientHttp.GetAsync(authRequestUrl);
+                AccountSession session = new AccountSession();
+                session.ClientId = ClientId;
+                session.RefreshToken = Token;
+                var _msaAuthenticationProvider = new MsaAuthenticationProvider(ClientId, AppResponseUrl, scopes);
+                client = new OneDriveClient(oneDriveConsumerBaseUrl, _msaAuthenticationProvider);
+                _msaAuthenticationProvider.CurrentAccountSession = session;
+                await _msaAuthenticationProvider.AuthenticateUserAsync();
 
 
-				browser = new WebBrowser();
-				//browser.Navigate(authRequestUrl);
+	        }
 
-				WebRequest request = WebRequest.Create(authRequestUrl);
-				// If required by the server, set the credentials.
-				request.Credentials = new System.Net.CredentialCache();
-				// Get the response.
-				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-				// Display the status.
-				Console.WriteLine(response.StatusDescription);
-				// Get the stream containing content returned by the server.
-				Stream dataStream = response.GetResponseStream();
-				// Open the stream using a StreamReader for easy access.
-				StreamReader reader = new StreamReader(dataStream);
-				// Read the content.
-				string responseFromServer = reader.ReadToEnd();
+            public string AppResponseUrl { get; set; } = @"https://login.live.com/oauth20_desktop.srf";
+            private readonly string oneDriveConsumerBaseUrl = "https://api.onedrive.com/v1.0";
+            private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.signin", "wl.offline_access" };
+	        private readonly string ClientId = "0000000040158EFF";
+	        private OneDriveClient client;
+	        private string Token;
 
-				lastUrl = authRequestUrl;
-				browser.Navigated += Navigated;
-				browser.Navigating += (sender, args) =>
-				{
+	        public async void Auth()
+            {
+                try
+                {
+                    var msaAuthenticationProvider = new MsaAuthenticationProvider(ClientId, AppResponseUrl,
+                        scopes);
+                    var authTask = msaAuthenticationProvider.AuthenticateUserAsync();
+                    client = new OneDriveClient(oneDriveConsumerBaseUrl, msaAuthenticationProvider);
+                    await authTask;
+                    var session = (((MsaAuthenticationProvider)client.AuthenticationProvider).CurrentAccountSession);
+                    Token = session.RefreshToken;
+                    _settings.CloudToken = Token;
+                }
+                catch (Exception e)
+                {
 
-				};
-				browser.Navigate(new Uri(authRequestUrl));
-			}
+                }
+            }
 
-			public Task UploadFileAsync(TypeFolder pathToFile, string newNameFile)
-			{
-				var fileHelper = ServerEngine.Engine.container.Resolve<FileHelperBase>();
-				return UploadFileAsync(Path.Combine( fileHelper.GetPath(pathToFile), newNameFile), newNameFile);
-			}
+            public Task<KeyValuePair<string, string>> UploadFileAsync(TypeFolder pathToFile, string newNameFile)
+            {
+                var fileHelper = ServerEngine.Engine.container.Resolve<FileHelperBase>();
+                return UploadFileAsync(Path.Combine(fileHelper.GetPath(pathToFile), newNameFile), newNameFile);
+            }
 
-			public event EventHandler<EventArgs> NeedAttention;
+            public async Task<KeyValuePair<string, string>> UploadFileAsync(string pathToFile, string newNameFile)
+	        {
+                using (var fileStream = File.OpenRead(pathToFile))
+                {
+                    var res = await client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).Content.Request().PutAsync<Item>(fileStream);
+                    return new KeyValuePair<string, string>(newNameFile, await GetLink(newNameFile));
+                }
+	        }
 
-			private string lastUrl = "";
+            Regex regex = new Regex(@"(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-?%&!]*)");
+	        private ICloudSettings _settings;
 
-			public async Task UploadFileAsync(string pathToFile, string newNameFile)
-			{
-				if (token != null)
-				{
-					try
-					{
-						options.RefreshToken = token.Refresh_Token;
-						options.AccessToken = token.Access_Token;
-						var rootFolder = await client.GetFolderAsync();
-						using (var fileStream = File.OpenRead(pathToFile))
-						{
-							await client.UploadAsync(rootFolder.Id, fileStream, newNameFile, OverwriteOption.Overwrite);
-						}
-					}
-					catch (FileNotFoundException e)
-					{
-						log.Error("UploadFileAsync: File no foudn",e);
-						throw;
-					}
-				}
-			}
+	        public async Task<string> GetLink(string newNameFile)
+            {
+                try
+                {
+                    return "";
+                    //var link =
+                    //    (client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).CreateLink("embed"));
+                    var response = await (client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).CreateLink("embed")).Request().PostAsync();
+                    var match = regex.Match(response.Link.WebHtml);
+                    if (match.Success)
+                        return match.Value.Replace("embed?", "download?");
+                    return "";
+                }
+                catch (ServiceException e)
+                {
+                    if (e.Error.Code == OneDriveErrors.ItemNotFound)
+                        return null;
+                    throw;
+                }
+            }
 
-			async void Navigated(Object sender, NavigationEventArgs AddingNewEventArgs)
-			{
-				browser.Navigated -= Navigated;
-				var resultString = browser.Source;
-
-				var authCode = new string(resultString.Query.Skip(6).ToArray());
-				if (authCode.Length > 50)
-					return;
-				//var authCode = @"M0921412b-b519-23a5-8c5b-c2cd95f2565c";
-				// Exchange the Authorization Code with Access/Refresh tokens
-				token = await client.GetAccessTokenAsync(authCode);
-
-				// Get user profile
-				var userProfile = await client.GetMeAsync();
-				//Console.WriteLine("Name: " + userProfile.Name);
-				//Console.WriteLine("Preferred Email: " + userProfile.Emails.Preferred);
-
-				//// Get user photo
-				//var userProfilePicture = await client.GetProfilePictureAsync(PictureSize.Small);
-				//Console.WriteLine("Avatar: " + userProfilePicture);
-
-				//// Retrieve the root folder
-				//var rootFolder = await client.GetFolderAsync();
-				//Console.WriteLine("Root Folder: {0} (Id: {1})", rootFolder.Name, rootFolder.Id);
-
-				//// Retrieve the content of the root folder
-				//var folderContent = await client.GetContentsAsync(rootFolder.Id);
-				//foreach (var item in folderContent)
-				//{
-				//	Console.WriteLine("\tItem ({0}: {1} (Id: {2})", item.Type, item.Name, item.Id);
-				//}
-
-				options.RefreshToken = token.Refresh_Token;
-				options.AccessToken = token.Access_Token;
-				//// Initialize a new Client, this time by providing previously requested Access/Refresh tokens
-				//var client2 = new Client(options);
-
-				//// Find a file in the root folder
-				//var file = folderContent.FirstOrDefault(x => x.Type == File.FileType);
-
-				//// Download file to a temporary local file
-				//var tempFile = Path.GetTempFileName();
-				//using (var fileStream = System.IO.File.OpenWrite(tempFile))
-				//{
-				//	var contentStream = await client2.DownloadAsync(file.Id);
-				//	await contentStream.CopyToAsync(fileStream);
-				//}
+            public event EventHandler<EventArgs> NeedAttention;
+	    }
 
 
-				//// Upload the file with a new name
-				//using (var fileStream = System.IO.File.OpenRead(tempFile))
-				//{
-				//	await client2.UploadAsync(rootFolder.Id, fileStream, "Copy Of " + file.Name);
-				//}
-			}
-		}
+  //      public class OneDriveController : ICloudStorageController
+		//{
+		//	private ILogger log;
+		//	public OneDriveController(ILogManager logManager)
+		//	{
+		//		if (logManager == null)
+		//			throw new ArgumentNullException(nameof(logManager));
+		//		log = logManager.GetLogger<OneDriveController>();
+		//	}
+		//	private Options options;
+
+		//	private WebBrowser browser;
+
+		//	private UserToken token;
+
+		//	// Initialize a new Client (without an Access/Refresh tokens
+		//	Client client;
+		//	public async Task Inicialize()
+		//	{
+		//		options = new Options
+		//		{
+		//			ClientId = "0000000040158EFF",
+		//			ClientSecret = "2QIsVS59PY9HZM--yq9W7PPeaya-q0lO",
+		//			AutoRefreshTokens = true
+		//		};
+
+		//		client = new Client(options);
+
+		//		// Get the OAuth Request Url
+		//		var authRequestUrl = client.GetAuthorizationRequestUrl(new[] { Scope.Basic, Scope.Signin, Scope.SkyDrive });
+
+
+
+
+		//		HttpClient clientHttp = new HttpClient();
+		//		//clientHttp.GetAsync(authRequestUrl);
+
+
+		//		browser = new WebBrowser();
+		//		//browser.Navigate(authRequestUrl);
+
+		//		WebRequest request = WebRequest.Create(authRequestUrl);
+		//		// If required by the server, set the credentials.
+		//		request.Credentials = new System.Net.CredentialCache();
+		//		// Get the response.
+		//		HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+		//		// Display the status.
+		//		Console.WriteLine(response.StatusDescription);
+		//		// Get the stream containing content returned by the server.
+		//		Stream dataStream = response.GetResponseStream();
+		//		// Open the stream using a StreamReader for easy access.
+		//		StreamReader reader = new StreamReader(dataStream);
+		//		// Read the content.
+		//		string responseFromServer = reader.ReadToEnd();
+
+		//		lastUrl = authRequestUrl;
+		//		browser.Navigated += Navigated;
+		//		browser.Navigating += (sender, args) =>
+		//		{
+
+		//		};
+		//		browser.Navigate(new Uri(authRequestUrl));
+		//	}
+
+		//	public Task<KeyValuePair<string,string>> UploadFileAsync(TypeFolder pathToFile, string newNameFile)
+		//	{
+		//		var fileHelper = ServerEngine.Engine.container.Resolve<FileHelperBase>();
+		//		return UploadFileAsync(Path.Combine( fileHelper.GetPath(pathToFile), newNameFile), newNameFile);
+		//	}
+
+		//	public event EventHandler<EventArgs> NeedAttention;
+
+		//	private string lastUrl = "";
+
+		//	public async Task<KeyValuePair<string,string>> UploadFileAsync(string pathToFile, string newNameFile)
+		//	{
+		//		if (token != null)
+		//		{
+		//			try
+		//			{
+		//				options.RefreshToken = token.Refresh_Token;
+		//				options.AccessToken = token.Access_Token;
+		//				var rootFolder = await client.GetFolderAsync();
+		//				using (var fileStream = File.OpenRead(pathToFile))
+		//				{
+		//					var file = await client.UploadAsync(rootFolder.Id, fileStream, newNameFile, OverwriteOption.Overwrite);
+		//				    var loaded = (await client.GetFileAsync(file.Id));
+		//				}
+		//			}
+		//			catch (FileNotFoundException e)
+		//			{
+		//				log.Error("UploadFileAsync: File no foudn",e);
+		//				throw;
+		//			}
+		//		}
+		//	    return new KeyValuePair<string, string>(newNameFile, "");
+		//	}
+
+		//	async void Navigated(Object sender, NavigationEventArgs AddingNewEventArgs)
+		//	{
+		//		browser.Navigated -= Navigated;
+		//		var resultString = browser.Source;
+
+		//		var authCode = new string(resultString.Query.Skip(6).ToArray());
+		//		if (authCode.Length > 50)
+		//			return;
+		//		//var authCode = @"M0921412b-b519-23a5-8c5b-c2cd95f2565c";
+		//		// Exchange the Authorization Code with Access/Refresh tokens
+		//		token = await client.GetAccessTokenAsync(authCode);
+
+		//		// Get user profile
+		//		var userProfile = await client.GetMeAsync();
+		//		//Console.WriteLine("Name: " + userProfile.Name);
+		//		//Console.WriteLine("Preferred Email: " + userProfile.Emails.Preferred);
+
+		//		//// Get user photo
+		//		//var userProfilePicture = await client.GetProfilePictureAsync(PictureSize.Small);
+		//		//Console.WriteLine("Avatar: " + userProfilePicture);
+
+		//		//// Retrieve the root folder
+		//		//var rootFolder = await client.GetFolderAsync();
+		//		//Console.WriteLine("Root Folder: {0} (Id: {1})", rootFolder.Name, rootFolder.Id);
+
+		//		//// Retrieve the content of the root folder
+		//		//var folderContent = await client.GetContentsAsync(rootFolder.Id);
+		//		//foreach (var item in folderContent)
+		//		//{
+		//		//	Console.WriteLine("\tItem ({0}: {1} (Id: {2})", item.Type, item.Name, item.Id);
+		//		//}
+
+		//		options.RefreshToken = token.Refresh_Token;
+		//		options.AccessToken = token.Access_Token;
+		//		//// Initialize a new Client, this time by providing previously requested Access/Refresh tokens
+		//		//var client2 = new Client(options);
+
+		//		//// Find a file in the root folder
+		//		//var file = folderContent.FirstOrDefault(x => x.Type == File.FileType);
+
+		//		//// Download file to a temporary local file
+		//		//var tempFile = Path.GetTempFileName();
+		//		//using (var fileStream = System.IO.File.OpenWrite(tempFile))
+		//		//{
+		//		//	var contentStream = await client2.DownloadAsync(file.Id);
+		//		//	await contentStream.CopyToAsync(fileStream);
+		//		//}
+
+
+		//		//// Upload the file with a new name
+		//		//using (var fileStream = System.IO.File.OpenRead(tempFile))
+		//		//{
+		//		//	await client2.UploadAsync(rootFolder.Id, fileStream, "Copy Of " + file.Name);
+		//		//}
+		//	}
+		//}
 
 		public bool NewsAutoUpdate
 		{
@@ -481,8 +615,8 @@ namespace PushNotificationServer
 			}
 			Settings.Default.DBUpdateTime = context.LastUpdateDbDateTimeUtc;
 			Settings.Default.Save();		
-			OnStopChecknews(currentStatusOfUpdates);
 			SaveTime();
+			OnStopChecknews(currentStatusOfUpdates);
 			Volatile.Write(ref Updating, false);
 			Debug.WriteLine("Check news ended");
 			return results != null && results.Any(x => x);

@@ -36,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppConstants.cs" />
     <Compile Include="AutoRouting\CalculateRout.cs" />
     <Compile Include="AutoRouting\Class1.cs" />
     <Compile Include="AutoRouting\DistanceCalculator.cs" />

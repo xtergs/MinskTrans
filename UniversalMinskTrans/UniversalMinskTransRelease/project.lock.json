@@ -2244,6 +2244,22 @@
           }
         }
       },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
+      },
       "XAML.MapControl/2.13.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
@@ -4578,6 +4594,22 @@
         },
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
         }
       },
       "XAML.MapControl/2.13.0": {
@@ -6955,6 +6987,22 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
+      },
       "XAML.MapControl/2.13.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
@@ -9298,6 +9346,22 @@
         },
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
         }
       },
       "XAML.MapControl/2.13.0": {
@@ -11684,6 +11748,22 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
+      },
       "XAML.MapControl/2.13.0": {
         "compile": {
           "lib/netcore451/MapControl.WinRT.dll": {}
@@ -14027,6 +14107,22 @@
         },
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
         }
       },
       "XAML.MapControl/2.13.0": {
@@ -16411,6 +16507,22 @@
         },
         "runtime": {
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
+        }
+      },
+      "WindowsAzure.Messaging/0.1.7.4": {
+        "compile": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        },
+        "runtime": {
+          "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd": {}
+        }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
         }
       },
       "XAML.MapControl/2.13.0": {
@@ -22706,6 +22818,29 @@
         "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll"
       ]
     },
+    "WindowsAzure.Messaging/0.1.7.4": {
+      "sha512": "POLgPC48bIPC3VtqOUemrbiHj5oDEaYvw08oZvuqlDN3uS2/WNRd8NF73BvSKbjWngcDvE/o/lLqbTzVszC2/g==",
+      "type": "package",
+      "files": [
+        "WindowsAzure.Messaging.0.1.7.4.nupkg.sha512",
+        "WindowsAzure.Messaging.nuspec",
+        "lib/windows8/Microsoft.WindowsAzure.Messaging.pri",
+        "lib/windows8/Microsoft.WindowsAzure.Messaging.winmd"
+      ]
+    },
+    "WindowsAzure.Messaging.Managed/0.1.7.9": {
+      "sha512": "9g7MVL7Odl5qwG9TSsaab/MKFXdeLitrvbbRAO7xWk4CGeD1j17GPeUsuufO8VY5+GAcCQjJcrM6fU+y/eLCBg==",
+      "type": "package",
+      "files": [
+        "WindowsAzure.Messaging.Managed.0.1.7.9.nupkg.sha512",
+        "WindowsAzure.Messaging.Managed.nuspec",
+        "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll",
+        "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.pri",
+        "lib/windowsphone8/Microsoft.WindowsAzure.Messaging.dll",
+        "lib/wpa81/Microsoft.WindowsAzure.Messaging.Managed.dll",
+        "lib/wpa81/Microsoft.WindowsAzure.Messaging.Managed.pri"
+      ]
+    },
     "XAML.MapControl/2.13.0": {
       "sha512": "wIOFrd8Ivwr7Qm4VOSoEVHbJLsjSKxOsMUWw5OPaAHHyqj+q6FT7wVTckVq3N89mvZIyV/m7cJw1hE6Tyuuiog==",
       "type": "package",
@@ -22739,6 +22874,8 @@
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.2.2",
       "PostSharp >= 4.3.21",
       "PostSharp.Patterns.Model >= 4.3.21",
+      "WindowsAzure.Messaging >= 0.1.7.4",
+      "WindowsAzure.Messaging.Managed >= 0.1.7.9",
       "XAML.MapControl >= 2.13.0"
     ],
     "UAP,Version=v10.0": []

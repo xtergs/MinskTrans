@@ -13,20 +13,18 @@ using Windows.UI.Xaml.Navigation;
 using MinskTrans.Universal.ModelView;
 using Windows.ApplicationModel.Background;
 using System.Threading.Tasks;
-using Windows.Foundation.Metadata;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using GoogleAnalytics;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.WindowsAzure.Messaging;
 using MyLibrary;
 using MinskTrans.Context.Base;
 using Microsoft.HockeyApp;
 using UniversalMinskTransRelease.Helpers;
+using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -76,9 +74,11 @@ namespace UniversalMinskTrans
         private void SetupAnalitics()
 	    {
 	        var config = new EasyTrackerConfig();
-	        //config.AppName = "MinskTransUWP";
+            //config.AppName = "MinskTransUWP";
             //config.AppVersion = GetAppVersion();
-            config.TrackingId = "UA-85431708-1";
+#if !DEBUG
+            config.TrackingId = AppConstants.GoogleAnalitics;
+#endif
 #if DEBUG
             config.Debug = true;
 #endif
@@ -544,7 +544,7 @@ namespace UniversalMinskTrans
 			}
 		}
 
-		#region Overrides of Application
+#region Overrides of Application
 
 		protected override async void OnActivated(IActivatedEventArgs args)
 		{
@@ -556,7 +556,7 @@ namespace UniversalMinskTrans
 			log?.Debug("App OnActivated, context loaded");
 		}
 
-		#endregion
+#endregion
 
 #if WINDOWS_PHONE_APP
 	/// <summary>

@@ -27,6 +27,7 @@ namespace MinskTrans.Context
     {
         public FilePathsSettings()
         {
+#if DEBUG
             StopsFile = new FilePathStruct("stops.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/stops.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116855&authkey=AN0rfhVuMuxHT68");
 			RouteFile = new FilePathStruct("route.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/routes.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116854&authkey=ABcKVzT0ApakBiY");
 			TimeFile = new FilePathStruct("time.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/times.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2116856&authkey=AOKR4i0KOtmFo58");
@@ -41,8 +42,24 @@ namespace MinskTrans.Context
             HotNewsFileV2 = new FilePathStruct("days.v2.txt", TypeFolder.Local, "");
 
 			AllNewsFileV3 = new FilePathStruct("news.json_v3", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117176&authkey=AIeOI5DJwJDd2n0");
+#else
+            FavouriteFile = new FilePathStruct("favourite.dat", TypeFolder.Roaming);
+            StatisticFile = new FilePathStruct("statistics.dat", TypeFolder.Roaming);
 
-		}
+            HotNewsFile = new FilePathStruct("days.txt", TypeFolder.Local, @"http://www.minsktrans.by/ru/newsall/news/operativnaya-informatsiya.html", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111531&authkey=%21AIJo-8Q4661GpiI&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D2");
+            MainNewsFile = new FilePathStruct("months.txt", TypeFolder.Local, @"http://www.minsktrans.by/ru/newsall/news/newscity.html", "https://onedrive.live.com/download.aspx?cid=27EDF63E3C801B19&resid=27edf63e3c801b19%2111532&authkey=%21AAQED1sY1RWFib8&canary=3P%2F1MinRbysxZGv9ZvRDurX7Th84GvFR4kV1zdateI8%3D8");
+
+            MainNewsFileV2 = new FilePathStruct("months.v2.txt", TypeFolder.Local, "");
+            HotNewsFileV2 = new FilePathStruct("days.v2.txt", TypeFolder.Local, "");
+
+            LastUpdatedFile = new FilePathStruct("LastNews.txt", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117710&authkey=AD0UH9iWkouWQGU"); 
+            TimeTableAllFile = new FilePathStruct("timetableall.json.v", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117709&authkey=AELGLIjg0OzRT7o");
+            AllNewsFileV3 = new FilePathStruct("news.json_v3", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117705&authkey=ABlcd8QNOvmtU3w");
+            StopsFile = new FilePathStruct("stops.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/stops.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117707&authkey=ANNJ6J3UVhaWj4s");
+            RouteFile = new FilePathStruct("route.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/routes.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117706&authkey=AEERyn1jbuNIrUw");
+            TimeFile = new FilePathStruct("time.dat", TypeFolder.Local, "http://www.minsktrans.by/city/minsk/times.txt", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117708&authkey=AEVeyPds_veaX3E");
+#endif
+        }
         public FilePathStruct TimeFile { get; private set; }
         public FilePathStruct RouteFile { get; private set; }
         public FilePathStruct StopsFile { get; private set; }

@@ -2,6 +2,7 @@
 using System.Windows.Navigation;
 using Microsoft.HockeyApp;
 using PushNotificationServer.Helper;
+using UniversalMinskTransRelease.Helpers;
 
 namespace PushNotificationServer
 {
@@ -12,7 +13,7 @@ namespace PushNotificationServer
 	{
 	    public App()
 	    {
-            Microsoft.HockeyApp.HockeyClient.Current.Configure(AppConstants.HockeyAppId);
+            Microsoft.HockeyApp.HockeyClient.Current.Configure(AppServerConstants.HockeyAppId);
             Application.Current.DispatcherUnhandledException += (sender, args) =>
 	        {
 	            MessageBox.Show(args.Exception.Message + "\n" + args.Exception.StackTrace);

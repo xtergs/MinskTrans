@@ -496,6 +496,16 @@ namespace MyLibrary
             }
         }
 
+        public bool ShowButtonLabels
+        {
+            get { return helper.SimpleGet(false); }
+            set
+            {
+                helper.SimpleSet(value);
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

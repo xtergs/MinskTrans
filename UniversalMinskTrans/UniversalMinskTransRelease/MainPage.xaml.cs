@@ -72,6 +72,10 @@ namespace MinskTrans.Universal
         public MainPage()
         {
             this.InitializeComponent();
+            if (Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported())
+            {
+                this.feedbackButton.Visibility = Visibility.Visible;
+            }
 #if DEBUG
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -555,6 +559,7 @@ namespace MinskTrans.Universal
                     .SendEvent("TabViewLengthSec", (Pivot.SelectedItem as PivotItem).Header.ToString(),
                         (((int) watch.ElapsedMilliseconds/1000)).ToString(), 0);
             watch.Restart();
+            //GoogleAnalytics.EasyTracker.GetTracker().SendView((Pivot.SelectedItem as PivotItem).Header.ToString());
             SelectVisualState();
 
         }
@@ -607,6 +612,12 @@ namespace MinskTrans.Universal
         private void ShowTransport(object sender, RoutedEventArgs e)
         {
             GoogleAnalytics.EasyTracker.GetTracker().SendEvent("SearchTab", "Transports", "", 0);
+        }
+
+        private async void feedbackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+            await launcher.LaunchAsync();
         }
     }
 

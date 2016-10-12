@@ -51,5 +51,10 @@ namespace MinskTrans.Universal
 			OnAddGroup();
 			flyout.Hide();
 		}
+
+	    private void TesstListview_OnItemClick(object sender, ItemClickEventArgs e)
+	    {
+	        throw new NotImplementedException();
+	    }
 	}
 }

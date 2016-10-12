@@ -70,7 +70,8 @@ namespace MyLibrary
         bool IsShowFavouriteStops { get; set; }
         bool IsShowFavouriteRoutes { get; set; }
 	    TransportType RoutsSelectedTransportType { get; set; }
-	}
+        bool ShowButtonLabels { get; set; }
+    }
 
 	public enum Error
 	{

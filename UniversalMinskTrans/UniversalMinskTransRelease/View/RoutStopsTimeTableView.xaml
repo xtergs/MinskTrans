@@ -231,6 +231,7 @@
                 <AppBarButton x:Name="SoftBackButton"
                               Command="{Binding BackCommand}"
                               Icon="Back"
+                              Click="SoftBackButton_OnClick"
                               IsCompact="True"
                               Label="Назад" />
                 <AppBarToggleButton HorizontalAlignment="Center"

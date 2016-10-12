@@ -96,7 +96,10 @@
                 </AppBarButton>
                 <AppBarButton Click="AppBarButton_Click"
                               Icon="Add"
-                              IsCompact="True"
+                              IsCompact="{Binding Settings.ShowButtonLabels,
+                                                  Converter={StaticResource BoolNoConverter},
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Label="В группу"
                               ToolTipService.ToolTip="Добавить в группу">
                     <AppBarButton.Flyout>
                         <Flyout>
@@ -171,7 +174,10 @@
                               Click="RefreshManualyClick"
                               Command="{Binding RefreshTimeSchedule}"
                               Icon="Sync"
-                              IsCompact="True"
+                              IsCompact="{Binding Settings.ShowButtonLabels,
+                                                  Converter={StaticResource BoolNoConverter},
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Label="Обновить"
                               ToolTipService.ToolTip="Обновить" />
                 <AppBarToggleButton HorizontalAlignment="Center"
                                     Click="FavouriteToggle"
@@ -181,7 +187,10 @@
                                     IsChecked="{Binding IsStopFavourite,
                                                         Mode=TwoWay,
                                                         UpdateSourceTrigger=PropertyChanged}"
-                                    IsCompact="True"
+                                    IsCompact="{Binding Settings.ShowButtonLabels,
+                                                        Converter={StaticResource BoolNoConverter},
+                                                        UpdateSourceTrigger=PropertyChanged}"
+                                    Label="В избранное"
                                     ToolTipService.ToolTip="В избранное" />
                 <AppBarButton HorizontalAlignment="Center"
                               Click="ShowOnMapClick"
@@ -189,8 +198,10 @@
                               CommandParameter="{Binding FilteredSelectedStop}"
                               DataContext="{Binding}"
                               Icon="Map"
-                              IsCompact="True"
-                              Label=""
+                              IsCompact="{Binding Settings.ShowButtonLabels,
+                                                  Converter={StaticResource BoolNoConverter},
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Label="На карте"
                               ToolTipService.ToolTip="Показать на карте" />
             </controls:WrapPanel>
         </Border>

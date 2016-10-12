@@ -25,6 +25,7 @@ namespace MinskTrans.Net
 		ListWithDate HotNews { get; }
 		Task LoadDataAsync(TypeFolder folder, string file);
 		Task Save(TypeFolder folder, string file);
+	    Task Clear(TypeFolder Folder);
 	}
 
 	public class BaseNewsContext : INewsContext
@@ -88,6 +89,12 @@ namespace MinskTrans.Net
 			return null;
 		}
 
+	    public Task Clear(TypeFolder Folder)
+	    {
+            HotNews = new ListWithDate();
+            MainNews = new ListWithDate();
+	        return fileHelerp.ClearFolder(Folder);
+	    }
 	}
 
 
@@ -221,5 +228,11 @@ namespace MinskTrans.Net
         }
 
         public FilePathsSettings Files { get; }
+
+	    public void ResetState()
+	    {
+	        context.Clear(Files.AllNewsFileV3.Folder);
+	        NewNews = null;
+	    }
     }
 }

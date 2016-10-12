@@ -48,6 +48,8 @@ namespace UniversalMinskTransRelease.View
                 TramTogleButton.IsChecked = false;
             if (BusTogleButton != null && sender != BusTogleButton)
                 BusTogleButton.IsChecked = false;
+
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutNumsView", "TransportTypeToggle", "", 0);
         }
     }
 }

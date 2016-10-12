@@ -33,6 +33,7 @@ namespace UniversalMinskTransRelease.View
         {
             //FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
             GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "ShowStopsDetails", "", 0);
+            GoogleAnalytics.EasyTracker.GetTracker().SendView("Rout->Stop->Detail");
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -58,6 +59,11 @@ namespace UniversalMinskTransRelease.View
         private void ShowHideRoutStopTimeTable(object sender, RoutedEventArgs e)
         {
             GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "Show/HideRout'sStopDetail", "", 0);
+        }
+
+        private void SoftBackButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            GoogleAnalytics.EasyTracker.GetTracker().SendEvent("RoutView", "Back", "", 0);
         }
     }
 }

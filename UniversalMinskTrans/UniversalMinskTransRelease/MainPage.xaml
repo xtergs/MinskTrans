@@ -127,9 +127,9 @@
                             </Grid.ColumnDefinitions>
                             <HyperlinkButton x:Uid="StopsButton"
                                              x:Name="StopsHyperlinkButton"
+                                             Click="StopsClick"
                                              Command="{Binding TogleToShowStopsFindViewCommand}"
                                              Content="Остановки"
-                                             Click="StopsClick"
                                              IsEnabled="False">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="IsEnabledChanged">
@@ -411,119 +411,141 @@
                        Header="Настройки"
                        Padding="0">
                 <Border BorderBrush="{StaticResource LightBlueSolidColorBrush}" BorderThickness="0,3,0,0">
-                    <ListView MinHeight="0"
-                              Margin="5,0,5,0"
-                              IsItemClickEnabled="False"
-                              ItemContainerStyle="{StaticResource FullListViewItem}"
-                              SelectionMode="None">
-
-                        <Button Click="UpdateScheduleManualClick"
-                                Command="{Binding UpdateDataCommand}"
-                                Content="Обновить расписание"
-                                DataContext="{Binding MainView,
-                                                      ElementName=mainPage}" />
-                        <ToggleSwitch IsOn="{Binding UpdateOnWiFi,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не использовать WiFi"
-                                      OnContent="Использовать WiFi" />
-                        <ToggleSwitch IsOn="{Binding UpdateOnMobileData,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не использовать мобильное соединение"
-                                      OnContent="Использовать мобильное соединение" />
-                        <ToggleSwitch IsOn="{Binding UseGPS,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не использовать GPS"
-                                      OnContent="Использовать GPS"
-                                      Toggled="NotUseGPSToggle" />
-                        <TextBlock x:Name="LocationDisabledMessage"
-                                   Margin="0,15,0,0"
-                                   FontStyle="Italic"
-                                   TextWrapping="Wrap"
-                                   Visibility="{Binding PermissionDeniedToUseGeolocation,
-                                                        Converter={StaticResource BooleanToVisibilityConverter},
-                                                        UpdateSourceTrigger=PropertyChanged,
-                                                        Mode=OneWay}">
-                            <Run Text="This app is not able to access Location. Go to " />
-                            <Hyperlink NavigateUri="ms-settings:privacy-location">
-                                <Run Text="Settings" />
-                            </Hyperlink>
-                            <Run Text=" to check the location privacy settings." />
-                        </TextBlock>
-                        <ToggleSwitch IsOn="{Binding ConsiderDistanceSortStops,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не учитывать расстояние при сортировке остановок"
-                                      OnContent="Учитывать расстояние при сортировке остановок"
-                                      Toggled="NoConsiderDistanceWhenSortToggle" />
-
-                        <ToggleSwitch IsOn="{Binding ConsiderFrequencySortStops,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не учитывать частоту при сортировке остановок"
-                                      OnContent="Учитывать частоту при сортировке остановок"
-                                      Toggled="NoConsiderFrequensyWhenSortToggle" />
-
-                        <ToggleSwitch IsOn="{Binding NotifyAboutNews,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                                      OffContent="Не оповещать о новостях"
-                                      OnContent="Оповещать о новостях"
-                                      Toggled="NoNotifyAboutNewsToggled" />
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="Дата обновления расписания" />
-                            <TextBlock Grid.Row="1" Text="{Binding LastUpdateDbDateTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
+                    <ScrollViewer>
+                        <StackPanel Margin="10">
                             <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Взгляд в прошлое " />
-                                <TextBlock Grid.Column="1" Text="{Binding TimeInPast, Mode=OneWay, UpdateSourceTrigger=Default}" />
-                                <TextBlock Grid.Column="2" Text=" мин" />
 
-
+                                <Button Click="UpdateScheduleManualClick"
+                                        Command="{Binding UpdateDataCommand}"
+                                        Content="Обновить расписание"
+                                        DataContext="{Binding MainView,
+                                                              ElementName=mainPage}" />
+                                <Button x:Name="feedbackButton"
+                                        Grid.Column="1"
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Click="feedbackButton_Click"
+                                        Content="&#xE939;"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        Visibility="Collapsed" />
                             </Grid>
-                            <ComboBox Grid.Row="1"
-                                      ItemsSource="{Binding PreDefMins}"
-                                      SelectedValue="{Binding TimeInPast,
-                                                              Mode=TwoWay,
-                                                              UpdateSourceTrigger=Default}"
-                                      SelectionChanged="SelectedLookAtBackChanged" />
-                        </Grid>
-                        <StackPanel>
-                            <TextBlock Text="Макс колво транспорта для избранного" />
-                            <ComboBox ItemsSource="{Binding SimpleArray}" SelectedItem="{Binding NextFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Макс колво транспорта для избранного" />
-                            <ComboBox ItemsSource="{Binding SimpleArray}" SelectedItem="{Binding PrevFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                        <Button Click="ShowChangelog" Content="Изменения" />
-                        <Button Click="ShowInStore" Content="Оставить отзыв" />
-                        <Button Name="ChatWithDeveloper"
-                                Click="StartEmailToDeveloper"
-                                Content="Связь с разработчиком" />
-                        <Button Click="OnOffLocationServises" Content="Настройка сервисов местоположения" />
-                        <Button Click="ShowPolicity" Content="Политика безопасности" />
-                        <Button Click="SendLog" Content="Отправить лог разработчику" />
-                        <!--<CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ToggleSwitch Margin="0,10,0,0"
+                                          IsOn="{Binding UpdateOnWiFi,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не использовать WiFi"
+                                          OnContent="Использовать WiFi" />
+                            <ToggleSwitch IsOn="{Binding UpdateOnMobileData,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не использовать мобильное соединение"
+                                          OnContent="Использовать мобильное соединение" />
+                            <ToggleSwitch IsOn="{Binding UseGPS,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не использовать GPS"
+                                          OnContent="Использовать GPS"
+                                          Toggled="NotUseGPSToggle" />
+                            <TextBlock x:Name="LocationDisabledMessage"
+                                       Margin="0,15,0,0"
+                                       FontStyle="Italic"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding PermissionDeniedToUseGeolocation,
+                                                            Converter={StaticResource BooleanToVisibilityConverter},
+                                                            UpdateSourceTrigger=PropertyChanged,
+                                                            Mode=OneWay}">
+                                <Run Text="This app is not able to access Location. Go to " />
+                                <Hyperlink NavigateUri="ms-settings:privacy-location">
+                                    <Run Text="Settings" />
+                                </Hyperlink>
+                                <Run Text=" to check the location privacy settings." />
+                            </TextBlock>
+                            <ToggleSwitch Margin="0,10,0,0"
+                                          IsOn="{Binding ConsiderDistanceSortStops,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не учитывать расстояние при сортировке остановок"
+                                          OnContent="Учитывать расстояние при сортировке остановок"
+                                          Toggled="NoConsiderDistanceWhenSortToggle" />
+
+                            <ToggleSwitch IsOn="{Binding ConsiderFrequencySortStops,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не учитывать частоту при сортировке остановок"
+                                          OnContent="Учитывать частоту при сортировке остановок"
+                                          Toggled="NoConsiderFrequensyWhenSortToggle" />
+
+                            <ToggleSwitch IsOn="{Binding NotifyAboutNews,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не оповещать о новостях"
+                                          OnContent="Оповещать о новостях"
+                                          Toggled="NoNotifyAboutNewsToggled" />
+                            <ToggleSwitch IsOn="{Binding ShowButtonLabels,
+                                                         Mode=TwoWay,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                          OffContent="Не показывать описание"
+                                          OnContent="Показывать описание" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Margin="0,10,0,0" Text="Дата обновления расписания" />
+                                <TextBlock Grid.Row="1"
+                                           Margin="0,0,0,10"
+                                           Text="{Binding LastUpdateDbDateTime,
+                                                          Mode=OneWay,
+                                                          UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Взгляд в прошлое " />
+                                    <TextBlock Grid.Column="1" Text="{Binding TimeInPast, Mode=OneWay, UpdateSourceTrigger=Default}" />
+                                    <TextBlock Grid.Column="2" Text=" мин" />
+
+
+                                </Grid>
+                                <ComboBox Grid.Row="1"
+                                          ItemsSource="{Binding PreDefMins}"
+                                          SelectedValue="{Binding TimeInPast,
+                                                                  Mode=TwoWay,
+                                                                  UpdateSourceTrigger=Default}"
+                                          SelectionChanged="SelectedLookAtBackChanged" />
+                            </Grid>
+                            <StackPanel>
+                                <TextBlock Text="Макс колво транспорта для избранного" />
+                                <ComboBox ItemsSource="{Binding SimpleArray}" SelectedItem="{Binding NextFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Макс колво транспорта для избранного" />
+                                <ComboBox ItemsSource="{Binding SimpleArray}" SelectedItem="{Binding PrevFavouriteRouts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <Button Click="ShowInStore" Content="Оставить отзыв" />
+                            <Button Name="ChatWithDeveloper"
+                                    Click="StartEmailToDeveloper"
+                                    Content="Связь с разработчиком" />
+                            <HyperlinkButton Click="ShowChangelog" Content="Изменения" />
+                            <HyperlinkButton Click="OnOffLocationServises" Content="Настройка сервисов местоположения" />
+                            <HyperlinkButton Click="ShowPolicity" Content="Политика безопасности" />
+                            <!--<CheckBox Content="Develop" IsChecked="{Binding Develop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox SelectedValue="{Binding FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                             <ComboBoxItem>15</ComboBoxItem>
                             <ComboBoxItem>16</ComboBoxItem>
@@ -533,7 +555,8 @@
                             <ComboBoxItem>20</ComboBoxItem>
                             <ComboBoxItem>21</ComboBoxItem>
                         </ComboBox>-->
-                    </ListView>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Border>
             </PivotItem>
             <!--<PivotItem GotFocus="PivotItem_GotFocus_1" Header="Logs">
@@ -546,11 +569,11 @@
                     <ListView Grid.Row="1" ItemsSource="{Binding AllLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"   />
                 </Grid>
             </PivotItem>-->
-            <PivotItem BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+            <!--<PivotItem BorderBrush="{StaticResource LightBlueSolidColorBrush}"
                        DataContext="{Binding SingFilterForAllDataModelView}"
                        Header="Новый поиск">
                 <view:SingFilterFieldView DataContext="{Binding}" />
-            </PivotItem>
+            </PivotItem>-->
         </Pivot>
 
 

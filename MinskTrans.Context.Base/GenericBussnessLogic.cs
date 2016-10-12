@@ -492,7 +492,14 @@ namespace MinskTrans.Context
 			return timeIndex;
 		}
 
-		public List<StopTimePair> GetStopsTimesParis(Rout rout, Stop stop, int mins, int day)
+	    public void ResetState()
+	    {
+            LastUpdateDbDateTimeUtc = DateTime.MinValue;
+	        Context.ClearState();
+
+	    }
+
+	    public List<StopTimePair> GetStopsTimesParis(Rout rout, Stop stop, int mins, int day)
 		{
 			Schedule timee = GetRouteSchedule(rout.RoutId);
 			var st = GetStop(stop.ID);

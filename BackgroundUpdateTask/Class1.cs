@@ -211,24 +211,29 @@ namespace BackgroundUpdateTaskUniversalRuntime
 						notify.ShowNotificaton(source.Message);
 					}
 
-				Log?.Info("Background.settings.LastSeenMainNewsDateTimeUtc before : " +
-				          settings.LastSeenMainNewsDateTimeUtc);
-				Log?.Info("Background.settings.LastSeenHotNewsDateTimeUtc before: " + settings.LastSeenHotNewsDateTimeUtc);
-
-				settings.LastSeenMainNewsDateTimeUtc = nowTimeUtc;
-				settings.LastSeenHotNewsDateTimeUtc = nowTimeUtc;
-
-				Log?.Info("Background.settings.LastSeenMainNewsDateTimeUtc before : " +
-				          settings.LastSeenMainNewsDateTimeUtc);
-				Log?.Info("Background.settings.LastSeenHotNewsDateTimeUtc before: " + settings.LastSeenHotNewsDateTimeUtc);
-
-
+			    try
+			    {
+			        settings.LastSeenMainNewsDateTimeUtc = nowTimeUtc;
+			        settings.LastSeenHotNewsDateTimeUtc = nowTimeUtc;
+			    }
+			    catch (Exception ex)
+			    {
+                    TelemetryClient.TrackException(ex, new Dictionary<string, string>()
+                    {
+                        ["Background task"] = "General",
+                        ["Background task"] = "InTheEnd setting lastUpdateTime"
+                    });
+                }
 				Log?.Error("Background ended ");
 			}
 			catch (Exception e)
 			{
 				Log?.Error("Background: " + e.Message, e);
-				TelemetryClient.TrackException(e, new Dictionary<string, string>() {["Background task"]= "General"});
+				TelemetryClient.TrackException(e, new Dictionary<string, string>()
+				{
+				    ["Background task"]= "General",
+                    ["Version"] = "2"
+                });
 			}
 			finally
 			{

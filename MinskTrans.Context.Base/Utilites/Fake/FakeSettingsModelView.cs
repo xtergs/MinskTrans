@@ -58,6 +58,7 @@ namespace MyLibrary
 	    public bool IsShowFavouriteStops { get; set; }
 	    public bool IsShowFavouriteRoutes { get; set; }
 	    public TransportType RoutsSelectedTransportType { get; set; }
+	    public bool ShowButtonLabels { get; set; }
 
 	    #endregion
 

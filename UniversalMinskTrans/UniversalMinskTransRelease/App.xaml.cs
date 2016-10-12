@@ -133,7 +133,16 @@ namespace UniversalMinskTrans
                     default:
 						// The user didn't explicitly disable or enable access and updates. 
 						BackgroundTaskRegistration updateTaskRegistration = null;
-						if (!isPushNotificationHubRegistered)
+#if DEBUG
+                        updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
+                                backgroundName, new TimeTrigger(15, false),
+                                new SystemCondition(SystemConditionType.InternetAvailable), new[] { backgroundPushName });
+                        updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
+                        updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
+                                backgroundPushName, new PushNotificationTrigger(),
+                                new SystemCondition(SystemConditionType.InternetAvailable), new[] { backgroundName });
+#else
+                        if (!isPushNotificationHubRegistered)
 							updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
 								backgroundName, new TimeTrigger(15, false),
 								new SystemCondition(SystemConditionType.InternetAvailable), new[] {""});
@@ -141,7 +150,8 @@ namespace UniversalMinskTrans
 							updateTaskRegistration = RegisterBackgroundTask(backgroundAssembly,
 								backgroundPushName, new PushNotificationTrigger(),
 								new SystemCondition(SystemConditionType.InternetAvailable), new[] {""});
-						updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
+#endif
+                        updateTaskRegistration.Completed += UpdateTaskRegistrationOnCompleted;
 
 
 						break;
@@ -390,8 +400,8 @@ namespace UniversalMinskTrans
 
 		private readonly TimeSpan maxDifTime = new TimeSpan(0, 1, 0, 0);
 		private string backgroundAssembly = "BackgroundUpdateTaskUniversalRuntime.UpdateBackgroundTask";
-		private string backgroundName = "UpdateBackground7";
-		private string backgroundPushName = "PushBackground8";
+		private string backgroundName = "UpdateBackground11";
+		private string backgroundPushName = "PushBackground12";
 
 		private void CallBackReconnectPushServerTimer(object state)
 		{

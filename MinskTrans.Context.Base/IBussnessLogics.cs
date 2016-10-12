@@ -119,5 +119,6 @@ namespace MinskTrans.Context
         Schedule GetRouteSchedule(int routId);
 
         int GetTimeIndex(Rout rout, Stop stop, int mins, int day);
+        void ResetState();
     }
 }

@@ -16,300 +16,323 @@
              d:DesignWidth="400"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d">
-	<UserControl.Resources>
-		<ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<mapControl:TileLayerCollection x:Key="TileLayers">
-			<!--
-				TileLayers with OpenStreetMap data.
-			-->
-			<mapControl:TileLayer Description="Maps © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
-			                      MaxZoomLevel="19"
-			                      SourceName="OpenStreetMap">
-				<mapControl:TileSource UriFormat="http://{c}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest OpenCycleMap">
-				<mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest Landscape">
-				<mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest Outdoors">
-				<mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest Transport">
-				<mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/transport/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Background="Black"
-			                      Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
-			                      Foreground="White"
-			                      SourceName="Thunderforest Transport Dark">
-				<mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Description="Maps © [MapQuest](http://www.mapquest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="MapQuest OpenStreetMap">
-				<mapControl:TileSource UriFormat="http://otile{n}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg" />
-			</mapControl:TileLayer>
-			<mapControl:TileLayer Description="© OpenSeaMap Contributors"
-			                      MaxZoomLevel="18"
-			                      MinZoomLevel="10"
-			                      SourceName="Seamarks">
-				<mapControl:TileSource UriFormat="http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png" />
-			</mapControl:TileLayer>
-		</mapControl:TileLayerCollection>
+    <UserControl.Resources>
+        <ExpanderControl:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <mapControl:TileLayerCollection x:Key="TileLayers">
+            <!--
+                TileLayers with OpenStreetMap data.
+            -->
+            <mapControl:TileLayer Description="Maps © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
+                                  MaxZoomLevel="19"
+                                  SourceName="OpenStreetMap">
+                <mapControl:TileSource UriFormat="http://{c}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest OpenCycleMap">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest Landscape">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest Outdoors">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="Thunderforest Transport">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/transport/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Background="Black"
+                                  Description="Maps © [Thunderforest](http://www.thunderforest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
+                                  Foreground="White"
+                                  SourceName="Thunderforest Transport Dark">
+                <mapControl:TileSource UriFormat="http://{c}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Description="Maps © [MapQuest](http://www.mapquest.com/), Data © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)" SourceName="MapQuest OpenStreetMap">
+                <mapControl:TileSource UriFormat="http://otile{n}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg" />
+            </mapControl:TileLayer>
+            <mapControl:TileLayer Description="© OpenSeaMap Contributors"
+                                  MaxZoomLevel="18"
+                                  MinZoomLevel="10"
+                                  SourceName="Seamarks">
+                <mapControl:TileSource UriFormat="http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png" />
+            </mapControl:TileLayer>
+        </mapControl:TileLayerCollection>
 
-		<Style x:Key="PushpinItemStyle" TargetType="mapControl:MapItem">
-			<Setter Property="mapControl:MapPanel.Location" Value="{Binding Location}" />
+        <Style x:Key="PushpinItemStyle" TargetType="mapControl:MapItem">
+            <Setter Property="mapControl:MapPanel.Location" Value="{Binding Location}" />
 
-			<Setter Property="VerticalAlignment" Value="Bottom" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="mapControl:MapItem">
-						<mapControl:Pushpin Content="{Binding Name}" />
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="mapControl:MapItem">
+                        <mapControl:Pushpin Content="{Binding Name}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
 
-		</Style>
-
-
-		<Style x:Key="PushpinStyle1" TargetType="mapControl:Pushpin">
-			<Setter Property="HorizontalAlignment" Value="Left" />
-			<Setter Property="VerticalAlignment" Value="Bottom" />
-			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-			<Setter Property="VerticalContentAlignment" Value="Stretch" />
-			<Setter Property="Padding" Value="3" />
-			<Setter Property="Foreground" Value="Black" />
-			<Setter Property="Background" Value="White" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="mapControl:Pushpin">
-						<Grid x:Name="MainGrid">
-							<Grid.RowDefinitions>
-								<RowDefinition />
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
-							<Rectangle x:Name="Rectangle" Fill="{TemplateBinding Background}" />
-							<ContentPresenter Margin="{TemplateBinding Padding}"
-							                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-							                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-							                  Content="{TemplateBinding Content}"
-							                  ContentTemplate="{TemplateBinding ContentTemplate}" />
-							<Path x:Name="Path"
-							      Grid.Row="1"
-							      Data="M0,-0.5L0,16 16,-0.5"
-							      Fill="{TemplateBinding Background}" />
-						</Grid>
-
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-		<Style x:Key="IPushPinStyle"
-		       BasedOn="{StaticResource PushpinStyle1}"
-		       TargetType="mapControl:Pushpin">
-			<Setter Property="Background" Value="Azure" />
-		</Style>
-		<Style x:Key="StartPositionPushPinStyle"
-		       BasedOn="{StaticResource PushpinStyle1}"
-		       TargetType="mapControl:Pushpin">
-			<Setter Property="Background" Value="DarkOrchid" />
-		</Style>
-		<Style x:Key="EndPositionPushPinStyle"
-		       BasedOn="{StaticResource PushpinStyle1}"
-		       TargetType="mapControl:Pushpin">
-			<Setter Property="Background" Value="DodgerBlue" />
-		</Style>
-	</UserControl.Resources>
+        </Style>
 
 
+        <Style x:Key="PushpinStyle1" TargetType="mapControl:Pushpin">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="mapControl:Pushpin">
+                        <Grid x:Name="MainGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Rectangle x:Name="Rectangle" Fill="{TemplateBinding Background}" />
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
+                            <Path x:Name="Path"
+                                  Grid.Row="1"
+                                  Data="M0,-0.5L0,16 16,-0.5"
+                                  Fill="{TemplateBinding Background}" />
+                        </Grid>
 
-	<Border d:DataContext="{d:DesignInstance modelview:MapModelView}"
-	        BorderBrush="{StaticResource LightBlueSolidColorBrush}"
-	        BorderThickness="0,3,0,0"
-	        DataContext="{Binding}">
-		<Grid x:Name="grid1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition Width="0.3*" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="IPushPinStyle"
+               BasedOn="{StaticResource PushpinStyle1}"
+               TargetType="mapControl:Pushpin">
+            <Setter Property="Background" Value="Azure" />
+        </Style>
+        <Style x:Key="StartPositionPushPinStyle"
+               BasedOn="{StaticResource PushpinStyle1}"
+               TargetType="mapControl:Pushpin">
+            <Setter Property="Background" Value="DarkOrchid" />
+        </Style>
+        <Style x:Key="EndPositionPushPinStyle"
+               BasedOn="{StaticResource PushpinStyle1}"
+               TargetType="mapControl:Pushpin">
+            <Setter Property="Background" Value="DodgerBlue" />
+        </Style>
+    </UserControl.Resources>
 
-			<mapControl:Map x:Name="map"
-			                mapControl:MapPanel.Location="{Binding Location,
-			                                                       Mode=TwoWay,
-			                                                       UpdateSourceTrigger=PropertyChanged}"
-			                TileLayer="{Binding [OpenStreetMap],
-			                                    Source={StaticResource TileLayers}}"
-			                ZoomLevel="19" />
-			<Grid HorizontalAlignment="Center"
-			      VerticalAlignment="Bottom"
-			      Background="#FF5D5959"
-			      Opacity="0.7">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<TextBlock DataContext="{Binding StartStop}"
-				           FontSize="20"
-				           Tapped="UIElement_OnTapped"
-				           Text="{Binding Name}" />
-				<ProgressBar Grid.ColumnSpan="5"
-				             VerticalAlignment="Bottom"
-				             IsIndeterminate="True" />
-				<Button Grid.Column="1"
-				        Command="{Binding SwitchStopsCommand}"
-				        Content="&lt;-&gt;" />
-				<TextBlock Grid.Column="2"
-				           DataContext="{Binding EndStop}"
-				           FontSize="20"
-				           Tapped="UIElement_OnTapped"
-				           Text="{Binding Name}" />
-				<Button Grid.Column="3"
-				        Command="{Binding CalculateRoutCommand}"
-				        Content="Calculate" />
-				<Button Grid.Column="4"
-				        Command="{Binding ClearStartEndStops}"
-				        Content="Clear" />
-			</Grid>
-			<TextBox HorizontalAlignment="Left"
-			         VerticalAlignment="Top"
-			         Text="{Binding Performance,
-			                        Mode=OneWay,
-			                        UpdateSourceTrigger=PropertyChanged}" />
 
-			<WebView x:Name="WebViewMap"
-			         PermissionRequested="WebViewMap_PermissionRequested"
-			         Visibility="Collapsed" />
-			<local:StopsListView x:Name="grid"
-			                     Grid.Column="1"
-			                     Grid.ColumnSpan="2"
-			                     DataContext="{Binding StopModelView,
-			                                           UpdateSourceTrigger=PropertyChanged,
-			                                           Mode=OneWay}"
-			                     SelectionChanged="Grid_OnSelectionChanged"
-			                     Visibility="{Binding ShowStopsList,
-			                                          Mode=TwoWay,
-			                                          UpdateSourceTrigger=PropertyChanged,
-			                                          Converter={StaticResource BooleanToVisibilityConverter},
-			                                          FallbackValue=Collapsed}" />
-			<Border Grid.Row="1"
-			        Grid.ColumnSpan="2"
-			        Margin="0,0"
-			        VerticalAlignment="Bottom"
-			        Background="#FF5D5959">
-				<controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
-					<AppBarButton x:Name="ButtonIMap"
-					              Command="{Binding ShowICommand}"
-					              IsCompact="True"
+
+    <Border d:DataContext="{d:DesignInstance modelview:MapModelView}"
+            BorderBrush="{StaticResource LightBlueSolidColorBrush}"
+            BorderThickness="0,3,0,0"
+            DataContext="{Binding}">
+        <Grid x:Name="grid1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="0.3*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <mapControl:Map x:Name="map"
+                            mapControl:MapPanel.Location="{Binding Location,
+                                                                   Mode=TwoWay,
+                                                                   UpdateSourceTrigger=PropertyChanged}"
+                            TileLayer="{Binding [OpenStreetMap],
+                                                Source={StaticResource TileLayers}}"
+                            ZoomLevel="19" />
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Bottom"
+                  Background="#FF5D5959"
+                  Opacity="0.7"
+                  Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock DataContext="{Binding StartStop}"
+                           FontSize="20"
+                           Tapped="UIElement_OnTapped"
+                           Text="{Binding Name}" />
+                <ProgressBar Grid.ColumnSpan="5"
+                             VerticalAlignment="Bottom"
+                             IsIndeterminate="True" />
+                <Button Grid.Column="1"
+                        Command="{Binding SwitchStopsCommand}"
+                        Content="&lt;-&gt;" />
+                <TextBlock Grid.Column="2"
+                           DataContext="{Binding EndStop}"
+                           FontSize="20"
+                           Tapped="UIElement_OnTapped"
+                           Text="{Binding Name}" />
+                <Button Grid.Column="3"
+                        Command="{Binding CalculateRoutCommand}"
+                        Content="Calculate" />
+                <Button Grid.Column="4"
+                        Command="{Binding ClearStartEndStops}"
+                        Content="Clear" />
+            </Grid>
+            <TextBox HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+                     Text="{Binding Performance,
+                                    Mode=OneWay,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                     Visibility="Collapsed" />
+
+            <WebView x:Name="WebViewMap"
+                     PermissionRequested="WebViewMap_PermissionRequested"
+                     Visibility="Collapsed" />
+            <local:StopsListView x:Name="grid"
+                                 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+                                 DataContext="{Binding StopModelView,
+                                                       UpdateSourceTrigger=PropertyChanged,
+                                                       Mode=OneWay}"
+                                 SelectionChanged="Grid_OnSelectionChanged"
+                                 Visibility="{Binding ShowStopsList,
+                                                      Mode=TwoWay,
+                                                      UpdateSourceTrigger=PropertyChanged,
+                                                      Converter={StaticResource BooleanToVisibilityConverter},
+                                                      FallbackValue=Collapsed}" />
+            <Border Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0"
+                    VerticalAlignment="Bottom"
+                    Background="#FF5D5959">
+                <controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <AppBarButton x:Name="ButtonIMap"
                                   Click="MyLocationClick"
-					              Label="Местоположение"
-					              ToolTipService.ToolTip="Определить мое местоположение">
-						<AppBarButton.Icon>
-							<FontIcon FontFamily="Segoe UI" Glyph="Я" />
-						</AppBarButton.Icon>
-					</AppBarButton>
-					<AppBarButton x:Name="ButtonIMinskTrans"
-					              Click="ShowIClick"
-					              IsCompact="True"
-					              Visibility="Collapsed">
-						<AppBarButton.Icon>
-							<FontIcon Glyph="Я" />
-						</AppBarButton.Icon>
-					</AppBarButton>
-					<AppBarButton x:Name="ShowAllPushPins"
-					              Click="ButtonBase_OnClick"
-					              Icon="ViewAll"
-					              IsCompact="True"
-					              Visibility="Collapsed" />
-					<AppBarButton x:Name="ShowRoutingMinskTrans"
-					              Click="ShowWebViewRouting"
-					              Icon="MapDrive"
-					              IsCompact="True"
-					              Label="Минсктранс"
-					              ToolTipService.ToolTip="Отобразить карту минсктранса">
-						<interactivity:Interaction.Behaviors>
-							<core:EventTriggerBehavior EventName="Click">
-								<core:GoToStateAction StateName="ShowMinskTransRoutingVisualState" />
-							</core:EventTriggerBehavior>
-						</interactivity:Interaction.Behaviors>
-					</AppBarButton>
-					<AppBarButton x:Name="ShowNormalMap"
-					              Click="ShowNormalMapClick"
-					              Icon="Map"
-					              IsCompact="True"
-					              Visibility="Collapsed">
-						<interactivity:Interaction.Behaviors>
-							<core:EventTriggerBehavior EventName="Click">
-								<core:GoToStateAction StateName="ShowNormalMapVisualState" />
-							</core:EventTriggerBehavior>
-						</interactivity:Interaction.Behaviors>
-					</AppBarButton>
-					<AppBarButton x:Name="ShowVirtualTable"
-					              Click="ShowVirtualTableClick"
-					              Icon="Tag"
-					              IsCompact="True"
-					              Label="Маршрут"
-					              ToolTipService.ToolTip="Отобразить карту для прокладки маршрута">
-						<interactivity:Interaction.Behaviors>
-							<core:EventTriggerBehavior EventName="Click">
-								<core:GoToStateAction StateName="ShowVirtualTableVisualState" />
-							</core:EventTriggerBehavior>
-						</interactivity:Interaction.Behaviors>
-					</AppBarButton>
-					<AppBarToggleButton x:Name="appBarToggleButton"
-					                    Checked="AppBarToggleButton_OnChecked"
-					                    Command="{Binding ChangeShowStopList}"
-					                    Icon="ShowResults"
-					                    IsChecked="{Binding ShowStopsList,
-					                                        Mode=TwoWay,
-					                                        UpdateSourceTrigger=PropertyChanged}"
-					                    IsCompact="True"
-					                    Label="Остановки"
-					                    ToolTipService.ToolTip="Отобразить список остановок"
-					                    Unchecked="AppBarToggleButton_OnUnchecked">
-						<interactivity:Interaction.Behaviors>
-							<core:DataTriggerBehavior Binding="{Binding ShowStopsList}" Value="True">
-								<core:ChangePropertyAction PropertyName="Width"
-								                           TargetObject="{Binding ColumnDefinitions[1],
-								                                                  ElementName=grid1}"
-								                           Value="0.3*" />
-							</core:DataTriggerBehavior>
-							<core:DataTriggerBehavior Binding="{Binding ShowStopsList}" Value="False">
-								<core:ChangePropertyAction PropertyName="Width"
-								                           TargetObject="{Binding ColumnDefinitions[1],
-								                                                  ElementName=grid1}"
-								                           Value="0" />
-							</core:DataTriggerBehavior>
-							<core:EventTriggerBehavior EventName="Unchecked">
-								<core:ChangePropertyAction PropertyName="Width"
-								                           TargetObject="{Binding ColumnDefinitions[1],
-								                                                  ElementName=grid1}"
-								                           Value="0" />
-							</core:EventTriggerBehavior>
-							<core:EventTriggerBehavior EventName="Checked">
-								<core:ChangePropertyAction PropertyName="Width"
-								                           TargetObject="{Binding ColumnDefinitions[1],
-								                                                  ElementName=grid1}"
-								                           Value="0.3*" />
-							</core:EventTriggerBehavior>
-						</interactivity:Interaction.Behaviors>
-					</AppBarToggleButton>
-					<AppBarToggleButton x:Name="ExtSet"
-					                    Icon="Setting"
+                                  Command="{Binding ShowICommand}"
+                                  IsCompact="{Binding Settings.ShowButtonLabels,
+                                                      Converter={StaticResource BoolNoConverter},
+                                                      UpdateSourceTrigger=PropertyChanged}"
+                                  Label="Местоположение"
+                                  ToolTipService.ToolTip="Определить мое местоположение">
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="Segoe UI" Glyph="Я" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton x:Name="ButtonIMinskTrans"
+                                  Click="ShowIClick"
+                                  IsCompact="{Binding Settings.ShowButtonLabels,
+                                                      Converter={StaticResource BoolNoConverter},
+                                                      UpdateSourceTrigger=PropertyChanged}"
+                                  Label="На карте"
+                                  Visibility="Collapsed">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="Я" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton x:Name="ShowAllPushPins"
+                                  Click="ButtonBase_OnClick"
+                                  Icon="ViewAll"
+                                  IsCompact="{Binding Settings.ShowButtonLabels,
+                                                      Converter={StaticResource BoolNoConverter},
+                                                      UpdateSourceTrigger=PropertyChanged}"
+                                  Label="Все остановки"
+                                  ToolTipService.ToolTip="Показать все остановки"
+                                  Visibility="Collapsed" />
+                    <AppBarButton x:Name="ShowRoutingMinskTrans"
+                                  Click="ShowWebViewRouting"
+                                  Icon="MapDrive"
+                                  IsCompact="{Binding Settings.ShowButtonLabels,
+                                                      Converter={StaticResource BoolNoConverter},
+                                                      UpdateSourceTrigger=PropertyChanged}"
+                                  Label="Минсктранс"
+                                  ToolTipService.ToolTip="Отобразить карту минсктранса">
+                        <interactivity:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="Click">
+                                <core:GoToStateAction StateName="ShowMinskTransRoutingVisualState" />
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                    </AppBarButton>
+                    <AppBarButton x:Name="ShowNormalMap"
+                                  Click="ShowNormalMapClick"
+                                  Icon="Map"
+                                  IsCompact="{Binding Settings.ShowButtonLabels,
+                                                      Converter={StaticResource BoolNoConverter},
+                                                      UpdateSourceTrigger=PropertyChanged}"
+                                  Label="Карта"
+                                  Visibility="Collapsed">
+                        <interactivity:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="Click">
+                                <core:GoToStateAction StateName="ShowNormalMapVisualState" />
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                    </AppBarButton>
+                    <AppBarButton x:Name="ShowVirtualTable"
+                                  Click="ShowVirtualTableClick"
+                                  Icon="Tag"
+                                  IsCompact="{Binding Settings.ShowButtonLabels,
+                                                      Converter={StaticResource BoolNoConverter},
+                                                      UpdateSourceTrigger=PropertyChanged}"
+                                  Label="Маршрут"
+                                  ToolTipService.ToolTip="Отобразить карту для прокладки маршрута">
+                        <interactivity:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="Click">
+                                <core:GoToStateAction StateName="ShowVirtualTableVisualState" />
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                    </AppBarButton>
+                    <AppBarToggleButton x:Name="appBarToggleButton"
+                                        Checked="AppBarToggleButton_OnChecked"
+                                        Command="{Binding ChangeShowStopList}"
+                                        Icon="ShowResults"
+                                        IsChecked="{Binding ShowStopsList,
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                        IsCompact="{Binding Settings.ShowButtonLabels,
+                                                            Converter={StaticResource BoolNoConverter},
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                        Label="Остановки"
+                                        ToolTipService.ToolTip="Отобразить список остановок"
+                                        Unchecked="AppBarToggleButton_OnUnchecked">
+                        <interactivity:Interaction.Behaviors>
+                            <core:DataTriggerBehavior Binding="{Binding ShowStopsList}" Value="True">
+                                <core:ChangePropertyAction PropertyName="Width"
+                                                           TargetObject="{Binding ColumnDefinitions[1],
+                                                                                  ElementName=grid1}"
+                                                           Value="0.3*" />
+                            </core:DataTriggerBehavior>
+                            <core:DataTriggerBehavior Binding="{Binding ShowStopsList}" Value="False">
+                                <core:ChangePropertyAction PropertyName="Width"
+                                                           TargetObject="{Binding ColumnDefinitions[1],
+                                                                                  ElementName=grid1}"
+                                                           Value="0" />
+                            </core:DataTriggerBehavior>
+                            <core:EventTriggerBehavior EventName="Unchecked">
+                                <core:ChangePropertyAction PropertyName="Width"
+                                                           TargetObject="{Binding ColumnDefinitions[1],
+                                                                                  ElementName=grid1}"
+                                                           Value="0" />
+                            </core:EventTriggerBehavior>
+                            <core:EventTriggerBehavior EventName="Checked">
+                                <core:ChangePropertyAction PropertyName="Width"
+                                                           TargetObject="{Binding ColumnDefinitions[1],
+                                                                                  ElementName=grid1}"
+                                                           Value="0.3*" />
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                    </AppBarToggleButton>
+                    <AppBarToggleButton x:Name="ExtSet"
                                         Click="ShowAdditionalMenuClick"
-					                    IsCompact="True" />
+                                        Icon="Setting"
+                                        IsCompact="{Binding Settings.ShowButtonLabels,
+                                                            Converter={StaticResource BoolNoConverter},
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                        Label="Дополнительно" />
 
-				</controls:WrapPanel>
-			</Border>
-			<!--<Grid x:Name="grid"  Grid.Column="1">
+                </controls:WrapPanel>
+            </Border>
+            <!--<Grid x:Name="grid"  Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
@@ -330,193 +353,193 @@
                 </ListView>
 
             </Grid>-->
-			<Grid Grid.Row="2" Grid.ColumnSpan="3">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<controls:WrapPanel Grid.Column="0" Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ExtSet, UpdateSourceTrigger=PropertyChanged}">
-					<Grid Width="220" Margin="5">
-						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
-						</Grid.RowDefinitions>
-						<TextBlock HorizontalAlignment="Center"
-						           FontSize="14"
-						           Foreground="Gray"
-						           Text="Zoom Level" />
-						<Slider Grid.Row="1"
-						        Width="200"
-						        Margin="10,-10,10,-10"
-						        Maximum="{Binding MaxZoomLevel,
-						                          ElementName=map,
-						                          UpdateSourceTrigger=PropertyChanged}"
-						        Minimum="{Binding MinZoomLevel,
-						                          ElementName=map,
-						                          UpdateSourceTrigger=PropertyChanged}"
-						        SmallChange="0.1"
-						        Value="{Binding TargetZoomLevel,
-						                        ElementName=map,
-						                        Mode=TwoWay,
-						                        UpdateSourceTrigger=PropertyChanged}" />
-					</Grid>
-					<Grid Width="220" Margin="5">
-						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
-						</Grid.RowDefinitions>
-						<TextBlock HorizontalAlignment="Center"
-						           FontSize="14"
-						           Foreground="Gray"
-						           Text="Heading" />
-						<Slider Grid.Row="1"
-						        Width="200"
-						        Margin="10,-10,10,-10"
-						        LargeChange="45"
-						        Maximum="360"
-						        Minimum="0"
-						        SmallChange="5"
-						        Value="{Binding Heading,
-						                        ElementName=map,
-						                        Mode=TwoWay}" />
-					</Grid>
+            <Grid Grid.Row="2" Grid.ColumnSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:WrapPanel Grid.Column="0" Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ExtSet, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid Width="220" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontSize="14"
+                                   Foreground="Gray"
+                                   Text="Zoom Level" />
+                        <Slider Grid.Row="1"
+                                Width="200"
+                                Margin="10,-10,10,-10"
+                                Maximum="{Binding MaxZoomLevel,
+                                                  ElementName=map,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                Minimum="{Binding MinZoomLevel,
+                                                  ElementName=map,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                SmallChange="0.1"
+                                Value="{Binding TargetZoomLevel,
+                                                ElementName=map,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                    <Grid Width="220" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontSize="14"
+                                   Foreground="Gray"
+                                   Text="Heading" />
+                        <Slider Grid.Row="1"
+                                Width="200"
+                                Margin="10,-10,10,-10"
+                                LargeChange="45"
+                                Maximum="360"
+                                Minimum="0"
+                                SmallChange="5"
+                                Value="{Binding Heading,
+                                                ElementName=map,
+                                                Mode=TwoWay}" />
+                    </Grid>
 
-					<ComboBox Width="200"
-					          Margin="10"
-					          VerticalAlignment="Center"
-					          SelectedValue="{Binding TileLayer,
-					                                  ElementName=map,
-					                                  Mode=TwoWay}"
-					          SelectedValuePath="Tag">
-						<ComboBoxItem Content="OpenStreetMap" Tag="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}" />
-						<ComboBoxItem Content="OpenCycleMap" Tag="{Binding [Thunderforest OpenCycleMap], Source={StaticResource TileLayers}}" />
-						<ComboBoxItem Content="Landscape" Tag="{Binding [Thunderforest Landscape], Source={StaticResource TileLayers}}" />
-						<ComboBoxItem Content="Outdoors" Tag="{Binding [Thunderforest Outdoors], Source={StaticResource TileLayers}}" />
-						<ComboBoxItem Content="Transport" Tag="{Binding [Thunderforest Transport], Source={StaticResource TileLayers}}" />
-						<ComboBoxItem Content="Transport Dark" Tag="{Binding [Thunderforest Transport Dark], Source={StaticResource TileLayers}}" />
-						<ComboBoxItem Content="MapQuest Open" Tag="{Binding [MapQuest OpenStreetMap], Source={StaticResource TileLayers}}" />
-						<!--<ComboBoxItem Tag="{Binding [Bing Maps Road], Source={StaticResource TileLayers}}">Bing Maps Road</ComboBoxItem>
+                    <ComboBox Width="200"
+                              Margin="10"
+                              VerticalAlignment="Center"
+                              SelectedValue="{Binding TileLayer,
+                                                      ElementName=map,
+                                                      Mode=TwoWay}"
+                              SelectedValuePath="Tag">
+                        <ComboBoxItem Content="OpenStreetMap" Tag="{Binding [OpenStreetMap], Source={StaticResource TileLayers}}" />
+                        <ComboBoxItem Content="OpenCycleMap" Tag="{Binding [Thunderforest OpenCycleMap], Source={StaticResource TileLayers}}" />
+                        <ComboBoxItem Content="Landscape" Tag="{Binding [Thunderforest Landscape], Source={StaticResource TileLayers}}" />
+                        <ComboBoxItem Content="Outdoors" Tag="{Binding [Thunderforest Outdoors], Source={StaticResource TileLayers}}" />
+                        <ComboBoxItem Content="Transport" Tag="{Binding [Thunderforest Transport], Source={StaticResource TileLayers}}" />
+                        <ComboBoxItem Content="Transport Dark" Tag="{Binding [Thunderforest Transport Dark], Source={StaticResource TileLayers}}" />
+                        <ComboBoxItem Content="MapQuest Open" Tag="{Binding [MapQuest OpenStreetMap], Source={StaticResource TileLayers}}" />
+                        <!--<ComboBoxItem Tag="{Binding [Bing Maps Road], Source={StaticResource TileLayers}}">Bing Maps Road</ComboBoxItem>
                     <ComboBoxItem Tag="{Binding [Bing Maps Aerial], Source={StaticResource TileLayers}}">Bing Maps Aerial</ComboBoxItem>
                     <ComboBoxItem Tag="{Binding [Bing Maps Hybrid], Source={StaticResource TileLayers}}">Bing Maps Hybrid</ComboBoxItem>-->
-					</ComboBox>
-				</controls:WrapPanel>
-			</Grid>
-		</Grid>
-		<VisualStateManager.VisualStateGroups>
-			<VisualStateGroup x:Name="MapVisualStates">
-				<VisualState x:Name="ShowMinskTransRoutingVisualState">
-					<VisualState.Setters>
-						<Setter Target="grid.(UIElement.Visibility)" Value="Collapsed" />
-						<Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Collapsed" />
-						<Setter Target="ExtSet.(UIElement.Visibility)" Value="Collapsed" />
-						<Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2" />
-					</VisualState.Setters>
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutingMinskTrans" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMinskTrans" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="WebViewMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="map" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="ShowNormalMapVisualState">
+                    </ComboBox>
+                </controls:WrapPanel>
+            </Grid>
+        </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="MapVisualStates">
+                <VisualState x:Name="ShowMinskTransRoutingVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="ExtSet.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2" />
+                    </VisualState.Setters>
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowRoutingMinskTrans" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMinskTrans" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMap" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WebViewMap" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="map" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="ShowNormalMapVisualState">
 
-					<VisualState.Setters>
+                    <VisualState.Setters>
 
-						<Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2" />
-						<Setter Target="map.(Grid.ColumnSpan)" Value="2" />
-					</VisualState.Setters>
-				</VisualState>
-				<VisualState x:Name="ShowNormalMapWideVisualState">
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="map.(Grid.ColumnSpan)" Value="2" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ShowNormalMapWideVisualState">
 
-					<VisualState.Setters>
-						<Setter Target="grid.(UIElement.Visibility)" Value="Visible" />
-						<Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="1" />
-					</VisualState.Setters>
-				</VisualState>
-				<VisualState x:Name="ShowVirtualTableVisualState">
-					<VisualState.Setters>
-						<Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2" />
-						<Setter Target="grid.(UIElement.Visibility)" Value="Collapsed" />
-						<Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Collapsed" />
-						<Setter Target="ExtSet.(UIElement.Visibility)" Value="Collapsed" />
-					</VisualState.Setters>
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowVirtualTable" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="WebViewMap" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetName="map" Storyboard.TargetProperty="(UIElement.Visibility)">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
-			</VisualStateGroup>
-		</VisualStateManager.VisualStateGroups>
-	</Border>
+                    <VisualState.Setters>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ShowVirtualTableVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="WebViewMap.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="appBarToggleButton.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="ExtSet.(UIElement.Visibility)" Value="Collapsed" />
+                    </VisualState.Setters>
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowVirtualTable" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowNormalMap" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonIMap" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WebViewMap" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="map" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Border>
 </UserControl>

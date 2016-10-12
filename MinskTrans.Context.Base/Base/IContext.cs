@@ -50,7 +50,9 @@ namespace MinskTrans.Context.Base
 		Task Load(LoadType type = LoadType.LoadAll);
 		Task Recover();
 		Task Save(bool saveAllDb = true);
-		Task AddFavouriteRout(Rout rout);
+	    Task ClearState();
+
+        Task AddFavouriteRout(Rout rout);
 		Task AddFavouriteStop(Stop stop);
 		Task RemoveFavouriteRout(Rout rout);
 		Task RemoveFavouriteStop(Stop stop);

@@ -223,6 +223,17 @@ namespace MinskTrans.Context
             }
         }
 
+        public Task ClearState()
+        {
+            Routs = new Rout[0];
+            Stops = new Stop[0];
+            Times = new Schedule[0];
+            UpdateDateTimeUtc = DateTime.MinValue;
+            favouriteRouts = new List<int>(0);
+            favouriteStops = new List<int>(0);
+            return Save(true);
+        }
+
         public virtual async Task Load(LoadType type = LoadType.LoadAll)
         {
             Debug.WriteLine($"{DateTime.UtcNow} UniversalContext.Load started");

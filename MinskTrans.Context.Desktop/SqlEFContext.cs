@@ -103,7 +103,12 @@ namespace MinskTrans.Context.Desktop
 			throw new NotImplementedException();
 		}
 
-		public void Save()
+	    public Task Clear(TypeFolder Folder)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public void Save()
 		{
 			for (int i = 0; i < MainNews.NewsEntries.Count; i++)
 			{

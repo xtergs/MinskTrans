@@ -40,6 +40,8 @@ namespace UniversalMinskTransRelease.View
 
         private void OnSelectionChanged(SelectionChangedEventArgs e)
         {
+            var added = e.AddedItems.ToList();
+            var deleted = e.RemovedItems.ToList();
             SelectionChanged?.Invoke(this, e);
         }
 

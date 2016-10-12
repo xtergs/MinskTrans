@@ -641,8 +641,9 @@ namespace PushNotificationServer
 		{
 			get { return new RelayCommand(() =>
 			{
-				
-				
+			    context.ResetState();
+			    newsManager.ResetState();
+
 			});}
 		}
 

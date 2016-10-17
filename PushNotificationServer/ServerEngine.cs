@@ -59,7 +59,7 @@ namespace PushNotificationServer
 			
 		}
 
-		public async void SendNotificationAsync(TypeOfUpdates updates)
+		public async Task<NotificationOutcome> SendNotificationAsync(TypeOfUpdates updates)
 		{
 		    var hub = GetHub();
 			var toast = $@"{updates}";
@@ -67,6 +67,7 @@ namespace PushNotificationServer
 			notification.ContentType = "application/octet-stream";
 			notification.Headers["X-WNS-Type"] = @"wns/raw";
 			var result  = await hub.SendNotificationAsync(notification);
+		    return result;
 		}
 	}
 
@@ -117,11 +118,11 @@ namespace PushNotificationServer
 			OndeDriveController.NeedAttention +=
 				(sender, args) => container.Resolve<INotifyHelper>().ReportErrorAsync("Need attention OneDrive  !!!");
 			OndeDriveController.Inicialize();
-			this.StopChecknews += (sender, args) =>
+			this.StopChecknews += async (sender, args) =>
 			{
 				if (args != TypeOfUpdates.None)
 				{
-					UploadAllToOneDrive(args);
+					await UploadAllToOneDrive(args);
 				}
 			};
 		}
@@ -133,23 +134,33 @@ namespace PushNotificationServer
 			if (updates == TypeOfUpdates.None)
 				return;
 			IsFilesBlocked = true;
-			try
-			{
-				var result = await Task.WhenAll(
-					//OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName),
-					//OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName),
-					OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName),
-					OndeDriveController.UploadFileAsync(files.AllNewsFileV3.Folder, files.AllNewsFileV3.FileName),
-					OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName),
-					OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName),
-					OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName),
-					OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName));
-				container.Resolve<NotifyTimeTableChanges>().SendNotificationAsync(updates);
-                UploadedFiles.Clear();
-			    for (int i = 0; i < result.Length; i++)
-			        UploadedFiles.Add(result[i]);
-
-			}
+		    KeyValuePair<string, string>[] result = null;
+		    try
+		    {
+		        //await container.Resolve<INotifyHelper>().ReportErrorAsync("About to send one drive");
+		        result = await Task.WhenAll(
+		            //OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName),
+		            //OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName),
+		            OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName),
+		            OndeDriveController.UploadFileAsync(files.AllNewsFileV3.Folder, files.AllNewsFileV3.FileName),
+		            OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName),
+		            OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName),
+		            OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName),
+		            OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName));
+		        //await container.Resolve<INotifyHelper>().ReportErrorAsync("About to notify by pushs");
+		        var resul = await container.Resolve<NotifyTimeTableChanges>().SendNotificationAsync(updates);
+		        if (resul.Failure != 0 || resul.State != NotificationOutcomeState.Enqueued)
+		            container.Resolve<INotifyHelper>()
+		                .ReportErrorAsync(
+		                    $"{resul.NotificationId}\n{resul.State}\n{resul.Results}\nSuccess:{resul.Success}\nFailour:{resul.Failure}");
+		        UploadedFiles.Clear();
+		        for (int i = 0; i < result.Length; i++)
+		            UploadedFiles.Add(result[i]);
+		    }
+		    catch (Exception e)
+		    {
+		        throw;
+		    }
 			finally
 			{
 				IsFilesBlocked = false;
@@ -174,9 +185,9 @@ namespace PushNotificationServer
 
 		ServerEngine()
 		{
-			UploadAllToOneDriveCommand = new RelayCommand(() =>
+			UploadAllToOneDriveCommand = new RelayCommand(async () =>
 			{
-				UploadAllToOneDrive(TypeOfUpdates.All);
+				await UploadAllToOneDrive(TypeOfUpdates.All);
 			}, () => !IsFilesBlocked);
 			SetAutoUpdateTimer(NewsAutoUpdate);
 			var builder = new ContainerBuilder();
@@ -192,7 +203,7 @@ namespace PushNotificationServer
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
 			builder.RegisterType<Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<BaseNewsContext>().As<INewsContext>().SingleInstance();
+			builder.RegisterType<BsonBaseNewsContext>().As<INewsContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
 			builder.RegisterType<OneDriveControllerOfficial>().As<ICloudStorageController>().SingleInstance();

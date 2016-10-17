@@ -1,1 +1,1 @@
-d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\UniversalMinskTransRelease_3.1.4.0\UniversalMinskTransRelease_3.1.4.0_x86_x64_arm.appxbundle
+d:\builds\MinskTrans\UniversalMinskTrans\UniversalMinskTransRelease\AppPackages\UniversalMinskTransRelease_2016.1015.1610.0\UniversalMinskTransRelease_2016.1015.1610.0_x86_x64_arm.appxbundle

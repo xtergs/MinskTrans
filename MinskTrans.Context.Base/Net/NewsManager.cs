@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -10,6 +13,7 @@ using MinskTrans.Context;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
 
 namespace MinskTrans.Net
 {
@@ -26,11 +30,14 @@ namespace MinskTrans.Net
 		Task LoadDataAsync(TypeFolder folder, string file);
 		Task Save(TypeFolder folder, string file);
 	    Task Clear(TypeFolder Folder);
-	}
+        string[] supportedVersions { get; }
+
+    }
 
 	public class BaseNewsContext : INewsContext
 	{
-		private ILogger log;
+	    public string[] supportedVersions  =>  new[] {"3"};
+	    private ILogger log;
 		private FileHelperBase fileHelerp;
 		public BaseNewsContext(FileHelperBase fileHelper, ILogManager logManager)
 		{
@@ -41,7 +48,7 @@ namespace MinskTrans.Net
 		public ListWithDate HotNews { get; private set; }
 
 		readonly object saveLocker = new object();
-		public async Task LoadDataAsync(TypeFolder folder, string file)
+		public virtual async Task LoadDataAsync(TypeFolder folder, string file)
 		{
 			if (!await fileHelerp.FileExistAsync(folder, file).ConfigureAwait(false))
 			{
@@ -73,7 +80,7 @@ namespace MinskTrans.Net
 			}
 		}
 
-		public Task Save(TypeFolder folder, string file)
+		public virtual Task Save(TypeFolder folder, string file)
 		{
 			try
 			{
@@ -97,8 +104,129 @@ namespace MinskTrans.Net
 	    }
 	}
 
+    public class NewsSaveStruct
+    {
+        public ListWithDate MainNews { get; set; }
+        public ListWithDate HotNews { get; set; }
+    }
 
-	public abstract class NewsManagerBase : INotifyPropertyChanged
+    public class BsonBaseNewsContext : INewsContext
+    {
+        public string[] supportedVersions => new[] { "4" };
+        private ILogger log;
+        private FileHelperBase fileHelerp;
+        public BsonBaseNewsContext(FileHelperBase fileHelper, ILogManager logManager)
+        {
+            this.fileHelerp = fileHelper;
+            this.log = logManager.GetLogger<BaseNewsContext>();
+        }
+        public ListWithDate MainNews { get; private set; }
+        public ListWithDate HotNews { get; private set; }
+
+        readonly object saveLocker = new object();
+
+        public async Task LoadDataAsync(TypeFolder folder, string file)
+        {
+            if (!await fileHelerp.FileExistAsync(folder, file).ConfigureAwait(false))
+            {
+                MainNews = new ListWithDate();
+                HotNews = new ListWithDate();
+                return;
+            }
+            try
+            {
+                JsonSerializer serializer = GetSerializer();
+                NewsSaveStruct result = null;
+                var open = await fileHelerp.OpenStream(folder, file).ConfigureAwait(false);
+                lock (saveLocker)
+                {
+                    using (var stream = open)
+                    {
+                        stream.Position = 0;
+                        using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress, true))
+                        using (BsonReader reader = new BsonReader(zip))
+                        {
+                            result = serializer.Deserialize<NewsSaveStruct>(reader);
+                        }
+                    }
+                    SetSaveStruct(result);
+                }
+            }
+            catch (Exception e)
+            {
+                MainNews = new ListWithDate();
+                HotNews = new ListWithDate();
+                Debug.WriteLine("NewsContext: not corrent json format data");
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+            }
+        }
+
+        private JsonSerializer GetSerializer()
+        {
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                return serializer;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+
+        protected virtual void SetSaveStruct(NewsSaveStruct st)
+
+        {
+            MainNews = st?.MainNews ?? new ListWithDate();
+                        HotNews = st?.HotNews ?? new ListWithDate();
+        }
+        protected virtual NewsSaveStruct GetSaveStruct()
+        {
+            return new NewsSaveStruct {HotNews = HotNews, MainNews = MainNews};
+        }
+
+        public Task Save(TypeFolder folder, string file)
+        {
+            try
+            {
+                string str = "";
+
+
+                JsonSerializer serializer = GetSerializer();
+                lock (saveLocker)
+                {
+                    MemoryStream ms = new MemoryStream();
+                    using (GZipStream zip = new GZipStream(ms, CompressionMode.Compress, true))
+                    using (BsonWriter writer = new BsonWriter(zip))
+                    { 
+                        serializer.Serialize(writer, GetSaveStruct());
+                        writer.CloseOutput = false;
+                        writer.Flush();
+                        zip.Flush();
+                    }
+                    ms.Position = 0;
+                    return fileHelerp.WriteTextAsync(folder, file, ms);
+
+                }
+            }
+            catch (JsonSerializationException e)
+            {
+                log.Error($"News context: can't serialize data:{e.Message} \n {MainNews}{HotNews}");
+            }
+            return null;
+        }
+
+        public Task Clear(TypeFolder Folder)
+        {
+            HotNews = new ListWithDate();
+            MainNews = new ListWithDate();
+            return fileHelerp.ClearFolder(Folder);
+        }
+    }
+
+    public abstract class NewsManagerBase : INotifyPropertyChanged
     {
         private ILogger log;
 	    private INewsContext context;

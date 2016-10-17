@@ -49,16 +49,16 @@ namespace UniversalMinskTransRelease.View
 				if (stop.Routs.Any(tr => tr.Transport == TransportType.Metro))
 					menu.Commands.Add(new UICommand(model.MapModelView.TransportToString(stop, TransportType.Metro)));
 
-                if (model.MapModelView.StartStopPushpin != push)
-			    menu.Commands.Add(new UICommand("Начало", command =>
-			    {
-			        model.MapModelView.SetStartStop.Execute(push);
-			    }));
-                if (model.MapModelView.EndStopPushpin != push)
-                    menu.Commands.Add(new UICommand("Конец", command =>
-                {
-                    model.MapModelView.SetEndtStop.Execute(push);
-                }));
+       //         if (model.MapModelView.StartStopPushpin != push)
+			    //menu.Commands.Add(new UICommand("Начало", command =>
+			    //{
+			    //    model.MapModelView.SetStartStop.Execute(push);
+			    //}));
+       //         if (model.MapModelView.EndStopPushpin != push)
+       //             menu.Commands.Add(new UICommand("Конец", command =>
+       //         {
+       //             model.MapModelView.SetEndtStop.Execute(push);
+       //         }));
 				await menu.ShowAsync(map.LocationToViewportPoint(MapPanel.GetLocation(push)));
 			};
 

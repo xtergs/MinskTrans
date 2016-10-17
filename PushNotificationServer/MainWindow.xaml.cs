@@ -151,20 +151,20 @@ namespace PushNotificationServer
 				Time = time.Add(addingTime);
 			}, null, new TimeSpan(), addingTime);
 
-			logingTimer = new Timer((ar) =>
-			{
-				Dispatcher.InvokeAsync( async () =>
-				{
-					debugOutput.Clear();
-					using (TextReader reader = new StreamReader((await LogManagerFactory.DefaultLogManager.GetCompressedLogs())))
-					{
-						var line = reader.ReadLine();
-						if (string.IsNullOrEmpty(line))
-							return;
-						debugOutput.Add(line);
-					}
-				});
-			}, null, 1000, 1000*30);
+			//logingTimer = new Timer((ar) =>
+			//{
+			//	Dispatcher.InvokeAsync( async () =>
+			//	{
+			//		debugOutput.Clear();
+			//		using (TextReader reader = new StreamReader((await LogManagerFactory.DefaultLogManager.GetCompressedLogs())))
+			//		{
+			//			var line = reader.ReadLine();
+			//			if (string.IsNullOrEmpty(line))
+			//				return;
+			//			debugOutput.Add(line);
+			//		}
+			//	});
+			//}, null, 1000, 1000*30);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

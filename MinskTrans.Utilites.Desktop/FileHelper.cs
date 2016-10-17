@@ -129,10 +129,17 @@ namespace MinskTrans.Utilites.Desktop
 			return File.Open(Path.Combine(path, file), FileMode.Open);
 		}
 
-	    public override Task WriteTextAsync(TypeFolder folder, string file, Stream text)
+	    public override async Task WriteTextAsync(TypeFolder folder, string file, Stream text)
 	    {
-	        throw new NotImplementedException();
-	    }
+            string path = Folders[folder];
+	        using (var stream = File.Create(Path.Combine(path, file)))
+	        {
+	            text.Position = 0;
+	            await text.CopyToAsync(stream).ConfigureAwait(false);
+                text.Close();
+                text.Dispose();
+	        }
+        }
 
 	    #endregion
 	}

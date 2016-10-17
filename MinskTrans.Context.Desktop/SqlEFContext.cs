@@ -108,6 +108,8 @@ namespace MinskTrans.Context.Desktop
 	        throw new NotImplementedException();
 	    }
 
+	    public string[] supportedVersions { get; }
+
 	    public void Save()
 		{
 			for (int i = 0; i < MainNews.NewsEntries.Count; i++)

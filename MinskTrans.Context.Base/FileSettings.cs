@@ -41,7 +41,7 @@ namespace MinskTrans.Context
 			MainNewsFileV2 = new FilePathStruct("months.v2.txt", TypeFolder.Local, "");
             HotNewsFileV2 = new FilePathStruct("days.v2.txt", TypeFolder.Local, "");
 
-			AllNewsFileV3 = new FilePathStruct("news.json_v3", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117176&authkey=AIeOI5DJwJDd2n0");
+			AllNewsFileV3 = new FilePathStruct("news.json_v4", TypeFolder.Local, "", "https://onedrive.live.com/download?cid=27EDF63E3C801B19&resid=27EDF63E3C801B19%2117176&authkey=AIeOI5DJwJDd2n0");
 #else
             FavouriteFile = new FilePathStruct("favourite.dat", TypeFolder.Roaming);
             StatisticFile = new FilePathStruct("statistics.dat", TypeFolder.Roaming);

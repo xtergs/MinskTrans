@@ -60,7 +60,7 @@
       <HintPath>..\FileDb\FileDbPcl.dll</HintPath>
     </Reference>
     <Reference Include="MapControl.WinRT">
-      <HintPath>..\..\..\..\Programming\MinskTrans\UniversalMinskTrans\packages\XAML.MapControl.2.9.0\lib\wpa81\MapControl.WinRT.dll</HintPath>
+      <HintPath>..\..\MapControl\WinRT\obj\Debug\MapControl.WinRT.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,18 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using MinskTrans.Utilites.Base.Net;
-    using MinskTrans.Universal.Annotations;
-    using Windows.Storage;
+using Windows.Storage;
+using MinskTrans.Context.Utilites;
 
-//using MinskTrans.DesctopClient.Annotations;
-//using MinskTrans.DesctopClient.Annotations;
-using MyLibrary;
-
-namespace MinskTrans.DesctopClient.Modelview
+namespace CommonLibrary.ModelView
 {
     public class UniversalApplicationSettingsHelper : IApplicationSettingsHelper
     {
@@ -37,10 +30,18 @@ namespace MinskTrans.DesctopClient.Modelview
             {
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey(key))
                 {
-                    var backField =
-                        DateTime.Parse(ApplicationData.Current.LocalSettings.Values[key].ToString(), CultureInfo.InvariantCulture);
-                    dateTimeDictionary.Add(key, backField);
-                    return backField;
+                    try
+                    {
+                        var backField =
+                            DateTime.Parse(ApplicationData.Current.LocalSettings.Values[key].ToString(),
+                                CultureInfo.InvariantCulture);
+                        dateTimeDictionary.Add(key, backField);
+                        return backField;
+                    }
+                    catch (FormatException exception)
+                    {
+                        return value;
+                    }
                 }
 
             }

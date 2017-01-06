@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using MinskTrans.Context.Base.BaseModel;
+using MinskTrans.Context.Utilites;
 
 namespace MyLibrary
 {

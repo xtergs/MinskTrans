@@ -20,6 +20,7 @@ using GalaSoft.MvvmLight.Command;
 using MyLibrary;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Utilites;
 #if WINDOWS_PHONE_APP
 using Windows.UI.Xaml.Media.Animation;
 #endif

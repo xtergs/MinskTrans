@@ -89,8 +89,8 @@
                         <ToggleButton x:Name="ToggleButton"
                                       HorizontalAlignment="Stretch"
                                       HorizontalContentAlignment="Stretch"
-                                      FontSize="17"
                                       Click="ShowHideRoutStopTimeTable"
+                                      FontSize="17"
                                       Style="{ThemeResource ToggleButtonStyle1}">
                             <Grid HorizontalAlignment="Stretch" Padding="0">
                                 <Button HorizontalAlignment="Right"
@@ -229,26 +229,27 @@
                 Background="#FF5D5959">
             <controls:WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <AppBarButton x:Name="SoftBackButton"
+                              Click="SoftBackButton_OnClick"
                               Command="{Binding BackCommand}"
                               Icon="Back"
-                              Click="SoftBackButton_OnClick"
                               IsCompact="True"
                               Label="Назад" />
                 <AppBarToggleButton HorizontalAlignment="Center"
+                                    Checked="AppBarToggleButton_Checked"
+                                    Click="FavouriteToggle"
                                     Command="{Binding AddRemoveFavouriteRout}"
                                     CommandParameter="{Binding RouteNumSelectedValue}"
                                     Icon="Favorite"
-                                    Click="FavouriteToggle"
                                     IsChecked="{Binding IsRoutFavourite,
                                                         Mode=TwoWay,
                                                         UpdateSourceTrigger=PropertyChanged}"
                                     IsCompact="True"
-                                    Label="Избранное" Checked="AppBarToggleButton_Checked" />
+                                    Label="Избранное" />
                 <AppBarButton HorizontalAlignment="Center"
+                              Click="ShowOnMapToggle"
                               Command="{Binding ShowRouteMap}"
                               CommandParameter="{Binding RouteNumSelectedValue}"
                               Icon="Map"
-                              Click="ShowOnMapToggle"
                               IsCompact="True"
                               Label="На карте"
                               ToolTipService.ToolTip="Показать на карте" />

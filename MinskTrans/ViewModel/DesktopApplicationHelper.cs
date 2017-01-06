@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Configuration;
-using MinskTrans.DesctopClient.Properties;
-using MyLibrary;
+using MinskTrans.Context.Utilites;
 
 namespace MinskTrans.DesctopClient.ViewModel
 {

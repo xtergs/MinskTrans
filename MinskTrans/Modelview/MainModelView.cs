@@ -12,6 +12,7 @@ using MinskTrans.Context.Desktop;
 using MinskTrans.Context.Fakes;
 using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
+using MinskTrans.Context.Utilites;
 using MinskTrans.DesctopClient.ViewModel;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;

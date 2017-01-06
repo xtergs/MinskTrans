@@ -32,49 +32,52 @@ namespace PushNotificationServer
 		{
 			InitializeComponent();
 
-			//Browser.Navigate(@"https://login.live.com/oauth20_authorize.srf?pretty=false&client_id=0000000040158EFF&scope=wl.basic+wl.signin+wl.skydrive&response_type=code&redirect_uri=");
-			NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
+#if DEBUG
+		    this.Title += " DEBUG!!!";
+#endif
+
+            //Browser.Navigate(@"https://login.live.com/oauth20_authorize.srf?pretty=false&client_id=0000000040158EFF&scope=wl.basic+wl.signin+wl.skydrive&response_type=code&redirect_uri=");
+            NewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			HotNewsTextBlock.DataContext = ServerEngine.Engine.NewsManager;
 			AutoUpdateNewsCheckBox.DataContext = ServerEngine.Engine;
 			this.DataContext = ServerEngine.Engine;
 			MainGrid.DataContext = ServerEngine.Engine;
 
-			ServerEngine.Engine.StartCheckNews += (sender, args) =>
-			{
-				Dispatcher.Invoke(() =>
-				{
-					if (sender is UIElement)
-						((UIElement)sender).IsEnabled = false;
-					Progress.Visibility = Visibility.Visible;
-					Progress.IsIndeterminate = true;
-				});
-				timerNewsAutoUpdate.Change(uint.MaxValue, uint.MaxValue);
-			};
+			ServerEngine.Engine.StartCheckNews += OnEngineOnStartCheckNews;
 
-			ServerEngine.Engine.StopChecknews += (sender, args) =>
-			{
-				Dispatcher.Invoke(() =>
-				{
-					Progress.Visibility = Visibility.Collapsed;
-					if (sender is UIElement)
-						((UIElement) sender).IsEnabled = true;
-					
-					
-				});
-				Time = new TimeSpan();
-				timerNewsAutoUpdate.Change(new TimeSpan(), addingTime);
-			};
+			ServerEngine.Engine.StopChecknews += OnEngineOnStopChecknews;
 
 			SetAutoUpdateTimer(NewsAutoUpdate);
 
 			output.ItemsSource = debugOutput;
 		}
 
-		
+	    private void OnEngineOnStopChecknews(object sender, TypeOfUpdates args)
+	    {
+	        Dispatcher.Invoke(() =>
+	        {
+	            Progress.Visibility = Visibility.Collapsed;
+	            if (sender is UIElement)
+	                ((UIElement) sender).IsEnabled = true;
+	        });
+	        Time = new TimeSpan();
+	        timerNewsAutoUpdate.Change(new TimeSpan(), addingTime);
+	    }
 
-		
+	    private void OnEngineOnStartCheckNews(object sender, EventArgs args)
+	    {
+	        Dispatcher.Invoke(() =>
+	        {
+	            if (sender is UIElement)
+	                ((UIElement) sender).IsEnabled = false;
+	            Progress.Visibility = Visibility.Visible;
+	            Progress.IsIndeterminate = true;
+	        });
+	        timerNewsAutoUpdate.Change(uint.MaxValue, uint.MaxValue);
+	    }
 
-		public bool Autorun
+
+	    public bool Autorun
 		{
 			get
 			{

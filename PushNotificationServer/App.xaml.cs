@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Navigation;
+using Microsoft.Build.Utilities;
 using Microsoft.HockeyApp;
-using PushNotificationServer.Helper;
 using UniversalMinskTransRelease.Helpers;
+using Task = System.Threading.Tasks.Task;
 
 namespace PushNotificationServer
 {
@@ -13,10 +14,11 @@ namespace PushNotificationServer
 	{
 	    public App()
 	    {
-            Microsoft.HockeyApp.HockeyClient.Current.Configure(AppServerConstants.HockeyAppId);
+            HockeyClient.Current.Configure(AppServerConstants.HockeyAppId);
             Application.Current.DispatcherUnhandledException += (sender, args) =>
-	        {
-	            MessageBox.Show(args.Exception.Message + "\n" + args.Exception.StackTrace);
+            {
+                //HockeyClient.Current.TrackException(args.Exception);
+                //MessageBox.Show(args.Exception.Message + "\n" + args.Exception.StackTrace);
 	        };
 
 	    }
@@ -25,14 +27,16 @@ namespace PushNotificationServer
 			//ServerEngine.Engine.InicializeAsync();
 		}
 
-		async private void Application_Startup(object sender, StartupEventArgs e)
+		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			await ServerEngine.Engine.InicializeAsync();
+            Task.WhenAll(ServerEngine.Engine.InicializeAsync(),
+		        HockeyClient.Current.SendCrashesAsync());
 		}
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message);
+            //HockeyClient.Current.TrackException(e.Exception);
+            //MessageBox.Show(e.Exception.Message);
         }
     }
 }

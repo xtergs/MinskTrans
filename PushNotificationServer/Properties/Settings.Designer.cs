@@ -81,5 +81,77 @@ namespace PushNotificationServer.Properties {
                 this["CloudToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int CountOfDiffDays {
+            get {
+                return ((int)(this["CountOfDiffDays"]));
+            }
+            set {
+                this["CountOfDiffDays"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("24")]
+        public int CleanIntervalHours {
+            get {
+                return ((int)(this["CleanIntervalHours"]));
+            }
+            set {
+                this["CleanIntervalHours"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DeleteRegistrations {
+            get {
+                return ((bool)(this["DeleteRegistrations"]));
+            }
+            set {
+                this["DeleteRegistrations"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HubName {
+            get {
+                return ((string)(this["HubName"]));
+            }
+            set {
+                this["HubName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ChanelEndPoint {
+            get {
+                return ((string)(this["ChanelEndPoint"]));
+            }
+            set {
+                this["ChanelEndPoint"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UsePushNotifications {
+            get {
+                return ((bool)(this["UsePushNotifications"]));
+            }
+            set {
+                this["UsePushNotifications"] = value;
+            }
+        }
     }
 }

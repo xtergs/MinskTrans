@@ -12,6 +12,7 @@ using GalaSoft.MvvmLight.Command;
 using MinskTrans.Context;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.UniversalModelView;
+using MinskTrans.Context.Utilites;
 using MinskTrans.DesctopClient.Model;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;

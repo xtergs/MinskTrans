@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Navigation;
 using MapControl;
 using MetroLog;
 using Microsoft.Xaml.Interactivity;
+using MinskTrans.Context.Utilites;
 using MinskTrans.DesctopClient;
 using MinskTrans.Universal.ModelView;
 using MinskTrans.Utilites.Base.IO;

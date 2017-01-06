@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.UI.Core;
 using MinskTrans.Context.Base;
+using MinskTrans.Context.Utilites;
 using MinskTrans.Utilites.Base.Net;
 using MyLibrary;
 using PostSharp.Aspects;
@@ -103,7 +104,6 @@ namespace UniversalMinskTransRelease.ModelView
                 {
                     SavedVersion = version;
                     return $"{version}\nПриложение обновлено:\n\n{changeLog}";
-                    ;
                 }
                 return "";
             }

@@ -85,6 +85,7 @@
     <Compile Include="Utilites\Fake\FakeSettingsModelView.cs" />
     <Compile Include="Utilites\FuzzySearch\LevenshteinDistance.cs" />
     <Compile Include="Utilites\FuzzySearch\StopsFilterMaster.cs" />
+    <Compile Include="Utilites\IApplicationSettingsHelper.cs" />
     <Compile Include="Utilites\ISettingsModelView.cs" />
     <Compile Include="Utilites\Model\GroupIdExt.cs" />
     <Compile Include="Utilites\Model\RoutEx.cs" />

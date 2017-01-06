@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +21,7 @@ using CommonLibrary.Notify;
 using MetroLog;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Graph;
+using Microsoft.HockeyApp;
 using Microsoft.OneDrive.Sdk;
 using Microsoft.OneDrive.Sdk.Authentication;
 //using Microsoft.OneDrive.Sdk.WindowsForms;
@@ -26,6 +29,7 @@ using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Fakes;
 using MinskTrans.Context.UniversalModelView;
+using MinskTrans.Context.Utilites;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
 using MinskTrans.Utilites;
@@ -35,7 +39,6 @@ using MinskTrans.Utilites.Desktop;
 using MyLibrary;
 using OneDriveRestAPI;
 using PropertyChanged;
-using UniversalMinskTransRelease.Helpers;
 //using CredentialCache = Microsoft.OneDrive.Sdk.CredentialCache;
 using File = System.IO.File;
 using IContainer = Autofac.IContainer;
@@ -43,52 +46,44 @@ using IContainer = Autofac.IContainer;
 
 namespace PushNotificationServer
 {
-	public class NotifyTimeTableChanges
+	public interface ICloudSettings
 	{
-	    private NotificationHubClient GetHub()
-	    {
-            NotificationHubClient hub = NotificationHubClient
-                .CreateClientFromConnectionString(AppServerConstants.PushNotificationChanelEndPoint, AppServerConstants.PushNotificationChanelHubName);
-	        return hub;
-	    }
-		public async void SendNotificationAsync(string text)
-		{
-		    var hub = GetHub();
-			var toast = $@"<toast><visual><binding template=""ToastText01""><text id=""1"">{text}</text></binding></visual></toast>";
-			var result = await hub.SendWindowsNativeNotificationAsync(toast);
-			
-		}
+		string CloudToken { get; set; }
+	}
 
-		public async Task<NotificationOutcome> SendNotificationAsync(TypeOfUpdates updates)
+	public class CloudSeettings : ICloudSettings
+	{
+		public string CloudToken
 		{
-		    var hub = GetHub();
-			var toast = $@"{updates}";
-			var notification = new WindowsNotification(toast);
-			notification.ContentType = "application/octet-stream";
-			notification.Headers["X-WNS-Type"] = @"wns/raw";
-			var result  = await hub.SendNotificationAsync(notification);
-		    return result;
+			get { return Settings.Default.CloudToken; }
+			set { Settings.Default.CloudToken = value; }
 		}
 	}
 
-    public interface ICloudSettings
+    public struct ExceptionDefinition
     {
-        string CloudToken { get; set; }
-    }
-
-    public class CloudSeettings : ICloudSettings
-    {
-        public string CloudToken
+        public ExceptionDefinition(string error, Exception ex)
         {
-            get { return Settings.Default.CloudToken; }
-            set { Settings.Default.CloudToken = value; }
+            ErrorMessage = error;
+            Exception = ex;
         }
+
+        public override string ToString()
+        {
+            return ErrorMessage;
+        }
+
+        public string ErrorMessage { get;  }
+        public Exception Exception { get; }
     }
 
-    [ImplementPropertyChanged]
+	[ImplementPropertyChanged]
 	public class ServerEngine:INotifyPropertyChanged
 	{
 		private static ServerEngine engine;
+		private ManageNotifications notificatiosn;
+
+
 		private IBussnessLogics context;
 		private ILogger log;
 		private FilePathsSettings files;
@@ -129,38 +124,47 @@ namespace PushNotificationServer
 
 		public RelayCommand UploadAllToOneDriveCommand { get; private set; }
 
+
+
+
+		public NotifyTimeTableChanges NotifyTimeTableChanged => container.Resolve<NotifyTimeTableChanges>();
+
 		public async Task UploadAllToOneDrive(TypeOfUpdates updates)
 		{
 			if (updates == TypeOfUpdates.None)
 				return;
 			IsFilesBlocked = true;
-		    KeyValuePair<string, string>[] result = null;
-		    try
-		    {
-		        //await container.Resolve<INotifyHelper>().ReportErrorAsync("About to send one drive");
-		        result = await Task.WhenAll(
-		            //OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName),
-		            //OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName),
-		            OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName),
-		            OndeDriveController.UploadFileAsync(files.AllNewsFileV3.Folder, files.AllNewsFileV3.FileName),
-		            OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName),
-		            OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName),
-		            OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName),
-		            OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName));
-		        //await container.Resolve<INotifyHelper>().ReportErrorAsync("About to notify by pushs");
-		        var resul = await container.Resolve<NotifyTimeTableChanges>().SendNotificationAsync(updates);
-		        if (resul.Failure != 0 || resul.State != NotificationOutcomeState.Enqueued)
-		            container.Resolve<INotifyHelper>()
-		                .ReportErrorAsync(
-		                    $"{resul.NotificationId}\n{resul.State}\n{resul.Results}\nSuccess:{resul.Success}\nFailour:{resul.Failure}");
-		        UploadedFiles.Clear();
-		        for (int i = 0; i < result.Length; i++)
-		            UploadedFiles.Add(result[i]);
-		    }
-		    catch (Exception e)
-		    {
-		        throw;
-		    }
+			KeyValuePair<string, string>[] result = null;
+			try
+			{
+				//await container.Resolve<INotifyHelper>().ReportErrorAsync("About to send one drive");
+				result = await Task.WhenAll(
+					//OndeDriveController.UploadFileAsync(files.HotNewsFile.Folder, files.HotNewsFile.FileName),
+					//OndeDriveController.UploadFileAsync(files.MainNewsFile.Folder, files.MainNewsFile.FileName),
+					OndeDriveController.UploadFileAsync(files.LastUpdatedFile.Folder, files.LastUpdatedFile.FileName),
+					OndeDriveController.UploadFileAsync(files.AllNewsFileV3.Folder, files.AllNewsFileV3.FileName),
+					OndeDriveController.UploadFileAsync(files.RouteFile.Folder, files.RouteFile.FileName),
+					OndeDriveController.UploadFileAsync(files.StopsFile.Folder, files.StopsFile.FileName),
+					OndeDriveController.UploadFileAsync(files.TimeFile.Folder, files.TimeFile.FileName),
+					OndeDriveController.UploadFileAsync(files.TimeTableAllFile.Folder, files.TimeTableAllFile.FileName));
+				//await container.Resolve<INotifyHelper>().ReportErrorAsync("About to notify by pushs");
+				var resul = await NotifyTimeTableChanged.SendNotificationAsync(updates);
+				Notificatiosn.AddNotificationObserv(resul.NotificationId);
+				if (resul.Failure != 0 || resul.State != NotificationOutcomeState.Enqueued)
+					container.Resolve<INotifyHelper>()
+						.ReportErrorAsync(
+							$"{resul.NotificationId}\n{resul.State}\n{resul.Results}\nSuccess:{resul.Success}\nFailour:{resul.Failure}");
+				UploadedFiles.Clear();
+				for (int i = 0; i < result.Length; i++)
+					UploadedFiles.Add(result[i]);
+			}
+			catch (Exception e)
+			{
+                LastExceptions =
+                                LastExceptions.Add(new ExceptionDefinition($"{DateTime.Now}: {e.Message}", e))
+                                    .Skip(LastExceptions.Count - 100 > 0 ? LastExceptions.Count - 100 : 0)
+                                    .ToImmutableList();
+			}
 			finally
 			{
 				IsFilesBlocked = false;
@@ -168,7 +172,7 @@ namespace PushNotificationServer
 
 		}
 
-        public readonly ObservableCollection<KeyValuePair<string,string>> UploadedFiles = new ObservableCollection<KeyValuePair<string, string>>();
+		public ObservableCollection<KeyValuePair<string,string>> UploadedFiles { get; } = new ObservableCollection<KeyValuePair<string, string>>();
 
 		void SaveTime()
 		{
@@ -185,7 +189,12 @@ namespace PushNotificationServer
 
 		ServerEngine()
 		{
-			UploadAllToOneDriveCommand = new RelayCommand(async () =>
+		    ShowExceptionCommand = new RelayCommand<ExceptionDefinition>(
+		        definition =>
+		        {
+		            container.Resolve<INotifyHelper>().ShowMessageAsync(definition.Exception.StackTrace);
+		        });
+		    UploadAllToOneDriveCommand = new RelayCommand(async () =>
 			{
 				await UploadAllToOneDrive(TypeOfUpdates.All);
 			}, () => !IsFilesBlocked);
@@ -203,7 +212,7 @@ namespace PushNotificationServer
 			builder.RegisterType<FileHelperDesktop>().As<FileHelperBase>().SingleInstance();
 			//builder.RegisterType<SqlEFContext>().As<IContext>().WithParameter("connectionString", @"default");
 			builder.RegisterType<Context>().As<IContext>().SingleInstance();
-			builder.RegisterType<BsonBaseNewsContext>().As<INewsContext>().SingleInstance();
+			builder.RegisterType<BaseNewsContext>().As<INewsContext>().SingleInstance();
 			builder.RegisterType<UpdateManagerBase>();
 			builder.RegisterType<InternetHelperDesktop>().As<InternetHelperBase>().SingleInstance();
 			builder.RegisterType<OneDriveControllerOfficial>().As<ICloudStorageController>().SingleInstance();
@@ -216,8 +225,10 @@ namespace PushNotificationServer
 			builder.RegisterInstance<ILogManager>(LogManagerFactory.DefaultLogManager).SingleInstance();
 			builder.RegisterType<NotifyHelperDesctop>().As<INotifyHelper>().SingleInstance();
 			builder.RegisterType<FilePathsSettings>().SingleInstance();
-		    builder.RegisterType<CloudSeettings>().As<ICloudSettings>();
+			builder.RegisterType<CloudSeettings>().As<ICloudSettings>();
 			builder.RegisterType<NotifyTimeTableChanges>().AsSelf().SingleInstance();
+			builder.RegisterType<ManageNotifications>();
+			builder.RegisterType<ManageNotificationsSettigns>();
 			container = builder.Build();
 
 			context = container.Resolve<IBussnessLogics>();
@@ -228,112 +239,114 @@ namespace PushNotificationServer
 				(sender, args) => container.Resolve<INotifyHelper>().ReportErrorAsync("Need attension for One Drive!!!");
 			log = container.Resolve<ILogManager>().GetLogger<ServerEngine>();
 			files = container.Resolve<FilePathsSettings>();
+
+			notificatiosn = container.Resolve<ManageNotifications>();
 		}
 
-	    public class OneDriveControllerOfficial : ICloudStorageController
-	    {
-            static class OneDriveErrors
-            {
-                public const string ItemNotFound = "itemNotFound";
-            }
+		public class OneDriveControllerOfficial : ICloudStorageController
+		{
+			static class OneDriveErrors
+			{
+				public const string ItemNotFound = "itemNotFound";
+			}
 
-            public string SubFolder { get; } = "/MinskTransRelease";
-	        private Options options;
+			public string SubFolder { get; } = "/MinskTransRelease";
+			private Options options;
 
-	        public OneDriveControllerOfficial(ICloudSettings settings)
-	        {
-                if (settings == null)
-                    throw new ArgumentNullException(nameof(settings));
-	            _settings = settings;
-	            Token = settings.CloudToken;
-	        }
+			public OneDriveControllerOfficial(ICloudSettings settings)
+			{
+				if (settings == null)
+					throw new ArgumentNullException(nameof(settings));
+				_settings = settings;
+				Token = settings.CloudToken;
+			}
 
-	        public async Task Inicialize()
-	        {
-	            if (string.IsNullOrWhiteSpace(Token))
-	            {
-	                Auth();
-	                return;
-	            }
+			public async Task Inicialize()
+			{
+				if (string.IsNullOrWhiteSpace(Token))
+				{
+					Auth();
+					return;
+				}
 
-                AccountSession session = new AccountSession();
-                session.ClientId = ClientId;
-                session.RefreshToken = Token;
-                var _msaAuthenticationProvider = new MsaAuthenticationProvider(ClientId, AppResponseUrl, scopes);
-                client = new OneDriveClient(oneDriveConsumerBaseUrl, _msaAuthenticationProvider);
-                _msaAuthenticationProvider.CurrentAccountSession = session;
-                await _msaAuthenticationProvider.AuthenticateUserAsync();
+				AccountSession session = new AccountSession();
+				session.ClientId = ClientId;
+				session.RefreshToken = Token;
+				var _msaAuthenticationProvider = new MsaAuthenticationProvider(ClientId, AppResponseUrl, scopes);
+				client = new OneDriveClient(oneDriveConsumerBaseUrl, _msaAuthenticationProvider);
+				_msaAuthenticationProvider.CurrentAccountSession = session;
+				await _msaAuthenticationProvider.AuthenticateUserAsync();
 
 
-	        }
+			}
 
-            public string AppResponseUrl { get; set; } = @"https://login.live.com/oauth20_desktop.srf";
-            private readonly string oneDriveConsumerBaseUrl = "https://api.onedrive.com/v1.0";
-            private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.signin", "wl.offline_access" };
-	        private readonly string ClientId = "0000000040158EFF";
-	        private OneDriveClient client;
-	        private string Token;
+			public string AppResponseUrl { get; set; } = @"https://login.live.com/oauth20_desktop.srf";
+			private readonly string oneDriveConsumerBaseUrl = "https://api.onedrive.com/v1.0";
+			private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.signin", "wl.offline_access" };
+			private readonly string ClientId = "0000000040158EFF";
+			private OneDriveClient client;
+			private string Token;
 
-	        public async void Auth()
-            {
-                try
-                {
-                    var msaAuthenticationProvider = new MsaAuthenticationProvider(ClientId, AppResponseUrl,
-                        scopes);
-                    var authTask = msaAuthenticationProvider.AuthenticateUserAsync();
-                    client = new OneDriveClient(oneDriveConsumerBaseUrl, msaAuthenticationProvider);
-                    await authTask;
-                    var session = (((MsaAuthenticationProvider)client.AuthenticationProvider).CurrentAccountSession);
-                    Token = session.RefreshToken;
-                    _settings.CloudToken = Token;
+			public async void Auth()
+			{
+				try
+				{
+					var msaAuthenticationProvider = new MsaAuthenticationProvider(ClientId, AppResponseUrl,
+						scopes);
+					var authTask = msaAuthenticationProvider.AuthenticateUserAsync();
+					client = new OneDriveClient(oneDriveConsumerBaseUrl, msaAuthenticationProvider);
+					await authTask;
+					var session = (((MsaAuthenticationProvider)client.AuthenticationProvider).CurrentAccountSession);
+					Token = session.RefreshToken;
+					_settings.CloudToken = Token;
+				}
+				catch (Exception e)
+				{
+                    
                 }
-                catch (Exception e)
-                {
+			}
 
-                }
-            }
+			public Task<KeyValuePair<string, string>> UploadFileAsync(TypeFolder pathToFile, string newNameFile)
+			{
+				var fileHelper = ServerEngine.Engine.container.Resolve<FileHelperBase>();
+				return UploadFileAsync(Path.Combine(fileHelper.GetPath(pathToFile), newNameFile), newNameFile);
+			}
 
-            public Task<KeyValuePair<string, string>> UploadFileAsync(TypeFolder pathToFile, string newNameFile)
-            {
-                var fileHelper = ServerEngine.Engine.container.Resolve<FileHelperBase>();
-                return UploadFileAsync(Path.Combine(fileHelper.GetPath(pathToFile), newNameFile), newNameFile);
-            }
+			public async Task<KeyValuePair<string, string>> UploadFileAsync(string pathToFile, string newNameFile)
+			{
+				using (var fileStream = File.OpenRead(pathToFile))
+				{
+					var res = await client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).Content.Request().PutAsync<Item>(fileStream);
+					return new KeyValuePair<string, string>(newNameFile, await GetLink(SubFolder + "/" + newNameFile));
+				}
+			}
 
-            public async Task<KeyValuePair<string, string>> UploadFileAsync(string pathToFile, string newNameFile)
-	        {
-                using (var fileStream = File.OpenRead(pathToFile))
-                {
-                    var res = await client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).Content.Request().PutAsync<Item>(fileStream);
-                    return new KeyValuePair<string, string>(newNameFile, await GetLink(newNameFile));
-                }
-	        }
+			Regex regex = new Regex(@"(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-?%&!]*)");
+			private ICloudSettings _settings;
 
-            Regex regex = new Regex(@"(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-?%&!]*)");
-	        private ICloudSettings _settings;
+			public async Task<string> GetLink(string path)
+			{
+				try
+				{
+					return path;
+//                    var link =
+//                        (client.Drive.Root.ItemWithPath(path).CreateLink("embed")).Request().PostAsync();
+					var response = await (client.Drive.Root.ItemWithPath(path).CreateLink("embed")).Request().PostAsync();
+					var match = regex.Match(response.Link.WebHtml);
+					if (match.Success)
+						return match.Value.Replace("embed?", "download?");
+					return "";
+				}
+				catch (ServiceException e)
+				{
+					if (e.Error.Code == OneDriveErrors.ItemNotFound)
+						return null;
+					throw;
+				}
+			}
 
-	        public async Task<string> GetLink(string newNameFile)
-            {
-                try
-                {
-                    return "";
-                    //var link =
-                    //    (client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).CreateLink("embed"));
-                    var response = await (client.Drive.Root.ItemWithPath(SubFolder + "/" + newNameFile).CreateLink("embed")).Request().PostAsync();
-                    var match = regex.Match(response.Link.WebHtml);
-                    if (match.Success)
-                        return match.Value.Replace("embed?", "download?");
-                    return "";
-                }
-                catch (ServiceException e)
-                {
-                    if (e.Error.Code == OneDriveErrors.ItemNotFound)
-                        return null;
-                    throw;
-                }
-            }
-
-            public event EventHandler<EventArgs> NeedAttention;
-	    }
+			public event EventHandler<EventArgs> NeedAttention;
+		}
 
 
   //      public class OneDriveController : ICloudStorageController
@@ -549,6 +562,8 @@ namespace PushNotificationServer
 		private static object a = new object();
 		private CancellationTokenSource tokenSource;
 
+        public ImmutableList<ExceptionDefinition> LastExceptions { get; private set; } = ImmutableList<ExceptionDefinition>.Empty;
+
 		public async Task<bool> CheckNews()
 		{
 			if (Updating || IsFilesBlocked)
@@ -578,13 +593,13 @@ namespace PushNotificationServer
 								await newsManager.SaveToFile();
 							return true;
 						}
-						catch (HttpRequestException ex)
+						catch (Exception e)
 						{
-							container.Resolve<INotifyHelper>().ReportErrorAsync("Bad request, try another time");
-						}
-						catch
-						{
-							throw;
+                            LastExceptions =
+                                LastExceptions.Add(new ExceptionDefinition($"{DateTime.Now}: {e.Message}", e))
+                                    .Skip(LastExceptions.Count - 100 > 0 ? LastExceptions.Count - 100 : 0)
+                                    .ToImmutableList();
+						    
 						}
 						return false;
 						//OndeDriveController.UploadFile(NewsManager.FileNameDays, NewsManager.FileNameDays);
@@ -601,10 +616,15 @@ namespace PushNotificationServer
 						catch (Exception e)
 						{
 							log.Error("Error while updating timetable");
-							container.Resolve<INotifyHelper>()
-								.ReportErrorAsync(DateTime.Now + $": Error while updating timetable\n{e.Message}").ConfigureAwait(false);
-							
-						}
+                            //							container.Resolve<INotifyHelper>()
+                            //								.ReportErrorAsync(DateTime.Now + $": Error while updating timetable\n{e.Message}").ConfigureAwait(false);
+						    LastExceptions =
+                                LastExceptions.Add(new ExceptionDefinition($"{DateTime.Now}: {e.Message}", e))
+                                    .Skip(LastExceptions.Count - 100 > 0 ? LastExceptions.Count - 100 : 0)
+						            .ToImmutableList();
+                            
+
+                        }
 						return false;
 					}), tokenSource.Token));
 				}
@@ -622,7 +642,12 @@ namespace PushNotificationServer
 			catch (Exception e)
 			{
 				log.Error("CheckNews Error", e);
-				throw;
+                LastExceptions =
+                                LastExceptions.Add(new ExceptionDefinition($"{DateTime.Now}: {e.Message}", e))
+                                    .Skip(LastExceptions.Count - 100 > 0 ? LastExceptions.Count - 100 : 0)
+                                    .ToImmutableList();
+                
+                return false;
 			}
 			Settings.Default.DBUpdateTime = context.LastUpdateDbDateTimeUtc;
 			Settings.Default.Save();		
@@ -633,7 +658,10 @@ namespace PushNotificationServer
 			return results != null && results.Any(x => x);
 		}
 
-		public RelayCommand<string> SentPushMessageCommand
+        public RelayCommand<ExceptionDefinition> ShowExceptionCommand { get; }
+
+
+        public RelayCommand<string> SentPushMessageCommand
 		{
 			get
 			{
@@ -652,8 +680,8 @@ namespace PushNotificationServer
 		{
 			get { return new RelayCommand(() =>
 			{
-			    context.ResetState();
-			    newsManager.ResetState();
+				context.ResetState();
+				newsManager.ResetState();
 
 			});}
 		}
@@ -663,6 +691,11 @@ namespace PushNotificationServer
 		public IBussnessLogics BusnesLogic => context;
 
 		public FilePathsSettings Files => container.Resolve<FilePathsSettings>();
+
+		public ManageNotifications Notificatiosn
+		{
+			get { return notificatiosn; }
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

@@ -9,6 +9,7 @@ using Windows.Networking.PushNotifications;
 using Autofac;
 using CommonLibrary;
 using CommonLibrary.IO;
+using CommonLibrary.ModelView;
 using CommonLibrary.Notify;
 using MetroLog;
 using MetroLog.Targets;
@@ -17,6 +18,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using MinskTrans.Context;
 using MinskTrans.Context.Base;
 using MinskTrans.Context.Fakes;
+using MinskTrans.Context.Utilites;
 using MinskTrans.DesctopClient.Modelview;
 using MinskTrans.Net;
 using MinskTrans.Net.Base;
@@ -130,9 +132,27 @@ namespace BackgroundUpdateTaskUniversalRuntime
 					return;
 				}
 
-				var oldDaylyTime = settings.LastSeenHotNewsDateTimeUtc;
-				var oldMonthTime = settings.LastSeenMainNewsDateTimeUtc;
-				bool isHaveNews = false;
+			    DateTime oldDaylyTime;
+			    DateTime oldMonthTime;
+			    try
+			    {
+			        oldDaylyTime = settings.LastSeenHotNewsDateTimeUtc;
+			        oldMonthTime = settings.LastSeenMainNewsDateTimeUtc;
+			    }
+                catch (FormatException e)
+                {
+                    Log?.Error("Background: " + e.Message, e);
+                    TelemetryClient.TrackException(e, new Dictionary<string, string>()
+                    {
+                        ["Background task"] = "General",
+                        ["Version"] = "3"
+                    });
+                    settings.LastSeenHotNewsDateTimeUtc = DateTime.UtcNow;
+                    settings.LastSeenMainNewsDateTimeUtc = DateTime.UtcNow;
+                    oldDaylyTime = settings.LastSeenHotNewsDateTimeUtc;
+                    oldMonthTime = settings.LastSeenMainNewsDateTimeUtc;
+                }
+                bool isHaveNews = false;
 				try
 				{
 					if (updateTypes.HasFlag(TypeOfUpdates.TimeTable))
@@ -226,15 +246,15 @@ namespace BackgroundUpdateTaskUniversalRuntime
                 }
 				Log?.Error("Background ended ");
 			}
-			catch (Exception e)
+			catch (FormatException e)
 			{
 				Log?.Error("Background: " + e.Message, e);
 				TelemetryClient.TrackException(e, new Dictionary<string, string>()
 				{
 				    ["Background task"]= "General",
-                    ["Version"] = "2"
+                    ["Version"] = "3"
                 });
-			}
+            }
 			finally
 			{
 				backgroundActive.Stop();

@@ -13,6 +13,7 @@ using MinskTrans.Context.Base;
 using MinskTrans.Context.Base.BaseModel;
 using MinskTrans.Context.Geopositioning;
 using MinskTrans.Context.UniversalModelView;
+using MinskTrans.Context.Utilites;
 using MinskTrans.DesctopClient.Modelview;
 using MyLibrary;
 using UniversalMinskTransRelease.ViewModel;

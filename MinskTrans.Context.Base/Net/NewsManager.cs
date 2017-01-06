@@ -363,4 +363,18 @@ namespace MinskTrans.Net
 	        NewNews = null;
 	    }
     }
+
+
+    public class NewsParser
+    {
+        public void GetTagsFromNews()
+        {
+            
+        }
+
+        public void GetTransportFromNews(string news)
+        {
+            
+        }
+    }
 }

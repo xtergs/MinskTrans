@@ -40,6 +40,8 @@ namespace MinskTrans.Utilites.Desktop
 				log.Error("CheckHotNewsAsync: Don't have nodes with news");
 				return null;
 			}
+            var repairTimeRegex = new Regex(@"[0-2]?[0-9][-:][0-6][0-9]",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 			foreach (var nodesNew in nodesNews)
 			{
 				try
@@ -64,11 +66,10 @@ namespace MinskTrans.Utilites.Desktop
 					string possibleRepairTime =
 						firstLine.Select(x => x.InnerText.DecodeHtml().Trim())
 							.Last(x => !String.IsNullOrWhiteSpace(x))
-							.Replace('.', ' ')
+							.Replace('.', ':')
 							.Replace(" ", "")
 							.Trim();
-					var match = Regex.Match(possibleRepairTime.Substring(possibleRepairTime.Length / 2), @"[0-2]?[0-9][-:][0-6][0-9]",
-					RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+					var match = repairTimeRegex.Match(possibleRepairTime.Substring(possibleRepairTime.Length / 2));
 					DateTime possibleDateTime;
 					string decodedString = allText.Replace("  ", " ").Trim();
 					if (DateTime.TryParse(match.Value.Replace('-', ':'), out possibleDateTime))

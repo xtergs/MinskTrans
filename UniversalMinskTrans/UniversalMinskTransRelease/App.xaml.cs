@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using MetroLog;
 using MetroLog.Targets;
@@ -23,6 +24,7 @@ using Microsoft.WindowsAzure.Messaging;
 using MyLibrary;
 using MinskTrans.Context.Base;
 using Microsoft.HockeyApp;
+using MinskTrans.Context.Utilites;
 using UniversalMinskTransRelease.Helpers;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
@@ -47,7 +49,7 @@ namespace UniversalMinskTrans
 			var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
 
 			var hub = new NotificationHub(AppConstants.PushNotificationChanelHubName, AppConstants.PushNotificationChanelEndPoint);
-			var result = await hub.RegisterNativeAsync(channel.Uri);
+			var result = await hub.RegisterNativeAsync(channel.Uri, new []{DateTime.UtcNow.Date.ToBinary().ToString()});
 			return result.RegistrationId != null;
 
 			// Displays the registration ID so you know it was successful

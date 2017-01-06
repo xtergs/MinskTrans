@@ -56,12 +56,31 @@
     <Reference Include="MetroLog">
       <HintPath>..\packages\MetroLog.1.0.1\lib\wpa81\MetroLog.dll</HintPath>
     </Reference>
+    <Reference Include="MetroLog.Targets.PortableFileTarget">
+      <HintPath>..\packages\MetroLog.Targets.PortableFileTarget.1.0.0.0\lib\portable-net45+win+wp80\MetroLog.Targets.PortableFileTarget.dll</HintPath>
+    </Reference>
     <Reference Include="MinskTrans.Utilites.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MinskTrans.Utilites.Desktop\bin\Debug\MinskTrans.Utilites.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Moq, Version=4.5.16.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.5.16\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PCLExt.FileStorage, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PCLExt.FileStorage.1.0.5\lib\net45\PCLExt.FileStorage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PCLExt.FileStorage.Abstractions, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PCLExt.FileStorage.1.0.5\lib\net45\PCLExt.FileStorage.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PCLStorage, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\net45\PCLStorage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\net45\PCLStorage.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -85,6 +104,7 @@
     <Compile Include="DistanceTests.cs" />
     <Compile Include="FileHelperDesktopUnitTest.cs" />
     <Compile Include="InternetHelperDesktopUnitTest.cs" />
+    <Compile Include="NewsManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestFileHelperDesktop.cs" />
     <Compile Include="UnitTest1.cs" />

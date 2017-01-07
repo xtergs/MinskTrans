@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using CommonLibrary;
 using GalaSoft.MvvmLight.Command;
 using MinskTrans.DesctopClient.Modelview;
-using MyLibrary;
 using Autofac;
 using CommonLibrary.IO;
 using CommonLibrary.ModelView;

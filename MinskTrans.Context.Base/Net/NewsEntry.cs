@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace MinskTrans.Net
 {
-	public class NewsEntry
+	public class NewsEntry : IEqualityComparer<NewsEntry>
 	{
 		public NewsEntry() { }
 		public NewsEntry(DateTime dateTimeNews, string decodedString)
@@ -41,6 +42,7 @@ namespace MinskTrans.Net
 
 		public DateTime PostedUtc { get; set; }
 
+		[JsonIgnore]
 		public DateTime PostedLocal
 		{
 			get
@@ -51,6 +53,7 @@ namespace MinskTrans.Net
 
 		public DateTime CollectedUtc { get; set; }
 
+		[JsonIgnore]
 		public DateTime CollectedLocal
 		{
 			get
@@ -66,6 +69,7 @@ namespace MinskTrans.Net
 
 		public DateTime RepairedLineUtc { get; set; }
 
+		[JsonIgnore]
 		public DateTime RepairedLineLocal
 		{
 			get
@@ -75,6 +79,36 @@ namespace MinskTrans.Net
 		}
 
 		public string[] Tags { get; set; }
+
+		public bool Equals(NewsEntry x, NewsEntry y)
+		{
+			return x.PostedUtc == y.PostedUtc
+					&& x.RepairedLineUtc == y.RepairedLineUtc
+					&& x.Message.Length == y.Message.Length
+					&& x.Message == y.Message;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			if (!(obj is NewsEntry))
+				return false;
+
+			return Equals(this, obj as NewsEntry);
+		}
+
+		public int GetHashCode(NewsEntry obj)
+		{
+			return obj.GetHashCode();
+		}
+
+		public override int GetHashCode()
+		{
+			var result = PostedUtc.GetHashCode() ^ Message.GetHashCode() ^ 
+						RepairedLineUtc.GetHashCode();
+			return result;
+		}
 	}
 
 	public class NewsEntryEqualityComparer: IEqualityComparer<NewsEntry>

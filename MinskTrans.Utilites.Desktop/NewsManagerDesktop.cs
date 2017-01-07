@@ -11,7 +11,6 @@ using MinskTrans.Context;
 using MinskTrans.Net;
 using MinskTrans.Utilites.Base.IO;
 using MinskTrans.Utilites.Base.Net;
-using MyLibrary;
 
 namespace MinskTrans.Utilites.Desktop
 {
@@ -40,8 +39,8 @@ namespace MinskTrans.Utilites.Desktop
 				log.Error("CheckHotNewsAsync: Don't have nodes with news");
 				return null;
 			}
-            var repairTimeRegex = new Regex(@"[0-2]?[0-9][-:][0-6][0-9]",
-                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+			var repairTimeRegex = new Regex(@"[0-2]?[0-9][-:][0-6][0-9]",
+					RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 			foreach (var nodesNew in nodesNews)
 			{
 				try
@@ -107,16 +106,9 @@ namespace MinskTrans.Utilites.Desktop
 			bool flagResult = false;
 
 			List<NewsEntry> newsToAdd = new List<NewsEntry>();
-			foreach (var newsEntry in returnDictionary)
+			var realNew = returnDictionary.Except(allHotNewsDictionary.NewsEntries);
+			foreach (var newsEntry in realNew)
 			{
-				if (
-					allHotNewsDictionary.NewsEntries.Any(
-						key =>
-							key.PostedUtc == newsEntry.PostedUtc && key.RepairedLineUtc == newsEntry.RepairedLineUtc &&
-							key.Message.Length == newsEntry.Message.Length && key.Message == newsEntry.Message))
-				{
-					continue;
-				}
 				var tempNode =
 					allHotNewsDictionary.NewsEntries.FirstOrDefault(
 						key =>

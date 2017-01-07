@@ -98,12 +98,17 @@ namespace MinskTrans.Context.Desktop
 			throw new NotImplementedException();
 		}
 
+		public Task LoadDataAsync(ListWithDate mainnews, ListWithDate hotnews)
+		{
+			throw new NotImplementedException();
+		}
+
 		Task INewsContext.Save(TypeFolder folder, string file)
 		{
 			throw new NotImplementedException();
 		}
 
-	    public Task Clear(TypeFolder Folder)
+	    public Task Clear(TypeFolder folder)
 	    {
 	        throw new NotImplementedException();
 	    }

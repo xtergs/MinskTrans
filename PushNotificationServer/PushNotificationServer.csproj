@@ -35,7 +35,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\DebutTest\</OutputPath>
+    <OutputPath>D:\DebutTest1\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -92,8 +92,8 @@
       <HintPath>..\UniversalMinskTrans\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="LiteDB, Version=2.0.2.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-      <HintPath>..\UniversalMinskTrans\packages\LiteDB.2.0.2\lib\net35\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=2.0.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\UniversalMinskTrans\packages\LiteDB.2.0.4\lib\net35\LiteDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MetroLog, Version=1.0.1.0, Culture=neutral, PublicKeyToken=ba4ace74c3b410f3, processorArchitecture=MSIL">
@@ -394,7 +394,8 @@
     </ApplicationDefinition>
     <Compile Include="Helper\AppConstants.cs" />
     <Compile Include="ManageNotifications.cs" />
-    <Compile Include="NoSqlNewsContext.cs" />
+    <Compile Include="NewsContext\CombinedNewsContext.cs" />
+    <Compile Include="NewsContext\NoSqlNewsContext.cs" />
     <Compile Include="NotifyTimeTableChanges.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ServerEngine.cs" />
